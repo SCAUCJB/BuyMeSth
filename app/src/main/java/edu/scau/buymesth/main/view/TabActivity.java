@@ -1,7 +1,6 @@
 package edu.scau.buymesth.main.view;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -27,11 +26,11 @@ public class TabActivity extends BaseActivity {
     List<String> list_title = new ArrayList<>();
     TabAdapter tabAdapter;
 
-
     @Bind(R.id.viewPager)
     ViewPager viewPager;
     @Bind(R.id.tabLayout)
     TabLayout tabLayout;
+
 
     @Override
     protected int getLayoutId() {
@@ -60,4 +59,5 @@ public class TabActivity extends BaseActivity {
         tabLayout.setupWithViewPager(viewPager);
 
     }
+
 }
