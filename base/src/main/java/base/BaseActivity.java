@@ -41,7 +41,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
-        if (mCanSwipeBack) {
+        if (!mCanSwipeBack) {
             super.setContentView(layoutResID);
         } else {
             super.setContentView(getContainer());
