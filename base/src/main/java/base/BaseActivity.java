@@ -25,8 +25,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     private ImageView ivShadow;
 
     @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         mContext=this;
         setContentView(getLayoutId());
         //声明透明状态栏
