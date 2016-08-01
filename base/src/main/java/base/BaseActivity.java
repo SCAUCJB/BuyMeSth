@@ -51,6 +51,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             swipeBackLayout.addView(view);
         }
     }
+
     private View getContainer() {
         RelativeLayout container = new RelativeLayout(this);
         swipeBackLayout = new SwipeBackLayout(this);
