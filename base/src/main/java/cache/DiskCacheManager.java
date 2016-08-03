@@ -164,6 +164,10 @@ public class DiskCacheManager implements IDiskCacheManage {
 
     @Override
     public void clear() {
-
+       if(cacheDir!=null){
+           for(File file:cacheDir.listFiles()){
+                   file.delete()  ;
+           }
+       }
     }
 }
