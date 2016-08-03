@@ -13,10 +13,11 @@ import android.widget.RelativeLayout;
 
 import butterknife.ButterKnife;
 import edu.scau.base.R;
-import view.layout.SwipeBackLayout;
+import ui.layout.SwipeBackLayout;
 
 /**
  * Created by John on 2016/8/1.
+ *
  */
 public abstract class BaseActivity extends AppCompatActivity {
     private boolean mCanSwipeBack=true;

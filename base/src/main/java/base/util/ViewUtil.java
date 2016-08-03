@@ -21,7 +21,7 @@ public class ViewUtil {
 			Field[] fields = clazz.getDeclaredFields();// 获得Activity中声明的字段
 			for (Field field : fields) {
 				if (field.getGenericType().toString().contains("widget")
-						|| field.getGenericType().toString().contains("view")
+						|| field.getGenericType().toString().contains("ui")
 						|| field.getGenericType().toString()
 								.contains("WebView")) {// 找到所有的view和widget,WebView
 					try {
@@ -52,7 +52,7 @@ public class ViewUtil {
 			Field[] fields = clazz.getDeclaredFields();// 获得Activity中声明的字段
 			for (Field field : fields) {
 				if (field.getGenericType().toString().contains("widget")
-						|| field.getGenericType().toString().contains("view")
+						|| field.getGenericType().toString().contains("ui")
 						|| field.getGenericType().toString()
 								.contains("WebView")) {// 找到所有的view和widget
 					try {

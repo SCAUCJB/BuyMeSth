@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package view.layout;
+package ui.layout;
 
 import android.app.Activity;
 import android.content.Context;
