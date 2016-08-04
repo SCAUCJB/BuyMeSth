@@ -42,12 +42,8 @@ public class ChangeColorIconWithTextView extends View
 	 * 限制绘制icon的范围,实例化放在生成对象的时候而不是在measure时候
 	 */
 	private Rect mIconRect=new Rect();
-	/**
-	 * icon底部文本
-	 */
-	private String mText = "";
-	private int mTextSize = (int) TypedValue.applyDimension(
-			TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics());
+
+
 	private Paint mTextPaint;
 	private Rect mTextBound = new Rect();
 
@@ -85,24 +81,12 @@ public class ChangeColorIconWithTextView extends View
 			} else if (attr == R.styleable.ChangeColorIconView_color1) {
 				mColor = a.getColor(attr, 0x45C01A);
 
-			} else if (attr == R.styleable.ChangeColorIconView_text) {
-				mText = a.getString(attr);
-
-			} else if (attr == R.styleable.ChangeColorIconView_text_size) {
-				mTextSize = (int) a.getDimension(attr, TypedValue
-						.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10,
-								getResources().getDisplayMetrics()));
-
 			}
 		}
 
 		a.recycle();
 
-		mTextPaint = new Paint();
-		mTextPaint.setTextSize(mTextSize);
-		mTextPaint.setColor(0xff555555);
-		// 得到text绘制范围
-		mTextPaint.getTextBounds(mText, 0, mText.length(), mTextBound);
+
 
 	}
 
@@ -113,23 +97,14 @@ public class ChangeColorIconWithTextView extends View
 
 		// 得到绘制icon的宽
 		int bitmapWidth;
-        if(mText.length()>0){
-            bitmapWidth = Math.min(getMeasuredWidth() - getPaddingLeft()
-                    - getPaddingRight(), getMeasuredHeight() - getPaddingTop()
-                    - getPaddingBottom() - mTextBound.height());
-        }else{
             bitmapWidth = Math.min(getMeasuredWidth() - getPaddingLeft()
                     - getPaddingRight(), getMeasuredHeight() - getPaddingTop()
                     - getPaddingBottom());
-        }
 
 		int left = getMeasuredWidth() / 2 - bitmapWidth / 2;
 		int top;
-        if(mText.length()>0){
-            top = (getMeasuredHeight() - mTextBound.height()) / 2 - bitmapWidth/ 2;
-        }else{
             top = getMeasuredHeight() / 2 - bitmapWidth/ 2;
-        }
+
 		// 设置icon的绘制范围
 		mIconRect.set(left, top, left + bitmapWidth, top + bitmapWidth);
 
@@ -142,10 +117,6 @@ public class ChangeColorIconWithTextView extends View
 		int alpha = (int) Math.ceil((255 * mAlpha));
 		canvas.drawBitmap(mIconBitmap, null, mIconRect, null);
 		setupTargetBitmap(alpha);
-        if(mText.length()>0){
-            drawSourceText(canvas, alpha);
-            drawTargetText(canvas, alpha);
-        }
         canvas.drawBitmap(mBitmap, 0, 0, null);
 
 	}
@@ -171,26 +142,6 @@ public class ChangeColorIconWithTextView extends View
 		this.mAlpha = alpha;
 		invalidateView();
 	}
-
-    private void drawSourceText(Canvas canvas, int alpha)
-    {
-        mTextPaint.setTextSize(mTextSize);
-        mTextPaint.setColor(0xff333333);
-        mTextPaint.setAlpha(255 - alpha);
-        canvas.drawText(mText, mIconRect.left + mIconRect.width() / 2
-                        - mTextBound.width() / 2,
-                mIconRect.bottom + mTextBound.height(), mTextPaint);
-    }
-
-    private void drawTargetText(Canvas canvas, int alpha)
-    {
-        mTextPaint.setColor(mColor);
-        mTextPaint.setAlpha(alpha);
-        canvas.drawText(mText, mIconRect.left + mIconRect.width() / 2
-                        - mTextBound.width() / 2,
-                mIconRect.bottom + mTextBound.height(), mTextPaint);
-
-    }
 
     private void invalidateView()
 	{
@@ -222,13 +173,6 @@ public class ChangeColorIconWithTextView extends View
 			invalidateView();
 	}
 
-    public void setText(String text){
-        this.mText = text;
-    }
-
-    public void setTextSize(int size){
-        this.mTextSize = size;
-    }
 
 	private static final String INSTANCE_STATE = "instance_state";
 	private static final String STATE_ALPHA = "state_alpha";
