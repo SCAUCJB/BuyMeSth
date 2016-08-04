@@ -86,6 +86,7 @@ public class WelcomeActivity extends BaseActivity{
         else {
             Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
             startActivity(intent);
+            finish();
         }
     }
 
