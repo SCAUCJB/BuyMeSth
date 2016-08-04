@@ -48,8 +48,11 @@ public class WelcomeActivity extends BaseActivity{
     @Override
     public void initView() {
         AlphaAnimation animation=new AlphaAnimation(0f,1f);
-        animation.setDuration(2000);
-        Glide.with(this).load("http://cdn.duitang.com/uploads/item/201312/03/20131203154448_WUTaC.thumb.700_0.jpeg").diskCacheStrategy(DiskCacheStrategy.ALL).animate(animation).into(welcomeImage);
+        animation.setDuration(1000);
+        Glide.with(this).load("http://cdn.duitang.com/uploads/item/201312/03/20131203154448_WUTaC.thumb.700_0.jpeg")
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .animate(animation)
+                .into(welcomeImage);
     }
 
     @Override

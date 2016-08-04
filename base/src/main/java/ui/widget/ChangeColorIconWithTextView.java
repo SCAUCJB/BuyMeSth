@@ -45,7 +45,7 @@ public class ChangeColorIconWithTextView extends View
 	/**
 	 * icon底部文本
 	 */
-	private String mText = "微信";
+	private String mText = "";
 	private int mTextSize = (int) TypedValue.applyDimension(
 			TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics());
 	private Paint mTextPaint;
@@ -112,13 +112,24 @@ public class ChangeColorIconWithTextView extends View
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
 		// 得到绘制icon的宽
-		int bitmapWidth = Math.min(getMeasuredWidth() - getPaddingLeft()
-				- getPaddingRight(), getMeasuredHeight() - getPaddingTop()
-				- getPaddingBottom() - mTextBound.height());
+		int bitmapWidth;
+        if(mText.length()>0){
+            bitmapWidth = Math.min(getMeasuredWidth() - getPaddingLeft()
+                    - getPaddingRight(), getMeasuredHeight() - getPaddingTop()
+                    - getPaddingBottom() - mTextBound.height());
+        }else{
+            bitmapWidth = Math.min(getMeasuredWidth() - getPaddingLeft()
+                    - getPaddingRight(), getMeasuredHeight() - getPaddingTop()
+                    - getPaddingBottom());
+        }
 
 		int left = getMeasuredWidth() / 2 - bitmapWidth / 2;
-		int top = (getMeasuredHeight() - mTextBound.height()) / 2 - bitmapWidth
-				/ 2;
+		int top;
+        if(mText.length()>0){
+            top = (getMeasuredHeight() - mTextBound.height()) / 2 - bitmapWidth/ 2;
+        }else{
+            top = getMeasuredHeight() / 2 - bitmapWidth/ 2;
+        }
 		// 设置icon的绘制范围
 		mIconRect.set(left, top, left + bitmapWidth, top + bitmapWidth);
 
@@ -131,7 +142,11 @@ public class ChangeColorIconWithTextView extends View
 		int alpha = (int) Math.ceil((255 * mAlpha));
 		canvas.drawBitmap(mIconBitmap, null, mIconRect, null);
 		setupTargetBitmap(alpha);
-		canvas.drawBitmap(mBitmap, 0, 0, null);
+        if(mText.length()>0){
+            drawSourceText(canvas, alpha);
+            drawTargetText(canvas, alpha);
+        }
+        canvas.drawBitmap(mBitmap, 0, 0, null);
 
 	}
 	
@@ -157,7 +172,27 @@ public class ChangeColorIconWithTextView extends View
 		invalidateView();
 	}
 
-	private void invalidateView()
+    private void drawSourceText(Canvas canvas, int alpha)
+    {
+        mTextPaint.setTextSize(mTextSize);
+        mTextPaint.setColor(0xff333333);
+        mTextPaint.setAlpha(255 - alpha);
+        canvas.drawText(mText, mIconRect.left + mIconRect.width() / 2
+                        - mTextBound.width() / 2,
+                mIconRect.bottom + mTextBound.height(), mTextPaint);
+    }
+
+    private void drawTargetText(Canvas canvas, int alpha)
+    {
+        mTextPaint.setColor(mColor);
+        mTextPaint.setAlpha(alpha);
+        canvas.drawText(mText, mIconRect.left + mIconRect.width() / 2
+                        - mTextBound.width() / 2,
+                mIconRect.bottom + mTextBound.height(), mTextPaint);
+
+    }
+
+    private void invalidateView()
 	{
 		if (Looper.getMainLooper() == Looper.myLooper())
 		{
@@ -186,6 +221,14 @@ public class ChangeColorIconWithTextView extends View
 		if (mIconRect != null)
 			invalidateView();
 	}
+
+    public void setText(String text){
+        this.mText = text;
+    }
+
+    public void setTextSize(int size){
+        this.mTextSize = size;
+    }
 
 	private static final String INSTANCE_STATE = "instance_state";
 	private static final String STATE_ALPHA = "state_alpha";
