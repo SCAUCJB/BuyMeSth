@@ -58,6 +58,7 @@ public class LoginActivity extends BaseActivity{
                                 toast(getString(R.string.action_login_succeed));
                                 Intent intent = new Intent(LoginActivity.this, TabActivity.class);
                                 startActivity(intent);
+                                finish();
                             }else {
                                 toast(getString(R.string.action_login_failed)+":"+e.getMessage());
                             }
