@@ -4,6 +4,9 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
 
+//    **兼容Android6.0系统所需，如果这句话报错，可在dependencies标签下使用compile 'cn.bmob.android:http-legacy:1.0'**
+//    useLibrary 'org.apache.http.legacy'
+
     defaultConfig {
         applicationId "edu.scau.buymesth"
         minSdkVersion 18
@@ -24,9 +27,13 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.2.0'
+    compile 'com.android.support:appcompat-v7:23.3.0'
     compile project(':base')
-    compile 'com.android.support:support-v4:24.1.1'
+    //    compile 'com.android.support:support-v4:24.1.1'
+    compile 'com.android.support:support-v4:23.3.0'
+    //
+    //    compile 'com.squareup.okhttp:okhttp:2.4.0'//CDN文件服务使用okhttp相关包进行文件的上传和下载（必填）
+    //    compile 'com.squareup.okio:okio:1.4.0'
 }

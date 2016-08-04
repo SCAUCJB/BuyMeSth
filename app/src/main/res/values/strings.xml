@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">BuyMeSth</string>
+    <string name="hint_nickname">Nickname</string>
+    <string name="hint_account">Username or Email</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_password_confirm">Password Confirm</string>
+    <string name="forgot_password"><u>Forgot your password ?</u></string>
+    <string name="button_login">Login</string>
+    <string name="button_register">Register</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="gender_male">Male</string>
+    <string name="gender_female">Female</string>
+    <string name="gender_secret">Secret</string>
+
+    <string name="action_login_succeed">Login succeed</string>
+    <string name="action_login_failed">Login failed</string>
+    <string name="action_register_succeed">Register succeed</string>
+    <string name="action_register_failed">Register failed</string>
+
+    <string name="error_input_too_short">Input too short</string>
+    <string name="error_input_too_long">Input too short</string>
+    <string name="error_input_incorrect">Input incorrect</string>
 </resources>

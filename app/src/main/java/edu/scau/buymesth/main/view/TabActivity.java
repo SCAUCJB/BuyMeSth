@@ -53,14 +53,13 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
             ChangeColorIconWithTextView cv = (ChangeColorIconWithTextView) view.findViewById(R.id.cv);
             switch (i) {
                 case 0:
-                    cv.setIcon(R.mipmap.icon_home);
+                    cv.setIcon(R.drawable.ic_home);
                     break;
                 case 1:
-                    cv.setIcon(R.mipmap.icon_discover);
+                    cv.setIcon(R.drawable.ic_discover);
                     break;
-
                 case 2:
-                    cv.setIcon(R.mipmap.icon_user);
+                    cv.setIcon(R.drawable.ic_user);
                     break;
             }
 
@@ -78,6 +77,21 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         tabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
 
         viewPager.setOnPageChangeListener(this);
+    }
+
+    @Override
+    public boolean canSwipeBack() {
+        return false;
+    }
+
+    @Override
+    public boolean showColorStatusBar() {
+        return true;
+    }
+
+    @Override
+    public int getStatusColorResources() {
+        return R.color.colorAccent;
     }
 
     @Override
