@@ -4,7 +4,12 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.animation.AlphaAnimation;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import base.BaseActivity;
 import cn.bmob.v3.Bmob;
@@ -25,7 +30,8 @@ import view.keke.AdvanceImageView;
 public class WelcomeActivity extends BaseActivity{
     private BmobUser bmobUser;
     @Bind(R.id.welcome_image)
-    AdvanceImageView welcomeImage;
+    ImageView welcomeImage;
+
 
     private boolean initialized = false;
 
@@ -41,22 +47,9 @@ public class WelcomeActivity extends BaseActivity{
 
     @Override
     public void initView() {
-        welcomeImage.setOnImageDownloadLinstener(new AdvanceImageView.OnImageDownloadLinstener() {
-            @Override
-            public void onStart() {
-
-            }
-
-            @Override
-            public void onFinish() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ObjectAnimator.ofFloat(welcomeImage,"alpha",0.0f,1.0f).setDuration(500).start();
-                    }
-                });
-            }
-        });
+        AlphaAnimation animation=new AlphaAnimation(0f,1f);
+        animation.setDuration(2000);
+        Glide.with(this).load("http://cdn.duitang.com/uploads/item/201312/03/20131203154448_WUTaC.thumb.700_0.jpeg").diskCacheStrategy(DiskCacheStrategy.ALL).animate(animation).into(welcomeImage);
     }
 
     @Override
@@ -74,21 +67,13 @@ public class WelcomeActivity extends BaseActivity{
             //完成初始化
             initialized = true;
             //打开新页面
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    WelcomeActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            jumpToNextActivity();
-                        }
-                    });
+            new Thread(() -> {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+                WelcomeActivity.this.runOnUiThread(() -> jumpToNextActivity());
             }).start();
         }
     }
