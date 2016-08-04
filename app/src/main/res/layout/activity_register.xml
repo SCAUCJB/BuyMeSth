@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/scrollView"
+        android:layout_gravity="center_horizontal" >
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:id="@+id/imageView2" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/activity_vertical_margin"
+                android:paddingTop="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_vertical_margin"
+                android:paddingBottom="@dimen/activity_horizontal_margin">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editText_nickname_reg"
+                    android:hint="@string/hint_nickname" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editText_account_reg"
+                    android:layout_marginTop="@dimen/activity_horizontal_margin"
+                    android:hint="@string/hint_account" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:ems="10"
+                    android:id="@+id/editText_password_reg"
+                    android:layout_marginTop="@dimen/activity_horizontal_margin"
+                    android:hint="@string/hint_password" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:ems="10"
+                    android:id="@+id/editText_password_confirm_reg"
+                    android:layout_marginTop="@dimen/activity_horizontal_margin"
+                    android:hint="@string/hint_password_confirm" />
+
+                <RadioGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/activity_horizontal_margin"
+                    android:id="@+id/radiogroup_gender">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/gender_male"
+                        android:id="@+id/radioButton_m"
+                        android:checked="false" />
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/gender_female"
+                        android:id="@+id/radioButton_f"
+                        android:checked="false" />
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/gender_secret"
+                        android:id="@+id/radioButton_s"
+                        android:checked="false" />
+                </RadioGroup>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/button_register"
+                    android:id="@+id/button_register_reg"
+                    android:layout_marginTop="@dimen/activity_horizontal_margin" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/button_cancel"
+                    android:id="@+id/button_cancel_reg" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

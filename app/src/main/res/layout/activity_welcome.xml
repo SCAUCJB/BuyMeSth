@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/imageView"
+        android:src="@drawable/meow"
+        android:scaleType="centerCrop" />
+
+    <view.keke.AdvanceImageView
+        xmlns:keke="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/welcome_image"
+        android:layout_gravity="center_horizontal"
+        android:scaleType="centerCrop"
+        keke:imageUrl="http://cdn.duitang.com/uploads/item/201312/03/20131203154448_WUTaC.thumb.700_0.jpeg"
+        android:alpha="0" />
+
+</FrameLayout>
