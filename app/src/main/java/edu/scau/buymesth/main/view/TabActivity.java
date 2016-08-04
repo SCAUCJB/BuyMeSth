@@ -54,12 +54,15 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
             switch (i) {
                 case 0:
                     cv.setIcon(R.drawable.ic_home);
+                    cv.setIconColor(getResources().getColor(R.color.colorAccent));
                     break;
                 case 1:
                     cv.setIcon(R.drawable.ic_discover);
+                    cv.setIconColor(getResources().getColor(R.color.colorAccent));
                     break;
                 case 2:
                     cv.setIcon(R.drawable.ic_user);
+                    cv.setIconColor(getResources().getColor(R.color.colorAccent));
                     break;
             }
 

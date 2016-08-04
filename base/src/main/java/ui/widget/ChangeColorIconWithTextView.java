@@ -45,7 +45,7 @@ public class ChangeColorIconWithTextView extends View
 	/**
 	 * icon底部文本
 	 */
-	private String mText = "微信";
+	private String mText = "";
 	private int mTextSize = (int) TypedValue.applyDimension(
 			TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics());
 	private Paint mTextPaint;
@@ -103,22 +103,41 @@ public class ChangeColorIconWithTextView extends View
 
 	}
 
+	public void setText(String text){
+		mText = text;
+	}
+
+	public void setTextSize(int size){
+		mTextSize = size;
+	}
+
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
 	{
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
 		// 得到绘制icon的宽
-		int bitmapWidth = Math.min(getMeasuredWidth() - getPaddingLeft()
-				- getPaddingRight(), getMeasuredHeight() - getPaddingTop()
-				- getPaddingBottom() - mTextBound.height());
-
+		int bitmapWidth;
+		if(mText.length()>0){
+			bitmapWidth = Math.min(getMeasuredWidth() - getPaddingLeft()
+					- getPaddingRight(), getMeasuredHeight() - getPaddingTop()
+					- getPaddingBottom() - mTextBound.height());
+		}
+		else {
+			bitmapWidth = Math.min(getMeasuredWidth() - getPaddingLeft()
+					- getPaddingRight(), getMeasuredHeight() - getPaddingTop()
+					- getPaddingBottom());
+		}
 		int left = getMeasuredWidth() / 2 - bitmapWidth / 2;
-		int top = (getMeasuredHeight() - mTextBound.height()) / 2 - bitmapWidth
-				/ 2;
+		int top;
+		if(mText.length()>0){
+			top = (getMeasuredHeight() - mTextBound.height()) / 2 - bitmapWidth / 2;
+		}
+		else {
+			top = getMeasuredHeight() / 2 - bitmapWidth / 2;
+		}
 		// 设置icon的绘制范围
 		mIconRect = new Rect(left, top, left + bitmapWidth, top + bitmapWidth);
-
 	}
 
 	@Override
@@ -128,10 +147,34 @@ public class ChangeColorIconWithTextView extends View
 		int alpha = (int) Math.ceil((255 * mAlpha));
 		canvas.drawBitmap(mIconBitmap, null, mIconRect, null);
 		setupTargetBitmap(alpha);
+		if(mText.length()>0){
+			drawSourceText(canvas, alpha);
+			drawTargetText(canvas, alpha);
+		}
 		canvas.drawBitmap(mBitmap, 0, 0, null);
 
 	}
-	
+
+	private void drawSourceText(Canvas canvas, int alpha)
+	{
+		mTextPaint.setTextSize(mTextSize);
+		mTextPaint.setColor(0xff333333);
+		mTextPaint.setAlpha(255 - alpha);
+		canvas.drawText(mText, mIconRect.left + mIconRect.width() / 2
+						- mTextBound.width() / 2,
+				mIconRect.bottom + mTextBound.height(), mTextPaint);
+	}
+
+	private void drawTargetText(Canvas canvas, int alpha)
+	{
+		mTextPaint.setColor(mColor);
+		mTextPaint.setAlpha(alpha);
+		canvas.drawText(mText, mIconRect.left + mIconRect.width() / 2
+						- mTextBound.width() / 2,
+				mIconRect.bottom + mTextBound.height(), mTextPaint);
+
+	}
+
 	private void setupTargetBitmap(int alpha)
 	{
 		mBitmap = Bitmap.createBitmap(getMeasuredWidth(), getMeasuredHeight(),
