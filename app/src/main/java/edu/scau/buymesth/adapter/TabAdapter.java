@@ -11,13 +11,12 @@ import java.util.List;
  */
 public class TabAdapter extends FragmentPagerAdapter{
 
-    List<String> title_list;
+
     List<Fragment> fragment_list;
 
-    public TabAdapter(FragmentManager fm,List<String> title_list, List<Fragment> fragment_list){
+    public TabAdapter(FragmentManager fm, List<Fragment> fragment_list){
         super(fm);
         this.fragment_list = fragment_list;
-        this.title_list = title_list;
     }
 
     @Override
@@ -27,11 +26,7 @@ public class TabAdapter extends FragmentPagerAdapter{
 
     @Override
     public int getCount() {
-        return title_list.size();
+        return fragment_list.size();
     }
 
-    @Override
-    public CharSequence getPageTitle(int position) {
-        return title_list.get(position);
-    }
 }

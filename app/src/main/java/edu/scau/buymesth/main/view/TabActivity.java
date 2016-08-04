@@ -4,26 +4,26 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import base.BaseActivity;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.TabAdapter;
 import edu.scau.buymesth.discover.view.DiscoverFragment;
 import edu.scau.buymesth.home.view.HomeFragment;
 import edu.scau.buymesth.user.view.UserFragment;
+import ui.widget.ChangeColorIconWithTextView;
 
 /**
  * Created by Jammy on 2016/8/1.
  */
-public class TabActivity extends BaseActivity {
+public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeListener {
 
     List<Fragment> fragmentList = new ArrayList<Fragment>();
-    List<String> list_title = new ArrayList<>();
     TabAdapter tabAdapter;
 
     @Bind(R.id.viewPager)
@@ -39,6 +39,7 @@ public class TabActivity extends BaseActivity {
 
     @Override
     public void initView() {
+        tabLayout.setSelectedTabIndicatorHeight(0);
         UserFragment userFragment = new UserFragment();
         DiscoverFragment discoverFragment = new DiscoverFragment();
         HomeFragment homeFragment = new HomeFragment();
@@ -46,18 +47,56 @@ public class TabActivity extends BaseActivity {
         fragmentList.add(discoverFragment);
         fragmentList.add(userFragment);
 
-        list_title.add("主页");
-        list_title.add("发现");
-        list_title.add("个人");
+        for (int i = 0; i < fragmentList.size(); i++) {
+            TabLayout.Tab tab = tabLayout.newTab();
+            View view = this.getLayoutInflater().inflate(R.layout.tab, null);
+            ChangeColorIconWithTextView cv = (ChangeColorIconWithTextView) view.findViewById(R.id.cv);
+            switch (i) {
+                case 0:
+                    cv.setIcon(R.mipmap.icon_home);
+                    break;
+                case 1:
+                    cv.setIcon(R.mipmap.icon_discover);
+                    break;
 
-        tabLayout.addTab(tabLayout.newTab().setText(list_title.get(0)));
-        tabLayout.addTab(tabLayout.newTab().setText(list_title.get(1)));
-        tabLayout.addTab(tabLayout.newTab().setText(list_title.get(2)));
+                case 2:
+                    cv.setIcon(R.mipmap.icon_user);
+                    break;
+            }
 
-        tabAdapter = new TabAdapter(this.getSupportFragmentManager(), list_title, fragmentList);
+
+            tab.setCustomView(view);
+            tabLayout.addTab(tab);
+        }
+
+        ((ChangeColorIconWithTextView) tabLayout.getTabAt(0).getCustomView().findViewById(R.id.cv)).setIconAlpha(1.0f);
+
+        tabAdapter = new TabAdapter(this.getSupportFragmentManager(), fragmentList);
         viewPager.setAdapter(tabAdapter);
-        tabLayout.setupWithViewPager(viewPager);
+
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
+
+        viewPager.setOnPageChangeListener(this);
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        if (positionOffset > 0) {
+            ChangeColorIconWithTextView left = (ChangeColorIconWithTextView) tabLayout.getTabAt(position).getCustomView().findViewById(R.id.cv);
+            ChangeColorIconWithTextView right = (ChangeColorIconWithTextView) tabLayout.getTabAt(position + 1).getCustomView().findViewById(R.id.cv);
+            left.setIconAlpha(1 - positionOffset);
+            right.setIconAlpha(positionOffset);
+        }
+    }
+
+    @Override
+    public void onPageSelected(int position) {
 
     }
 
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
 }
