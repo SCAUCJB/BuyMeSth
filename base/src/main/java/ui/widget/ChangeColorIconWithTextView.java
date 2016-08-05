@@ -138,6 +138,7 @@ public class ChangeColorIconWithTextView extends View
 		mPaint.setDither(true);
 		mPaint.setAlpha(alpha);
 		Rect tempRect = new Rect();
+
 		tempRect.set(0,0,mIconBitmap.getWidth(),mIconBitmap.getHeight());
 		mCanvas.drawBitmap(mIconBitmap, 0, 0, mPaint);
 		mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
