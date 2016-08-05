@@ -84,15 +84,19 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                ChangeColorIconWithTextView cv = (ChangeColorIconWithTextView) tab.getCustomView().findViewById(R.id.cv);
-                cv.setIconAlpha(1);
-                viewPager.setCurrentItem((Integer) tab.getCustomView().getTag(),false);
+//                ChangeColorIconWithTextView cv = (ChangeColorIconWithTextView) tab.getCustomView().findViewById(R.id.cv);
+//                cv.setIconAlpha(1);
+                if(!scrolling)
+                    viewPager.setCurrentItem((Integer) tab.getCustomView().getTag(),false);
+
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                ChangeColorIconWithTextView cv = (ChangeColorIconWithTextView) tab.getCustomView().findViewById(R.id.cv);
-                cv.setIconAlpha(0);
+//                if(!scrolling){
+//                    ChangeColorIconWithTextView cv = (ChangeColorIconWithTextView) tab.getCustomView().findViewById(R.id.cv);
+//                    cv.setIconAlpha(0);
+//                }
             }
 
             @Override
@@ -129,12 +133,28 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         }
     }
 
+    private boolean scrolling = false;
+
     @Override
     public void onPageSelected(int position) {
+        if(!scrolling){
+            for(int n = 0;n<=2;n++){
+                ChangeColorIconWithTextView cv = (ChangeColorIconWithTextView) tabLayout.getTabAt(n).getCustomView().findViewById(R.id.cv);
+                if(n == position){
+                    cv.setIconAlpha(1);
+                    System.out.println();
+                }
+                else{
+                    cv.setIconAlpha(0);
+                }
+            }
+        }
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
+        if(state==0)scrolling = false;
+        else scrolling = true;
     }
 
 

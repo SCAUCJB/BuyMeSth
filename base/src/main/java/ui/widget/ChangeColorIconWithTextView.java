@@ -107,24 +107,9 @@ public class ChangeColorIconWithTextView extends View
 	protected void onDraw(Canvas canvas)
 	{
 		int alpha = (int) Math.ceil((255 * mAlpha));
-//		setupSourceBitmap(255-alpha);
-//		canvas.drawBitmap(mBitmap, null, mIconRect, null);
 		setupTargetBitmap(alpha);
         canvas.drawBitmap(mBitmap, null, mIconRect, null);
 
-	}
-
-	private void setupSourceBitmap(int alpha)
-	{
-		mBitmap = Bitmap.createBitmap(mIconBitmap.getWidth(), mIconBitmap.getHeight(),
-				Config.ARGB_8888);
-		mCanvas = new Canvas(mBitmap);
-		mPaint = new Paint();
-		mPaint.setColor(mColor);
-		mPaint.setAntiAlias(true);
-		mPaint.setDither(true);
-		mPaint.setAlpha(alpha);
-		mCanvas.drawBitmap(mIconBitmap, 0, 0, mPaint);
 	}
 
 	private void setupTargetBitmap(int alpha)
@@ -138,7 +123,6 @@ public class ChangeColorIconWithTextView extends View
 		mPaint.setDither(true);
 		mPaint.setAlpha(alpha);
 		Rect tempRect = new Rect();
-
 		tempRect.set(0,0,mIconBitmap.getWidth(),mIconBitmap.getHeight());
 		mCanvas.drawBitmap(mIconBitmap, 0, 0, mPaint);
 		mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
