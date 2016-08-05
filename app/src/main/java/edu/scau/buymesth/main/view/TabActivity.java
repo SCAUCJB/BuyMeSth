@@ -4,12 +4,15 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import base.BaseActivity;
+import base.util.ToastUtil;
 import butterknife.Bind;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.TabAdapter;
@@ -50,6 +53,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         for (int i = 0; i < fragmentList.size(); i++) {
             TabLayout.Tab tab = tabLayout.newTab();
             View view = this.getLayoutInflater().inflate(R.layout.tab, null);
+            view.setTag(i);
             ChangeColorIconWithTextView cv = (ChangeColorIconWithTextView) view.findViewById(R.id.cv);
             switch (i) {
                 case 0:
@@ -66,9 +70,9 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
                     break;
             }
 
-
             tab.setCustomView(view);
             tabLayout.addTab(tab);
+
         }
 
         ((ChangeColorIconWithTextView) tabLayout.getTabAt(0).getCustomView().findViewById(R.id.cv)).setIconAlpha(1.0f);
@@ -77,7 +81,25 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         viewPager.setAdapter(tabAdapter);
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                ChangeColorIconWithTextView cv = (ChangeColorIconWithTextView) tab.getCustomView().findViewById(R.id.cv);
+                cv.setIconAlpha(1);
+                viewPager.setCurrentItem((Integer) tab.getCustomView().getTag(),false);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                ChangeColorIconWithTextView cv = (ChangeColorIconWithTextView) tab.getCustomView().findViewById(R.id.cv);
+                cv.setIconAlpha(0);
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         viewPager.setOnPageChangeListener(this);
     }
@@ -109,11 +131,11 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
 
     @Override
     public void onPageSelected(int position) {
-
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
-
     }
+
+
 }

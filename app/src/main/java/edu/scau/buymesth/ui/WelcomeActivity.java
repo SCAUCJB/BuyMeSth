@@ -85,6 +85,7 @@ public class WelcomeActivity extends BaseActivity{
         if(bmobUser!=null){
             Intent intent = new Intent(WelcomeActivity.this, TabActivity.class);
             startActivity(intent);
+            finish();
         }
         else {
             Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
