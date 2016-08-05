@@ -31,7 +31,7 @@ public class QuickAdapter extends BaseQuickAdapter<Request> {
             .setText(R.id.tv_tweet_text,item.getContent());
 
            Glide.with(mContext).load(item.getAuthor().getAvatar()).crossFade().placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into((ImageView) helper.getView(R.id.iv_avatar));
-        if(!item.getUrls().isEmpty())
+        if(item!=null&&item.getUrls()!=null&&!item.getUrls().isEmpty())
         {
             helper.setVisible(R.id.iv_tweet_image,true);
             Glide.with(mContext).load(item.getUrls().get(0)).crossFade().diskCacheStrategy(DiskCacheStrategy.ALL).into((ImageView) helper.getView(R.id.iv_tweet_image));
