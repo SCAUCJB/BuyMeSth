@@ -8,12 +8,10 @@ import android.widget.RadioGroup;
 
 import base.BaseActivity;
 import butterknife.Bind;
-import cn.bmob.v3.Bmob;
-import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
 import edu.scau.buymesth.R;
-import edu.scau.buymesth.bmob.User;
+import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.main.view.TabActivity;
 
 /**

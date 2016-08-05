@@ -31,9 +31,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile project(':base')
-    //    compile 'com.android.support:support-v4:24.1.1'
     compile 'com.android.support:support-v4:23.3.0'
-    //
-    //    compile 'com.squareup.okhttp:okhttp:2.4.0'//CDN文件服务使用okhttp相关包进行文件的上传和下载（必填）
-    //    compile 'com.squareup.okio:okio:1.4.0'
+
 }

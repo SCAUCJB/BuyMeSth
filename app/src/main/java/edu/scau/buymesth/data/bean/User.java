@@ -1,17 +1,18 @@
-package edu.scau.buymesth.bmob;
+package edu.scau.buymesth.data.bean;
 
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.BmobUser;
 
 /**
  * Created by IamRabbit on 2016/8/3.
+ * 用户
  */
 public class User extends BmobUser {
     private String nickname;//昵称
     private Integer age = 0;//年龄
     private String gender = "secret";//性别
     private Integer exp = 0;//经验值
-
+    private String avatar="";
     public String getNickname() {
         return nickname;
     }
@@ -42,5 +43,13 @@ public class User extends BmobUser {
 
     public void setExp(Integer exp) {
         this.exp = exp;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

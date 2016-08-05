@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--在这里设置背景和logo能显著提升性能-->
+<item>
+    <shape android:shape="rectangle">
+        <solid android:color="@color/app_background"/>
+    </shape>
+</item>
+    <item android:gravity="center">
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/meow"/>
+    </item>
+</layer-list>
