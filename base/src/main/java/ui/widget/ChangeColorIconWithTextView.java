@@ -62,26 +62,6 @@ public class ChangeColorIconWithTextView extends View
 	{
 		super(context, attrs);
 
-		// 获取设置的图标
-		TypedArray a = context.obtainStyledAttributes(attrs,
-				R.styleable.ChangeColorIconView);
-
-		int n = a.getIndexCount();
-		for (int i = 0; i < n; i++)
-		{
-
-			int attr = a.getIndex(i);
-			if (attr == R.styleable.ChangeColorIconView_icon1) {
-				BitmapDrawable drawable = (BitmapDrawable) a.getDrawable(attr);
-				mIconBitmap = drawable.getBitmap();
-
-			} else if (attr == R.styleable.ChangeColorIconView_color1) {
-				mColor = a.getColor(attr, 0x45C01A);
-
-			}
-		}
-
-		a.recycle();
 	}
 
 	@Override
