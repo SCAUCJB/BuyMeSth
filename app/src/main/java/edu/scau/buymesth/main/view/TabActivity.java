@@ -58,15 +58,15 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
             ChangeColorIconWithTextView cv = (ChangeColorIconWithTextView) view.findViewById(R.id.cv);
             switch (i) {
                 case 0:
-                    cv.setIcon(R.mipmap.icon_home);
+                    cv.setIcon(R.drawable.ic_home);
                     cv.setIconColor(getResources().getColor(R.color.colorAccent));
                     break;
                 case 1:
-                    cv.setIcon(R.mipmap.icon_discover);
+                    cv.setIcon(R.drawable.ic_whatshot);
                     cv.setIconColor(getResources().getColor(R.color.colorAccent));
                     break;
                 case 2:
-                    cv.setIcon(R.mipmap.icon_user);
+                    cv.setIcon(R.drawable.ic_user);
                     cv.setIconColor(getResources().getColor(R.color.colorAccent));
                     break;
             }
