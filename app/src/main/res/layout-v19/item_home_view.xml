@@ -8,12 +8,11 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:foreground="?android:attr/selectableItemBackground"
-    android:background="?android:attr/selectableItemBackgroundBorderless"
     card_view:cardBackgroundColor="#e0e4e7"
     card_view:cardCornerRadius="8dp"
     card_view:cardElevation="5dp"
     card_view:cardUseCompatPadding="true"
-    tools:targetApi="lollipop">
+    tools:targetApi="kitkat">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

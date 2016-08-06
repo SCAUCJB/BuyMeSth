@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +73,6 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
 
             tab.setCustomView(view);
             tabLayout.addTab(tab);
-
         }
 
         ((ChangeColorIconWithTextView) tabLayout.getTabAt(0).getCustomView().findViewById(R.id.cv)).setIconAlpha(1.0f);
