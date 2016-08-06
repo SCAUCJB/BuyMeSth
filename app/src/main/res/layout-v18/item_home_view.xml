@@ -10,9 +10,9 @@
     android:foreground="?android:attr/selectableItemBackground"
     card_view:cardBackgroundColor="#e0e4e7"
     card_view:cardCornerRadius="8dp"
-    card_view:cardElevation="5dp"
+    card_view:cardElevation="4dp"
     card_view:cardUseCompatPadding="true"
-    tools:targetApi="19">
+    tools:targetApi="18">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
             style="@style/tweetName"
             android:text="标题"
             android:layout_marginTop="@dimen/dp_4"
-            android:layout_alignStart="@+id/iv_avatar"
+            android:layout_alignStart="@+id/iv_tweet_image"
             android:layout_below="@+id/iv_tweet_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -67,9 +67,10 @@
         <ImageView
             android:id="@+id/iv_tweet_image"
             android:src="@mipmap/default_img_rect"
+            android:layout_marginTop="@dimen/dp_10"
             android:layout_below="@+id/iv_avatar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
             />
 
 

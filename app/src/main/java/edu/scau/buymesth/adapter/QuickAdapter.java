@@ -1,5 +1,6 @@
 package edu.scau.buymesth.adapter;
 
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -34,9 +35,12 @@ public class QuickAdapter extends BaseQuickAdapter<Request> {
         if(item!=null&&item.getUrls()!=null&&!item.getUrls().isEmpty())
         {
             helper.setVisible(R.id.iv_tweet_image,true);
-            Glide.with(mContext).load(item.getUrls().get(0)).crossFade().diskCacheStrategy(DiskCacheStrategy.ALL).into((ImageView) helper.getView(R.id.iv_tweet_image));
+            Glide.with(mContext).load(item.getUrls().get(0)).diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .centerCrop().into((ImageView) helper.getView(R.id.iv_tweet_image));
+            Log.d("zhx","visible");
         }
         else{
+            Log.d("zhx","invisible");
             helper.setVisible(R.id.iv_tweet_image,false);
         }
     }
