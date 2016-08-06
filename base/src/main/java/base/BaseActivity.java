@@ -86,7 +86,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                 view.setLayoutParams(lp);
             }
             super.setContentView(frameLayout);
-//            super.setContentView(layoutResID);
         } else {
             super.setContentView(getContainer());
             FrameLayout frameLayout = new FrameLayout(this);
