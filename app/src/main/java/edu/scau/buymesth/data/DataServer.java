@@ -29,6 +29,9 @@ public class DataServer {
             request.setTitle("帮我请个中国教练");
             request.setContent("很急很关键，十五字十五字十五字十五字");
             request.setLikes(150);
+            List<String> urls=new LinkedList<>();
+            urls.add("https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRWLBFxI7JzjyOSaWkME4BmINK7QZalcL8F2jdU3VOZ6fGFfKhi");
+            request.setUrls(urls);
             request.setComments(30);
             request.setAuthor(user);
             list.add(request);
