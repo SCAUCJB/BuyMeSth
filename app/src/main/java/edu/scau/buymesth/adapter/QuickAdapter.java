@@ -29,7 +29,8 @@ public class QuickAdapter extends BaseQuickAdapter<Request> {
             helper.setText(R.id.tv_name,item.getAuthor().getNickname())
             .setText(R.id.tv_tweet_date,item.getCreatedAt())
             .setText(R.id.tv_tweet_title,item.getTitle())
-            .setText(R.id.tv_tweet_text,item.getContent());
+            .setText(R.id.tv_tweet_text,item.getContent())
+            .setText(R.id.tv_level,"LV "+ item.getAuthor().getExp()/10);
 
            Glide.with(mContext).load(item.getAuthor().getAvatar()).crossFade().placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into((ImageView) helper.getView(R.id.iv_avatar));
         if(item!=null&&item.getUrls()!=null&&!item.getUrls().isEmpty())

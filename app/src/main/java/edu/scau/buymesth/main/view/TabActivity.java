@@ -120,7 +120,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
 
     @Override
     public int getStatusColorResources() {
-        return R.color.colorAccent;
+        return R.color.cardview_dark_background;
     }
 
     @Override

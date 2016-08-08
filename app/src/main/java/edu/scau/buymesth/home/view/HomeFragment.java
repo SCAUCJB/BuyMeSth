@@ -1,5 +1,6 @@
 package edu.scau.buymesth.home.view;
 
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -27,6 +28,7 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home,container,false);
         mRecyclerView= (RecyclerView) view.findViewById(R.id.rv_home_fragment);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_10)));
         initAdapter();
         return view;
     }
@@ -35,5 +37,21 @@ public class HomeFragment extends Fragment {
         mQuickAdapter.openLoadAnimation();
         mRecyclerView.setAdapter(mQuickAdapter);
         mQuickAdapter.setOnRecyclerViewItemClickListener((view, position) -> Toast.makeText(getActivity(), "" + Integer.toString(position), Toast.LENGTH_LONG).show());
+    }
+
+    public class SpaceItemDecoration extends RecyclerView.ItemDecoration{
+
+        private int space;
+
+        public SpaceItemDecoration(int space) {
+            this.space = space;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+
+            if(parent.getChildPosition(view) != 0)
+                outRect.top = space;
+        }
     }
 }

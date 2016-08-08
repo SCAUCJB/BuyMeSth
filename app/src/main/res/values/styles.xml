@@ -38,4 +38,38 @@
         <item name="android:textSize">16sp</item>
         <item name="android:textColorLink">#778085</item>
     </style>
+
+
+    <style name="theTitleLarge">
+        <item name="android:textColor">@color/txt_color</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="theTitleNormal">
+        <item name="android:textColor">@color/txt_color</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="theTitleSmall">
+        <item name="android:textColor">@color/txt_color</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="theName">
+        <item name="android:textColor">@color/txt_color</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="theDate">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#FFAAAAAA</item>
+    </style>
+    <style name="theText">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColorLink">#778085</item>
+    </style>
+
+    <style name="theLevelWhite">
+        <item name="android:textSize">8sp</item>
+        <item name="android:textColorLink">#ffffffff</item>
+    </style>
 </resources>
