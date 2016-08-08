@@ -1,5 +1,6 @@
 package edu.scau.buymesth.home.view;
 
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,6 +15,9 @@ import android.widget.Toast;
 import adpater.BaseQuickAdapter;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.QuickAdapter;
+import in.srain.cube.views.ptr.PtrFrameLayout;
+import in.srain.cube.views.ptr.PtrHandler;
+import in.srain.cube.views.ptr.header.StoreHouseHeader;
 
 /**
  * Created by Jammy on 2016/8/1.
@@ -30,7 +34,30 @@ public class HomeFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_10)));
         initAdapter();
+        initStoreHouse(view);
         return view;
+    }
+    private void initStoreHouse(View view) {
+        final PtrFrameLayout frame = (PtrFrameLayout) view.findViewById(R.id.store_house_ptr_frame);
+        final StoreHouseHeader header = new StoreHouseHeader(getActivity());
+        header.setPadding(0, 5, 0, 0);
+        header.initWithString("BuyMeSth");
+        header.setTextColor(Color.BLACK);
+        frame.setDurationToCloseHeader(1500);
+        frame.setHeaderView(header);
+        frame.addPtrUIHandler(header);
+        frame.postDelayed(() -> frame.autoRefresh(false), 2100);
+        frame.setPtrHandler(new PtrHandler() {
+            @Override
+            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
+                return true;
+            }
+
+            @Override
+            public void onRefreshBegin(final PtrFrameLayout frame) {
+                frame.postDelayed(() -> frame.refreshComplete(), 2000);
+            }
+        });
     }
     private void initAdapter(){
         mQuickAdapter = new QuickAdapter(10);

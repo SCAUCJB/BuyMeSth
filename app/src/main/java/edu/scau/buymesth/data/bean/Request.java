@@ -17,6 +17,9 @@ public class Request extends BmobObject {
     private Boolean isAnonymous;
     private Integer likes;
     private Integer comments;
+    private Boolean isAccecpted;//是否被接单
+    private Integer minPrice;
+    private Integer maxPrice;
 
     /**
      * 帖子标题
