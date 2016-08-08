@@ -1,29 +1,25 @@
 package edu.scau.buymesth.main.view;
 
-import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import base.BaseActivity;
-import base.util.ToastUtil;
 import butterknife.Bind;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.TabAdapter;
 import edu.scau.buymesth.discover.view.DiscoverFragment;
-import edu.scau.buymesth.home.view.HomeFragment;
+import edu.scau.buymesth.home.HomeFragment;
 import edu.scau.buymesth.user.view.UserFragment;
 import ui.widget.ChangeColorIconWithTextView;
 
 /**
  * Created by Jammy on 2016/8/1.
+ * Updated by John on 2016/8/9
  */
 public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeListener {
 

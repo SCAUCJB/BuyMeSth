@@ -1,4 +1,4 @@
-package edu.scau.buymesth.home.view;
+package edu.scau.buymesth.home;
 
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -12,21 +12,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import adpater.BaseQuickAdapter;
+import java.util.List;
+
+import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.QuickAdapter;
-import in.srain.cube.views.ptr.PtrDefaultHandler;
+import edu.scau.buymesth.data.bean.Request;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
 
 /**
  * Created by Jammy on 2016/8/1.
+ *
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements HomeContract.View{
     private RecyclerView mRecyclerView;
     private QuickAdapter mQuickAdapter;
-
+    private HomePresenter mPresenter;
+    private PtrFrameLayout mPtrFrameLayout;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -34,6 +38,10 @@ public class HomeFragment extends Fragment {
         mRecyclerView= (RecyclerView) view.findViewById(R.id.rv_home_fragment);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_10)));
+        //初始化代理人
+        mPresenter=new HomePresenter();
+        mPresenter.setVM(this,new HomeModel());
+
         initAdapter();
         initStoreHouse(view);
         return view;
@@ -56,7 +64,8 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onRefreshBegin(final PtrFrameLayout frame) {
-                frame.postDelayed(() -> frame.refreshComplete(), 2000);
+                mPtrFrameLayout=frame;
+                mPresenter.onRefresh();
             }
         });
     }
@@ -65,19 +74,53 @@ public class HomeFragment extends Fragment {
         mQuickAdapter.openLoadAnimation();
         mRecyclerView.setAdapter(mQuickAdapter);
         mQuickAdapter.setOnRecyclerViewItemClickListener((view, position) -> Toast.makeText(getActivity(), "" + Integer.toString(position), Toast.LENGTH_LONG).show());
+        mQuickAdapter.setOnLoadMoreListener(() -> mPresenter.onLoadMore());
+        mQuickAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
     }
 
-    public class SpaceItemDecoration extends RecyclerView.ItemDecoration{
+    /**
+     * 通知局部刷新，要加上没有数据的考虑
+     * @param list
+     * @param isNextLoad
+     */
+    @Override
+    public void onLoadMoreSuccess(List<Request> list, boolean isNextLoad) {
+        mQuickAdapter.notifyDataChangedAfterLoadMore(list,isNextLoad);
+    }
+
+    /**
+     * 这个到时候抽取到base view里面，base fragment也要实现
+     * @param msg
+     */
+    @Override
+    public void showError(String msg) {
+        Toast.makeText(getActivity(),msg,Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * 这里的下拉刷新处理得很丑陋，把之前加载更多的数据都去掉了，很伤,想办法利用缓存才行
+     * @param list
+     */
+    @Override
+    public void onRefreshComplete(List<Request>list) {
+        mQuickAdapter.setNewData(list);
+        mQuickAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
+        mQuickAdapter.removeAllFooterView();
+        if(mPtrFrameLayout!=null)
+        mPtrFrameLayout.refreshComplete();
+    }
+
+    private final class SpaceItemDecoration extends RecyclerView.ItemDecoration{
 
         private int space;
 
-        public SpaceItemDecoration(int space) {
+          SpaceItemDecoration(int space) {
             this.space = space;
         }
 
         @Override
         public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-
+//TODO  @止园哥 这里建议换成 getChildAdapterPosition(View) 或者 getChildLayoutPosition(View)
             if(parent.getChildPosition(view) != 0)
                 outRect.top = space;
         }
