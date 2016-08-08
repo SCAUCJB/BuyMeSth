@@ -15,6 +15,7 @@ import android.widget.Toast;
 import adpater.BaseQuickAdapter;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.QuickAdapter;
+import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
@@ -40,8 +41,8 @@ public class HomeFragment extends Fragment {
     private void initStoreHouse(View view) {
         final PtrFrameLayout frame = (PtrFrameLayout) view.findViewById(R.id.store_house_ptr_frame);
         final StoreHouseHeader header = new StoreHouseHeader(getActivity());
-        header.setPadding(0, 5, 0, 0);
-        header.initWithString("BuyMeSth");
+        header.setPadding(0, 80, 0,50);
+        header.initWithString("Buy Me Sth");
         header.setTextColor(Color.BLACK);
         frame.setDurationToCloseHeader(1500);
         frame.setHeaderView(header);
@@ -50,7 +51,7 @@ public class HomeFragment extends Fragment {
         frame.setPtrHandler(new PtrHandler() {
             @Override
             public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
-                return true;
+                return  !mRecyclerView.canScrollVertically(-1);
             }
 
             @Override
