@@ -22,6 +22,9 @@
         android:name=".App"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="Bmob_APP_KEY"
+            android:value="211614edac96ab4c9492179cf459993a" />
         <activity android:name=".MainActivity">
 
         </activity>
