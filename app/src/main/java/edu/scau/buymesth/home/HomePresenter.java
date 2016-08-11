@@ -50,6 +50,7 @@ public class HomePresenter extends BasePresenter<HomeContract.Model,HomeContract
             @Override
             public void onError(Throwable throwable) {
                 mView.showError("获取数据出了些问题");
+                mView.onRefreshFail();
             }
 
             @Override

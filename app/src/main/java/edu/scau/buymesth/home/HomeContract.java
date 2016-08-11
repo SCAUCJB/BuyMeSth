@@ -15,6 +15,7 @@ public interface HomeContract {
         void onLoadMoreSuccess(List<Request>list,boolean isNextLoad);
         void showError(String msg);
         void onRefreshComplete(List<Request>list);
+        void onRefreshFail();
     }
 
     interface Model{

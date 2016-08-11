@@ -1,9 +1,11 @@
 package edu.scau.buymesth.home;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,16 +33,28 @@ public class HomeFragment extends Fragment implements HomeContract.View{
     private QuickAdapter mQuickAdapter;
     private HomePresenter mPresenter;
     private PtrFrameLayout mPtrFrameLayout;
+    private FloatingActionButton fbAdd;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home,container,false);
         mRecyclerView= (RecyclerView) view.findViewById(R.id.rv_home_fragment);
+        fbAdd = (FloatingActionButton) view.findViewById(R.id.fb_add);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_10)));
         //初始化代理人
         mPresenter=new HomePresenter();
         mPresenter.setVM(this,new HomeModel());
+
+//        fbAdd.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getContext(),AddActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+
 
         initAdapter();
         initStoreHouse(view);
@@ -95,6 +109,8 @@ public class HomeFragment extends Fragment implements HomeContract.View{
     @Override
     public void showError(String msg) {
         Toast.makeText(getActivity(),msg,Toast.LENGTH_SHORT).show();
+        if(mPtrFrameLayout!=null)
+            mPtrFrameLayout.refreshComplete();
     }
 
     /**
@@ -108,6 +124,12 @@ public class HomeFragment extends Fragment implements HomeContract.View{
         mQuickAdapter.removeAllFooterView();
         if(mPtrFrameLayout!=null)
         mPtrFrameLayout.refreshComplete();
+    }
+
+    @Override
+    public void onRefreshFail() {
+        if(mPtrFrameLayout!=null)
+            mPtrFrameLayout.refreshComplete();
     }
 
     private final class SpaceItemDecoration extends RecyclerView.ItemDecoration{
