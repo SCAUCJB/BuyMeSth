@@ -15,15 +15,14 @@ public interface HomeContract {
         void onLoadMoreSuccess(List<Request>list);
         void showError(String msg);
         void onRefreshComplete(List<Request>list);
+        void setAdapter(List<Request>list);
     }
 
     interface Model{
-        interface GetRequestListener{
-            void onSuccess(List<Request>list);
-        }
+
         List<Request> getDatas();
         void setDatas(List<Request>list);
         void resetPage();
-        Observable<List<Request>> getRxRequests();
+        Observable<List<Request>> getRxRequests(int policy);
     }
 }

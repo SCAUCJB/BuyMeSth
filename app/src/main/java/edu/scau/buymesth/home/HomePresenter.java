@@ -35,7 +35,7 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
      */
     public void onLoadMore() {
         List<Request> tempList = new LinkedList<>();
-        mModel.getRxRequests().flatMap(new Func1<List<Request>, Observable<Request>>() {
+        mModel.getRxRequests(HomeModel.FROM_NETWORK).flatMap(new Func1<List<Request>, Observable<Request>>() {
             @Override
             public Observable<Request> call(List<Request> requests) {
                 return Observable.from(requests);
@@ -73,7 +73,7 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
     public void onRefresh() {
         mModel.resetPage();
         mModel.getDatas().clear();
-        mModel.getRxRequests().flatMap(new Func1<List<Request>, Observable<Request>>() {
+        mModel.getRxRequests(HomeModel.FROM_NETWORK).flatMap(new Func1<List<Request>, Observable<Request>>() {
             @Override
             public Observable<Request> call(List<Request> requests) {
                 return Observable.from(requests);
@@ -84,6 +84,34 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
                     @Override
                     public void onCompleted() {
                         if(isAlive()) mView.onRefreshComplete(mModel.getDatas());
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        if(isAlive())  mView.showError("获取数据出了些问题");
+                    }
+
+                    @Override
+                    public void onNext(Request request) {
+                        if(isAlive()) mModel.getDatas().add(request);
+                    }
+                });
+    }
+
+    public void initAdapter() {
+        mModel.resetPage();
+        mModel.getDatas().clear();
+        mModel.getRxRequests(HomeModel.FROM_CACHE).flatMap(new Func1<List<Request>, Observable<Request>>() {
+            @Override
+            public Observable<Request> call(List<Request> requests) {
+                return Observable.from(requests);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Request>() {
+                    @Override
+                    public void onCompleted() {
+                        if(isAlive()) mView.setAdapter(mModel.getDatas());
                     }
 
                     @Override

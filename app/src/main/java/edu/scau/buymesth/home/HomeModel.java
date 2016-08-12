@@ -11,6 +11,7 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import edu.scau.Constant;
 import edu.scau.buymesth.data.bean.Request;
+import edu.scau.buymesth.data.bean.User;
 import rx.Observable;
 
 /**
@@ -19,6 +20,8 @@ import rx.Observable;
  */
 
 public class HomeModel implements HomeContract.Model {
+    public static final int FROM_CACHE=0;
+    public static final int FROM_NETWORK=1;
     private int pageNum;
     private List<Request> requestList;
     public HomeModel(){
@@ -49,14 +52,18 @@ public class HomeModel implements HomeContract.Model {
      * @return Observable
      */
     @Override
-    public Observable<List<Request>> getRxRequests() {
+    public Observable<List<Request>> getRxRequests(int policy) {
         BmobQuery<Request> query=new BmobQuery<>();
-              query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ELSE_NETWORK);//先从缓存再从网络
         query.setMaxCacheAge(TimeUnit.DAYS.toMillis(1));//此表示缓存一天，可以用来优化下拉刷新而清空了的加载更多
         query.order("-createdAt");
         query.include("author");
         query.setLimit(Constant.NUMBER_PER_PAGE);
         query.setSkip(Constant.NUMBER_PER_PAGE * (pageNum++));
+        if(policy==FROM_CACHE&&query.hasCachedResult(Request.class))
+            query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ELSE_NETWORK);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
+        else
+            query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);//先从缓存再从网络
         return query.findObjectsObservable(Request.class);
     }
+
 }

@@ -11,6 +11,7 @@ import java.util.List;
 import adpater.BaseQuickAdapter;
 import adpater.BaseViewHolder;
 import base.util.GlideCircleTransform;
+import cn.bmob.v3.BmobQuery;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.DataServer;
 import edu.scau.buymesth.data.bean.Request;
@@ -20,8 +21,8 @@ import edu.scau.buymesth.data.bean.Request;
  */
 
 public class HomeAdapter extends BaseQuickAdapter<Request> {
-    public HomeAdapter(int dataSize) {
-        super(R.layout.item_home_view, DataServer.getRequests(dataSize));
+    public HomeAdapter( ) {
+        super(R.layout.item_home_view,null);
     }
 
     @Override

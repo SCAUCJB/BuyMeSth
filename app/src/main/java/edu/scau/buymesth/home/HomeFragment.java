@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import adpater.animation.ScaleInAnimation;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.HomeAdapter;
@@ -59,7 +60,6 @@ public class HomeFragment extends Fragment implements HomeContract.View{
         frame.setDurationToCloseHeader(1500);
         frame.setHeaderView(header);
         frame.addPtrUIHandler(header);
-        frame.postDelayed(() -> frame.autoRefresh(false), 0);
         frame.setPtrHandler(new PtrHandler() {
             @Override
             public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
@@ -74,8 +74,9 @@ public class HomeFragment extends Fragment implements HomeContract.View{
         });
     }
     private void initAdapter(){
-        mHomeAdapter = new HomeAdapter(10);
-        mHomeAdapter.openLoadAnimation();
+        mPresenter.initAdapter();
+        mHomeAdapter = new HomeAdapter();
+        mHomeAdapter.openLoadAnimation(new ScaleInAnimation());
         mRecyclerView.setAdapter(mHomeAdapter);
         mHomeAdapter.setOnRecyclerViewItemClickListener((view, position) -> {
             Intent intent =new Intent(getActivity(), HomeDetailActivity.class);
@@ -123,6 +124,15 @@ public class HomeFragment extends Fragment implements HomeContract.View{
         mHomeAdapter.removeAllFooterView();
         if(mPtrFrameLayout!=null)
         mPtrFrameLayout.refreshComplete();
+    }
+
+    /**
+     * 第一次进入的时候从缓存拿数据，然后设置
+     * @param list
+     */
+    @Override
+    public void setAdapter(List<Request> list) {
+        mHomeAdapter.setNewData(list);
     }
 
     private final class SpaceItemDecoration extends RecyclerView.ItemDecoration{
