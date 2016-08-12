@@ -140,4 +140,22 @@ public class HomeFragment extends Fragment implements HomeContract.View{
                 outRect.top = space;
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.setAlive(false);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mPresenter.setAlive(false);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        mPresenter.setAlive(true);
+    }
 }
