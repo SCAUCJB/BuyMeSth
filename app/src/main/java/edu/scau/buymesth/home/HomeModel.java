@@ -44,28 +44,6 @@ public class HomeModel implements HomeContract.Model {
         pageNum=0;
     }
 
-    @Override
-    public void getRequests(GetRequestListener listener) {
-        BmobQuery<Request> query=new BmobQuery<>();
- //       query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ELSE_NETWORK);//先从缓存再从网络
-//        query.setMaxCacheAge(TimeUnit.DAYS.toMillis(1));//此表示缓存一天，可以用来优化下拉刷新而清空了的加载更多
-        query.order("-createAt");
-        query.setLimit(Constant.NUMBER_PER_PAGE);
-        query.setSkip(Constant.NUMBER_PER_PAGE * (pageNum++));
-        query.findObjects(new FindListener<Request>() {
-            @Override
-            public void done(List<Request> list, BmobException e) {
-                if(list.isEmpty()){
-                    --pageNum;
-                    return;
-                }
-               if(listener!=null)
-                   listener.onSuccess(list);
-            }
-        });
-
-    }
-
     /**
      * 通常在load more的时候用
      * @return Observable
@@ -73,6 +51,8 @@ public class HomeModel implements HomeContract.Model {
     @Override
     public Observable<List<Request>> getRxRequests() {
         BmobQuery<Request> query=new BmobQuery<>();
+              query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ELSE_NETWORK);//先从缓存再从网络
+        query.setMaxCacheAge(TimeUnit.DAYS.toMillis(1));//此表示缓存一天，可以用来优化下拉刷新而清空了的加载更多
         query.order("-createdAt");
         query.include("author");
         query.setLimit(Constant.NUMBER_PER_PAGE);

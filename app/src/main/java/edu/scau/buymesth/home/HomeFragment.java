@@ -36,6 +36,8 @@ public class HomeFragment extends Fragment implements HomeContract.View{
     private PtrFrameLayout mPtrFrameLayout;
     private FloatingActionButton fbAdd;
 
+    private View notLoadingView;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -70,7 +72,7 @@ public class HomeFragment extends Fragment implements HomeContract.View{
         frame.setDurationToCloseHeader(1500);
         frame.setHeaderView(header);
         frame.addPtrUIHandler(header);
-        frame.postDelayed(() -> frame.autoRefresh(false), 2100);
+        frame.postDelayed(() -> frame.autoRefresh(false), 0);
         frame.setPtrHandler(new PtrHandler() {
             @Override
             public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
@@ -97,13 +99,21 @@ public class HomeFragment extends Fragment implements HomeContract.View{
     }
 
     /**
-     * 通知局部刷新，要加上没有数据的考虑
+     * 通知局部刷新
      * @param list
      * @param isNextLoad
      */
     @Override
-    public void onLoadMoreSuccess(List<Request> list, boolean isNextLoad) {
-        mHomeAdapter.notifyDataChangedAfterLoadMore(list,isNextLoad);
+    public void onLoadMoreSuccess(List<Request> list) {
+        if(list!=null)
+        mHomeAdapter.notifyDataChangedAfterLoadMore(list,true);
+        else{
+            mHomeAdapter.notifyDataChangedAfterLoadMore(false);
+            if (notLoadingView == null) {
+                notLoadingView = getActivity().getWindow().getLayoutInflater().inflate(R.layout.not_loading, (ViewGroup) mRecyclerView.getParent(), false);
+            }
+            mHomeAdapter.addFooterView(notLoadingView);
+        }
     }
 
     /**
@@ -113,8 +123,6 @@ public class HomeFragment extends Fragment implements HomeContract.View{
     @Override
     public void showError(String msg) {
         Toast.makeText(getActivity(),msg,Toast.LENGTH_SHORT).show();
-        if(mPtrFrameLayout!=null)
-            mPtrFrameLayout.refreshComplete();
     }
 
     /**
@@ -150,5 +158,23 @@ public class HomeFragment extends Fragment implements HomeContract.View{
             if(parent.getChildPosition(view) != 0)
                 outRect.top = space;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.setAlive(false);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mPresenter.setAlive(false);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        mPresenter.setAlive(true);
     }
 }
