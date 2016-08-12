@@ -73,7 +73,8 @@ public class HomeModel implements HomeContract.Model {
     @Override
     public Observable<List<Request>> getRxRequests() {
         BmobQuery<Request> query=new BmobQuery<>();
-        query.order("-createAt");
+        query.order("-createdAt");
+        query.include("author");
         query.setLimit(Constant.NUMBER_PER_PAGE);
         query.setSkip(Constant.NUMBER_PER_PAGE * (pageNum++));
         return query.findObjectsObservable(Request.class);

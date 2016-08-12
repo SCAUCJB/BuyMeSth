@@ -1,4 +1,4 @@
-package edu.scau.buymesth.main.view;
+package edu.scau.buymesth.main;
 
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -75,7 +75,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
 
         tabAdapter = new TabAdapter(this.getSupportFragmentManager(), fragmentList);
         viewPager.setAdapter(tabAdapter);
-
+        viewPager.setOffscreenPageLimit(3);//缓存3个页面
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

@@ -33,7 +33,7 @@ public class HomePresenter extends BasePresenter<HomeContract.Model,HomeContract
      *   但是现在还没处理已经没有数据了的情况
      */
     public void onLoadMore(){
-        mModel.getDatas().clear();//清空之前的数据，降低内存消耗
+         mModel.getDatas().clear();//清空之前的数据，降低内存消耗
         mModel.getRxRequests().flatMap(new Func1<List<Request>, Observable<Request>>() {
             @Override
             public Observable<Request> call(List<Request> requests) {

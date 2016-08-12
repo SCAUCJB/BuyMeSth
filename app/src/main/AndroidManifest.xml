@@ -48,10 +48,10 @@
             android:windowSoftInputMode="stateHidden|stateUnchanged">
         </activity>
 
-        <activity android:name=".main.view.TabActivity"
+        <activity android:name=".main.TabActivity"
             android:theme="@style/AppTheme.SwipeBackLayout">
         </activity>
-
+<activity android:name=".homedetail.HomeDetailActivity" android:theme="@style/AppTheme.SwipeBackLayout">  </activity>
     </application>
 
 </manifest>

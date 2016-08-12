@@ -19,8 +19,8 @@ import edu.scau.buymesth.data.bean.Request;
  * Created by John on 2016/8/4.
  */
 
-public class QuickAdapter extends BaseQuickAdapter<Request> {
-    public QuickAdapter(int dataSize) {
+public class HomeAdapter extends BaseQuickAdapter<Request> {
+    public HomeAdapter(int dataSize) {
         super(R.layout.item_home_view, DataServer.getRequests(dataSize));
     }
 
