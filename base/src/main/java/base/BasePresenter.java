@@ -20,6 +20,9 @@ public abstract class BasePresenter <M, V> {
 
     public void onDestroy() {
         //mRxManager.clear();
+        isAlive=false;
+        mView=null;
+        mModel=null;
     }
 
     public boolean isAlive() {
