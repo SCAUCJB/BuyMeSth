@@ -12,7 +12,7 @@ import rx.Observable;
 
 public interface HomeContract {
     interface  View{
-        void onLoadMoreSuccess(List<Request>list,boolean isNextLoad);
+        void onLoadMoreSuccess(List<Request>list);
         void showError(String msg);
         void onRefreshComplete(List<Request>list);
     }
@@ -24,7 +24,6 @@ public interface HomeContract {
         List<Request> getDatas();
         void setDatas(List<Request>list);
         void resetPage();
-        void getRequests(GetRequestListener listener);
         Observable<List<Request>> getRxRequests();
     }
 }

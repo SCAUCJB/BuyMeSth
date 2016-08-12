@@ -1,6 +1,7 @@
 package edu.scau.buymesth.home;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import base.BasePresenter;
@@ -33,7 +34,7 @@ public class HomePresenter extends BasePresenter<HomeContract.Model,HomeContract
      *   但是现在还没处理已经没有数据了的情况
      */
     public void onLoadMore(){
-         mModel.getDatas().clear();//清空之前的数据，降低内存消耗
+        List<Request> tempList=new LinkedList<>();
         mModel.getRxRequests().flatMap(new Func1<List<Request>, Observable<Request>>() {
             @Override
             public Observable<Request> call(List<Request> requests) {
@@ -44,7 +45,10 @@ public class HomePresenter extends BasePresenter<HomeContract.Model,HomeContract
                 .subscribe(new Observer<Request>() {
             @Override
             public void onCompleted() {
-                mView.onLoadMoreSuccess(mModel.getDatas(),true);
+                if(tempList.size()>0)
+                mView.onLoadMoreSuccess(tempList);
+                else
+                    mView.onLoadMoreSuccess(null);
             }
 
             @Override
@@ -54,7 +58,7 @@ public class HomePresenter extends BasePresenter<HomeContract.Model,HomeContract
 
             @Override
             public void onNext(Request request) {
-                mModel.getDatas().add(request);
+                tempList.add(request);
             }
         });
     }
