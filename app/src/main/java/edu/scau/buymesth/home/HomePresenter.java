@@ -1,6 +1,7 @@
 package edu.scau.buymesth.home;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import base.BasePresenter;
@@ -54,14 +55,12 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
 
             @Override
             public void onError(Throwable throwable) {
-                mView.showError("获取数据出了些问题");
-                mView.onRefreshFail();
+                if (isAlive()){
+                    mView.showError("获取数据出了些问题");
+                    mView.onRefreshFail();
+                }
+
             }
-                    @Override
-                    public void onError(Throwable throwable) {
-                        if (isAlive())
-                            mView.showError("获取数据出了些问题");
-                    }
 
                     @Override
                     public void onNext(Request request) {

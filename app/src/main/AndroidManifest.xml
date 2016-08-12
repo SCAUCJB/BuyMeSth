@@ -52,6 +52,12 @@
             android:theme="@style/AppTheme.SwipeBackLayout">
         </activity>
 <activity android:name=".homedetail.HomeDetailActivity" android:theme="@style/AppTheme.SwipeBackLayout">  </activity>
+
+        <activity android:name=".home.AddActivity">
+
+
+        </activity>
+
     </application>
 
 </manifest>

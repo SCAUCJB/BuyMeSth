@@ -12,7 +12,6 @@ import base.BaseActivity;
 import cn.bmob.v3.Bmob;
 import butterknife.Bind;
 import cn.bmob.v3.BmobUser;
-import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.main.TabActivity;
 
@@ -40,7 +39,7 @@ public class WelcomeActivity extends BaseActivity{
     @Override
     public void initView() {
         AlphaAnimation animation=new AlphaAnimation(0f,1f);
-        animation.setDuration(Constant.SPLASH_TIME);
+        animation.setDuration(1000);
         Glide.with(this).load("http://cdn.duitang.com/uploads/item/201312/03/20131203154448_WUTaC.thumb.700_0.jpeg")
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .animate(animation)
@@ -64,7 +63,7 @@ public class WelcomeActivity extends BaseActivity{
             //打开新页面
             new Thread(() -> {
                 try {
-                    Thread.sleep(Constant.SPLASH_TIME);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

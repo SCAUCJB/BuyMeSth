@@ -50,13 +50,13 @@ public class HomeFragment extends Fragment implements HomeContract.View{
         mPresenter=new HomePresenter();
         mPresenter.setVM(this,new HomeModel());
 
-//        fbAdd.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getContext(),AddActivity.class);
-//                startActivity(intent);
-//            }
-//        });
+        fbAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(),AddActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         initAdapter();
