@@ -101,6 +101,4 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
                     }
                 });
     }
-
-
 }

@@ -20,6 +20,7 @@ public class Request extends BmobObject {
     private Boolean isAccecpted;//是否被接单
     private Integer minPrice;
     private Integer maxPrice;
+    private List<String> tags;
 
     /**
      * 帖子标题
@@ -96,5 +97,37 @@ public class Request extends BmobObject {
 
     public void setComments(Integer comments) {
         this.comments = comments;
+    }
+
+    public Boolean getAccecpted() {
+        return isAccecpted;
+    }
+
+    public void setAccecpted(Boolean accecpted) {
+        isAccecpted = accecpted;
+    }
+
+    public Integer getMinPrice() {
+        return minPrice;
+    }
+
+    public void setMinPrice(Integer minPrice) {
+        this.minPrice = minPrice;
+    }
+
+    public Integer getMaxPrice() {
+        return maxPrice;
+    }
+
+    public void setMaxPrice(Integer maxPrice) {
+        this.maxPrice = maxPrice;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 }
