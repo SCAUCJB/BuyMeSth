@@ -12,7 +12,7 @@ import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
 import edu.scau.buymesth.R;
-import edu.scau.buymesth.main.view.TabActivity;
+import edu.scau.buymesth.main.TabActivity;
 
 /**
  * Created by IamRabbit on 2016/8/3.

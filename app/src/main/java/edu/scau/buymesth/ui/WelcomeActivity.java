@@ -14,7 +14,7 @@ import butterknife.Bind;
 import cn.bmob.v3.BmobUser;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
-import edu.scau.buymesth.main.view.TabActivity;
+import edu.scau.buymesth.main.TabActivity;
 
 /**
  * Created by IamRabbit on 2016/8/2.

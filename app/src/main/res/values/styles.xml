@@ -19,7 +19,6 @@
     <style name="AppTheme.SwipeBackLayout" parent="AppTheme.NoActionBar">
         <item name="android:windowBackground">@color/transparent</item>
         <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
     </style>
     <style name="tweetName">
         <item name="android:textColor">@color/txt_color</item>

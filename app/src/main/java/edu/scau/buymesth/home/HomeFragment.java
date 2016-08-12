@@ -1,5 +1,6 @@
 package edu.scau.buymesth.home;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -16,8 +17,9 @@ import java.util.List;
 
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
-import edu.scau.buymesth.adapter.QuickAdapter;
+import edu.scau.buymesth.adapter.HomeAdapter;
 import edu.scau.buymesth.data.bean.Request;
+import edu.scau.buymesth.homedetail.HomeDetailActivity;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
@@ -28,7 +30,7 @@ import in.srain.cube.views.ptr.header.StoreHouseHeader;
  */
 public class HomeFragment extends Fragment implements HomeContract.View{
     private RecyclerView mRecyclerView;
-    private QuickAdapter mQuickAdapter;
+    private HomeAdapter mHomeAdapter;
     private HomePresenter mPresenter;
     private PtrFrameLayout mPtrFrameLayout;
     @Nullable
@@ -70,12 +72,15 @@ public class HomeFragment extends Fragment implements HomeContract.View{
         });
     }
     private void initAdapter(){
-        mQuickAdapter = new QuickAdapter(10);
-        mQuickAdapter.openLoadAnimation();
-        mRecyclerView.setAdapter(mQuickAdapter);
-        mQuickAdapter.setOnRecyclerViewItemClickListener((view, position) -> Toast.makeText(getActivity(), "" + Integer.toString(position), Toast.LENGTH_LONG).show());
-        mQuickAdapter.setOnLoadMoreListener(() -> mPresenter.onLoadMore());
-        mQuickAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
+        mHomeAdapter = new HomeAdapter(10);
+        mHomeAdapter.openLoadAnimation();
+        mRecyclerView.setAdapter(mHomeAdapter);
+        mHomeAdapter.setOnRecyclerViewItemClickListener((view, position) -> {
+            Intent intent =new Intent(getActivity(), HomeDetailActivity.class);
+            startActivity(intent);
+        });
+        mHomeAdapter.setOnLoadMoreListener(() -> mPresenter.onLoadMore());
+        mHomeAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
     }
 
     /**
@@ -85,7 +90,7 @@ public class HomeFragment extends Fragment implements HomeContract.View{
      */
     @Override
     public void onLoadMoreSuccess(List<Request> list, boolean isNextLoad) {
-        mQuickAdapter.notifyDataChangedAfterLoadMore(list,isNextLoad);
+        mHomeAdapter.notifyDataChangedAfterLoadMore(list,isNextLoad);
     }
 
     /**
@@ -103,9 +108,9 @@ public class HomeFragment extends Fragment implements HomeContract.View{
      */
     @Override
     public void onRefreshComplete(List<Request>list) {
-        mQuickAdapter.setNewData(list);
-        mQuickAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
-        mQuickAdapter.removeAllFooterView();
+        mHomeAdapter.setNewData(list);
+        mHomeAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
+        mHomeAdapter.removeAllFooterView();
         if(mPtrFrameLayout!=null)
         mPtrFrameLayout.refreshComplete();
     }
