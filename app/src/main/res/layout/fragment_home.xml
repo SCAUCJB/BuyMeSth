@@ -12,7 +12,9 @@
     cube_ptr:ptr_resistance="1.7">
 
 
-
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_home_fragment"
             android:layout_width="match_parent"
@@ -21,6 +23,20 @@
             android:overScrollMode="never"
             android:paddingLeft="@dimen/dp_4"
             android:paddingRight="@dimen/dp_4" />
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="28dp"
+            android:layout_marginBottom="30dp"
+            android:id="@+id/fb_add"
+            />
+</RelativeLayout>
+
+
+
+
 
 
 </in.srain.cube.views.ptr.PtrFrameLayout>

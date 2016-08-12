@@ -1,6 +1,5 @@
 package edu.scau.buymesth.data.bean;
 
-import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.BmobUser;
 
 /**

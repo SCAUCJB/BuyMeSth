@@ -2,6 +2,8 @@ package edu.scau.buymesth;
 
 import android.app.Application;
 
+import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobConfig;
 import crush.CustomActivityOnCrash;
 
 /**
@@ -13,5 +15,6 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         CustomActivityOnCrash.install(this);
+
     }
 }

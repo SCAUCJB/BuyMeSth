@@ -15,6 +15,7 @@ public interface HomeContract {
         void onLoadMoreSuccess(List<Request>list);
         void showError(String msg);
         void onRefreshComplete(List<Request>list);
+        void onRefreshFail();
         void setAdapter(List<Request>list);
     }
 
