@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.HomeAdapter;
 import edu.scau.buymesth.data.bean.Request;
+import edu.scau.buymesth.homedetail.DetailActivity;
 import edu.scau.buymesth.homedetail.HomeDetailActivity;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
@@ -51,12 +53,9 @@ public class HomeFragment extends Fragment implements HomeContract.View{
         mPresenter=new HomePresenter();
         mPresenter.setVM(this,new HomeModel());
 
-        fbAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(),AddActivity.class);
-                startActivity(intent);
-            }
+        fbAdd.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(),AddActivity.class);
+            startActivity(intent);
         });
 
 
@@ -92,7 +91,14 @@ public class HomeFragment extends Fragment implements HomeContract.View{
         mHomeAdapter.openLoadAnimation(new ScaleInAnimation());
         mRecyclerView.setAdapter(mHomeAdapter);
         mHomeAdapter.setOnRecyclerViewItemClickListener((view, position) -> {
-            Intent intent =new Intent(getActivity(), HomeDetailActivity.class);
+//            DetailActivity.navigate((AppCompatActivity) getActivity(),view.findViewById(R.id.iv_tweet_image),mHomeAdapter.getData().get(position));
+            Intent intent = new Intent(getActivity(),DetailActivity.class);
+            if(mHomeAdapter.getData().get(position).getUrls()!=null&&!mHomeAdapter.getData().get(position).getUrls().isEmpty())
+                intent.putExtra(DetailActivity.EXTRA_IMAGE, mHomeAdapter.getData().get(position).getUrls().get(0));
+            else
+                intent.putExtra(DetailActivity.EXTRA_IMAGE, "");
+            intent.putExtra(DetailActivity.EXTRA_TITLE,mHomeAdapter.getData().get(position).getTitle());
+            intent.putExtra(DetailActivity.EXTRA_CONTENT,mHomeAdapter.getData().get(position).getContent());
             startActivity(intent);
         });
         mHomeAdapter.setOnLoadMoreListener(() -> mPresenter.onLoadMore());
@@ -180,12 +186,12 @@ public class HomeFragment extends Fragment implements HomeContract.View{
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mPresenter.setAlive(false);
+  //      mPresenter.setAlive(false);
     }
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        mPresenter.setAlive(true);
+  //      mPresenter.setAlive(true);
     }
 }

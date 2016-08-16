@@ -56,7 +56,7 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
             @Override
             public void onError(Throwable throwable) {
                 if (isAlive()){
-                    mView.showError("获取数据出了些问题");
+                    mView.showError("仿佛网络有点差");
                     mView.onRefreshFail();
                 }
 
@@ -75,7 +75,7 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
      */
     public void onRefresh() {
         mModel.resetPage();
-        mModel.getDatas().clear();
+        List<Request> tempList=new LinkedList<>();
         mModel.getRxRequests(HomeModel.FROM_NETWORK).flatMap(new Func1<List<Request>, Observable<Request>>() {
             @Override
             public Observable<Request> call(List<Request> requests) {
@@ -86,17 +86,24 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
                 .subscribe(new Observer<Request>() {
                     @Override
                     public void onCompleted() {
-                        if(isAlive()) mView.onRefreshComplete(mModel.getDatas());
+                        if(isAlive())
+                        {
+                            mModel.getDatas().clear();
+                            mModel.setDatas(tempList);
+                            mView.onRefreshComplete(mModel.getDatas());}
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        if(isAlive())  mView.showError("获取数据出了些问题");
+                        if (isAlive()){
+                            mView.showError("仿佛网络有点差");
+                            mView.onRefreshFail();
+                        }
                     }
 
                     @Override
                     public void onNext(Request request) {
-                        if(isAlive()) mModel.getDatas().add(request);
+                        if(isAlive()) tempList.add(request);
                     }
                 });
     }
@@ -119,7 +126,10 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
 
                     @Override
                     public void onError(Throwable throwable) {
-                        if(isAlive())  mView.showError("获取数据出了些问题");
+                        if (isAlive()){
+                            mView.showError("仿佛网络有点差");
+                            mView.onRefreshFail();
+                        }
                     }
 
                     @Override

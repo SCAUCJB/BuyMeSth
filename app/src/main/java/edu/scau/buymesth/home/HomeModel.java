@@ -62,6 +62,7 @@ public class HomeModel implements HomeContract.Model {
             query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ELSE_NETWORK);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
         else
             query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);//先从缓存再从网络
+
         return query.findObjectsObservable(Request.class);
     }
 

@@ -25,9 +25,6 @@
         <meta-data
             android:name="Bmob_APP_KEY"
             android:value="211614edac96ab4c9492179cf459993a" />
-        <activity android:name=".MainActivity">
-
-        </activity>
 
         <activity android:name=".ui.WelcomeActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -53,11 +50,16 @@
         </activity>
 <activity android:name=".homedetail.HomeDetailActivity" android:theme="@style/AppTheme.SwipeBackLayout">  </activity>
 
-        <activity android:name=".home.AddActivity">
+        <activity android:name=".home.AddActivity" android:theme="@style/AppTheme.SwipeBackLayout">
 
 
         </activity>
-
+<activity android:name=".homedetail.DetailActivity" android:theme="@style/BaseTheme"
+    android:parentActivityName=".main.TabActivity">
+    <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value=".main.TabActivity"/>
+</activity>
     </application>
 
 </manifest>

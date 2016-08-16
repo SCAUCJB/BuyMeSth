@@ -39,10 +39,8 @@ public class HomeAdapter extends BaseQuickAdapter<Request> {
             helper.setVisible(R.id.iv_tweet_image,true);
             Glide.with(mContext).load(item.getUrls().get(0)).diskCacheStrategy(DiskCacheStrategy.ALL)
                     .centerCrop().into((ImageView) helper.getView(R.id.iv_tweet_image));
-            Log.d("zhx","visible");
         }
         else{
-            Log.d("zhx","invisible");
             helper.setVisible(R.id.iv_tweet_image,false);
         }
     }
