@@ -13,6 +13,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Toast;
 
 import java.util.List;
@@ -24,6 +26,7 @@ import edu.scau.buymesth.adapter.HomeAdapter;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.homedetail.DetailActivity;
 import edu.scau.buymesth.homedetail.HomeDetailActivity;
+import edu.scau.buymesth.publish.PublishActivity;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
@@ -53,9 +56,26 @@ public class HomeFragment extends Fragment implements HomeContract.View{
         mPresenter=new HomePresenter();
         mPresenter.setVM(this,new HomeModel());
 
-        fbAdd.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(),AddActivity.class);
-            startActivity(intent);
+        mRecyclerView.setOnScrollListener(new HidingScrollListener() {
+            @Override
+            public void onHide() {
+//                fbAdd.setVisibility(View.GONE);
+                fbAdd.animate().translationY(fbAdd.getHeight()+ fbAdd.getBottom()).setInterpolator(new AccelerateInterpolator(2)).start();
+            }
+
+            @Override
+            public void onShow() {
+//                fbAdd.setVisibility(View.VISIBLE);
+                fbAdd.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+            }
+        });
+
+        fbAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(),PublishActivity.class);
+                startActivity(intent);
+            }
         });
 
 
@@ -186,12 +206,12 @@ public class HomeFragment extends Fragment implements HomeContract.View{
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-  //      mPresenter.setAlive(false);
+        mPresenter.setAlive(false);
     }
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-  //      mPresenter.setAlive(true);
+        mPresenter.setAlive(true);
     }
 }

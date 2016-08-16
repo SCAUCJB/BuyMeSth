@@ -1,4 +1,4 @@
-package edu.scau.buymesth.home;
+package edu.scau.buymesth.publish;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -22,7 +22,7 @@ import edu.scau.buymesth.data.bean.User;
 /**
  * Created by Jammy on 2016/8/11.
  */
-public class AddActivity extends BaseActivity implements View.OnClickListener {
+public class PublishActivity extends BaseActivity implements View.OnClickListener {
 
 
     @Bind(R.id.btn_cancel)
@@ -49,7 +49,7 @@ public class AddActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public boolean canSwipeBack() {
-        return false;
+        return true;
     }
 
     @Override
@@ -69,6 +69,7 @@ public class AddActivity extends BaseActivity implements View.OnClickListener {
                     public void done(String s, BmobException e) {
                         if (e == null) {
                             toast("创建数据成功：" + s);
+                            finish();
                         } else {
                             Log.i("bmob", "失败：" + e.getMessage() + "," + e.getErrorCode());
                         }

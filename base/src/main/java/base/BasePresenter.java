@@ -32,4 +32,5 @@ public abstract class BasePresenter <M, V> {
     public void setAlive(boolean alive) {
         isAlive = alive;
     }
+
 }
