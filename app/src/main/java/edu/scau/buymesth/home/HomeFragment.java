@@ -203,15 +203,5 @@ public class HomeFragment extends Fragment implements HomeContract.View{
         mPresenter=null;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mPresenter.setAlive(false);
-    }
 
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        mPresenter.setAlive(true);
-    }
 }

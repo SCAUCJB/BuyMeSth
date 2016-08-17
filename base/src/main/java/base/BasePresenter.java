@@ -26,11 +26,9 @@ public abstract class BasePresenter <M, V> {
     }
 
     public boolean isAlive() {
-        return isAlive;
+        return mView!=null;
     }
 
-    public void setAlive(boolean alive) {
-        isAlive = alive;
-    }
+
 
 }

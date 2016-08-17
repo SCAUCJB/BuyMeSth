@@ -53,7 +53,12 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         btnSubmit.setOnClickListener(this);
         btnCancel.setOnClickListener(this);
         rv.setLayoutManager(new GridLayoutManager(this,3));
-
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
     }
 
     @Override
@@ -91,7 +96,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                     @Override
                     public void onHanlderSuccess(int reqeustCode, List<PhotoInfo> resultList) {
                         ////这里的List就是选择的List
-                        rv.setAdapter(new PictureAdapter(R.layout.picture_item,resultList));
+                        rv.setAdapter(new PictureAdapter(R.layout.picture_item,resultList,PublishActivity.this));
                     }
 
                     @Override

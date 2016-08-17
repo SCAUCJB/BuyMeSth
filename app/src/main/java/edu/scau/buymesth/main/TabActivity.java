@@ -80,8 +80,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-//                ChangeColorIconWithTextView cv = (ChangeColorIconWithTextView) tab.getCustomView().findViewById(R.id.cv);
-//                cv.setIconAlpha(1);
+
                 if(!scrolling)
                     viewPager.setCurrentItem((Integer) tab.getCustomView().getTag(),false);
 
@@ -89,10 +88,6 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-//                if(!scrolling){
-//                    ChangeColorIconWithTextView cv = (ChangeColorIconWithTextView) tab.getCustomView().findViewById(R.id.cv);
-//                    cv.setIconAlpha(0);
-//                }
             }
 
             @Override

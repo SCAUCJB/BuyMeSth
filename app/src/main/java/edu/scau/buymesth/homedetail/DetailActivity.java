@@ -50,7 +50,10 @@ public class DetailActivity extends BaseActivity {
     }
 
 
-
+    @Override
+    public boolean showColorStatusBar() {
+        return false;
+    }
 
     @Override
     protected int getLayoutId() {
@@ -68,13 +71,14 @@ public class DetailActivity extends BaseActivity {
         String itemTitle = getIntent().getStringExtra(EXTRA_TITLE);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbarLayout.setTitle(itemTitle);
-        collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
+
+ //       collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
 
         final ImageView image = (ImageView) findViewById(R.id.image);
         if(!getIntent().getStringExtra(EXTRA_IMAGE).equals(""))
         Glide.with(this).load(getIntent().getStringExtra(EXTRA_IMAGE)).centerCrop().into(image);
         else
-        image.setVisibility(View.INVISIBLE);
+            Glide.with(this).load(R.drawable.ic_gf_default_photo).centerCrop().into(image);
         TextView title = (TextView) findViewById(R.id.title);
         title.setText(getIntent().getStringExtra(EXTRA_TITLE));
         TextView content= (TextView) findViewById(R.id.description);
