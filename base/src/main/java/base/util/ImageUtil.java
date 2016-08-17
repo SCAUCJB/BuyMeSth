@@ -30,7 +30,7 @@ import edu.scau.base.R;
 public class ImageUtil {
     public static void loadImg(ImageView v, String url) {
         Glide.with(v.getContext())
-                .load(getFuckUrl(url))
+                .load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(v);
 
@@ -38,20 +38,14 @@ public class ImageUtil {
 
     public static void loadRoundImg(ImageView v, String url) {
         Glide.with(v.getContext())
-                .load(getFuckUrl(url))
+                .load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .transform(new GlideCircleTransform(v.getContext()))
                 .error(R.mipmap.ic_launcher)
                 .into(v);
     }
 
-    public static String getFuckUrl(String url) {
-        if (url != null && url.startsWith("http://ear.duomi.com/wp-content/themes/headlines/thumb.php?src=")) {
-            url = url.substring(url.indexOf("=") + 1, url.indexOf("jpg") > 0 ? url.indexOf("jpg") + 3 : url.indexOf("png") > 0 ? url.indexOf("png") + 3 : url.length());
-            url = url.replace("kxt.fm", "ear.duomi.com");
-        }
-        return url;
-    }
+
 
     /**
      * 保存文件
@@ -107,20 +101,7 @@ public class ImageUtil {
         return buffer;
     }
 
-    public static void loadRoundAndBgImg(ImageView v, String url, ImageView im_header) {
-        Glide.with(v.getContext())
-                .load(getFuckUrl(url))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .transform(new GlideCircleTransform(v.getContext()))
-                .error(R.mipmap.ic_launcher)
-                .into(v);
 
-   /*     Glide.with(v.getContext())
-                .load(getFuckUrl(url))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .transform(new LowPolyTransform(v.getContext()))
-                .into(im_header);*/
-    }
 
     public static String getUrlByIntent(Context mContext, Intent mdata) {
         Uri uri = mdata.getData();
