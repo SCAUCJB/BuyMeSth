@@ -19,17 +19,17 @@ import edu.scau.buymesth.R;
  * Created by Jammy on 2016/8/17.
  */
 public class PictureAdapter extends BaseQuickAdapter<PhotoInfo>{
-private Context context;
+
     /////布局和数据
-    public PictureAdapter(int layoutResId, List<PhotoInfo> data, Context context) {
-        super(layoutResId, data);
-        this.context=context;
+    public PictureAdapter( ) {
+        super(R.layout.picture_item, null);
+
     }
 
     @Override
     protected void convert(BaseViewHolder helper, PhotoInfo item) {
 
-        Glide.with(this.context).load(item.getPhotoPath()).crossFade().override(60,60).into((ImageView) helper.getView(R.id.rv_iv));
+        Glide.with(mContext).load(item.getPhotoPath()).crossFade().override(60,60).into((ImageView) helper.getView(R.id.rv_iv));
 
     }
 }

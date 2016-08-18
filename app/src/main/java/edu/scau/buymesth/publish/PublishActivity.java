@@ -40,7 +40,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     Button btn_gallery;
     @Bind(R.id.rv)
     RecyclerView rv;
-
+    private PictureAdapter mAdapter;
 
     @Override
     protected int getLayoutId() {
@@ -52,6 +52,8 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         btn_gallery.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
         btnCancel.setOnClickListener(this);
+        mAdapter=new PictureAdapter();
+        rv.setAdapter(mAdapter);
         rv.setLayoutManager(new GridLayoutManager(this,3));
         rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -96,7 +98,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                     @Override
                     public void onHanlderSuccess(int reqeustCode, List<PhotoInfo> resultList) {
                         ////这里的List就是选择的List
-                        rv.setAdapter(new PictureAdapter(R.layout.picture_item,resultList,PublishActivity.this));
+                    mAdapter.setNewData(resultList);
                     }
 
                     @Override
