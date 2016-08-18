@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="标题"
-        android:id="@+id/textView" />
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <EditText
-    android:id="@+id/et_title"
-    android:layout_width="match_parent"
-    android:layout_height="50dp"
+        android:id="@+id/et_title"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
 
-    />
+        />
 
     <TextView
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="内容"
-        android:id="@+id/textView2" />
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <EditText
         android:id="@+id/et_detail"
@@ -33,33 +34,37 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-<Button
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="打开相册"
-    android:id="@+id/gallery"
-    />
+
         <Button
+            android:id="@+id/gallery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="取消"
+            android:text="打开相册" />
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_toStartOf="@+id/btn_submit"
-            android:id="@+id/btn_cancel"
-            />
+            android:text="取消" />
+
         <Button
+            android:id="@+id/btn_submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="提交"
-            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:id="@+id/btn_submit" />
+            android:layout_alignParentTop="true"
+            android:text="提交" />
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv"
+        android:foregroundGravity="center"
+        android:fadingEdge="none"
+        android:overScrollMode="never"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/rv"/>
+        android:layout_height="match_parent" />
 
 
 </LinearLayout>

@@ -1,4 +1,4 @@
-package edu.scau.buymesth.publish;
+package edu.scau.buymesth.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -21,15 +21,14 @@ import edu.scau.buymesth.R;
 public class PictureAdapter extends BaseQuickAdapter<PhotoInfo>{
 
     /////布局和数据
-    public PictureAdapter( ) {
-        super(R.layout.picture_item, null);
-
+    public PictureAdapter(List<PhotoInfo> data ) {
+        super(R.layout.picture_item, data);
     }
 
     @Override
     protected void convert(BaseViewHolder helper, PhotoInfo item) {
-
-        Glide.with(mContext).load(item.getPhotoPath()).crossFade().override(60,60).into((ImageView) helper.getView(R.id.rv_iv));
+        String url=item.getPhotoPath();
+        Glide.with(mContext).load(url).centerCrop().into((ImageView) helper.getView(R.id.iv));
 
     }
 }
