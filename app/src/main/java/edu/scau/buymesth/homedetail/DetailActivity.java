@@ -99,8 +99,8 @@ public class DetailActivity extends BaseActivity {
         }
     }
     private void applyPalette(Palette palette) {
-        int primaryDark = getResources().getColor(R.color.primary_dark);
-        int primary = getResources().getColor(R.color.primary);
+        int primaryDark = getResources().getColor(R.color.colorPrimaryDark);
+        int primary = getResources().getColor(R.color.colorPrimary);
         collapsingToolbarLayout.setContentScrimColor(palette.getMutedColor(primary));
         collapsingToolbarLayout.setStatusBarScrimColor(palette.getDarkMutedColor(primaryDark));
         supportStartPostponedEnterTransition();

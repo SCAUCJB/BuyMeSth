@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.HomeAdapter;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.homedetail.DetailActivity;
+import edu.scau.buymesth.homedetail.RequestDetailActivity;
 import edu.scau.buymesth.publish.PublishActivity;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
@@ -106,14 +108,15 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         mRecyclerView.setAdapter(mHomeAdapter);
         mHomeAdapter.setOnRecyclerViewItemClickListener((view, position) -> {
 //            DetailActivity.navigate((AppCompatActivity) getActivity(),view.findViewById(R.id.iv_tweet_image),mHomeAdapter.getData().get(position));
-            Intent intent = new Intent(getActivity(), DetailActivity.class);
-            if (mHomeAdapter.getData().get(position).getUrls() != null && !mHomeAdapter.getData().get(position).getUrls().isEmpty())
-                intent.putExtra(DetailActivity.EXTRA_IMAGE, mHomeAdapter.getData().get(position).getUrls().get(0));
-            else
-                intent.putExtra(DetailActivity.EXTRA_IMAGE, "");
-            intent.putExtra(DetailActivity.EXTRA_TITLE, mHomeAdapter.getData().get(position).getTitle());
-            intent.putExtra(DetailActivity.EXTRA_CONTENT, mHomeAdapter.getData().get(position).getContent());
-            startActivity(intent);
+//            Intent intent = new Intent(getActivity(), RequestDetailActivity.class);
+//            if (mHomeAdapter.getData().get(position).getUrls() != null && !mHomeAdapter.getData().get(position).getUrls().isEmpty())
+//                intent.putExtra(DetailActivity.EXTRA_IMAGE, mHomeAdapter.getData().get(position).getUrls().get(0));
+//            else
+//                intent.putExtra(DetailActivity.EXTRA_IMAGE, "");
+//            intent.putExtra(DetailActivity.EXTRA_TITLE, mHomeAdapter.getData().get(position).getTitle());
+//            intent.putExtra(DetailActivity.EXTRA_CONTENT, mHomeAdapter.getData().get(position).getContent());
+//            startActivity(intent);
+            RequestDetailActivity.navigate((AppCompatActivity)getActivity(),view.findViewById(R.id.iv_tweet_image),mHomeAdapter.getData().get(position));
         });
         mHomeAdapter.setOnLoadMoreListener(() -> mPresenter.onLoadMore());
         mHomeAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);

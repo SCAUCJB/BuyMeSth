@@ -18,13 +18,11 @@ import edu.scau.buymesth.main.TabActivity;
 /**
  * Created by IamRabbit on 2016/8/2.
  */
-public class WelcomeActivity extends BaseActivity{
+public class WelcomeActivity extends BaseActivity {
     private BmobUser bmobUser;
     @Bind(R.id.welcome_image)
     ImageView welcomeImage;
 
-
-    private boolean initialized = false;
 
     @Override
     protected int getLayoutId() {
@@ -38,8 +36,8 @@ public class WelcomeActivity extends BaseActivity{
 
     @Override
     public void initView() {
-        AlphaAnimation animation=new AlphaAnimation(0f,1f);
-        animation.setDuration(1000);
+        AlphaAnimation animation = new AlphaAnimation(0f, 1f);
+        animation.setDuration(100);
         Glide.with(this).load("http://cdn.duitang.com/uploads/item/201312/03/20131203154448_WUTaC.thumb.700_0.jpeg")
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .animate(animation)
@@ -54,31 +52,31 @@ public class WelcomeActivity extends BaseActivity{
     @Override
     protected void onStart() {
         super.onStart();
-        if(!initialized){
-            //在这里进行初始化的操作
-            Bmob.initialize(this, "211614edac96ab4c9492179cf459993a");
-            bmobUser = BmobUser.getCurrentUser();
-            //完成初始化
-            initialized = true;
-            //打开新页面
-            new Thread(() -> {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                WelcomeActivity.this.runOnUiThread(() -> jumpToNextActivity());
-            }).start();
-        }
+
+        //原本在这里进行初始化的操作
+        //放到了Application里面，防止不经过这个页面就进入Activity导致context空指针
+
+        bmobUser = BmobUser.getCurrentUser();
+        //完成初始化
+
+        //打开新页面
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            WelcomeActivity.this.runOnUiThread(() -> jumpToNextActivity());
+        }).start();
+
     }
 
     private void jumpToNextActivity() {
-        if(bmobUser!=null){
+        if (bmobUser != null) {
             Intent intent = new Intent(WelcomeActivity.this, TabActivity.class);
             startActivity(intent);
             finish();
-        }
-        else {
+        } else {
             Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();

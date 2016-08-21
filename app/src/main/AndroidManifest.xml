@@ -30,7 +30,6 @@
 
         <activity
             android:name=".ui.WelcomeActivity"
-
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,25 +48,14 @@
         <activity
             android:name=".main.TabActivity"
             android:theme="@style/AppTheme.SwipeBackLayout" />
-        <!-- <activity android:name=".homedetail.HomeDetailActivity" android:theme="@style/AppTheme.SwipeBackLayout">  </activity> -->
 
-
-        <!-- <activity android:name=".home.AddActivity" android:theme="@style/AppTheme.SwipeBackLayout"> -->
-        <!-- <activity android:name=".publish.PublishActivity" android:theme="@style/AppTheme.SwipeBackLayout"> -->
-
-
-        <!-- </activity> -->
-        <activity
-            android:name=".homedetail.DetailActivity"
-            android:parentActivityName=".main.TabActivity"
-            android:theme="@style/BaseTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".main.TabActivity" />
-        </activity>
         <activity
             android:name=".publish.PublishActivity"
-            android:theme="@style/BaseTheme" />
+            android:theme="@style/AppTheme.SwipeBackLayout" />
+
+        <activity android:name=".homedetail.RequestDetailActivity"
+
+            android:theme="@style/AppTheme.SwipeBackLayout"/>
     </application>
 
 </manifest>
