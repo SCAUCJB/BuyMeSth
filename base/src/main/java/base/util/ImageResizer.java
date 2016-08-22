@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import java.io.FileDescriptor;
+import java.io.InputStream;
 
 /**
  * Created by John on 2016/8/17.
@@ -25,6 +26,7 @@ public class ImageResizer {
         options.inJustDecodeBounds=false;
        return  BitmapFactory.decodeResource(res,resId,options);
     }
+
     public Bitmap decodeSampledBitmapFromFIleDescriptor(FileDescriptor fd,int reqWidth,int reqHeight){
         final BitmapFactory.Options options=new BitmapFactory.Options();
         options.inJustDecodeBounds=true;

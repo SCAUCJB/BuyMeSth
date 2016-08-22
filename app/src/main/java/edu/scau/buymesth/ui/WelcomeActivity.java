@@ -1,25 +1,34 @@
 package edu.scau.buymesth.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import base.BaseActivity;
+import base.util.GlideCircleTransform;
 import cn.bmob.v3.Bmob;
 import butterknife.Bind;
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
+import edu.scau.Constant;
 import edu.scau.buymesth.R;
+import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.main.TabActivity;
+import rx.SingleSubscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by IamRabbit on 2016/8/2.
  */
 public class WelcomeActivity extends BaseActivity {
-    private BmobUser bmobUser;
+    private User bmobUser;
     @Bind(R.id.welcome_image)
     ImageView welcomeImage;
 
@@ -37,7 +46,7 @@ public class WelcomeActivity extends BaseActivity {
     @Override
     public void initView() {
         AlphaAnimation animation = new AlphaAnimation(0f, 1f);
-        animation.setDuration(100);
+        animation.setDuration(500);
         Glide.with(this).load("http://cdn.duitang.com/uploads/item/201312/03/20131203154448_WUTaC.thumb.700_0.jpeg")
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .animate(animation)
@@ -56,19 +65,30 @@ public class WelcomeActivity extends BaseActivity {
         //原本在这里进行初始化的操作
         //放到了Application里面，防止不经过这个页面就进入Activity导致context空指针
 
-        bmobUser = BmobUser.getCurrentUser();
-        //完成初始化
+        bmobUser = BmobUser.getCurrentUser(User.class);
+        if (bmobUser != null)
+            queryUser();
+            //完成初始化
+        else {
+            jumpToNextActivity();
+        }
 
-        //打开新页面
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+    }
+
+    private void queryUser() {
+        User user = BmobUser.getCurrentUser(User.class);
+        BmobQuery<User> query = new BmobQuery<>();
+        query.getObjectObservable(User.class, user.getObjectId()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).toSingle().subscribe(new SingleSubscriber<User>() {
+            @Override
+            public void onSuccess(User user) {
+                storeToSharePreference(user);
             }
-            WelcomeActivity.this.runOnUiThread(() -> jumpToNextActivity());
-        }).start();
 
+            @Override
+            public void onError(Throwable throwable) {
+                finish();
+            }
+        });
     }
 
     private void jumpToNextActivity() {
@@ -81,6 +101,22 @@ public class WelcomeActivity extends BaseActivity {
             startActivity(intent);
             finish();
         }
+    }
+
+    private void storeToSharePreference(User user) {
+        SharedPreferences settings = getSharedPreferences(Constant.SHARE_PREFRENCE_USER_INFO, MODE_PRIVATE);
+//让setting处于编辑状态
+        SharedPreferences.Editor editor = settings.edit();
+//存放数据
+        editor.putInt(Constant.KEY_AGE, user.getAge());
+        editor.putString(Constant.KEY_GENDA, user.getGender());
+        editor.putString(Constant.KEY_AVATAR, user.getAvatar());
+        editor.putString(Constant.KEY_NICKNAME, user.getNickname());
+        editor.putInt(Constant.KEY_EXP, user.getExp());
+//完成提交
+        editor.apply();
+
+        jumpToNextActivity();
     }
 
     @Override

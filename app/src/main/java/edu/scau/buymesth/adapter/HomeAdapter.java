@@ -1,19 +1,14 @@
 package edu.scau.buymesth.adapter;
 
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import java.util.List;
-
 import adpater.BaseQuickAdapter;
 import adpater.BaseViewHolder;
 import base.util.GlideCircleTransform;
-import cn.bmob.v3.BmobQuery;
 import edu.scau.buymesth.R;
-import edu.scau.buymesth.data.DataServer;
 import edu.scau.buymesth.data.bean.Request;
 
 /**
@@ -33,7 +28,7 @@ public class HomeAdapter extends BaseQuickAdapter<Request> {
             .setText(R.id.tv_tweet_text,item.getContent())
             .setText(R.id.tv_level,"LV "+ item.getAuthor().getExp()/10);
 
-           Glide.with(mContext).load(item.getAuthor().getAvatar()).crossFade().placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into((ImageView) helper.getView(R.id.iv_avatar));
+           Glide.with(mContext).load(item.getAuthor().getAvatar()).crossFade().placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into((ImageView) helper.getView(R.id.iv_avatar_author));
         if(item!=null&&item.getUrls()!=null&&!item.getUrls().isEmpty())
         {
             helper.setVisible(R.id.iv_tweet_image,true);

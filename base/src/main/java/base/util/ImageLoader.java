@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -75,6 +76,7 @@ public class ImageLoader {
             }
         }
     };
+
     private Context mContext;
     private ImageResizer mImageResizer = new ImageResizer();
     private LruCache<String, Bitmap> mMemoryCache;
@@ -102,7 +104,36 @@ public class ImageLoader {
             }
         }
     }
-
+    public  int getNetworkImageHeight(String url) throws IOException {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            throw new RuntimeException("cannot visit network from UI Thread.");
+        }
+        if (mDiskLruCache == null)
+            return -1;
+        String key = hashKeyFormUrl(url);
+        DiskLruCache.Snapshot snapshot = mDiskLruCache.get(key);
+        if(snapshot==null){
+            DiskLruCache.Editor editor = mDiskLruCache.edit(key);
+            if (editor != null) {
+                OutputStream outputStream = editor.newOutputStream(DISK_CACHE_INDEX);
+                if (downloadUrlToStream(url, outputStream))
+                    editor.commit();
+                else
+                    editor.abort();
+                mDiskLruCache.flush();
+            }
+        }
+         snapshot = mDiskLruCache.get(key);
+        if (snapshot != null) {
+            FileInputStream fileInputStream = (FileInputStream) snapshot.getInputStream(DISK_CACHE_INDEX);
+            FileDescriptor fileDescriptor = fileInputStream.getFD();
+            final BitmapFactory.Options options=new BitmapFactory.Options();
+            options.inJustDecodeBounds=true;
+            BitmapFactory.decodeFileDescriptor(fileDescriptor,null,options);
+            return options.outHeight;
+        }
+       return -1;
+    }
     public static ImageLoader build(Context context) {
         return new ImageLoader(context);
     }
