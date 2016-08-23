@@ -46,7 +46,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
     private void setTranslucentStatus(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT&&Build.VERSION.SDK_INT<=Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             //透明化状态栏
             WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
             localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS |
@@ -70,15 +70,15 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void setContentView(@LayoutRes int layoutResID) {
         if (!canSwipeBack()) {
             FrameLayout frameLayout = new FrameLayout(this);
+            frameLayout.setBackgroundColor(getResources().getColor(R.color.window_background));
+            View view = LayoutInflater.from(this).inflate(layoutResID, null);
+            frameLayout.addView(view);
             //添加状态栏色块
             if(showColorStatusBar()&&Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
                 colorStatus = new ImageView(this);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, getStatusBarHeight());
                 frameLayout.addView(colorStatus,params);
             }
-            frameLayout.setBackgroundColor(getResources().getColor(R.color.window_background));
-            View view = LayoutInflater.from(this).inflate(layoutResID, null);
-            frameLayout.addView(view);
             //如果设置的布局fitsSystemWindows==true 将多出的状态栏空间去掉
             if(!showColorStatusBar()&&Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT&&view.getFitsSystemWindows()){
                 FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) view.getLayoutParams();
@@ -89,16 +89,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         } else {
             super.setContentView(getContainer());
             FrameLayout frameLayout = new FrameLayout(this);
+            frameLayout.setBackgroundColor(getResources().getColor(R.color.window_background));
+
+            View view = LayoutInflater.from(this).inflate(layoutResID, null);
+            frameLayout.addView(view);
             //添加状态栏色块
             if(showColorStatusBar()&&Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
                 colorStatus = new ImageView(this);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, getStatusBarHeight());
                 frameLayout.addView(colorStatus,params);
             }
-            frameLayout.setBackgroundColor(getResources().getColor(R.color.window_background));
-
-            View view = LayoutInflater.from(this).inflate(layoutResID, null);
-            frameLayout.addView(view);
             //如果设置的布局fitsSystemWindows==true 将多出的状态栏空间去掉
             if(!showColorStatusBar()&&Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT&&view.getFitsSystemWindows()){
                 FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) view.getLayoutParams();
