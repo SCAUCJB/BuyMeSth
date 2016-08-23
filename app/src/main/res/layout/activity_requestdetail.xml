@@ -72,12 +72,12 @@
                     android:textColor="#f3f3f3"
                     android:textSize="8sp" />
                 <TextView
-                    android:id="@+id/tv_follow"
+                    android:id="@+id/tv_accept"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:gravity="center"
                     android:background="@drawable/rect_accent"
-                    android:text="关注"
+                    android:text="接单"
                     android:layout_marginRight="@dimen/dp_6"
                     android:layout_width="@dimen/dp_72"
                     android:layout_height="30dp"

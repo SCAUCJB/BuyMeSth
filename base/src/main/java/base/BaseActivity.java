@@ -26,7 +26,6 @@ import ui.layout.SwipeBackLayout;
  *
  */
 public abstract class BaseActivity extends AppCompatActivity {
-    private boolean mCanSwipeBack=true;
     public Context mContext;
     private SwipeBackLayout swipeBackLayout;
     private ImageView ivShadow;
@@ -46,7 +45,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
     private void setTranslucentStatus(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT&&Build.VERSION.SDK_INT<=Build.VERSION_CODES.LOLLIPOP) {
             //透明化状态栏
             WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
             localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS |

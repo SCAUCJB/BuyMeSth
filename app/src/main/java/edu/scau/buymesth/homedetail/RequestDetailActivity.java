@@ -9,7 +9,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -25,28 +24,21 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import base.BaseActivity;
 import base.util.GlideCircleTransform;
 import butterknife.Bind;
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.BmobUser;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Request;
-import edu.scau.buymesth.data.bean.User;
-import rx.SingleSubscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by John on 2016/8/20.
  */
 
-public class RequestDetailActivity extends BaseActivity {
+public class RequestDetailActivity extends BaseActivity implements RequestDetailContract.View {
     public static final String EXTRA_REQUEST = "edu.scau.buymesth.homedetail.request";
     @Bind(R.id.tv_content)
     TextView content;
@@ -61,14 +53,22 @@ public class RequestDetailActivity extends BaseActivity {
     @Bind(R.id.tv_like)
     TextView like;
     @Bind(R.id.iv_avatar_user)
-    ImageView userAavatar;
+    ImageView userAvatar;
     @Bind(R.id.tv_comment)
     TextView comment;
+    @Bind(R.id.iv_avatar_author)
+    ImageView authorAvatar;
+    @Bind(R.id.tv_level)
+    TextView level;
+    @Bind(R.id.tv_name)
+    TextView name;
+    @Bind(R.id.rl_user_info)
+    RelativeLayout userInfoBar;
+    private RequestDetailPresenter presenter;
     private int[] heights;
     private List<ImageView> imageViews;
     private PagerAdapter mAdapter;
-    private Request mRequest;
-    private LinkedList<HttpURLConnection> connections = new LinkedList<>();
+    private ConcurrentLinkedQueue<HttpURLConnection> connections = new ConcurrentLinkedQueue<>();
 
     public static void navigate(AppCompatActivity activity, Request request) {
         Intent intent = new Intent(activity, RequestDetailActivity.class);
@@ -84,86 +84,190 @@ public class RequestDetailActivity extends BaseActivity {
     @Override
     public void initView() {
         initToolBar();
-        mRequest = (Request) getIntent().getSerializableExtra(EXTRA_REQUEST);
-        initUserInfo();
-        initContent();
-
+        RequestDetailModel model = new RequestDetailModel();
+        model.setRequest((Request) getIntent().getSerializableExtra(EXTRA_REQUEST));
+        presenter = new RequestDetailPresenter();
+        presenter.setVM(this, model);
+        presenter.initUserInfo();
+        presenter.initCommentBar();
+        presenter.initContent();
     }
 
-    private void initContent() {
-        title.setText(mRequest.getTitle());
-        content.setText(mRequest.getContent());
-        String timeString = mRequest.getCreatedAt() + "发布";
-        time.setText(timeString);
-        String likeString = mRequest.getLikes() + "次赞";
-        like.setText(likeString);
-        if (mRequest.getUrls() != null) {
-            imageViews = new ArrayList<>(mRequest.getUrls().size());
-            heights = new int[mRequest.getUrls().size()];
-            initViewPager();
-        } else
-            mViewPager.setVisibility(View.GONE);
+
+
+    /**
+     * 仅仅获取图片的高度，不加载图片
+     *
+     * @param urlString
+     * @return
+     */
+    private int getImageHeight(String urlString) {
+        HttpURLConnection urlConnection = null;
+        int height = -1;
+        try {
+            final URL url = new URL(urlString);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            connections.add(urlConnection);
+            urlConnection.setReadTimeout(50000);
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(urlConnection.getInputStream(), null, options);
+            WindowManager manager = getWindow().getWindowManager();
+            DisplayMetrics outMetrics = new DisplayMetrics();
+            manager.getDefaultDisplay().getMetrics(outMetrics);
+            height = (int) ((1.0f * outMetrics.widthPixels / options.outWidth) * options.outHeight);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+                if (!connections.isEmpty())
+                    connections.remove(urlConnection);
+            }
+        }
+        return height;
     }
 
-    private void initUserInfo() {
-        ImageView authorAvatar = (ImageView) findViewById(R.id.iv_avatar_author);
-        Glide.with(mContext).load(mRequest.getAuthor().getAvatar()).placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into(authorAvatar);
-        TextView level = (TextView) findViewById(R.id.tv_level);
-        String levelString = "LV" + mRequest.getAuthor().getExp() / 10;
+    @Override
+    protected void onDestroy() {
+        for (HttpURLConnection connection : connections) {
+            if (connection != null)
+                connection.disconnect();
+        }
+        presenter.onDestroy();
+        presenter=null;
+        super.onDestroy();
+    }
+
+    private void initToolBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener((v) -> onBackPressed());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.gf_flip_horizontal_in, R.anim.gf_flip_horizontal_out);
+    }
+
+    @Override
+    public int getStatusColorResources() {
+        return R.color.colorPrimaryDark;
+    }
+
+    @Override
+    public boolean showColorStatusBar() {
+        return true;
+    }
+
+    @Override
+    public boolean canSwipeBack() {
+        return true;
+    }
+
+    @Override
+    public void setAuthorAvatar(String avatar) {
+        Glide.with(mContext).load(avatar).placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into(authorAvatar);
+    }
+
+    @Override
+    public void setAuthorExp(Integer exp) {
+        String levelString = "LV" + exp / 10;
         level.setText(levelString);
-        String nameString=mRequest.getAuthor().getNickname();
-        TextView name= (TextView) findViewById(R.id.tv_name);
-        name.setText(nameString);
-        RelativeLayout userInfo = (RelativeLayout) findViewById(R.id.rl_user_info);
-        userInfo.setOnClickListener((v) -> {
+    }
+
+    @Override
+    public void setAuthorName(String nickname) {
+        name.setText(nickname);
+    }
+
+    @Override
+    public void setAuthorOnClicked() {
+        userInfoBar.setOnClickListener((v) -> {
             Toast.makeText(mContext, "跳转用户页面", Toast.LENGTH_SHORT).show();
         });
-        TextView follow = (TextView) findViewById(R.id.tv_follow);
-        follow.setOnClickListener((v) -> {
+    }
+
+    @Override
+    public void setOnAcceptClicked() {
+        TextView accept = (TextView) findViewById(R.id.tv_accept);
+        accept.setOnClickListener((v) -> {
             Toast.makeText(mContext, "关注", Toast.LENGTH_SHORT).show();
         });
-        SharedPreferences globalUser=getSharedPreferences(Constant.SHARE_PREFRENCE_USER_INFO, MODE_PRIVATE);
-        String avatar=globalUser.getString(Constant.KEY_AVATAR,"");
-        Glide.with(mContext).load(avatar).placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into(userAavatar);
+    }
 
-        comment.setText("要勾搭，先评论");
+    @Override
+    public void setCommentBtn(String commentBtnStr) {
+        comment.setText(commentBtnStr);
+    }
+
+    @Override
+    public void setUserAvatar() {
+        SharedPreferences globalUser = getSharedPreferences(Constant.SHARE_PREFRENCE_USER_INFO, MODE_PRIVATE);
+        String avatar = globalUser.getString(Constant.KEY_AVATAR, "");
+        Glide.with(mContext).load(avatar).placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into(userAvatar);
+    }
+
+    @Override
+    public void setTitle(String title) {
+        this.title.setText(title);
 
     }
 
-    private void initViewPager() {
-        if (mRequest.getUrls() != null)
-            mViewPager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    for (int i = mRequest.getUrls().size() - 1; i >= 0; --i) {
-                        ImageView imageView = new ImageView(RequestDetailActivity.this);
-                        if (mRequest.getUrls() != null) {
-                            final int fi = i;
-                            new Thread() {
-                                @Override
-                                public void run() {
-                                    heights[fi] = getImageHeight(mRequest.getUrls().get(fi));
-                                    RequestDetailActivity.this.runOnUiThread(
-                                            () -> mAdapter.notifyDataSetChanged()
-                                    );
-                                }
-                            }.start();
-                            Glide.with(mContext).load(mRequest.getUrls().get(i)).into(imageView);
-                        }
-                        imageViews.add(imageView);
-                    }
-                    mAdapter.notifyDataSetChanged();
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        mViewPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    } else {
-                        mViewPager.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                    }
-                    //ViewPager的初始高度设置为第一个页面的高度
-                    ViewGroup.LayoutParams layoutParams = mViewPager.getLayoutParams();
-                    layoutParams.height = heights[0];
-                    mViewPager.setLayoutParams(layoutParams);
+    @Override
+    public void setContent(String content) {
+        this.content.setText(content);
+
+    }
+
+    @Override
+    public void setLikes(Integer likes) {
+        String likeString = likes + "次赞";
+        like.setText(likeString);
+    }
+
+    @Override
+    public void setTime(String createdAt) {
+        String timeString = createdAt + "发布";
+        time.setText(timeString);
+    }
+
+    @Override
+    public void setUpViewPager(List<String> urls) {
+        imageViews = new ArrayList<>(urls.size());
+        heights = new int[urls.size()];
+        mViewPager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                for (int i =0; i <urls.size(); ++i) {
+                    ImageView imageView = new ImageView(RequestDetailActivity.this);
+                        final int fi = i;
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                heights[fi] = getImageHeight(urls.get(fi));
+                                RequestDetailActivity.this.runOnUiThread(
+                                        () -> mAdapter.notifyDataSetChanged()
+                                );
+                            }
+                        }.start();
+                        Glide.with(mContext).load(urls.get(i)).into(imageView);
+                    imageViews.add(imageView);
                 }
-            });
+                mAdapter.notifyDataSetChanged();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    mViewPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                } else {
+                    mViewPager.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+                //ViewPager的初始高度设置为第一个页面的高度
+                ViewGroup.LayoutParams layoutParams = mViewPager.getLayoutParams();
+                layoutParams.height = heights[0];
+                mViewPager.setLayoutParams(layoutParams);
+            }
+        });
         mAdapter = new PagerAdapter() {
             @Override
             public int getCount() {
@@ -216,67 +320,9 @@ public class RequestDetailActivity extends BaseActivity {
         });
     }
 
-    /**
-     * 仅仅获取图片的高度，不加载图片
-     *
-     * @param urlString
-     * @return
-     */
-    private int getImageHeight(String urlString) {
-        HttpURLConnection urlConnection = null;
-        int height = -1;
-        try {
-            final URL url = new URL(urlString);
-            urlConnection = (HttpURLConnection) url.openConnection();
-            connections.addFirst(urlConnection);
-            urlConnection.setReadTimeout(50000);
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(urlConnection.getInputStream(), null, options);
-            WindowManager manager = getWindow().getWindowManager();
-            DisplayMetrics outMetrics = new DisplayMetrics();
-            manager.getDefaultDisplay().getMetrics(outMetrics);
-            height = (int) ((1.0f * outMetrics.widthPixels / options.outWidth) * options.outHeight);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-                if(!connections.isEmpty())
-                connections.pollFirst();
-            }
-        }
-        return height;
-    }
-
     @Override
-    protected void onDestroy() {
-        for (HttpURLConnection connection : connections) {
-            if (connection != null)
-                connection.disconnect();
-        }
-        super.onDestroy();
+    public void hideViewPager() {
+        mViewPager.setVisibility(View.GONE);
     }
 
-    private void initToolBar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener((v) -> onBackPressed());
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    @Override
-    public int getStatusColorResources() {
-        return R.color.colorPrimaryDark;
-    }
-
-    @Override
-    public boolean showColorStatusBar() {
-        return true;
-    }
-
-    @Override
-    public boolean canSwipeBack() {
-        return true;
-    }
 }
