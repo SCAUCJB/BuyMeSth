@@ -40,4 +40,7 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
             mView.hideViewPager();
         }
     }
+    public void setComment(){
+
+    }
 }

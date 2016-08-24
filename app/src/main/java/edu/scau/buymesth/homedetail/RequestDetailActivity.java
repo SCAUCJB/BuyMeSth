@@ -25,7 +25,6 @@ import com.bumptech.glide.Glide;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -287,7 +286,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
 
     @Override
     public void setUserAvatar() {
-        SharedPreferences globalUser = getSharedPreferences(Constant.SHARE_PREFRENCE_USER_INFO, MODE_PRIVATE);
+        SharedPreferences globalUser = getSharedPreferences(Constant.SHARE_PREFERENCE_USER_INFO, MODE_PRIVATE);
         String avatar = globalUser.getString(Constant.KEY_AVATAR, "");
         Glide.with(mContext).load(avatar).placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into(userAvatar);
     }

@@ -5,14 +5,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import base.BaseActivity;
-import base.util.GlideCircleTransform;
-import cn.bmob.v3.Bmob;
 import butterknife.Bind;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
@@ -104,7 +101,7 @@ public class WelcomeActivity extends BaseActivity {
     }
 
     private void storeToSharePreference(User user) {
-        SharedPreferences settings = getSharedPreferences(Constant.SHARE_PREFRENCE_USER_INFO, MODE_PRIVATE);
+        SharedPreferences settings = getSharedPreferences(Constant.SHARE_PREFERENCE_USER_INFO, MODE_PRIVATE);
 //让setting处于编辑状态
         SharedPreferences.Editor editor = settings.edit();
 //存放数据
