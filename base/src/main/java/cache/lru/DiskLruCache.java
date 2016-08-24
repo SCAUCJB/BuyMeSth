@@ -339,7 +339,7 @@ public final class DiskLruCache implements Closeable {
         }
 
         Writer writer = new BufferedWriter(
-                new OutputStreamWriter(new FileOutputStream(journalFileTmp), Util.US_ASCII));
+                new OutputStreamWriter(new FileOutputStream(journalFileTmp), Util.UTF_8));
         try {
             writer.write(MAGIC);
             writer.write("\n");

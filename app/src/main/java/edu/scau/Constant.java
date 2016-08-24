@@ -17,4 +17,9 @@ public class Constant {
     public static final String KEY_EXP="exp";
     public static final String KEY_AGE="age";
     public static final String KEY_GENDA="genda";
+
+    public static final long DISK_CACHE_SIZE = 1024 * 1024 * 20;
+    public static final int IO_BUFFER_SIZE = 8 * 1024;
+    public static final int DISK_CACHE_INDEX = 0;
+    public static final int APP_VERSION=1;
 }

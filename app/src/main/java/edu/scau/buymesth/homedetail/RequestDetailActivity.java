@@ -1,9 +1,11 @@
 package edu.scau.buymesth.homedetail;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -21,9 +23,16 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -31,9 +40,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import base.BaseActivity;
 import base.util.GlideCircleTransform;
 import butterknife.Bind;
+import cache.lru.DiskLruCache;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Request;
+import edu.scau.buymesth.util.DiskLruCacheHelper;
 
 /**
  * Created by John on 2016/8/20.
@@ -94,8 +105,65 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         presenter.initContent();
     }
 
+    private File getDiskCacheDir(Context context, String name) {
+        boolean externalStorageAvailable = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+        final String cachePath = externalStorageAvailable ? context.getExternalCacheDir().getPath() : context.getCacheDir().getPath();
+        return new File(cachePath + File.separator + name);
 
+    }
+    public void put(String key, String value) {
+        DiskLruCache.Editor editor = null;
+        BufferedWriter bw = null;
+        try {
+            editor = mDiskLruCache.edit(key);
+            if (editor == null) return;
+            OutputStream os = editor.newOutputStream(0);
+            bw = new BufferedWriter(new OutputStreamWriter(os));
+            bw.write(value);
+            editor.commit();//write CLEAN
+            Log.d("zhx","put to cache success,value="+value);
+        } catch (IOException e) {
+            e.printStackTrace();
+            try {
+                //s
+                editor.abort();//write REMOVE
+                Log.d("zhx","put to cache success,fail");
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        } finally {
+            try {
+                if (bw != null)
+                    bw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    private String hashKeyFormUrl(String url) {
+        String cacheKey;
+        try {
+            final MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+            messageDigest.update(url.getBytes());
+            cacheKey = bytesToHexString(messageDigest.digest());
+        } catch (NoSuchAlgorithmException e) {
+            cacheKey = String.valueOf(url.hashCode());
+        }
+        return cacheKey;
+    }
 
+    private String bytesToHexString(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < bytes.length; ++i) {
+            String hex = Integer.toHexString(bytes[i] & 0xFF);
+            if (hex.length() == 1) {
+                sb.append(0);
+            }
+            sb.append(hex);
+        }
+        return sb.toString();
+    }
+    private DiskLruCache mDiskLruCache=null;
     /**
      * 仅仅获取图片的高度，不加载图片
      *
@@ -103,6 +171,12 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
      * @return
      */
     private int getImageHeight(String urlString) {
+        if(mDiskLruCache==null){
+            mDiskLruCache= DiskLruCacheHelper.create(mContext,"requestDetail");
+        }
+        String value=DiskLruCacheHelper.get(urlString,mDiskLruCache);
+        if(value!=null)
+            return Integer.valueOf(value);
         HttpURLConnection urlConnection = null;
         int height = -1;
         try {
@@ -117,6 +191,8 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
             DisplayMetrics outMetrics = new DisplayMetrics();
             manager.getDefaultDisplay().getMetrics(outMetrics);
             height = (int) ((1.0f * outMetrics.widthPixels / options.outWidth) * options.outHeight);
+
+            DiskLruCacheHelper.put(urlString,String.valueOf(height),mDiskLruCache);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -137,6 +213,11 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         }
         presenter.onDestroy();
         presenter=null;
+        if(mDiskLruCache!=null) try {
+            mDiskLruCache.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         super.onDestroy();
     }
 
