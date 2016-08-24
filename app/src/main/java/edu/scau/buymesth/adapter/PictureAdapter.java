@@ -1,8 +1,6 @@
 package edu.scau.buymesth.adapter;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -11,7 +9,6 @@ import java.util.List;
 
 import adpater.BaseQuickAdapter;
 import adpater.BaseViewHolder;
-import base.util.ImageResizer;
 import cn.finalteam.galleryfinal.model.PhotoInfo;
 import edu.scau.buymesth.R;
 
