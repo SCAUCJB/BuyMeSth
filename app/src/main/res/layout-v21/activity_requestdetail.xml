@@ -23,6 +23,7 @@
     <LinearLayout
         android:id="@+id/bottom_bar"
         android:layout_alignParentBottom="true"
+        android:elevation="@dimen/elevation_high"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_36"
         android:orientation="horizontal">

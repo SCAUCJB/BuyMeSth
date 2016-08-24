@@ -52,7 +52,6 @@ public class DiskLruCacheHelper {
                 while ((len = fileInputStream.read(buf)) != -1) {
                     sb.append(new String(buf, 0, len));
                 }
-                Log.d("zhx","from cache");
                 return sb.toString();
             }
         } catch (IOException e) {

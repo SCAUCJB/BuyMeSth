@@ -1,17 +1,16 @@
 package edu.scau.buymesth.homedetail;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Build;
-import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -23,25 +22,22 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import base.BaseActivity;
 import base.util.GlideCircleTransform;
+import base.util.SpaceItemDecoration;
 import butterknife.Bind;
 import cache.lru.DiskLruCache;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
+import edu.scau.buymesth.adapter.RequestCommentAdapter;
+import edu.scau.buymesth.data.bean.Comment;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.util.DiskLruCacheHelper;
 
@@ -75,6 +71,8 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     TextView name;
     @Bind(R.id.rl_user_info)
     RelativeLayout userInfoBar;
+    @Bind(R.id.rv_comment)
+    RecyclerView rvComment;
     private RequestDetailPresenter presenter;
     private int[] heights;
     private List<ImageView> imageViews;
@@ -95,6 +93,10 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     @Override
     public void initView() {
         initToolBar();
+        rvComment.setLayoutManager(new LinearLayoutManager(mContext));
+        rvComment.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_4)));
+        rvComment.setHasFixedSize(true);
+        rvComment.setNestedScrollingEnabled(false);
         RequestDetailModel model = new RequestDetailModel();
         model.setRequest((Request) getIntent().getSerializableExtra(EXTRA_REQUEST));
         presenter = new RequestDetailPresenter();
@@ -102,66 +104,10 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         presenter.initUserInfo();
         presenter.initCommentBar();
         presenter.initContent();
+        presenter.initComment();
     }
 
-    private File getDiskCacheDir(Context context, String name) {
-        boolean externalStorageAvailable = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
-        final String cachePath = externalStorageAvailable ? context.getExternalCacheDir().getPath() : context.getCacheDir().getPath();
-        return new File(cachePath + File.separator + name);
 
-    }
-    public void put(String key, String value) {
-        DiskLruCache.Editor editor = null;
-        BufferedWriter bw = null;
-        try {
-            editor = mDiskLruCache.edit(key);
-            if (editor == null) return;
-            OutputStream os = editor.newOutputStream(0);
-            bw = new BufferedWriter(new OutputStreamWriter(os));
-            bw.write(value);
-            editor.commit();//write CLEAN
-            Log.d("zhx","put to cache success,value="+value);
-        } catch (IOException e) {
-            e.printStackTrace();
-            try {
-                //s
-                editor.abort();//write REMOVE
-                Log.d("zhx","put to cache success,fail");
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        } finally {
-            try {
-                if (bw != null)
-                    bw.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    private String hashKeyFormUrl(String url) {
-        String cacheKey;
-        try {
-            final MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-            messageDigest.update(url.getBytes());
-            cacheKey = bytesToHexString(messageDigest.digest());
-        } catch (NoSuchAlgorithmException e) {
-            cacheKey = String.valueOf(url.hashCode());
-        }
-        return cacheKey;
-    }
-
-    private String bytesToHexString(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < bytes.length; ++i) {
-            String hex = Integer.toHexString(bytes[i] & 0xFF);
-            if (hex.length() == 1) {
-                sb.append(0);
-            }
-            sb.append(hex);
-        }
-        return sb.toString();
-    }
     private DiskLruCache mDiskLruCache=null;
     /**
      * 仅仅获取图片的高度，不加载图片
@@ -410,6 +356,17 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     @Override
     public void hideViewPager() {
         mViewPager.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void setComment(List<Comment> commentList) {
+        if(commentList.size() == 0){
+            return;
+        }
+        RequestCommentAdapter requestCommentAdapter = new RequestCommentAdapter(commentList);
+        rvComment.setAdapter(requestCommentAdapter);
+        requestCommentAdapter.setOnRecyclerViewItemClickListener((v,p)->{
+            Toast.makeText(mContext, "i was click", Toast.LENGTH_SHORT).show();});
     }
 
 }

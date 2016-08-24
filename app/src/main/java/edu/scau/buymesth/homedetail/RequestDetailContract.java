@@ -2,7 +2,9 @@ package edu.scau.buymesth.homedetail;
 
 import java.util.List;
 
+import edu.scau.buymesth.data.bean.Comment;
 import edu.scau.buymesth.data.bean.Request;
+import rx.Observable;
 
 /**
  * Created by John on 2016/8/23.
@@ -36,10 +38,17 @@ public interface RequestDetailContract {
          void setUpViewPager(List<String> urls);
 
          void hideViewPager();
+
+         void setComment(List<Comment> commentList);
      }
     interface Model{
         void setRequest(Request request);
         Request getRequest();
         String getCommentBtnStr();
+
+        Observable<List<Comment>> getRxComment(String objId);
+
+        List<Comment> getCommentList();
+        void setCommentList(List<Comment> comments);
     }
 }

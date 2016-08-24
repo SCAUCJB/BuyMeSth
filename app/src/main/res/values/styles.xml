@@ -48,8 +48,18 @@
         <item name="android:textSize">16sp</item>
         <item name="android:textColorLink">#778085</item>
     </style>
-
-
+    <style name="commentName">
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="commentDate">
+        <item name="android:textColor">@color/silver</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+    <style name="commentText">
+        <item name="android:textColor">@color/txt_color</item>
+        <item name="android:textSize">16sp</item>
+    </style>
     <style name="theTitleLarge">
         <item name="android:textColor">@color/txt_color</item>
         <item name="android:textSize">20sp</item>

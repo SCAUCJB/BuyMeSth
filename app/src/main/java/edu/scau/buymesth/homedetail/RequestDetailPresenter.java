@@ -1,7 +1,13 @@
 package edu.scau.buymesth.homedetail;
 
+import java.util.List;
+
 import base.BasePresenter;
+import edu.scau.buymesth.data.bean.Comment;
 import edu.scau.buymesth.data.bean.Request;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by John on 2016/8/23.
@@ -40,7 +46,24 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
             mView.hideViewPager();
         }
     }
-    public void setComment(){
+    public void initComment(){
+        mModel.getRxComment(mModel.getRequest().getObjectId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<List<Comment>>() {
+            @Override
+            public void onCompleted() {
+                mView.setComment(mModel.getCommentList());
+            }
 
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onNext(List<Comment> comments) {
+                mModel.setCommentList(comments);
+            }
+        });
     }
 }
