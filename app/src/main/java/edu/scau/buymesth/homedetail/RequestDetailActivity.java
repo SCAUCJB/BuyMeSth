@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -247,9 +248,17 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
                         new Thread() {
                             @Override
                             public void run() {
+                                //提前测量图片的高度
                                 heights[fi] = getImageHeight(urls.get(fi));
                                 RequestDetailActivity.this.runOnUiThread(
-                                        () -> mAdapter.notifyDataSetChanged()
+                                        () -> {
+                                            if(fi==0){
+                                                //ViewPager的初始高度设置为第一个页面的高度
+                                                ViewGroup.LayoutParams layoutParams = mViewPager.getLayoutParams();
+                                                layoutParams.height = heights[0];
+                                                mViewPager.setLayoutParams(layoutParams);
+                                            }
+                                        }
                                 );
                             }
                         }.start();
@@ -262,10 +271,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
                 } else {
                     mViewPager.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 }
-                //ViewPager的初始高度设置为第一个页面的高度
-                ViewGroup.LayoutParams layoutParams = mViewPager.getLayoutParams();
-                layoutParams.height = heights[0];
-                mViewPager.setLayoutParams(layoutParams);
+
             }
         });
         mAdapter = new PagerAdapter() {
@@ -296,6 +302,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                //最后一页就不用动态改变高度了
                 if (position == heights.length - 1) {
                     return;
                 }
