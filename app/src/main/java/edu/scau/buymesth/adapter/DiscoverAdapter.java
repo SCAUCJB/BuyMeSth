@@ -1,49 +1,18 @@
 package edu.scau.buymesth.adapter;
 
 import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.Nullable;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.widget.RecyclerView;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.format.DateUtils;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import adpater.BaseMultiItemQuickAdapter;
-import adpater.BaseQuickAdapter;
 import adpater.BaseViewHolder;
 import base.util.GlideCircleTransform;
-import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
-import cn.bmob.v3.datatype.BmobPointer;
-import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.FindListener;
 import edu.scau.buymesth.R;
-import edu.scau.buymesth.data.DataServer;
-import edu.scau.buymesth.data.adapter.MomentItem;
 import edu.scau.buymesth.data.bean.Moment;
-import edu.scau.buymesth.data.bean.MomentsComment;
-import edu.scau.buymesth.data.bean.MomentsLike;
-import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.util.ColorChangeHelper;
 import edu.scau.buymesth.util.DateFormatHelper;
 import ui.layout.NineGridLayout;

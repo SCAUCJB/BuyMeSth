@@ -16,7 +16,10 @@ import base.BaseActivity;
 import base.util.ToastUtil;
 import butterknife.Bind;
 import cn.bmob.v3.BmobUser;
+import cn.finalteam.galleryfinal.CoreConfig;
+import cn.finalteam.galleryfinal.FunctionConfig;
 import cn.finalteam.galleryfinal.GalleryFinal;
+import cn.finalteam.galleryfinal.ThemeConfig;
 import cn.finalteam.galleryfinal.model.PhotoInfo;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.PictureAdapter;
@@ -59,17 +62,19 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
-
-
-
         adapter = new PictureAdapter(list);
         mRecyclerView.setAdapter(adapter);
         adapter.setOnRecyclerViewItemClickListener(new BaseQuickAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 ////这里设置点击事件
-                if(adapter.getItemId(position) == 1){
-                    GalleryFinal.openGalleryMuti(1, 9, new GalleryFinal.OnHanlderResultCallback() {
+                if (adapter.getItemId(position) == 1) {
+                    FunctionConfig functionConfig = new FunctionConfig.Builder()
+                            .setEnableCamera(true)
+                            .setSelected(list)
+                            .setMutiSelectMaxSize(9)
+                            .build();
+                    GalleryFinal.openGalleryMuti(1, functionConfig, new GalleryFinal.OnHanlderResultCallback() {
                         @Override
                         public void onHanlderSuccess(int requestCode, List<PhotoInfo> resultList) {
                             //这个传过来的resultList的生命周期跟当前activity的生命周期不一致，所以要复制一份，否则recycler view没更新完，resultList就被垃圾回收了
@@ -85,14 +90,11 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                             ToastUtil.show("出错了");
                         }
                     });
-                }
-                else{
-
+                } else {
+                    //TODO: 使用ImageLoader来放大查看图片
                 }
             }
-
         });
-
         initToolBar();
     }
 

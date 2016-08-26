@@ -32,6 +32,8 @@ public class App extends Application {
         //设置主题
         //ThemeConfig.CYAN
         ThemeConfig theme = new ThemeConfig.Builder()
+//                .setTitleBarBgColor()
+                .setIconCamera(R.mipmap.ic_camear)
                 .build();
         //配置功能
         FunctionConfig functionConfig = new FunctionConfig.Builder()
