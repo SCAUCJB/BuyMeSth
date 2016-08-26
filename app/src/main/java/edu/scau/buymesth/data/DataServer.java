@@ -3,6 +3,7 @@ package edu.scau.buymesth.data;
 import java.util.LinkedList;
 import java.util.List;
 
+import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.data.bean.User;
 
@@ -35,6 +36,25 @@ public class DataServer {
             request.setComments(30);
             request.setAuthor(user);
             list.add(request);
+        }
+        return list;
+    }
+
+    public static List<Moment>getMoments(int size){
+        List<Moment> list=new LinkedList<>();
+        for(int i=0;i<size;i++){
+            Moment moment=new Moment();
+            User user=new User();
+            user.setNickname("Miracle");
+            user.setAvatar("http://p2.ifengimg.com/fck/2016_28/26e28bccda30aaa_w350_h495.png");
+            moment.setContent("很急很关键，十五字十五字十五字十五字");
+//            moment.setLikes(150);
+            List<String> urls=new LinkedList<>();
+//            urls.add("http://www.dota2.com.cn/images/heroes/antimage_vert.jpg");
+            moment.setImages(urls);
+//            moment.setComments(30);
+            moment.setAuthor(user);
+            list.add(moment);
         }
         return list;
     }

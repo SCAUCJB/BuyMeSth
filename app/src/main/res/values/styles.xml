@@ -92,6 +92,10 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textColorLink">#778085</item>
     </style>
+    <style name="theTextSmall">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColorLink">#778085</item>
+    </style>
 
     <style name="theLevelWhite">
         <item name="android:textSize">8sp</item>

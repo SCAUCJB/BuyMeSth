@@ -22,7 +22,8 @@ public class HomeAdapter extends BaseQuickAdapter<Request> {
 
     @Override
     protected void convert(BaseViewHolder helper, Request item) {
-            helper.setText(R.id.tv_name,item.getAuthor().getNickname())
+            helper.setText(R.id.tv_name,
+                    item.getAuthor().getNickname())
             .setText(R.id.tv_tweet_date,item.getCreatedAt())
             .setText(R.id.tv_tweet_title,item.getTitle())
             .setText(R.id.tv_tweet_text,item.getContent())

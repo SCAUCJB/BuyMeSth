@@ -30,21 +30,19 @@ public class App extends Application {
         Bmob.initialize(this, "211614edac96ab4c9492179cf459993a");
 
         //设置主题
-//ThemeConfig.CYAN
+        //ThemeConfig.CYAN
         ThemeConfig theme = new ThemeConfig.Builder()
                 .build();
-//配置功能
+        //配置功能
         FunctionConfig functionConfig = new FunctionConfig.Builder()
                 .setEnableCamera(true)
                 .build();
 
-//配置imageloader
+        //配置imageloader
         GlideImageLoader imageloader = new GlideImageLoader();
         CoreConfig coreConfig = new CoreConfig.Builder(this, imageloader, theme)
                 .setFunctionConfig(functionConfig)
                 .build();
         GalleryFinal.init(coreConfig);
-
-
     }
 }

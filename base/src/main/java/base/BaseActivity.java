@@ -73,7 +73,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             View view = LayoutInflater.from(this).inflate(layoutResID, null);
             frameLayout.addView(view);
             //添加状态栏色块
-            if(showColorStatusBar()&&Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            if(showColorStatusBar()&&Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){//4.4以上就统一用这种状态栏
                 colorStatus = new ImageView(this);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, getStatusBarHeight());
                 frameLayout.addView(colorStatus,params);

@@ -21,4 +21,5 @@
     <string name="error_input_too_long">Input too short</string>
     <string name="error_input_incorrect">Input incorrect</string>
     <string name="abcdefadsfdkhvkljxzhvkljafhkvjkzhaiofweopaifhvndsklowpihvblkjdszvnoiwhafvadsmhfoqieafhvbdsjzcxmoqiwlfadsnmvkjzvmsdlfknoiasfdhklsdzkvj">long_text</string>
+    <string name="text_share_request">Share Request :</string>
 </resources>
