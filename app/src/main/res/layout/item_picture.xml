@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/iv"
+        android:layout_width="110dp"
+        android:layout_height="110dp" />
+
+    <ImageView
+        android:id="@+id/btn_cancle"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignEnd="@+id/iv"
+        android:visibility="visible"
+        android:src="@mipmap/ic_clear_white_18dp"
+        android:background="#424242" />
+</RelativeLayout>
