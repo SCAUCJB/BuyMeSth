@@ -1,5 +1,6 @@
 package edu.scau.buymesth.publish;
 
+import android.app.ProgressDialog;
 import android.graphics.Rect;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,7 @@ import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.PictureAdapter;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.data.bean.User;
+import ui.widget.SelectableSeekBar;
 
 /**
  * Created by Jammy on 2016/8/11.
@@ -39,7 +42,8 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     EditText etDetail;
     @Bind(R.id.rv)
     RecyclerView mRecyclerView;
-
+    @Bind(R.id.range_bar)
+    SelectableSeekBar mSelectableSeekBar;
     PublishPresenter presenter;
     PictureAdapter adapter;
 
@@ -47,6 +51,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     List<PhotoInfo> list = new ArrayList<>();
     @Bind(R.id.toolbar)
     Toolbar toolbar;
+    private ProgressDialog mDialog=null;
 
 
     @Override
@@ -64,38 +69,37 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
         adapter = new PictureAdapter(list);
         mRecyclerView.setAdapter(adapter);
-        adapter.setOnRecyclerViewItemClickListener(new BaseQuickAdapter.OnRecyclerViewItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                ////这里设置点击事件
-                if (adapter.getItemId(position) == 1) {
-                    FunctionConfig functionConfig = new FunctionConfig.Builder()
-                            .setEnableCamera(true)
-                            .setSelected(list)
-                            .setMutiSelectMaxSize(9)
-                            .build();
-                    GalleryFinal.openGalleryMuti(1, functionConfig, new GalleryFinal.OnHanlderResultCallback() {
-                        @Override
-                        public void onHanlderSuccess(int requestCode, List<PhotoInfo> resultList) {
-                            //这个传过来的resultList的生命周期跟当前activity的生命周期不一致，所以要复制一份，否则recycler view没更新完，resultList就被垃圾回收了
-                            list = new ArrayList<>();
-                            for (int i = 0; i < resultList.size(); i++) {
-                                list.add(resultList.get(i));
-                            }
-                            adapter.setList(list);
+        adapter.setOnRecyclerViewItemClickListener((view, position) -> {
+            ////这里设置点击事件
+            if (adapter.getItemId(position) == 1) {
+                FunctionConfig functionConfig = new FunctionConfig.Builder()
+                        .setEnableCamera(true)
+                        .setSelected(list)
+                        .setMutiSelectMaxSize(9)
+                        .build();
+                GalleryFinal.openGalleryMuti(1, functionConfig, new GalleryFinal.OnHanlderResultCallback() {
+                    @Override
+                    public void onHanlderSuccess(int requestCode, List<PhotoInfo> resultList) {
+                        //这个传过来的resultList的生命周期跟当前activity的生命周期不一致，所以要复制一份，否则recycler view没更新完，resultList就被垃圾回收了
+                        list = new ArrayList<>();
+                        for (int i = 0; i < resultList.size(); i++) {
+                            list.add(resultList.get(i));
                         }
+                        adapter.setList(list);
+                    }
 
-                        @Override
-                        public void onHanlderFailure(int requestCode, String errorMsg) {
-                            ToastUtil.show("出错了");
-                        }
-                    });
-                } else {
-                    //TODO: 使用ImageLoader来放大查看图片
-                }
+                    @Override
+                    public void onHanlderFailure(int requestCode, String errorMsg) {
+                        ToastUtil.show("出错了");
+                    }
+                });
+            } else {
+                //TODO: 使用ImageLoader来放大查看图片
             }
         });
         initToolBar();
+        mSelectableSeekBar.setOnStateSelectedListener(pos -> Toast.makeText(PublishActivity.this,pos+" was selected",Toast.LENGTH_SHORT).show());
+        int currentPosition=mSelectableSeekBar.getSelectedPosition();
     }
 
     @Override
@@ -125,6 +129,22 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     @Override
     public void onSubmitFail() {
         ToastUtil.show("提交失败");
+    }
+
+    @Override
+    public void showLoadingDialog() {
+        if(mDialog==null)
+        {
+            mDialog = new ProgressDialog(mContext);
+            mDialog.setCancelable(false);
+            mDialog.setMessage("上传中");
+        }
+        mDialog.show();
+    }
+
+    @Override
+    public void closeLoadingDialog() {
+        mDialog.dismiss();
     }
 
     private void initToolBar() {

@@ -40,7 +40,7 @@ public class PublishModel implements BaseModel, PublishContract.Model {
                                 if (e == null) {
                                     observable.onSuccess(s);
                                 } else {
-                                    Log.i("bmob", "失败：" + e.getMessage() + "," + e.getErrorCode());
+                                    Log.e("bmob", "失败：" + e.getMessage() + "," + e.getErrorCode());
                                     observable.onError(e);
                                 }
                             }
