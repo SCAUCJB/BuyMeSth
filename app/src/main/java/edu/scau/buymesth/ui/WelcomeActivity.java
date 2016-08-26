@@ -88,6 +88,11 @@ public class WelcomeActivity extends BaseActivity {
         });
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
     private void jumpToNextActivity() {
         if (bmobUser != null) {
             Intent intent = new Intent(WelcomeActivity.this, TabActivity.class);

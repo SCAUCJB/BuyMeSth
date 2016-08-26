@@ -12,7 +12,7 @@ import base.BaseActivity;
 import butterknife.Bind;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.TabAdapter;
-import edu.scau.buymesth.discover.view.DiscoverFragment;
+import edu.scau.buymesth.discover.list.DiscoverFragment;
 import edu.scau.buymesth.home.HomeFragment;
 import edu.scau.buymesth.user.view.UserFragment;
 import ui.widget.ChangeColorIconWithTextView;

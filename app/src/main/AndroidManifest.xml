@@ -47,14 +47,16 @@
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
             android:name=".main.TabActivity"
-            android:theme="@style/AppTheme.SwipeBackLayout" />
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".publish.PublishActivity"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
         <activity android:name=".homedetail.RequestDetailActivity"
+            android:theme="@style/AppTheme.SwipeBackLayout"/>
 
+        <activity android:name=".discover.detail.MomentDetailActivity"
             android:theme="@style/AppTheme.SwipeBackLayout"/>
     </application>
 

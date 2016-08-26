@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingLeft="5dp"
+        android:paddingTop="10dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="10dp">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/iv_avatar">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="8dp"
+                android:layout_marginLeft="5dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toEndOf="@+id/iv_avatar">
+
+                    <TextView
+                        android:id="@+id/tv_date"
+                        style="@style/theDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="04/06/13"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true" />
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:baselineAligned="false"
+                        android:layout_toStartOf="@+id/tv_tweet_date"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/tv_name"
+                            style="@style/theName"
+                            android:text="Miracle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="5dp" />
+
+                        <TextView
+                            android:id="@+id/tv_level"
+                            android:text="LV 2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:autoText="true"
+                            android:paddingLeft="4dp"
+                            android:paddingTop="2dp"
+                            android:paddingRight="4dp"
+                            android:paddingBottom="2dp"
+                            android:textColor="#ffffff"
+                            android:textSize="8sp"
+                            android:textStyle="bold"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@+id/tv_name"
+                            android:background="#525252" />
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/tv_content"
+                    style="@style/theText"
+                    android:layout_below="@+id/tv_tweet_title"
+                    android:layout_alignStart="@+id/tv_tweet_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:textColor="@android:color/tertiary_text_dark"
+                    android:text="Hello world!"
+                    android:layout_marginTop="@dimen/title_to_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_avatar"
+            android:src="@mipmap/def_head"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_alignParentStart="true"
+            android:layout_margin="4dp" />
+
+
+    </RelativeLayout>

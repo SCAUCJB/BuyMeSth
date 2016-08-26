@@ -1,5 +1,6 @@
 package edu.scau.buymesth.homedetail;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
@@ -79,7 +80,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     private PagerAdapter mAdapter;
     private ConcurrentLinkedQueue<HttpURLConnection> connections = new ConcurrentLinkedQueue<>();
 
-    public static void navigate(AppCompatActivity activity, Request request) {
+    public static void navigate(Activity activity, Request request) {
         Intent intent = new Intent(activity, RequestDetailActivity.class);
         intent.putExtra(EXTRA_REQUEST, request);
         activity.startActivity(intent);
