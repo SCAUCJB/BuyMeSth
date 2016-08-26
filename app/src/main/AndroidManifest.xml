@@ -51,10 +51,10 @@
 
         <activity
             android:name=".publish.PublishActivity"
-            android:theme="@style/AppTheme.SwipeBackLayout" />
+            android:theme="@style/AppTheme.SwipeBackLayout"
+            />
 
         <activity android:name=".homedetail.RequestDetailActivity"
-
             android:theme="@style/AppTheme.SwipeBackLayout"/>
     </application>
 
