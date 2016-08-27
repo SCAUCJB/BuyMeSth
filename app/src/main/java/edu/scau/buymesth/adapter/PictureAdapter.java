@@ -1,10 +1,7 @@
 package edu.scau.buymesth.adapter;
 
-
-import android.media.Image;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -21,9 +18,7 @@ import edu.scau.buymesth.R;
  */
 public class PictureAdapter extends BaseQuickAdapter<PhotoInfo> {
 
-    //    List<PhotoInfo> list;
     public void setList(List<PhotoInfo> list) {
-//        this.list = list;
         if (list.size() != 9)
             list.add(new PhotoInfo());
         setNewData(list);
@@ -38,9 +33,11 @@ public class PictureAdapter extends BaseQuickAdapter<PhotoInfo> {
 
     @Override
     protected void convert(BaseViewHolder helper, PhotoInfo item) {
-        if (helper.getLayoutPosition()==getItemCount()-1&&getItemCount()!=9) {
+        if (item.getPhotoPath()==null) {
+            //TODO:8个的BUG在这里
             ImageView btn = helper.getView(R.id.btn_cancle);
             btn.setVisibility(View.GONE);
+            item.setPhotoPath(null);
             Glide.with(mContext).load(R.mipmap.ic_add).centerCrop().into((ImageView) helper.getView(R.id.iv));
         } else {
             String url = item.getPhotoPath();
@@ -50,9 +47,10 @@ public class PictureAdapter extends BaseQuickAdapter<PhotoInfo> {
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO:如果满9个删除的特殊情况还没考虑
-                    Log.v("点击了","删除了");
-                    getData().remove(helper.getPosition());
+                    getData().remove(item);
+                    if(getData().get(getData().size()-1).getPhotoPath()!=null){
+                        setList(getData());
+                    }
                     notifyDataSetChanged();
                 }
             });

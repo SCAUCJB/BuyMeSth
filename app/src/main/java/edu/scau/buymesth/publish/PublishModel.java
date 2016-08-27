@@ -2,6 +2,7 @@ package edu.scau.buymesth.publish;
 
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import base.BaseModel;
@@ -21,11 +22,14 @@ public class PublishModel implements BaseModel, PublishContract.Model {
 
     @Override
     public void submit(Request request, SingleSubscriber<String> observable, List<PhotoInfo> list) {
-
-        if (list != null && list.size() != 0) {
-            String[] fileList = new String[list.size()];
-            for(int i=0;i<list.size();i++){
-                fileList[i]=list.get(i).getPhotoPath();
+        List<PhotoInfo> photoInfoList = new ArrayList<>(list);
+        if (photoInfoList != null && photoInfoList.size() != 0) {
+            if(photoInfoList.get(photoInfoList.size()-1).getPhotoPath()==null){
+                photoInfoList.remove(photoInfoList.size()-1);
+            }
+            String[] fileList = new String[photoInfoList.size()];
+            for(int i=0;i<photoInfoList.size();i++){
+                fileList[i]=photoInfoList.get(i).getPhotoPath();
             }
             BmobFile.uploadBatch(fileList, new UploadBatchListener() {
                 @Override

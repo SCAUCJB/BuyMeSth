@@ -118,13 +118,15 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     public void onSubmitFinish() {
-        ToastUtil.show("提交成功");
+        //  TODO:这里有BUG
+//        ToastUtil.show("提交成功");
         this.finish();
     }
 
     @Override
     public void onSubmitFail() {
-        ToastUtil.show("提交失败");
+        //  TODO:这里有BUG
+//        ToastUtil.show("提交失败");
     }
 
     private void initToolBar() {
