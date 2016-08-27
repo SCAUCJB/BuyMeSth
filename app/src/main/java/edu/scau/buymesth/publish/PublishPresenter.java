@@ -21,16 +21,16 @@ public class PublishPresenter extends BasePresenter<PublishContract.Model, Publi
     }
 
     public void submit(Request request, List<PhotoInfo> list) {
-
+        mView.showLoadingDialog();
         SingleSubscriber singleSubscriber = new SingleSubscriber() {
             @Override
             public void onSuccess(Object o) {
-                mView.onSubmitFinish();
+                mView.onSubmitFinish();mView.closeLoadingDialog();
             }
 
             @Override
             public void onError(Throwable throwable) {
-                mView.onSubmitFail();
+                mView.onSubmitFail();mView.closeLoadingDialog();
             }
         };
 

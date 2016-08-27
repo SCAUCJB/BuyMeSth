@@ -14,7 +14,8 @@ public interface PublishContract {
     interface  View{
         void onSubmitFinish();
         void onSubmitFail();
-
+        void showLoadingDialog();
+        void closeLoadingDialog();
     }
 
     interface Model{
