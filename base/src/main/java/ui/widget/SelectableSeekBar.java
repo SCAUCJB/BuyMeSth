@@ -5,25 +5,27 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ScrollView;
+
 /**
  * Created by John on 2016/8/27.
  */
 
 public class SelectableSeekBar extends View {
-
     private TextPaint mTextPaint;
     private Paint mSlipperPaint;
     private float mTextWidth;
 
-    private int mSize = 3;
+    private int mSize = 2;
     private int mCircleRadius = 20;
     private float mLineWidth = 8;
     private int mCurrentPos = 0;
     private float mCurrentX=-1;
     private float mVelocity = 1;
-    private float mAcceleration = 1;
+    private float mAcceleration = 2;
     private boolean mIsUp;
     private float cy;
     private float[] cx=new float[3];
@@ -35,6 +37,10 @@ public class SelectableSeekBar extends View {
     private Paint mLinePaint;
     private float mSlipperRadius=35;
 
+    private ScrollView parent;
+    public void setParent(ScrollView parent){
+        this.parent=parent;
+    }
     public  interface OnStateSelectedListener{
         void onStateSelected(int pos);
     }
@@ -60,7 +66,7 @@ public class SelectableSeekBar extends View {
 
     private void init( AttributeSet attrs, int defStyle) {
 
-        texts=new String[]{"一口价","范围内","面议"};
+        texts=new String[]{"一口价","范围内"};
         mSlipperPaint = new Paint();
         mSlipperPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         mSlipperPaint.setColor(mSlipperColor);
@@ -93,7 +99,7 @@ public class SelectableSeekBar extends View {
             perWidth = (int) (1.0f * contentWidth / mSize);
             cx[i] = paddingLeft + 1.0f * perWidth / 2 + i * perWidth;
             if(mCurrentX==-1)mCurrentX=cx[i];
-            cy = paddingTop + 1.0f * contentHeight / mSize;
+            cy = paddingTop + 1.0f * contentHeight / 3;
             canvas.drawCircle(cx[i], cy, mCircleRadius, mLinePaint);
             if (i != mSize - 1) {
                 float startX = cx[i] + mCircleRadius;
@@ -106,7 +112,7 @@ public class SelectableSeekBar extends View {
             if(mCurrentPos==i)mTextPaint.setColor(mSlipperColor);
             else mTextPaint.setColor(Color.BLACK);
             mTextWidth = mTextPaint.measureText(texts[i]);
-            canvas.drawText(texts[i],cx[i]-mTextWidth/2,mCircleRadius+15+paddingTop + 2.0f * contentHeight / mSize,mTextPaint);
+            canvas.drawText(texts[i],cx[i]-mTextWidth/2,mCircleRadius+15+paddingTop + 2.0f * contentHeight / 3,mTextPaint);
         }
         canvas.drawCircle(mCurrentX, paddingTop + 1.0f * contentHeight / 3, mSlipperRadius, mSlipperPaint);
         int state=(int)(mCurrentX-cx[0])/(perWidth/2);
@@ -137,14 +143,13 @@ public class SelectableSeekBar extends View {
         }
         else {
             mVelocity = 1;
-            mAcceleration = 1;
+            mAcceleration = 2;
             mCurrentPos=i;
             if(mListener!=null){
                 mListener.onStateSelected(i);
             }
         }
     }
-
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -154,17 +159,20 @@ public class SelectableSeekBar extends View {
                 mIsUp = false;
                 mSlipperPaint.setColor(Color.WHITE);
                 mSlipperRadius+=8;
+                parent.requestDisallowInterceptTouchEvent(true);
                 mCurrentX = event.getX();
                 return true;
             case MotionEvent.ACTION_MOVE:
                 mIsUp=false;
                 mSlipperPaint.setColor(Color.WHITE);
                 mCurrentX = event.getX();
+                parent.requestDisallowInterceptTouchEvent(true);
                 invalidate();
                 return  true;
             case MotionEvent.ACTION_UP:
                 mIsUp = true;
                 mSlipperRadius-=8;
+                parent.requestDisallowInterceptTouchEvent(false);
                 invalidate();
                 return true;
         }

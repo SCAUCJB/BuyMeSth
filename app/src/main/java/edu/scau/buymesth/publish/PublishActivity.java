@@ -2,26 +2,29 @@ package edu.scau.buymesth.publish;
 
 import android.app.ProgressDialog;
 import android.graphics.Rect;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import adpater.BaseQuickAdapter;
 import base.BaseActivity;
 import base.util.ToastUtil;
 import butterknife.Bind;
 import cn.bmob.v3.BmobUser;
-import cn.finalteam.galleryfinal.CoreConfig;
 import cn.finalteam.galleryfinal.FunctionConfig;
 import cn.finalteam.galleryfinal.GalleryFinal;
-import cn.finalteam.galleryfinal.ThemeConfig;
 import cn.finalteam.galleryfinal.model.PhotoInfo;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.PictureAdapter;
@@ -46,13 +49,22 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     SelectableSeekBar mSelectableSeekBar;
     PublishPresenter presenter;
     PictureAdapter adapter;
-
-
+    @Bind(R.id.rl_price_bar)
+    RelativeLayout mPriceBar;
+    @Bind(R.id.tv_price_number)
+    TextView mPriceNumber;
     List<PhotoInfo> list = new ArrayList<>();
     @Bind(R.id.toolbar)
     Toolbar toolbar;
+    @Bind(R.id.sv_parent)
+    ScrollView parent;
     private ProgressDialog mDialog=null;
-
+    private AlertDialog priceInputDialog;
+    private AlertDialog priceRangeDialog;
+    private String low;
+    private String high;
+    private String rangePrice="￥0~￥0";
+    private String thePrice="￥0";
 
     @Override
     protected int getLayoutId() {
@@ -98,8 +110,38 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
             }
         });
         initToolBar();
-        mSelectableSeekBar.setOnStateSelectedListener(pos -> Toast.makeText(PublishActivity.this,pos+" was selected",Toast.LENGTH_SHORT).show());
-        int currentPosition=mSelectableSeekBar.getSelectedPosition();
+        mSelectableSeekBar.setParent(parent);
+        mSelectableSeekBar.setOnStateSelectedListener(pos -> {
+            if(mSelectableSeekBar.getSelectedPosition()==0)
+                mPriceNumber.setText(thePrice);
+            else if(mSelectableSeekBar.getSelectedPosition()==1)
+                mPriceNumber.setText( rangePrice);
+        });
+        final EditText editText=new EditText(mContext);
+        editText.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+        priceInputDialog=new AlertDialog.Builder(mContext).setView(editText).setPositiveButton("确定", (dialog, which) -> {
+            String price=editText.getText().toString();
+            if(!price.equals("")){
+                thePrice="￥"+price;
+            }
+            mPriceNumber.setText(thePrice);
+        }).create();
+        View view=getLayoutInflater().inflate(R.layout.dialog_price_range,null) ;
+        EditText etLow = (EditText) view.findViewById(R.id.et_low);
+        EditText etHigh = (EditText) view.findViewById(R.id.et_high);
+        priceRangeDialog=new AlertDialog.Builder(mContext).setView(view).setPositiveButton("确定", (dialog, which) -> {
+             low= etLow.getText().toString();
+             high= etHigh.getText().toString();
+            if(!low.equals("")&&!high.equals("")&&Integer.valueOf(low)<Integer.valueOf(high))
+                rangePrice="￥"+low+"~￥"+high;
+            mPriceNumber.setText( rangePrice);
+        }).create();
+        mPriceBar.setOnClickListener((v)->{
+            if(mSelectableSeekBar.getSelectedPosition()==0)
+            priceInputDialog.show();
+            else if(mSelectableSeekBar.getSelectedPosition()==1)
+                priceRangeDialog.show();
+        });
     }
 
     @Override
@@ -122,13 +164,12 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     public void onSubmitFinish() {
-        ToastUtil.show("提交成功");
         this.finish();
     }
 
     @Override
     public void onSubmitFail() {
-        ToastUtil.show("提交失败");
+        Toast.makeText(mContext,"上传失败，请重试",Toast.LENGTH_SHORT).show();
     }
 
     @Override
