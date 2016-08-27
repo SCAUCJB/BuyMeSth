@@ -5,16 +5,12 @@ import java.util.List;
 import base.BasePresenter;
 import cn.finalteam.galleryfinal.model.PhotoInfo;
 import edu.scau.buymesth.data.bean.Request;
-import edu.scau.buymesth.home.HomeContract;
-import rx.Observable;
-import rx.Observer;
-import rx.Single;
-import rx.SingleSubscriber;
+import rx.Subscriber;
 
 /**
  * Created by Jammy on 2016/8/16.
  */
-public class PublishPresenter extends BasePresenter<PublishContract.Model, PublishContract.View>{
+public class PublishPresenter extends BasePresenter<PublishContract.Model, PublishContract.View> {
     @Override
     public void onStart() {
 
@@ -22,19 +18,26 @@ public class PublishPresenter extends BasePresenter<PublishContract.Model, Publi
 
     public void submit(Request request, List<PhotoInfo> list) {
         mView.showLoadingDialog();
-        SingleSubscriber singleSubscriber = new SingleSubscriber() {
+        Subscriber<String> subscriber = new Subscriber<String>() {
+
             @Override
-            public void onSuccess(Object o) {
-                mView.onSubmitFinish();mView.closeLoadingDialog();
+            public void onCompleted() {
+                mView.onSubmitFinish();
+                mView.closeLoadingDialog();
             }
 
             @Override
             public void onError(Throwable throwable) {
-                mView.onSubmitFail();mView.closeLoadingDialog();
+                mView.onSubmitFail();
+                mView.closeLoadingDialog();
+            }
+
+            @Override
+            public void onNext(String s) {
+
             }
         };
-
-        mModel.submit(request,singleSubscriber,list);
+        mModel.submit(request, subscriber, list);
     }
 
 

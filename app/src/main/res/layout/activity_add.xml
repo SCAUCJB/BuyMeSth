@@ -70,15 +70,23 @@
                 android:layout_height="70dp"
                 android:paddingBottom="2dp"
                 android:paddingTop="5dp" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="#bdbdbd"
+                android:layout_marginTop="10dp" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
                 android:fadingEdge="none"
                 android:foregroundGravity="center"
-                android:overScrollMode="never" />
+                android:overScrollMode="never"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
 
             <Button
                 android:id="@+id/btn_submit"
@@ -91,7 +99,8 @@
                 android:layout_marginRight="10dp"
                 android:background="#ff5454"
                 android:text="提交"
-                android:textColor="#ffffff" />
+                android:textColor="#ffffff"
+                android:layout_marginTop="10dp" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

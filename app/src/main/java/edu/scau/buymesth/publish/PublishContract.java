@@ -6,6 +6,7 @@ import cn.finalteam.galleryfinal.model.PhotoInfo;
 import edu.scau.buymesth.data.bean.Request;
 import rx.Observer;
 import rx.SingleSubscriber;
+import rx.Subscriber;
 
 /**
  * Created by Jammy on 2016/8/16.
@@ -19,7 +20,7 @@ public interface PublishContract {
     }
 
     interface Model{
-        void submit(Request request, SingleSubscriber<String> observable, List<PhotoInfo> list);
+        void submit(Request request, Subscriber<String> observable, List<PhotoInfo> list);
     }
 
 
