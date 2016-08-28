@@ -1,11 +1,14 @@
 package edu.scau.buymesth.publish;
 
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -17,8 +20,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
+import adpater.BaseQuickAdapter;
 import base.BaseActivity;
 import base.util.ToastUtil;
 import butterknife.Bind;
@@ -58,13 +64,16 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     Toolbar toolbar;
     @Bind(R.id.sv_parent)
     ScrollView parent;
-    private ProgressDialog mDialog=null;
+    private ProgressDialog mDialog = null;
     private AlertDialog priceInputDialog;
     private AlertDialog priceRangeDialog;
     private String low;
     private String high;
-    private String rangePrice="￥0~￥0";
-    private String thePrice="￥0";
+    private String rangePrice = "￥0~￥0";
+    private String thePrice = "￥0";
+
+    ItemTouchHelper helper;
+
 
     @Override
     protected int getLayoutId() {
@@ -79,8 +88,47 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
+
+        helper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
+            @Override
+            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                int dragFlags = ItemTouchHelper.UP |
+                        ItemTouchHelper.DOWN |
+                        ItemTouchHelper.LEFT |
+                        ItemTouchHelper.RIGHT;
+                int swipeFlags = 0;
+                return makeMovementFlags(dragFlags, swipeFlags);
+            }
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+
+                int fromPosition = viewHolder.getAdapterPosition();
+                int toPosition = target.getAdapterPosition();
+                if(adapter.getItemId(fromPosition)==1) return  false;
+                if(adapter.getItemId(toPosition)==1)return false;
+                if (fromPosition < toPosition) {
+                    for (int i = fromPosition; i < toPosition; i++) {
+                        Collections.swap(adapter.getData(), i, i + 1);
+                    }
+                } else {
+                    for (int i = fromPosition; i > toPosition; i--) {
+                        Collections.swap(adapter.getData(), i, i - 1);
+                    }
+                }
+                adapter.notifyItemMoved(fromPosition,toPosition);
+                return true;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+            }
+        });
+        helper.attachToRecyclerView(mRecyclerView);
         adapter = new PictureAdapter(list);
         mRecyclerView.setAdapter(adapter);
+
         adapter.setOnRecyclerViewItemClickListener((view, position) -> {
             ////这里设置点击事件
             if (adapter.getItemId(position) == 1) {
@@ -112,34 +160,34 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         initToolBar();
         mSelectableSeekBar.setParent(parent);
         mSelectableSeekBar.setOnStateSelectedListener(pos -> {
-            if(mSelectableSeekBar.getSelectedPosition()==0)
+            if (mSelectableSeekBar.getSelectedPosition() == 0)
                 mPriceNumber.setText(thePrice);
-            else if(mSelectableSeekBar.getSelectedPosition()==1)
-                mPriceNumber.setText( rangePrice);
+            else if (mSelectableSeekBar.getSelectedPosition() == 1)
+                mPriceNumber.setText(rangePrice);
         });
-        final EditText editText=new EditText(mContext);
+        final EditText editText = new EditText(mContext);
         editText.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
-        priceInputDialog=new AlertDialog.Builder(mContext).setView(editText).setPositiveButton("确定", (dialog, which) -> {
-            String price=editText.getText().toString();
-            if(!price.equals("")){
-                thePrice="￥"+price;
+        priceInputDialog = new AlertDialog.Builder(mContext).setView(editText).setPositiveButton("确定", (dialog, which) -> {
+            String price = editText.getText().toString();
+            if (!price.equals("")) {
+                thePrice = "￥" + price;
             }
             mPriceNumber.setText(thePrice);
         }).create();
-        View view=getLayoutInflater().inflate(R.layout.dialog_price_range,null) ;
+        View view = getLayoutInflater().inflate(R.layout.dialog_price_range, null);
         EditText etLow = (EditText) view.findViewById(R.id.et_low);
         EditText etHigh = (EditText) view.findViewById(R.id.et_high);
-        priceRangeDialog=new AlertDialog.Builder(mContext).setView(view).setPositiveButton("确定", (dialog, which) -> {
-             low= etLow.getText().toString();
-             high= etHigh.getText().toString();
-            if(!low.equals("")&&!high.equals("")&&Integer.valueOf(low)<Integer.valueOf(high))
-                rangePrice="￥"+low+"~￥"+high;
-            mPriceNumber.setText( rangePrice);
+        priceRangeDialog = new AlertDialog.Builder(mContext).setView(view).setPositiveButton("确定", (dialog, which) -> {
+            low = etLow.getText().toString();
+            high = etHigh.getText().toString();
+            if (!low.equals("") && !high.equals("") && Integer.valueOf(low) < Integer.valueOf(high))
+                rangePrice = "￥" + low + "~￥" + high;
+            mPriceNumber.setText(rangePrice);
         }).create();
-        mPriceBar.setOnClickListener((v)->{
-            if(mSelectableSeekBar.getSelectedPosition()==0)
-            priceInputDialog.show();
-            else if(mSelectableSeekBar.getSelectedPosition()==1)
+        mPriceBar.setOnClickListener((v) -> {
+            if (mSelectableSeekBar.getSelectedPosition() == 0)
+                priceInputDialog.show();
+            else if (mSelectableSeekBar.getSelectedPosition() == 1)
                 priceRangeDialog.show();
         });
     }
@@ -169,28 +217,25 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     public void onSubmitFail() {
-        Toast.makeText(mContext,"上传失败，请重试",Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, "上传失败，请重试", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void showLoadingDialog() {
-                if(mDialog==null)
-                {
-                    mDialog = new ProgressDialog(mContext);
-                    mDialog.setCancelable(false);
-                    mDialog.setMessage("上传中");
-                }
-                mDialog.show();
+        if (mDialog == null) {
+            mDialog = new ProgressDialog(mContext);
+            mDialog.setCancelable(false);
+            mDialog.setMessage("上传中");
+        }
+        mDialog.show();
 
     }
 
     @Override
     public void closeLoadingDialog() {
-                if(mDialog==null)
-                {
-                    mDialog.dismiss();
-                }
-                mDialog.show();
+        if (mDialog == null) {
+            mDialog.dismiss();
+        }
     }
 
     private void initToolBar() {
@@ -213,8 +258,5 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
             if (parent.getChildPosition(view) != 0)
                 outRect.top = space;
         }
-
-
     }
-
 }

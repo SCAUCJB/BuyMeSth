@@ -1,6 +1,8 @@
 package edu.scau.buymesth.publish;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 
 import com.bumptech.glide.Glide;
@@ -48,4 +50,17 @@ public class GlideImageLoader implements cn.finalteam.galleryfinal.ImageLoader {
     @Override
     public void clearMemoryCache() {
     }
+
+    public Bitmap getBitmap(String imgPath) {
+        // Get bitmap through image path
+        BitmapFactory.Options newOpts = new BitmapFactory.Options();
+        newOpts.inJustDecodeBounds = false;
+        newOpts.inPurgeable = true;
+        newOpts.inInputShareable = true;
+        // Do not compress
+        newOpts.inSampleSize = 1;
+        newOpts.inPreferredConfig = Bitmap.Config.RGB_565;
+        return BitmapFactory.decodeFile(imgPath, newOpts);
+    }
+
 }

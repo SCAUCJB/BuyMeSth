@@ -1,11 +1,15 @@
 package edu.scau.buymesth.adapter;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import adpater.BaseQuickAdapter;
@@ -24,8 +28,6 @@ public class PictureAdapter extends BaseQuickAdapter<PhotoInfo> {
         setNewData(list);
     }
 
-
-    /////布局和数据
     public PictureAdapter(List<PhotoInfo> data) {
         super(R.layout.item_picture, data);
         setList(data);
@@ -34,7 +36,6 @@ public class PictureAdapter extends BaseQuickAdapter<PhotoInfo> {
     @Override
     protected void convert(BaseViewHolder helper, PhotoInfo item) {
         if (item.getPhotoPath()==null) {
-            //TODO:8个的BUG在这里
             ImageView btn = helper.getView(R.id.btn_cancle);
             btn.setVisibility(View.GONE);
             item.setPhotoPath(null);
@@ -63,4 +64,5 @@ public class PictureAdapter extends BaseQuickAdapter<PhotoInfo> {
             return 0;
         return 1;
     }
+
 }
