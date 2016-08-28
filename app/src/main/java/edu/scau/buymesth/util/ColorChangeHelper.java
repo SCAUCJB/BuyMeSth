@@ -11,7 +11,7 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 public class ColorChangeHelper {
 
     public static Drawable tintDrawable(Drawable drawable, ColorStateList colors) {
-        final Drawable wrappedDrawable = DrawableCompat.wrap(drawable);
+        final Drawable wrappedDrawable = DrawableCompat.wrap(drawable).mutate();
         DrawableCompat.setTintList(wrappedDrawable, colors);
         return wrappedDrawable;
     }
@@ -32,6 +32,7 @@ public class ColorChangeHelper {
             }else {
                 break;
             }
+            position++;
         }
         return RGB;
     }
@@ -52,6 +53,7 @@ public class ColorChangeHelper {
             }else {
                 break;
             }
+            position++;
         }
         return Color.rgb(RGB[0],RGB[1],RGB[2]);
     }

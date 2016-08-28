@@ -21,6 +21,7 @@ import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.SizeReadyCallback;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -317,37 +318,64 @@ public class NineGridLayout extends ViewGroup {
      */
 //    protected abstract boolean displayOneImage(RatioImageView imageView, String url, int parentWidth);
     protected boolean displayOneImage(RatioImageView imageView, String url, int parentWidth){
+//        Glide.with(getContext()).load(url)
+//                .asBitmap()
+//                .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                .into(new SimpleTarget<Bitmap>() {
+//                    @Override
+//                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+//
+//                        int w = resource.getWidth();
+//                        int h = resource.getHeight();
+//
+//                        int newW;
+//                        int newH;
+//                        if(w>parentWidth){
+//                            newW = parentWidth;
+//                            newH = (int)(h/(double)w*newW);
+//                        }else if(h>300){
+//                            newH = 300;
+//                            newW = (int)(w/(double)h*newH);
+//                        }else{
+//                            newW = w;
+//                            newH = h;
+//                        }
+//                        setOneImageLayoutParams(imageView, newW, newH);
+////                        imageView.setImageBitmap(resource);
+//                        Glide.with(getContext()).load(url)
+//                                .override(newW, newH)
+//                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                                .into(imageView);
+//                    }
+//                });
+
+        SimpleTarget<GlideDrawable> simpleTarget = new SimpleTarget<GlideDrawable>() {
+            @Override
+            public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                int width = resource.getIntrinsicWidth();
+                int height = resource.getIntrinsicHeight();
+                int newW;
+                int newH;
+                if(width>parentWidth){
+                    newW = parentWidth;
+                    newH = (int)(height/(double)width*newW);
+                }else if(height>300){
+                    newH = 300;
+                    newW = (int)(width/(double)height*newH);
+                }else{
+                    newW = width;
+                    newH = height;
+                }
+                setOneImageLayoutParams(imageView, newW, newH);
+                Glide.with(getContext()).load(url)
+                        .override(newW, newH)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(imageView);
+            }
+        };
         Glide.with(getContext()).load(url)
-                .asBitmap()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-
-                        int w = resource.getWidth();
-                        int h = resource.getHeight();
-
-                        int newW;
-                        int newH;
-                        if(w>parentWidth){
-                            newW = parentWidth;
-                            newH = (int)(h/(double)w*newW);
-                        }else if(h>300){
-                            newH = 300;
-                            newW = (int)(w/(double)h*newH);
-                        }else{
-                            newW = w;
-                            newH = h;
-                        }
-                        setOneImageLayoutParams(imageView, newW, newH);
-//                        imageView.setImageBitmap(resource);
-                        Glide.with(getContext()).load(url)
-                                .override(newW, newH)
-                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                .into(imageView);
-                    }
-                });
-
+                .into(simpleTarget);
         return false;
     }
 
@@ -355,16 +383,6 @@ public class NineGridLayout extends ViewGroup {
         Glide.with(getContext()).load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imageView);
-
-//        Glide.with(getContext()).load(url)
-//                .asBitmap()
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                .into(new SimpleTarget<Bitmap>() {
-//                    @Override
-//                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-//                        imageView.setImageBitmap(resource);
-//                    }
-//                });
     }
 
     public OnImageClickListener getOnImageClickListener() {
