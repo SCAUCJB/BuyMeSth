@@ -1,35 +1,26 @@
 package edu.scau.buymesth.discover.detail;
 
-import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-import adpater.BaseQuickAdapter;
 import base.BaseActivity;
 import base.util.GlideCircleTransform;
 import butterknife.Bind;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
-import edu.scau.buymesth.adapter.DiscoverAdapter;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.data.bean.MomentsComment;
-import edu.scau.buymesth.discover.list.DiscoverModel;
-import edu.scau.buymesth.discover.list.DiscoverPresenter;
 import edu.scau.buymesth.util.ColorChangeHelper;
 import edu.scau.buymesth.util.DateFormatHelper;
 import in.srain.cube.views.ptr.PtrFrameLayout;
@@ -78,7 +69,7 @@ public class MomentDetailActivity extends BaseActivity implements  MomentDetailC
         });
     }
 
-    private void initToolBar() {
+    protected void initToolBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener((v) -> onBackPressed());

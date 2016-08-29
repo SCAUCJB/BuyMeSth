@@ -33,7 +33,7 @@ public class PublishModel implements BaseModel, PublishContract.Model {
             public void call(Subscriber<? super String> subscriber) {
 
                 List<PhotoInfo> photoInfoList = new ArrayList<>(list);
-                if (photoInfoList != null && photoInfoList.size() != 0) {
+                if (photoInfoList != null && photoInfoList.size() != 0&&photoInfoList.get(0).getPhotoPath()!=null) {
                     if(photoInfoList.get(photoInfoList.size()-1).getPhotoPath()==null){
                         photoInfoList.remove(photoInfoList.size()-1);
                     }

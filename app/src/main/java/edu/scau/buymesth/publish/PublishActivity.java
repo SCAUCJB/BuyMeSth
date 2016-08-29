@@ -1,16 +1,16 @@
 package edu.scau.buymesth.publish;
 
 import android.app.ProgressDialog;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,12 +19,13 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.zip.Inflater;
 
-import adpater.BaseQuickAdapter;
 import base.BaseActivity;
 import base.util.ToastUtil;
 import butterknife.Bind;
@@ -43,6 +44,7 @@ import ui.widget.SelectableSeekBar;
  * Updated by John on 2016/8/18
  */
 public class PublishActivity extends BaseActivity implements View.OnClickListener, PublishContract.View {
+    List<TextView> tagList = new ArrayList<>();
     @Bind(R.id.btn_submit)
     Button btnSubmit;
     @Bind(R.id.et_title)
@@ -64,6 +66,10 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     Toolbar toolbar;
     @Bind(R.id.sv_parent)
     ScrollView parent;
+    @Bind(R.id.tv_add)
+    TextView tvAdd;
+    @Bind(R.id.flowlayout)
+    FlowLayout flowlayout;
     private ProgressDialog mDialog = null;
     private AlertDialog priceInputDialog;
     private AlertDialog priceRangeDialog;
@@ -105,8 +111,8 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
 
                 int fromPosition = viewHolder.getAdapterPosition();
                 int toPosition = target.getAdapterPosition();
-                if(adapter.getItemId(fromPosition)==1) return  false;
-                if(adapter.getItemId(toPosition)==1)return false;
+                if (adapter.getItemId(fromPosition) == 1) return false;
+                if (adapter.getItemId(toPosition) == 1) return false;
                 if (fromPosition < toPosition) {
                     for (int i = fromPosition; i < toPosition; i++) {
                         Collections.swap(adapter.getData(), i, i + 1);
@@ -116,7 +122,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                         Collections.swap(adapter.getData(), i, i - 1);
                     }
                 }
-                adapter.notifyItemMoved(fromPosition,toPosition);
+                adapter.notifyItemMoved(fromPosition, toPosition);
                 return true;
             }
 
@@ -190,6 +196,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
             else if (mSelectableSeekBar.getSelectedPosition() == 1)
                 priceRangeDialog.show();
         });
+        tvAdd.setOnClickListener(this);
     }
 
     @Override
@@ -205,7 +212,44 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                 request.setTitle(etTitle.getText().toString());
                 request.setContent(etDetail.getText().toString());
                 request.setAuthor(BmobUser.getCurrentUser(User.class));
+                List<String> tag = new ArrayList<>();
+                for(TextView tv : tagList){
+                    String text = (String) tv.getText();
+                    text = text.substring(1,text.length()-1);
+                    tag.add(text);
+                }
+                request.setTags(tag);
                 presenter.submit(request, list);
+                break;
+
+            case R.id.tv_add:
+                EditText et = new EditText(mContext);
+                AlertDialog dialog = new AlertDialog.Builder(mContext).setView(et).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        TextView tv = (TextView) LayoutInflater.from(PublishActivity.this).inflate(R.layout.tv_tag,null);
+                        ViewGroup.MarginLayoutParams marginLayoutParams = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                        marginLayoutParams.setMargins(4,4,4,4);
+                        tv.setLayoutParams(marginLayoutParams);
+                        tv.setText("#" + et.getText());
+                        flowlayout.addView(tv);
+                        tagList.add(tv);
+                        tv.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                AlertDialog dialog1 = new AlertDialog.Builder(mContext).setTitle("是否删除").setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        flowlayout.removeView(tv);
+                                        tagList.remove(tv);
+                                    }
+                                }).create();
+                                dialog1.show();
+                            }
+                        });
+                    }
+                }).create();
+                dialog.show();
                 break;
         }
     }
@@ -228,7 +272,6 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
             mDialog.setMessage("上传中");
         }
         mDialog.show();
-
     }
 
     @Override
@@ -238,11 +281,12 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
-    private void initToolBar() {
+    protected void initToolBar() {
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener((v) -> onBackPressed());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
 
     private final class SpaceItemDecoration extends RecyclerView.ItemDecoration {
 
@@ -259,4 +303,12 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                 outRect.top = space;
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.onDestroy();
+        presenter = null;
+    }
+
 }

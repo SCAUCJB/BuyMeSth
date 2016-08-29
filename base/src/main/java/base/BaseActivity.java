@@ -49,8 +49,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-    private void initToolBar() {
-        if (getToolBarId() == -DEFAULT_TOOLBAR_ID)
+    protected void initToolBar() {
+        if (getToolBarId() == DEFAULT_TOOLBAR_ID)
             return;
         Toolbar toolbar = (Toolbar) findViewById(getToolBarId());
         setSupportActionBar(toolbar);
