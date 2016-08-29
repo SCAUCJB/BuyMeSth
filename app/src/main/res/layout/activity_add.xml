@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout
@@ -23,7 +23,8 @@
     <ScrollView
         android:id="@+id/sv_parent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,8 +39,8 @@
                 android:layout_marginRight="10dp"
                 android:background="@null"
                 android:hint="标题"
-                android:selectAllOnFocus="true"
-                android:maxLines="1" />
+                android:maxLines="1"
+                android:selectAllOnFocus="true" />
 
             <View
                 android:layout_width="match_parent"
@@ -66,62 +67,80 @@
                 android:layout_marginRight="10dp"
                 android:background="#bdbdbd" />
 
+  <edu.scau.buymesth.publish.FlowLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/flowlayout"
+      android:layout_margin="10dp">
+      <TextView
+          android:text="添加标签"
+          android:id="@+id/tv_add"
+          style="@style/textView_tag"
+          />
+  </edu.scau.buymesth.publish.FlowLayout>
+
             <ui.widget.SelectableSeekBar
                 android:id="@+id/range_bar"
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
                 android:paddingBottom="2dp"
                 android:paddingTop="5dp" />
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#bdbdbd"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="10dp"
+                android:background="#bdbdbd" />
 
             <RelativeLayout
                 android:id="@+id/rl_price_bar"
                 android:layout_width="match_parent"
+                android:layout_height="40dp"
                 android:paddingLeft="@dimen/dp_14"
-                android:paddingRight="@dimen/dp_14"
-                android:layout_height="40dp">
+                android:paddingRight="@dimen/dp_14">
+
                 <TextView
                     android:id="@+id/tv_price_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_alignParentStart="true"
                     android:gravity="center"
-                    android:text="价格"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent" />
+                    android:text="价格" />
+
                 <TextView
                     android:id="@+id/tv_price_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/dp_36"
                     android:layout_toRightOf="@+id/tv_price_text"
                     android:gravity="center"
-                    android:layout_marginLeft="@dimen/dp_36"
-                    android:text="￥0"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent" />
+                    android:text="￥0" />
+
                 <ImageView
-                    android:layout_alignParentRight="true"
-                    android:src="@drawable/ic_chevron_right_grey600_36dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ic_chevron_right_grey600_36dp" />
             </RelativeLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:background="#bdbdbd" />
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:fadingEdge="none"
                 android:foregroundGravity="center"
-                android:overScrollMode="never"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp" />
+                android:overScrollMode="never" />
 
             <Button
                 android:id="@+id/btn_submit"
@@ -132,10 +151,10 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
                 android:background="#ff5454"
                 android:text="提交"
-                android:textColor="#ffffff"
-                android:layout_marginTop="10dp" />
+                android:textColor="#ffffff" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
