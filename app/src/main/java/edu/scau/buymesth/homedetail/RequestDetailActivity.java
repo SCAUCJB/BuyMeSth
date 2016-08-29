@@ -7,10 +7,8 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +22,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -38,6 +37,7 @@ import cache.lru.DiskLruCache;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.RequestCommentAdapter;
+import edu.scau.buymesth.createorder.CreateOrderActivity;
 import edu.scau.buymesth.data.bean.Comment;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.util.DiskLruCacheHelper;
@@ -74,6 +74,8 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     RelativeLayout userInfoBar;
     @Bind(R.id.rv_comment)
     RecyclerView rvComment;
+    @Bind(R.id.tv_create_order)
+    TextView mCreateOrderBtn;
     private RequestDetailPresenter presenter;
     private int[] heights;
     private List<ImageView> imageViews;
@@ -86,6 +88,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         activity.startActivity(intent);
     }
 
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_requestdetail;
@@ -93,7 +96,6 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
 
     @Override
     public void initView() {
-        initToolBar();
         rvComment.setLayoutManager(new LinearLayoutManager(mContext));
         rvComment.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_4)));
         rvComment.setHasFixedSize(true);
@@ -106,10 +108,15 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         presenter.initCommentBar();
         presenter.initContent();
         presenter.initComment();
+        mCreateOrderBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(mContext, CreateOrderActivity.class);
+            startActivity(intent);
+        });
     }
 
 
-    private DiskLruCache mDiskLruCache=null;
+    private DiskLruCache mDiskLruCache = null;
+
     /**
      * 仅仅获取图片的高度，不加载图片
      *
@@ -117,31 +124,41 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
      * @return
      */
     private int getImageHeight(String urlString) {
-        if(mDiskLruCache==null){
-            mDiskLruCache= DiskLruCacheHelper.create(mContext,"requestDetail");
+        if (mDiskLruCache == null) {
+            mDiskLruCache = DiskLruCacheHelper.create(mContext, "requestDetail");
         }
-        String value=DiskLruCacheHelper.get(urlString,mDiskLruCache);
-        if(value!=null)
+        String value = DiskLruCacheHelper.get(urlString, mDiskLruCache);
+        if (value != null)
             return Integer.valueOf(value);
         HttpURLConnection urlConnection = null;
+        InputStream inputStream = null;
         int height = -1;
         try {
             final URL url = new URL(urlString);
             urlConnection = (HttpURLConnection) url.openConnection();
             connections.add(urlConnection);
             urlConnection.setReadTimeout(50000);
+            inputStream = urlConnection.getInputStream();
             final BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(urlConnection.getInputStream(), null, options);
+
+            BitmapFactory.decodeStream(inputStream, null, options);
             WindowManager manager = getWindow().getWindowManager();
             DisplayMetrics outMetrics = new DisplayMetrics();
             manager.getDefaultDisplay().getMetrics(outMetrics);
             height = (int) ((1.0f * outMetrics.widthPixels / options.outWidth) * options.outHeight);
 
-            DiskLruCacheHelper.put(urlString,String.valueOf(height),mDiskLruCache);
+            DiskLruCacheHelper.put(urlString, String.valueOf(height), mDiskLruCache);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             if (urlConnection != null) {
                 urlConnection.disconnect();
                 if (!connections.isEmpty())
@@ -158,8 +175,8 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
                 connection.disconnect();
         }
         presenter.onDestroy();
-        presenter=null;
-        if(mDiskLruCache!=null) try {
+        presenter = null;
+        if (mDiskLruCache != null) try {
             mDiskLruCache.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -167,17 +184,8 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         super.onDestroy();
     }
 
-    private void initToolBar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener((v) -> onBackPressed());
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.gf_flip_horizontal_in, R.anim.gf_flip_horizontal_out);
+    protected int getToolBarId() {
+        return R.id.toolbar;
     }
 
     @Override
@@ -269,27 +277,27 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         mViewPager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                for (int i =0; i <urls.size(); ++i) {
+                for (int i = 0; i < urls.size(); ++i) {
                     ImageView imageView = new ImageView(RequestDetailActivity.this);
-                        final int fi = i;
-                        new Thread() {
-                            @Override
-                            public void run() {
-                                //提前测量图片的高度
-                                heights[fi] = getImageHeight(urls.get(fi));
-                                RequestDetailActivity.this.runOnUiThread(
-                                        () -> {
-                                            if(fi==0){
-                                                //ViewPager的初始高度设置为第一个页面的高度
-                                                ViewGroup.LayoutParams layoutParams = mViewPager.getLayoutParams();
-                                                layoutParams.height = heights[0];
-                                                mViewPager.setLayoutParams(layoutParams);
-                                            }
+                    final int fi = i;
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            //提前测量图片的高度
+                            heights[fi] = getImageHeight(urls.get(fi));
+                            RequestDetailActivity.this.runOnUiThread(
+                                    () -> {
+                                        if (fi == 0) {
+                                            //ViewPager的初始高度设置为第一个页面的高度
+                                            ViewGroup.LayoutParams layoutParams = mViewPager.getLayoutParams();
+                                            layoutParams.height = heights[0];
+                                            mViewPager.setLayoutParams(layoutParams);
                                         }
-                                );
-                            }
-                        }.start();
-                        Glide.with(mContext).load(urls.get(i)).into(imageView);
+                                    }
+                            );
+                        }
+                    }.start();
+                    Glide.with(mContext).load(urls.get(i)).into(imageView);
                     imageViews.add(imageView);
                 }
                 mAdapter.notifyDataSetChanged();
@@ -361,13 +369,14 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
 
     @Override
     public void setComment(List<Comment> commentList) {
-        if(commentList.size() == 0){
+        if (commentList.size() == 0) {
             return;
         }
         RequestCommentAdapter requestCommentAdapter = new RequestCommentAdapter(commentList);
         rvComment.setAdapter(requestCommentAdapter);
-        requestCommentAdapter.setOnRecyclerViewItemClickListener((v,p)->{
-            Toast.makeText(mContext, "i was click", Toast.LENGTH_SHORT).show();});
+        requestCommentAdapter.setOnRecyclerViewItemClickListener((v, p) -> {
+            Toast.makeText(mContext, "i was click", Toast.LENGTH_SHORT).show();
+        });
     }
 
 }

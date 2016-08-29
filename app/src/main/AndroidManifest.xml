@@ -59,6 +59,8 @@
 
         <activity android:name=".discover.detail.MomentDetailActivity"
             android:theme="@style/AppTheme.SwipeBackLayout"/>
+        <activity android:name=".createorder.CreateOrderActivity"
+            android:theme="@style/AppTheme.SwipeBackLayout"/>
     </application>
 
 </manifest>

@@ -33,7 +33,7 @@ public class HomeAdapter extends BaseQuickAdapter<Request> {
         if(item!=null&&item.getUrls()!=null&&!item.getUrls().isEmpty())
         {
             helper.setVisible(R.id.iv_tweet_image,true);
-            Glide.with(mContext).load(item.getUrls().get(0)).diskCacheStrategy(DiskCacheStrategy.ALL)
+            Glide.with(mContext).load(item.getUrls().get(0)).diskCacheStrategy(DiskCacheStrategy.ALL).thumbnail(0.1f)
                     .centerCrop().into((ImageView) helper.getView(R.id.iv_tweet_image));
         }
         else{

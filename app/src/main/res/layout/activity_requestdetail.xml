@@ -42,7 +42,9 @@
             android:layout_weight="1" />
 
         <TextView
+            android:id="@+id/tv_create_order"
             android:text="接单"
+            android:clickable="true"
             android:gravity="center"
             android:layout_width="0dp"
             android:layout_height="match_parent"
