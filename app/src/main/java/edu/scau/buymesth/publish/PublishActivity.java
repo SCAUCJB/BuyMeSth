@@ -281,7 +281,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
-    private void initToolBar() {
+    protected void initToolBar() {
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener((v) -> onBackPressed());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
