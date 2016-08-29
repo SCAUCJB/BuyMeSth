@@ -64,7 +64,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @return ToolBarId
      */
     protected int getToolBarId() {
-        return -DEFAULT_TOOLBAR_ID;
+        return DEFAULT_TOOLBAR_ID;
     }
 
     private void setTranslucentStatus() {
@@ -92,7 +92,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void setContentView(@LayoutRes int layoutResID) {
         if (!canSwipeBack()) {
             FrameLayout frameLayout = new FrameLayout(this);
-            frameLayout.setBackgroundColor(getResources().getColor(R.color.window_background));
+//            frameLayout.setBackgroundColor(getResources().getColor(R.color.window_background));
             View view = LayoutInflater.from(this).inflate(layoutResID, null);
             frameLayout.addView(view);
             //添加状态栏色块
@@ -111,7 +111,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         } else {
             super.setContentView(getContainer());
             FrameLayout frameLayout = new FrameLayout(this);
-            frameLayout.setBackgroundColor(getResources().getColor(R.color.window_background));
+//            frameLayout.setBackgroundColor(getResources().getColor(R.color.window_background));
 
             View view = LayoutInflater.from(this).inflate(layoutResID, null);
             frameLayout.addView(view);
