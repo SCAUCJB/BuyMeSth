@@ -40,9 +40,9 @@ public class DatePickerDialogFragment extends DialogFragment {
                 .setPositiveButton("确定",
                         (dialog, id) -> {
                             ((CreateOrderActivity)getActivity()).tvDeliverTime.setText(mYear+"年"+(mMonth+1)+"月"+mDay+"日");
-                            ((CreateOrderActivity)getActivity()).year=mYear;
-                            ((CreateOrderActivity)getActivity()).month=mMonth;
-                            ((CreateOrderActivity)getActivity()).day=mDay;
+                            ((CreateOrderModel)((CreateOrderActivity)getActivity()).mPresenter.mModel).setYear(mYear);
+                            ((CreateOrderModel)((CreateOrderActivity)getActivity()).mPresenter.mModel).setMonth(mMonth);
+                            ((CreateOrderModel)((CreateOrderActivity)getActivity()).mPresenter.mModel).setDay(mDay);
                         }).setNegativeButton("取消", null);
         return builder.create();
     }

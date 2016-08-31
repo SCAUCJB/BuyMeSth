@@ -66,4 +66,9 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
             }
         });
     }
+
+    public void initTags() {
+        if(mModel.getRequest().getTags()!=null)
+        mView.setTagList(mModel.getRequest().getTags());
+    }
 }

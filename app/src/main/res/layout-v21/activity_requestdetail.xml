@@ -141,7 +141,15 @@
                 android:paddingLeft="@dimen/content_padding"
                 android:paddingRight="@dimen/content_padding"
                 android:text="" />
+            <edu.scau.buymesth.publish.FlowLayout
+                android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginBottom="@dimen/dp_10"
+                android:id="@+id/fl_tags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp">
 
+            </edu.scau.buymesth.publish.FlowLayout>
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_60">
