@@ -40,6 +40,7 @@ public interface RequestDetailContract {
          void hideViewPager();
 
          void setComment(List<Comment> commentList);
+         void setTagList(List<String> tags);
      }
     interface Model{
         void setRequest(Request request);

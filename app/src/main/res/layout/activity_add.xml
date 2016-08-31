@@ -67,17 +67,17 @@
                 android:layout_marginRight="10dp"
                 android:background="#bdbdbd" />
 
-  <edu.scau.buymesth.publish.FlowLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/flowlayout"
-      android:layout_margin="10dp">
-      <TextView
-          android:text="添加标签"
-          android:id="@+id/tv_add"
-          style="@style/textView_tag"
-          />
-  </edu.scau.buymesth.publish.FlowLayout>
+            <edu.scau.buymesth.publish.FlowLayout
+                android:id="@+id/flowlayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp">
+
+                <TextView
+                    android:id="@+id/tv_add"
+                    style="@style/textView_tag"
+                    android:text="添加标签" />
+            </edu.scau.buymesth.publish.FlowLayout>
 
             <ui.widget.SelectableSeekBar
                 android:id="@+id/range_bar"

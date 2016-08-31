@@ -24,6 +24,7 @@ import ui.layout.SwipeBackLayout;
  */
 public abstract class BaseActivity extends AppCompatActivity {
     public Context mContext;
+    public BasePresenter mPresenter=null;
     private SwipeBackLayout swipeBackLayout;
     private ImageView ivShadow;
     private ImageView colorStatus;
@@ -38,8 +39,20 @@ public abstract class BaseActivity extends AppCompatActivity {
         //设置透明状态栏
         setTranslucentStatus();
         initToolBar();
+        initPresenter();
         initView();
         setListener();
+    }
+    protected  void initPresenter(){
+
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mPresenter!=null){
+            mPresenter.onDestroy();
+            mPresenter=null;
+        }
     }
 
     /**

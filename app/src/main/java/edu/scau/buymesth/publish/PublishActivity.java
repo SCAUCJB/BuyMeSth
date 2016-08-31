@@ -19,12 +19,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.zip.Inflater;
 
 import base.BaseActivity;
 import base.util.ToastUtil;
@@ -44,7 +42,7 @@ import ui.widget.SelectableSeekBar;
  * Updated by John on 2016/8/18
  */
 public class PublishActivity extends BaseActivity implements View.OnClickListener, PublishContract.View {
-    List<TextView> tagList = new ArrayList<>();
+    List<TextView> tagList = new LinkedList<>();
     @Bind(R.id.btn_submit)
     Button btnSubmit;
     @Bind(R.id.et_title)
@@ -234,18 +232,12 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                         tv.setText("#" + et.getText());
                         flowlayout.addView(tv);
                         tagList.add(tv);
-                        tv.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                AlertDialog dialog1 = new AlertDialog.Builder(mContext).setTitle("是否删除").setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        flowlayout.removeView(tv);
-                                        tagList.remove(tv);
-                                    }
-                                }).create();
-                                dialog1.show();
-                            }
+                        tv.setOnClickListener(v1 -> {
+                            AlertDialog dialog1 = new AlertDialog.Builder(mContext).setTitle("是否删除").setPositiveButton("确定", (dialog2, which1) -> {
+                                flowlayout.removeView(tv);
+                                tagList.remove(tv);
+                            }).create();
+                            dialog1.show();
                         });
                     }
                 }).create();
@@ -298,7 +290,6 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
 
         @Override
         public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-//TODO 这里建议换成 getChildAdapterPosition(View) 或者 getChildLayoutPosition(View)
             if (parent.getChildPosition(view) != 0)
                 outRect.top = space;
         }
