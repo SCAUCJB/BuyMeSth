@@ -118,5 +118,21 @@
         <item name="android:background">@drawable/rect_grey</item>
     </style>
 
+<style name="textView_user">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:gravity">center</item>
+    <item name="android:textSize">13sp</item>
+    <item name="android:textColor">#ffffff</item>
+</style>
+
+    <style name="textView_userNum">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:layout_marginTop">10dp</item>
+    </style>
 
 </resources>

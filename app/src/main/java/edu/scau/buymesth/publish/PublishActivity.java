@@ -151,7 +151,6 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                         }
                         adapter.setList(list);
                     }
-
                     @Override
                     public void onHanlderFailure(int requestCode, String errorMsg) {
                         ToastUtil.show("出错了");
@@ -211,9 +210,9 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                 request.setContent(etDetail.getText().toString());
                 request.setAuthor(BmobUser.getCurrentUser(User.class));
                 List<String> tag = new ArrayList<>();
-                for(TextView tv : tagList){
+                for (TextView tv : tagList) {
                     String text = (String) tv.getText();
-                    text = text.substring(1,text.length()-1);
+                    text = text.substring(1, text.length() - 1);
                     tag.add(text);
                 }
                 request.setTags(tag);
@@ -225,9 +224,9 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                 AlertDialog dialog = new AlertDialog.Builder(mContext).setView(et).setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        TextView tv = (TextView) LayoutInflater.from(PublishActivity.this).inflate(R.layout.tv_tag,null);
+                        TextView tv = (TextView) LayoutInflater.from(PublishActivity.this).inflate(R.layout.tv_tag, null);
                         ViewGroup.MarginLayoutParams marginLayoutParams = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                        marginLayoutParams.setMargins(4,4,4,4);
+                        marginLayoutParams.setMargins(4, 4, 4, 4);
                         tv.setLayoutParams(marginLayoutParams);
                         tv.setText("#" + et.getText());
                         flowlayout.addView(tv);
