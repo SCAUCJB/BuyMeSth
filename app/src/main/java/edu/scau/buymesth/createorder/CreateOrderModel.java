@@ -5,13 +5,14 @@ import java.util.Calendar;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.data.bean.User;
+import rx.Observable;
 
 /**
  * Created by John on 2016/8/30.
  */
 
 public class CreateOrderModel   implements CreateOrderContract.Model {
-    private Order order;
+    private Order order =new Order();
     private Request request;
     private User buyer;
     private User seller;
@@ -19,14 +20,13 @@ public class CreateOrderModel   implements CreateOrderContract.Model {
     private int year = getC().get(Calendar.YEAR);
     private int month = getC().get(Calendar.MONTH);
     private int day = getC().get(Calendar.DAY_OF_MONTH);
-
+    String priceType;
+    String tipType;
+    Float price;
+    Float tip;
     @Override
     public Order getOrder() {
         return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
     }
 
     @Override
@@ -92,5 +92,40 @@ public class CreateOrderModel   implements CreateOrderContract.Model {
     @Override
     public void setDay(int day) {
         this.day = day;
+    }
+
+    @Override
+    public void setPriceType(String text) {
+        priceType =text;
+    }
+
+    @Override
+    public void setTipType(String text) {
+        tipType=text;
+    }
+
+    @Override
+    public void setTip(Float tip) {
+        this.tip=tip;
+    }
+
+    @Override
+    public void setPrice(Float price) {
+        this.price=price;
+    }
+
+    @Override
+    public Observable<String> submit() {
+
+        order.setPrice(price);
+        order.setPriceType(priceType);
+        order.setRequest(request);
+        order.setTip(tip);
+        order.setTipType(tipType);
+        order.setBuyer(buyer);
+        order.setSeller(seller);
+        order.setStatus(Order.STATUS_CREATED);
+        order.setDeliverAt(getYear()+"-"+getMonth()+"-"+getDay());
+        return order.saveObservable();
     }
 }

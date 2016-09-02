@@ -44,6 +44,7 @@
         <TextView
             android:id="@+id/tv_create_order"
             android:text="接单"
+            android:background="@color/red"
             android:clickable="true"
             android:gravity="center"
             android:layout_width="0dp"
