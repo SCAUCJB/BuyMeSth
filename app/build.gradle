@@ -41,6 +41,7 @@ dependencies {
     compile 'cn.bmob.android:bmob-sdk:3.4.7-aar'
 
 
+
 //以下是检测内存泄漏的依赖
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
