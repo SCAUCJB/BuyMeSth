@@ -36,6 +36,10 @@ dependencies {
     compile 'in.srain.cube:ultra-ptr:1.0.11'
     compile 'cn.finalteam:galleryfinal:1.4.8.7'
 
+    //bmob-im：Bmob的即时通讯包，注意每个版本的im依赖特定版本的bmob-sdk
+    compile 'cn.bmob.android:bmob-im:2.0.5@aar'
+    compile 'cn.bmob.android:bmob-sdk:3.4.7-aar'
+
 
 //以下是检测内存泄漏的依赖
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
