@@ -39,8 +39,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         //设置透明状态栏
         setTranslucentStatus();
         initToolBar();
-        initPresenter();
         initView();
+        initPresenter();
         setListener();
     }
     protected  void initPresenter(){

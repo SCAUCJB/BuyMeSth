@@ -38,6 +38,7 @@ import base.util.GlideCircleTransform;
 import base.util.SpaceItemDecoration;
 import butterknife.Bind;
 import cache.lru.DiskLruCache;
+import cn.bmob.v3.BmobUser;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.RequestCommentAdapter;
@@ -116,9 +117,8 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         presenter.initContent();
         presenter.initComment();
         presenter.initTags();
-        mCreateOrderBtn.setOnClickListener(v -> {
-            CreateOrderActivity.navigateTo(mContext,(Request) getIntent().getSerializableExtra(EXTRA_REQUEST));
-        });
+        if(!model.getRequest().getAuthor().getObjectId().equals( BmobUser.getCurrentUser().getObjectId()))
+        mCreateOrderBtn.setOnClickListener(v -> CreateOrderActivity.navigateTo(mContext,(Request) getIntent().getSerializableExtra(EXTRA_REQUEST)));
     }
 
 

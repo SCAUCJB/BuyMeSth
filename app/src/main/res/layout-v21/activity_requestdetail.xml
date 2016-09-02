@@ -25,7 +25,7 @@
         android:layout_alignParentBottom="true"
         android:elevation="@dimen/elevation_high"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_36"
+        android:layout_height="@dimen/dp_40"
         android:orientation="horizontal">
 
         <TextView
@@ -45,6 +45,7 @@
        <TextView
         android:id="@+id/tv_create_order"
         android:text="接单"
+        android:background="@color/red"
         android:clickable="true"
         android:gravity="center"
         android:layout_width="0dp"

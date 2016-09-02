@@ -1,5 +1,7 @@
 package edu.scau.buymesth.data.bean;
 
+import java.util.List;
+
 import cn.bmob.v3.BmobObject;
 
 /**
@@ -7,6 +9,11 @@ import cn.bmob.v3.BmobObject;
  */
 
 public class Order extends BmobObject {
+    public static final short STATUS_CREATED=0;
+    public static final short STATUS_ACCEPTED=1;
+    public static final short STATUS_REJECTED=2;
+    public static final short STATUS_DELIVERING=3;
+    public static final short STATUS_FINISH=4;
     private Float price;
     private Short status;
     private String accomplishAt;
@@ -18,8 +25,9 @@ public class Order extends BmobObject {
     private String expressNumber;
     private String deliverAt;
     private Float tip;
-    private Float tax;
-
+    private String tipType;
+     private String priceType;
+    private List<String> tags ;
     public Float getPrice() {
         return price;
     }
@@ -108,11 +116,28 @@ public class Order extends BmobObject {
         this.tip = tip;
     }
 
-    public Float getTax() {
-        return tax;
+
+    public String getTipType() {
+        return tipType;
     }
 
-    public void setTax(Float tax) {
-        this.tax = tax;
+    public void setTipType(String tipType) {
+        this.tipType = tipType;
+    }
+
+    public String getPriceType() {
+        return priceType;
+    }
+
+    public void setPriceType(String priceType) {
+        this.priceType = priceType;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 }
