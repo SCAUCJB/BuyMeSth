@@ -26,6 +26,7 @@ import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.publish.FlowLayout;
+import edu.scau.buymesth.util.InputMethodHelper;
 import ui.widget.PickerView;
 
 import static edu.scau.buymesth.homedetail.RequestDetailActivity.EXTRA_REQUEST;
@@ -124,6 +125,7 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
 
     @Override
     protected void setListener() {
+        findViewById(R.id.ll_background).setOnClickListener(v-> InputMethodHelper.toggle(mContext));
         tvDeliverTime.setOnClickListener(v -> createOrderPresenter.onDeliverTimeClicked());
         tvAdd.setOnClickListener(v -> tagInputDialog.show());
         btnSubmit.setOnClickListener(v->createOrderPresenter.onSubmitClicked());

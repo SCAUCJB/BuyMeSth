@@ -9,9 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import cn.bmob.newim.BmobIM;
-import cn.bmob.newim.core.ConnectionStatus;
 import cn.bmob.newim.listener.ConnectListener;
-import cn.bmob.newim.listener.ConnectStatusChangeListener;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import edu.scau.buymesth.R;
@@ -42,13 +40,13 @@ public class ChatFragment extends Fragment {
             }
         });
 
-        /////当状态变化，重新连接
-        BmobIM.getInstance().setOnConnectStatusChangeListener(new ConnectStatusChangeListener() {
-            @Override
-            public void onChange(ConnectionStatus connectionStatus) {
-
-            }
-        });
+//        /////当状态变化，重新连接
+//        BmobIM.getInstance().setOnConnectStatusChangeListener(new ConnectStatusChangeListener() {
+//            @Override
+//            public void onChange(ConnectionStatus connectionStatus) {
+//
+//            }
+//        });
 
     }
 }
