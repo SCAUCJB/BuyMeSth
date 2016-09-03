@@ -5,6 +5,7 @@ import java.util.List;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.data.bean.User;
+import rx.Observable;
 
 /**
  * Created by John on 2016/8/30.
@@ -19,6 +20,18 @@ public interface CreateOrderContract {
         void setRequestInfo(User buyer, String title, String content, String createdAt);
 
         void setTagList(List<String> tags);
+        void initPickerView();
+
+        String getTip();
+
+        String getPrice();
+
+        void showMsg(String msg);
+          void showLoadingDialog();
+          void closeLoadingDialog();
+        User getSeller();
+
+        void exit();
     }
     interface Model{
         Order getOrder();
@@ -28,7 +41,7 @@ public interface CreateOrderContract {
         User getBuyer();
 
         User getSeller();
-
+        void setSeller(User seller);
         int getYear();
 
         int getMonth();
@@ -37,5 +50,15 @@ public interface CreateOrderContract {
         void setYear(int year);
         void setMonth(int month);
         void setDay(int day);
+
+        void setPriceType(String text);
+
+        void setTipType(String text);
+
+        void setTip(Float tip);
+
+        void setPrice(Float price);
+
+        Observable<String> submit();
     }
 }

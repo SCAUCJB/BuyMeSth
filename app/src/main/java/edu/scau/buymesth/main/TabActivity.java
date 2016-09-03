@@ -12,6 +12,7 @@ import base.BaseActivity;
 import butterknife.Bind;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.TabAdapter;
+import edu.scau.buymesth.chat.ChatFragment;
 import edu.scau.buymesth.discover.list.DiscoverFragment;
 import edu.scau.buymesth.home.HomeFragment;
 import edu.scau.buymesth.user.UserFragment;
@@ -43,8 +44,11 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         UserFragment userFragment = new UserFragment();
         DiscoverFragment discoverFragment = new DiscoverFragment();
         HomeFragment homeFragment = new HomeFragment();
+        ChatFragment chatFragment = new ChatFragment();
+
         fragmentList.add(homeFragment);
         fragmentList.add(discoverFragment);
+        fragmentList.add(chatFragment);
         fragmentList.add(userFragment);
 
         for (int i = 0; i < fragmentList.size(); i++) {
@@ -62,6 +66,10 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
                     cv.setIconColor(getResources().getColor(R.color.colorAccent));
                     break;
                 case 2:
+                    cv.setIcon(R.drawable.ic_whatshot);
+                    cv.setIconColor(getResources().getColor(R.color.colorAccent));
+                    break;
+                case 3:
                     cv.setIcon(R.drawable.ic_person);
                     cv.setIconColor(getResources().getColor(R.color.colorAccent));
                     break;
@@ -75,14 +83,14 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
 
         tabAdapter = new TabAdapter(this.getSupportFragmentManager(), fragmentList);
         viewPager.setAdapter(tabAdapter);
-        viewPager.setOffscreenPageLimit(3);//缓存3个页面
+        viewPager.setOffscreenPageLimit(4);//缓存3个页面
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
 
-                if(!scrolling)
-                    viewPager.setCurrentItem((Integer) tab.getCustomView().getTag(),false);
+                if (!scrolling)
+                    viewPager.setCurrentItem((Integer) tab.getCustomView().getTag(), false);
 
             }
 
@@ -128,14 +136,13 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
 
     @Override
     public void onPageSelected(int position) {
-        if(!scrolling){
-            for(int n = 0;n<=2;n++){
+        if (!scrolling) {
+            for (int n = 0; n <= 2; n++) {
                 ChangeColorIconWithTextView cv = (ChangeColorIconWithTextView) tabLayout.getTabAt(n).getCustomView().findViewById(R.id.cv);
-                if(n == position){
+                if (n == position) {
                     cv.setIconAlpha(1);
                     System.out.println();
-                }
-                else{
+                } else {
                     cv.setIconAlpha(0);
                 }
             }
@@ -144,7 +151,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
 
     @Override
     public void onPageScrollStateChanged(int state) {
-        if(state==0)scrolling = false;
+        if (state == 0) scrolling = false;
         else scrolling = true;
     }
 
