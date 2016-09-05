@@ -3,7 +3,6 @@ package edu.scau.buymesth.publish;
 import java.util.List;
 
 import base.BasePresenter;
-import cn.finalteam.galleryfinal.model.PhotoInfo;
 import edu.scau.buymesth.data.bean.Request;
 import rx.Subscriber;
 
@@ -16,8 +15,8 @@ public class PublishPresenter extends BasePresenter<PublishContract.Model, Publi
 
     }
 
-    public void submit(Request request, List<PhotoInfo> list) {
-        mView.showLoadingDialog();
+    public void submit(Request request, List<String> list) {
+
         Subscriber<String> subscriber = new Subscriber<String>() {
 
             @Override

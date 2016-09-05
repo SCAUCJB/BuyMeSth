@@ -41,6 +41,8 @@ public interface RequestDetailContract {
 
          void setComment(List<Comment> commentList);
          void setTagList(List<String> tags);
+
+         void setPrice(String price);
      }
     interface Model{
         void setRequest(Request request);

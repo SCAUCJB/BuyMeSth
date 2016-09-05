@@ -2,18 +2,14 @@ package edu.scau.buymesth.publish;
 
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import base.BaseModel;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadBatchListener;
-import cn.finalteam.galleryfinal.model.PhotoInfo;
 import edu.scau.buymesth.data.bean.Request;
 import rx.Observable;
-import rx.SingleSubscriber;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -21,10 +17,10 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Jammy on 2016/8/16.
  */
-public class PublishModel implements BaseModel, PublishContract.Model {
+public class PublishModel implements  PublishContract.Model {
 
     @Override
-    public void submit(Request request, Subscriber<String> subscriber, List<PhotoInfo> list) {
+    public void submit(Request request, Subscriber<String> subscriber, List<String> list) {
 
 
 
@@ -32,15 +28,10 @@ public class PublishModel implements BaseModel, PublishContract.Model {
             @Override
             public void call(Subscriber<? super String> subscriber) {
 
-                List<PhotoInfo> photoInfoList = new ArrayList<>(list);
-                if (photoInfoList != null && photoInfoList.size() != 0&&photoInfoList.get(0).getPhotoPath()!=null) {
-                    if(photoInfoList.get(photoInfoList.size()-1).getPhotoPath()==null){
-                        photoInfoList.remove(photoInfoList.size()-1);
-                    }
-                    String[] fileList = new String[photoInfoList.size()];
-                    for(int i=0;i<photoInfoList.size();i++){
-                        fileList[i]=photoInfoList.get(i).getPhotoPath();
-                    }
+                if (list != null && !list.isEmpty()) {
+                    String[] fileList = new String[list.size()];
+                    list.toArray(fileList);
+
                     BmobFile.uploadBatch(fileList, new UploadBatchListener() {
                         @Override
                         public void onSuccess(List<BmobFile> files, List<String> urls) {

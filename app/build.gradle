@@ -34,7 +34,6 @@ dependencies {
     compile 'com.android.support:support-v4:23.3.0'
 
     compile 'in.srain.cube:ultra-ptr:1.0.11'
-    compile 'cn.finalteam:galleryfinal:1.4.8.7'
 
     //bmob-im：Bmob的即时通讯包，注意每个版本的im依赖特定版本的bmob-sdk
     compile 'cn.bmob.android:bmob-im:2.0.5@aar'
@@ -48,5 +47,8 @@ dependencies {
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
     //Clans/FloatingActionButton
     compile 'com.github.clans:fab:1.6.4'
-
+//鲁班图片压缩
+    compile 'top.zibin:Luban:1.0.8'
+    compile 'me.iwf.photopicker:PhotoPicker:0.8.5@aar'
+    compile 'com.nineoldandroids:library:2.4.0'
 }

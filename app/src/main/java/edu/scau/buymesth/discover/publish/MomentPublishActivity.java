@@ -9,28 +9,32 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import base.BaseActivity;
 import base.util.SpaceItemDecoration;
-import base.util.ToastUtil;
 import butterknife.Bind;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadBatchListener;
-import cn.finalteam.galleryfinal.FunctionConfig;
-import cn.finalteam.galleryfinal.GalleryFinal;
-import cn.finalteam.galleryfinal.model.PhotoInfo;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.PictureAdapter;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.data.bean.User;
 import gallery.PhotoDialogFragment;
-import photoview.PhotoView;
-import ui.layout.NineGridLayout;
+import me.iwf.photopicker.PhotoPicker;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import top.zibin.luban.Luban;
 
 /**
  * Created by ！ on 2016/8/29.
@@ -47,7 +51,7 @@ public class MomentPublishActivity extends BaseActivity{
     TextView tvRequest;
     List<String> localUrlList;
     List<String> urlList;
-    List<PhotoInfo> photoInfoList;
+    List<String> photoInfoList;
     PictureAdapter adapter;
     @Override
     protected int getLayoutId() {
@@ -63,35 +67,20 @@ public class MomentPublishActivity extends BaseActivity{
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setNestedScrollingEnabled(false);
         adapter = new PictureAdapter(photoInfoList);
         recyclerView.setAdapter(adapter);
 
         adapter.setOnRecyclerViewItemClickListener((view, position) -> {
             ////这里设置点击事件
             if (adapter.getItemId(position) == 1) {
-                FunctionConfig functionConfig = new FunctionConfig.Builder()
-                        .setEnableCamera(true)
-                        .setSelected(photoInfoList)
-                        .setMutiSelectMaxSize(9)
-                        .build();
-                GalleryFinal.openGalleryMuti(1, functionConfig, new GalleryFinal.OnHanlderResultCallback() {
-                    @Override
-                    public void onHanlderSuccess(int requestCode, List<PhotoInfo> resultList) {
-                        //这个传过来的resultList的生命周期跟当前activity的生命周期不一致，所以要复制一份，否则recycler view没更新完，resultList就被垃圾回收了
-                        photoInfoList.clear();
-                        localUrlList.clear();
-                        for (int i = 0; i < resultList.size(); i++) {
-                            photoInfoList.add(resultList.get(i));
-                            localUrlList.add(resultList.get(i).getPhotoPath());
-                        }
-                        adapter.setList(photoInfoList);
-                    }
-
-                    @Override
-                    public void onHanlderFailure(int requestCode, String errorMsg) {
-                        ToastUtil.show("出错了");
-                    }
-                });
+                PhotoPicker.builder()
+                        .setPhotoCount(9)
+                        .setShowCamera(true)
+                        .setShowGif(false)
+                        .setPreviewEnabled(true)
+                        .start(MomentPublishActivity.this, PhotoPicker.REQUEST_CODE);
             } else {
                 PhotoDialogFragment.navigate(MomentPublishActivity.this,view.findViewById(R.id.iv),localUrlList.get(position),position);
             }
@@ -109,12 +98,11 @@ public class MomentPublishActivity extends BaseActivity{
             @Override
             public void onClick(View v) {
                 //upload images
-                if(localUrlList.size()>0) {
+                if(localUrlList.size()>1) {
+                    localUrlList.remove(localUrlList.size()-1);
                     String[] sendList = new String[localUrlList.size()];
-                    for(int i=0;i<localUrlList.size();i++){
-                        sendList[i] = localUrlList.get(i);
-                    }
-                    toast("upload");
+                    localUrlList.toArray(sendList);
+
                     BmobFile.uploadBatch(sendList, new UploadBatchListener() {
                         @Override
                         public void onSuccess(List<BmobFile> files, List<String> urls) {
@@ -129,7 +117,6 @@ public class MomentPublishActivity extends BaseActivity{
                                     public void done(String s, BmobException e) {
                                         if(e==null){
                                             //succeed
-                                            toast("send");
                                             finish();
                                         }else {
                                             toast(e.toString());
@@ -170,7 +157,6 @@ public class MomentPublishActivity extends BaseActivity{
                         public void done(String s, BmobException e) {
                             if(e==null){
                                 //succeed
-                                toast("send");
                                 finish();
                             }else {
                                 toast(e.toString());
@@ -181,7 +167,54 @@ public class MomentPublishActivity extends BaseActivity{
             }
         });
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        if (resultCode == RESULT_OK && requestCode == PhotoPicker.REQUEST_CODE) {
+            if (data != null) {
+                ArrayList<String> photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
+                new Thread(() -> {
+                    compressWithRx(photos);
+                }).start();
+    //            adapter.setList(photos);
+            }
+        }
+    }
+    /**
+     * 压缩单张图片 RxJava 方式
+     */
+    private void compressWithRx(ArrayList<String> photos) {
+        List<String> list = Collections.synchronizedList(new LinkedList<>());
+        AtomicInteger count = new AtomicInteger(photos.size());
+        Semaphore semaphore = new Semaphore(1);
+        for (String path : photos) {
+            try {
+                semaphore.acquire();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Luban.get(this)
+                    .load(new File(path))
+                    .putGear(Luban.THIRD_GEAR)
+                    .asObservable()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnError(throwable -> throwable.printStackTrace())
+                    .onErrorResumeNext(throwable -> {
+                        return Observable.empty();
+                    })
+                    .subscribe(file -> {
+                        list.add(file.getAbsolutePath());
+                        semaphore.release();
+                        if (count.decrementAndGet() == 0)
+                        {
+                            adapter.setList(list);
+                            localUrlList=list;
+                        }
+                    });
+        }
+    }
     @Override
     public boolean canSwipeBack() {
         return true;

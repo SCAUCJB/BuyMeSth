@@ -89,30 +89,32 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
         final EditText editText = new EditText(mContext);
         tagInputDialog = new AlertDialog.Builder(mContext).setView(editText).setPositiveButton("确定", (dialog, which) -> {
                     String tag = editText.getText().toString();
-                    TextView tv = (TextView) LayoutInflater.from(mContext).inflate(R.layout.tv_tag, null);
+                    TextView tvTag = (TextView) LayoutInflater.from(mContext).inflate(R.layout.tv_tag, null);
                     ViewGroup.MarginLayoutParams marginLayoutParams = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    marginLayoutParams.setMargins(4, 4, 4, 4);
-                    tv.setLayoutParams(marginLayoutParams);
-                    tv.setText(tag);
-                    tv.setClickable(true);
-                    tv.setOnClickListener(
+                    marginLayoutParams.setMargins(20, 4, 20, 4);
+                    tvTag.setLayoutParams(marginLayoutParams);
+                    tvTag.setText(tag);
+                    createOrderPresenter.addTag(tag);
+                    tvTag.setClickable(true);
+                    tvTag.setBackground(clickerDrawable);
+                    tvTag.setOnClickListener(
                             new View.OnClickListener() {
-                                boolean flag = true;
+                                boolean flag = false;
                                 @Override
                                 public void onClick(View v) {
                                     if (flag) {
-                                        tv.setBackground(clickerDrawable);
+                                        tvTag.setBackground(clickerDrawable);
                                         createOrderPresenter.addTag(tag);
                                         flag = false;
                                     } else {
-                                        tv.setBackground(unclickerDrawable);
+                                        tvTag.setBackground(unclickerDrawable);
                                         createOrderPresenter.removeTag(tag);
                                         flag = true;
                                     }
                                 }
                 }
         );
-        flTags.addView(tv);
+        flTags.addView(tvTag);
     }
     ).
     create();

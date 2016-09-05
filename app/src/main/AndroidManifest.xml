@@ -53,22 +53,44 @@
             android:name=".publish.PublishActivity"
             android:theme="@style/AppTheme.SwipeBackLayout"
             android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name="me.iwf.photopicker.PhotoPickerActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
 
+        <activity
+            android:name="me.iwf.photopicker.PhotoPagerActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name=".homedetail.RequestDetailActivity"
             android:theme="@style/AppTheme.SwipeBackLayout"/>
 
         <activity android:name=".discover.detail.MomentDetailActivity"
             android:theme="@style/AppTheme.SwipeBackLayout"/>
-
         <activity android:name=".createorder.CreateOrderActivity"
             android:theme="@style/AppTheme.SwipeBackLayout"/>
-
         <activity android:name=".discover.publish.MomentPublishActivity"
             android:theme="@style/AppTheme.SwipeBackLayout"
             android:windowSoftInputMode="stateHidden|stateUnchanged"/>
 
+        <receiver android:name="cn.bmob.newim.core.ConnectChangeReceiver" >
+            <intent-filter>
+                <action android:name="cn.bmob.action.RECONNECT" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name="cn.bmob.newim.core.service.BmobIMService"
+            android:process=":bmobcore" />
+        <service
+            android:name="cn.bmob.newim.core.service.NotifyService"
+            android:process=":bmobcore" />
+        <service android:name="cn.bmob.newim.core.service.ReConnectService" />
+        <service android:name="cn.bmob.newim.core.service.HeartBeatService" />
+
         <activity android:name=".discover.publish.SelectActivity"
             android:theme="@style/AppTheme.SwipeBackLayout"/>
     </application>
+
 
 </manifest>

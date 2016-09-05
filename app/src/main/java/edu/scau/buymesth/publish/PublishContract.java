@@ -2,10 +2,7 @@ package edu.scau.buymesth.publish;
 
 import java.util.List;
 
-import cn.finalteam.galleryfinal.model.PhotoInfo;
 import edu.scau.buymesth.data.bean.Request;
-import rx.Observer;
-import rx.SingleSubscriber;
 import rx.Subscriber;
 
 /**
@@ -20,7 +17,7 @@ public interface PublishContract {
     }
 
     interface Model{
-        void submit(Request request, Subscriber<String> observable, List<PhotoInfo> list);
+        void submit(Request request, Subscriber<String> observable, List<String> list);
     }
 
 

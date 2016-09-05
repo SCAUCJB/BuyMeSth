@@ -1,55 +1,47 @@
 package edu.scau.buymesth.adapter;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import adpater.BaseQuickAdapter;
 import adpater.BaseViewHolder;
-import cn.finalteam.galleryfinal.model.PhotoInfo;
 import edu.scau.buymesth.R;
 
 /**
  * Created by Jammy on 2016/8/17.
  */
-public class PictureAdapter extends BaseQuickAdapter<PhotoInfo> {
+public class PictureAdapter extends BaseQuickAdapter<String> {
 
-    public void setList(List<PhotoInfo> list) {
+    public void setList(List<String> list) {
         if (list.size() != 9)
-            list.add(new PhotoInfo());
+            list.add(null);
         setNewData(list);
     }
 
-    public PictureAdapter(List<PhotoInfo> data) {
+    public PictureAdapter(List<String> data) {
         super(R.layout.item_picture, data);
         setList(data);
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, PhotoInfo item) {
-        if (item.getPhotoPath()==null) {
+    protected void convert(BaseViewHolder helper, String item) {
+        if (item ==null) {
             ImageView btn = helper.getView(R.id.btn_cancle);
             btn.setVisibility(View.GONE);
-            item.setPhotoPath(null);
-            Glide.with(mContext).load(R.drawable.ic_add).centerCrop().into((ImageView) helper.getView(R.id.iv));
+            Glide.with(mContext).load(R.mipmap.ic_add).centerCrop().into((ImageView) helper.getView(R.id.iv));
         } else {
-            String url = item.getPhotoPath();
-            Glide.with(mContext).load(url).centerCrop().into((ImageView) helper.getView(R.id.iv));
+            Glide.with(mContext).load(item).thumbnail(0.1f).centerCrop().into((ImageView) helper.getView(R.id.iv));
             ImageView btn = helper.getView(R.id.btn_cancle);
             btn.setVisibility(View.VISIBLE);
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     getData().remove(item);
-                    if(getData().get(getData().size()-1).getPhotoPath()!=null){
+                    if(getData().get(getData().size()-1)!=null){
                         setList(getData());
                     }
                     notifyDataSetChanged();
@@ -60,7 +52,7 @@ public class PictureAdapter extends BaseQuickAdapter<PhotoInfo> {
 
     @Override
     public long getItemId(int position) {
-        if(getData().get(position).getPhotoPath()!=null)
+        if(getData().get(position)!=null)
             return 0;
         return 1;
     }

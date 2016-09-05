@@ -84,6 +84,8 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     TextView mCreateOrderBtn;
     @Bind(R.id.fl_tags)
     FlowLayout flTags;
+    @Bind(R.id.tv_price)
+    TextView mPriceTv;
     private RequestDetailPresenter presenter;
     private int[] heights;
     private List<ImageView> imageViews;
@@ -112,11 +114,11 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         model.setRequest((Request) getIntent().getSerializableExtra(EXTRA_REQUEST));
         presenter = new RequestDetailPresenter();
         presenter.setVM(this, model);
-        presenter.initUserInfo();
-        presenter.initCommentBar();
-        presenter.initContent();
-        presenter.initComment();
-        presenter.initTags();
+//        presenter.initUserInfo();
+//        presenter.initCommentBar();
+//        presenter.initContent();
+//        presenter.initComment();
+//        presenter.initTags();
         if(!model.getRequest().getAuthor().getObjectId().equals( BmobUser.getCurrentUser().getObjectId()))
         mCreateOrderBtn.setOnClickListener(v -> CreateOrderActivity.navigateTo(mContext,(Request) getIntent().getSerializableExtra(EXTRA_REQUEST)));
     }
@@ -399,5 +401,10 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
             tv.setClickable(true);
             flTags.addView(tv);
         }
+    }
+
+    @Override
+    public void setPrice(String price) {
+        mPriceTv.setText(price);
     }
 }

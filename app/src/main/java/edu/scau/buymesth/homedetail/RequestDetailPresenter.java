@@ -16,7 +16,22 @@ import rx.schedulers.Schedulers;
 public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.Model, RequestDetailContract.View> {
     @Override
     public void onStart() {
+        initUserInfo();
+        initCommentBar();
+        initContent();
+        initPrice();
+        initComment();
+        initTags();
+    }
 
+    private void initPrice() {
+        Integer high=mModel.getRequest().getMaxPrice();
+        Integer low=mModel.getRequest().getMinPrice();
+        if(low!=null){
+            mView.setPrice("期望价格：￥"+low+"~￥"+high);
+        }else{
+            mView.setPrice("期望价格：￥"+high);
+        }
     }
 
     public void initUserInfo() {
@@ -34,19 +49,20 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
     }
 
     public void initContent() {
-        Request request=mModel.getRequest();
+        Request request = mModel.getRequest();
         mView.setTitle(request.getTitle());
         mView.setContent(request.getContent());
         mView.setLikes(request.getLikes());
         mView.setTime(request.getCreatedAt());
 
-        if(request.getUrls()!=null){
+        if (request.getUrls() != null) {
             mView.setUpViewPager(request.getUrls());
-        }else {
+        } else {
             mView.hideViewPager();
         }
     }
-    public void initComment(){
+
+    public void initComment() {
         mModel.getRxComment(mModel.getRequest().getObjectId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<List<Comment>>() {
@@ -68,7 +84,7 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
     }
 
     public void initTags() {
-        if(mModel.getRequest().getTags()!=null)
-        mView.setTagList(mModel.getRequest().getTags());
+        if (mModel.getRequest().getTags() != null)
+            mView.setTagList(mModel.getRequest().getTags());
     }
 }

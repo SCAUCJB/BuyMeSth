@@ -2,7 +2,7 @@ package edu.scau.buymesth.publish;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.graphics.Rect;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,22 +19,26 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
 
 import base.BaseActivity;
-import base.util.ToastUtil;
+import base.util.SpaceItemDecoration;
 import butterknife.Bind;
 import cn.bmob.v3.BmobUser;
-import cn.finalteam.galleryfinal.FunctionConfig;
-import cn.finalteam.galleryfinal.GalleryFinal;
-import cn.finalteam.galleryfinal.model.PhotoInfo;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.PictureAdapter;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.data.bean.User;
+import me.iwf.photopicker.PhotoPicker;
+import rx.Observable;
+import rx.schedulers.Schedulers;
+import top.zibin.luban.Luban;
 import ui.widget.SelectableSeekBar;
 
 /**
@@ -59,7 +63,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     RelativeLayout mPriceBar;
     @Bind(R.id.tv_price_number)
     TextView mPriceNumber;
-    List<PhotoInfo> list = new ArrayList<>();
+    List<String> list = new ArrayList<>();
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     @Bind(R.id.sv_parent)
@@ -73,6 +77,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     private AlertDialog priceRangeDialog;
     private String low;
     private String high;
+    private String price;
     private String rangePrice = "￥0~￥0";
     private String thePrice = "￥0";
 
@@ -92,7 +97,8 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
-
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setNestedScrollingEnabled(false);
         helper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
             @Override
             public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
@@ -136,31 +142,74 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         adapter.setOnRecyclerViewItemClickListener((view, position) -> {
             ////这里设置点击事件
             if (adapter.getItemId(position) == 1) {
-                FunctionConfig functionConfig = new FunctionConfig.Builder()
-                        .setEnableCamera(true)
-                        .setSelected(list)
-                        .setMutiSelectMaxSize(9)
-                        .build();
-                GalleryFinal.openGalleryMuti(1, functionConfig, new GalleryFinal.OnHanlderResultCallback() {
-                    @Override
-                    public void onHanlderSuccess(int requestCode, List<PhotoInfo> resultList) {
-                        //这个传过来的resultList的生命周期跟当前activity的生命周期不一致，所以要复制一份，否则recycler view没更新完，resultList就被垃圾回收了
-                        list = new ArrayList<>();
-                        for (int i = 0; i < resultList.size(); i++) {
-                            list.add(resultList.get(i));
-                        }
-                        adapter.setList(list);
-                    }
-                    @Override
-                    public void onHanlderFailure(int requestCode, String errorMsg) {
-                        ToastUtil.show("出错了");
-                    }
-                });
+                PhotoPicker.builder()
+                        .setPhotoCount(9)
+                        .setShowCamera(true)
+                        .setShowGif(false)
+                        .setPreviewEnabled(true)
+                        .start(PublishActivity.this, PhotoPicker.REQUEST_CODE);
             } else {
                 //TODO: 使用ImageLoader来放大查看图片
             }
         });
         initToolBar();
+        initPriceSelect();
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && requestCode == PhotoPicker.REQUEST_CODE) {
+            if (data != null) {
+                ArrayList<String> photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
+                adapter.setList(photos);
+            }
+        }
+    }
+
+    List<String> dstList;
+    volatile Semaphore semaphore = new Semaphore(1);
+
+    /**
+     * 压缩单张图片 RxJava 方式
+     */
+    private void compress(List<String> photos) {
+        if (photos.size() <= 1) return;
+        List<String> list = Collections.synchronizedList(new LinkedList<>());
+        CountDownLatch countDownLatch = new CountDownLatch(photos.size() - 1);
+        for (int i = 0; i < photos.size() - 1; ++i) {
+            try {
+                semaphore.acquire();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Luban.get(this)
+                    .load(new File(photos.get(i)))
+                    .putGear(Luban.THIRD_GEAR)
+                    .asObservable()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .doOnError(Throwable::printStackTrace)
+                    .onErrorResumeNext(throwable -> {
+                        return Observable.empty();
+                    })
+                    .subscribe(file -> {
+                        list.add(file.getAbsolutePath());
+                        countDownLatch.countDown();
+                        semaphore.release();
+                    });
+        }
+        try {
+            countDownLatch.await();
+            dstList = list;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initPriceSelect() {
         mSelectableSeekBar.setParent(parent);
         mSelectableSeekBar.setOnStateSelectedListener(pos -> {
             if (mSelectableSeekBar.getSelectedPosition() == 0)
@@ -171,7 +220,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         final EditText editText = new EditText(mContext);
         editText.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
         priceInputDialog = new AlertDialog.Builder(mContext).setView(editText).setPositiveButton("确定", (dialog, which) -> {
-            String price = editText.getText().toString();
+            price = editText.getText().toString();
             if (!price.equals("")) {
                 thePrice = "￥" + price;
             }
@@ -209,14 +258,34 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                 request.setTitle(etTitle.getText().toString());
                 request.setContent(etDetail.getText().toString());
                 request.setAuthor(BmobUser.getCurrentUser(User.class));
+                if (mSelectableSeekBar.getSelectedPosition() == 1) {
+                    try {
+                        request.setMaxPrice(Integer.valueOf(high));
+                        request.setMinPrice(Integer.valueOf(low));
+                    } catch (NumberFormatException e) {
+                        toast("请填整数价格");
+                        return;
+                    }
+                } else {
+                    try {
+                        request.setMaxPrice(Integer.valueOf(price));
+                        request.setMinPrice(null);
+                    } catch (NumberFormatException e) {
+                        toast("请填整数价格");
+                        return;
+                    }
+                }
+
                 List<String> tag = new ArrayList<>();
                 for (TextView tv : tagList) {
-                    String text = (String) tv.getText();
-                    text = text.substring(1, text.length() - 1);
-                    tag.add(text);
+                    tag.add(tv.getText().toString());
                 }
                 request.setTags(tag);
-                presenter.submit(request, list);
+                list = adapter.getData();
+                showLoadingDialog();
+                //压缩图片
+                compress(list);
+                presenter.submit(request, dstList);
                 break;
 
             case R.id.tv_add:
@@ -228,7 +297,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                         ViewGroup.MarginLayoutParams marginLayoutParams = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                         marginLayoutParams.setMargins(4, 4, 4, 4);
                         tv.setLayoutParams(marginLayoutParams);
-                        tv.setText("#" + et.getText());
+                        tv.setText(et.getText());
                         flowlayout.addView(tv);
                         tagList.add(tv);
                         tv.setOnClickListener(v1 -> {
@@ -276,22 +345,6 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener((v) -> onBackPressed());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-
-    private final class SpaceItemDecoration extends RecyclerView.ItemDecoration {
-
-        private int space;
-
-        SpaceItemDecoration(int space) {
-            this.space = space;
-        }
-
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            if (parent.getChildPosition(view) != 0)
-                outRect.top = space;
-        }
     }
 
     @Override
