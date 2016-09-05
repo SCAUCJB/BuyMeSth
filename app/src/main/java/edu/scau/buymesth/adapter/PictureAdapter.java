@@ -39,7 +39,7 @@ public class PictureAdapter extends BaseQuickAdapter<PhotoInfo> {
             ImageView btn = helper.getView(R.id.btn_cancle);
             btn.setVisibility(View.GONE);
             item.setPhotoPath(null);
-            Glide.with(mContext).load(R.mipmap.ic_add).centerCrop().into((ImageView) helper.getView(R.id.iv));
+            Glide.with(mContext).load(R.drawable.ic_add).centerCrop().into((ImageView) helper.getView(R.id.iv));
         } else {
             String url = item.getPhotoPath();
             Glide.with(mContext).load(url).centerCrop().into((ImageView) helper.getView(R.id.iv));

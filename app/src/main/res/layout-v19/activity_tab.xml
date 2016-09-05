@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true" >
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -14,7 +15,7 @@
         android:weightSum="4">
 
         <android.support.design.widget.TabLayout
-            android:layout_width="210dp"
+            android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/cardview_dark_background"
             android:id="@+id/tabLayout" />
@@ -36,6 +37,46 @@
             android:layout_width="match_parent"
             android:layout_height="6dp"
             android:background="@drawable/shadow"></FrameLayout>
+
+        <com.github.clans.fab.FloatingActionMenu
+            android:id="@+id/fab_menu"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:paddingRight="20dp"
+            android:paddingBottom="20dp"
+            android:paddingLeft="10dp"
+            fab:menu_labels_ellipsize="end"
+            fab:menu_labels_singleLine="true"
+            fab:menu_backgroundColor="#88000000"
+            fab:menu_fab_label="Menu label"
+            fab:menu_fab_show_animation="@anim/jump_from_down"
+            fab:menu_fab_hide_animation="@anim/jump_to_down"
+            android:layout_gravity="bottom|right">
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fab1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                fab:fab_size="mini"
+                fab:fab_label="Add Request" />
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fab2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                fab:fab_size="mini"
+                fab:fab_label="Add Moment" />
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fab3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                fab:fab_size="mini"
+                fab:fab_label="Search" />
+
+        </com.github.clans.fab.FloatingActionMenu>
 
     </FrameLayout>
 

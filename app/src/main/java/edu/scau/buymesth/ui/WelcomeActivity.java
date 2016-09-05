@@ -25,7 +25,7 @@ import rx.schedulers.Schedulers;
  * Created by IamRabbit on 2016/8/2.
  */
 public class WelcomeActivity extends BaseActivity {
-    private User bmobUser;
+    private volatile User bmobUser;
     @Bind(R.id.welcome_image)
     ImageView welcomeImage;
 
@@ -115,6 +115,7 @@ public class WelcomeActivity extends BaseActivity {
         editor.putString(Constant.KEY_AVATAR, user.getAvatar());
         editor.putString(Constant.KEY_NICKNAME, user.getNickname());
         editor.putInt(Constant.KEY_EXP, user.getExp());
+
 //完成提交
         editor.apply();
 

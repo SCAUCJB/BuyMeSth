@@ -20,6 +20,7 @@ public class DiscoverContract {
         void onAddOneItem(Moment moment);
         void onItemChanged();
         void onRefreshInterrupt();
+        void onDeleteSuccess(String msg);
     }
 
     interface Model{

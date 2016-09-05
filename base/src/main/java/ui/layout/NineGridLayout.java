@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,18 +17,25 @@ import android.widget.Toast;
 
 import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.ResourceDecoder;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.Resource;
+import com.bumptech.glide.load.model.ImageVideoWrapper;
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.resource.gifbitmap.GifBitmapWrapper;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.SizeReadyCallback;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.scau.base.R;
+import util.DensityUtil;
 
 /**
  * 描述:
@@ -50,9 +58,19 @@ public class NineGridLayout extends ViewGroup {
 
     private boolean mIsShowAll = false;
     private boolean mIsFirst = true;
+
+    public List<String> getUrlList() {
+        return mUrlList;
+    }
+
     private List<String> mUrlList = new ArrayList<>();
 
     private OnImageClickListener onImageClickListener;
+
+    public static final String DEFAULT_PLUS_PIC = "@Add";
+
+    public List<View> imageViewList = new ArrayList<>();
+
 
     public NineGridLayout(Context context) {
         super(context);
@@ -115,8 +133,9 @@ public class NineGridLayout extends ViewGroup {
         }
         setVisibility(VISIBLE);
 
-        mUrlList.clear();
-        mUrlList.addAll(urlList);
+//        mUrlList.clear();
+//        mUrlList.addAll(urlList);
+        mUrlList = urlList;
 
         if (!mIsFirst) {
             notifyDataSetChanged();
@@ -318,36 +337,14 @@ public class NineGridLayout extends ViewGroup {
      */
 //    protected abstract boolean displayOneImage(RatioImageView imageView, String url, int parentWidth);
     protected boolean displayOneImage(RatioImageView imageView, String url, int parentWidth){
-//        Glide.with(getContext()).load(url)
-//                .asBitmap()
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                .into(new SimpleTarget<Bitmap>() {
-//                    @Override
-//                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-//
-//                        int w = resource.getWidth();
-//                        int h = resource.getHeight();
-//
-//                        int newW;
-//                        int newH;
-//                        if(w>parentWidth){
-//                            newW = parentWidth;
-//                            newH = (int)(h/(double)w*newW);
-//                        }else if(h>300){
-//                            newH = 300;
-//                            newW = (int)(w/(double)h*newH);
-//                        }else{
-//                            newW = w;
-//                            newH = h;
-//                        }
-//                        setOneImageLayoutParams(imageView, newW, newH);
-////                        imageView.setImageBitmap(resource);
-//                        Glide.with(getContext()).load(url)
-//                                .override(newW, newH)
-//                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                                .into(imageView);
-//                    }
-//                });
+        if(url.equals(DEFAULT_PLUS_PIC)){
+            imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
+            imageView.setBackgroundColor(Color.TRANSPARENT);
+            imageView.setPadding(10,10,10,10);
+            return false;
+        }
+
+        setOneImageLayoutParams(imageView, imageView.getWidth(), 260);
 
         SimpleTarget<GlideDrawable> simpleTarget = new SimpleTarget<GlideDrawable>() {
             @Override
@@ -355,20 +352,23 @@ public class NineGridLayout extends ViewGroup {
                 int width = resource.getIntrinsicWidth();
                 int height = resource.getIntrinsicHeight();
                 int newW;
-                int newH;
-                if(width>parentWidth){
-                    newW = parentWidth;
-                    newH = (int)(height/(double)width*newW);
-                }else if(height>300){
-                    newH = 300;
-                    newW = (int)(width/(double)height*newH);
-                }else{
-                    newW = width;
-                    newH = height;
+                newW = (int) (width*DensityUtil.dip2px(getContext(),260)/(double)height);
+                if(DensityUtil.px2dip(getContext(),newW)>parentWidth){
+                    imageView.layout(0, 0, parentWidth, 260);
+                }else {
+                    imageView.layout(0, 0, DensityUtil.px2dip(getContext(),newW), 260);
                 }
-                setOneImageLayoutParams(imageView, newW, newH);
+//                if(width>parentWidth){
+//                    newW = parentWidth;
+//                    newH = (int)(height/(double)width*newW);
+//                }else if(DensityUtil.px2dip(getContext(),height)>200){
+//                    newH = DensityUtil.dip2px(getContext(),200);
+//                    newW = (int)(width/(double)height*newH);
+//                }else{
+//                    newW = width;
+//                    newH = height;
+//                }
                 Glide.with(getContext()).load(url)
-                        .override(newW, newH)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(imageView);
             }
@@ -380,6 +380,11 @@ public class NineGridLayout extends ViewGroup {
     }
 
     protected void displayImage(RatioImageView imageView, String url){
+        if(url.equals(DEFAULT_PLUS_PIC)){
+            imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
+            imageView.setBackgroundColor(Color.TRANSPARENT);
+            return;
+        }
         Glide.with(getContext()).load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imageView);

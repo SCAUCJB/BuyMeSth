@@ -65,6 +65,9 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
             ((ImageView)helper.getView(R.id.iv_likes))
                     .setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_favorite_red)
             );
+        }else {
+            ((ImageView)helper.getView(R.id.iv_likes))
+                    .setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_favorite));
         }
 
 
@@ -82,6 +85,12 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
                 onItemsContentClickListener.onItemsContentClick(v,item,helper.getAdapterPosition());
             }
         };
+        if(item.getAuthor().getObjectId().equals(BmobUser.getCurrentUser().getObjectId())){
+            helper.getView(R.id.ly_delete).setVisibility(View.VISIBLE);
+            helper.getView(R.id.ly_delete).setOnClickListener(defaultOnClickListener);
+        }else {
+            helper.getView(R.id.ly_delete).setVisibility(View.INVISIBLE);
+        }
         helper.getView(R.id.ly_likes).setOnClickListener(defaultOnClickListener);
         helper.getView(R.id.ly_comments).setOnClickListener(defaultOnClickListener);
         if(item.getRequest()!=null)
@@ -89,7 +98,9 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
         ((NineGridLayout)helper.getView(R.id.nine_grid_layout)).setOnImageClickListener(new NineGridLayout.OnImageClickListener() {
             @Override
             public void onClickImage(int position, String url, List<String> urlList) {
-                onItemsContentClickListener.onItemsContentClick(helper.getView(R.id.nine_grid_layout),urlList,position);
+                onItemsContentClickListener.onItemsContentClick(
+                        helper.getView(R.id.nine_grid_layout),
+                        urlList,position);
             }
         });
     }

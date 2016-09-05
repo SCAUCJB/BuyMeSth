@@ -1,9 +1,13 @@
 package edu.scau.buymesth.main;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +18,9 @@ import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.TabAdapter;
 import edu.scau.buymesth.chat.ChatFragment;
 import edu.scau.buymesth.discover.list.DiscoverFragment;
+import edu.scau.buymesth.discover.publish.MomentPublishActivity;
 import edu.scau.buymesth.home.HomeFragment;
+import edu.scau.buymesth.publish.PublishActivity;
 import edu.scau.buymesth.user.UserFragment;
 import ui.widget.ChangeColorIconWithTextView;
 
@@ -31,7 +37,14 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
     ViewPager viewPager;
     @Bind(R.id.tabLayout)
     TabLayout tabLayout;
-
+    @Bind(R.id.fab_menu)
+    FloatingActionMenu fab;
+    @Bind(R.id.fab1)
+    FloatingActionButton fab1;
+    @Bind(R.id.fab2)
+    FloatingActionButton fab2;
+    @Bind(R.id.fab3)
+    FloatingActionButton fab3;
 
     @Override
     protected int getLayoutId() {
@@ -46,10 +59,28 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         HomeFragment homeFragment = new HomeFragment();
         ChatFragment chatFragment = new ChatFragment();
 
+        homeFragment.setRelatedFab(fab);
+        fab.setClosedOnTouchOutside(true);
+        fab1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(TabActivity.this,PublishActivity.class);
+                startActivity(i);
+            }
+        });
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(TabActivity.this, MomentPublishActivity.class);
+                startActivity(i);
+            }
+        });
+
         fragmentList.add(homeFragment);
         fragmentList.add(discoverFragment);
         fragmentList.add(chatFragment);
         fragmentList.add(userFragment);
+
 
         for (int i = 0; i < fragmentList.size(); i++) {
             TabLayout.Tab tab = tabLayout.newTab();
@@ -108,6 +139,15 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
     }
 
     @Override
+    public void onBackPressed() {
+        if(fab.isOpened()){
+            fab.close(true);
+        }else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public boolean canSwipeBack() {
         return false;
     }
@@ -146,6 +186,11 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
                     cv.setIconAlpha(0);
                 }
             }
+        }
+        if(position==0||position==1){
+            fab.showMenu(true);
+        }else {
+            fab.hideMenu(true);
         }
     }
 

@@ -75,6 +75,7 @@ public class DiscoverModel implements DiscoverContract.Model{
         query.setMaxCacheAge(TimeUnit.DAYS.toMillis(2));//此表示缓存两天，可以用来优化下拉刷新而清空了的加载更多
         query.order("-createdAt");
         query.include("author,request");
+        query.addWhereEqualTo("authorDelete",false);
         query.setLimit(Constant.NUMBER_PER_PAGE);
         query.setSkip(Constant.NUMBER_PER_PAGE * (loadedPageNum++));
         return query.findObjectsObservable(Moment.class);

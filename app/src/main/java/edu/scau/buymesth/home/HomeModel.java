@@ -66,4 +66,21 @@ public class HomeModel implements HomeContract.Model {
         return query.findObjectsObservable(Request.class);
     }
 
+    @Override
+    public Observable<List<Request>> getSomeonesRxRequests(int policy,String userId) {
+        BmobQuery<Request> query=new BmobQuery<>();
+        query.setMaxCacheAge(TimeUnit.DAYS.toMillis(1));//此表示缓存一天，可以用来优化下拉刷新而清空了的加载更多
+        query.order("-createdAt");
+        query.include("author");
+        query.addWhereEqualTo("author",userId);
+        query.setLimit(Constant.NUMBER_PER_PAGE);
+        query.setSkip(Constant.NUMBER_PER_PAGE * (pageNum++));
+        if(policy==FROM_CACHE&&query.hasCachedResult(Request.class))
+            query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ELSE_NETWORK);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
+        else
+            query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);//先从缓存再从网络
+
+        return query.findObjectsObservable(Request.class);
+    }
+
 }

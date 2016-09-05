@@ -11,10 +11,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import adpater.BaseQuickAdapter;
 import edu.scau.Constant;
@@ -22,10 +23,13 @@ import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.DiscoverAdapter;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.discover.detail.MomentDetailActivity;
+import edu.scau.buymesth.discover.publish.MomentPublishActivity;
 import edu.scau.buymesth.homedetail.RequestDetailActivity;
+import gallery.PhotoDialogFragment;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
+import ui.layout.NineGridLayout;
 
 /**
  * Created by Jammy on 2016/8/1.
@@ -94,10 +98,19 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
 //            Intent intent =new Intent(getActivity(), HomeDetailActivity.class);
 //            startActivity(intent);
 //        });
+//        mDiscoverAdapter.setOnRecyclerViewItemChildClickListener(new BaseQuickAdapter.OnRecyclerViewItemChildClickListener() {
+//            @Override
+//            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+//
+//            }
+//        });
         mDiscoverAdapter.setOnItemsContentClickListener(new DiscoverAdapter.OnItemsContentClickListener() {
             @Override
             public void onItemsContentClick(View v, Object item, int position) {
                 switch (v.getId()){
+                    case R.id.ly_delete:
+                        mPresenter.DeleteOne((Moment) item,position);
+                        break;
                     case R.id.ly_likes:
                         mPresenter.AddLike(v, (Moment) item, position);
                         break;
@@ -108,6 +121,11 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
                         break;
                     case R.id.nine_grid_layout:
                         Toast.makeText(getContext(),"click on image position : "+position,Toast.LENGTH_SHORT).show();
+                        List<View> views = new ArrayList<View>();
+                        for(int i = ((NineGridLayout)v).getChildCount()-1;i>=0;i--){
+                            views.add(0,((NineGridLayout)v).getChildAt(i));
+                        }
+                        PhotoDialogFragment.navigate(getActivity(),views,((List<String>)item),position);
                         break;
                     default:
                         break;
@@ -133,7 +151,12 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
 
     @Override
     public void onError(Throwable throwable, String msg) {
-        Toast.makeText(getActivity(),throwable==null?msg:throwable.toString(),Toast.LENGTH_SHORT).show();
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getActivity(),throwable==null?msg:throwable.toString(),Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -165,6 +188,16 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
         if(mPtrFrameLayout!=null)
             mPtrFrameLayout.refreshComplete();
         mDiscoverAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onDeleteSuccess(String msg) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getActivity(),"Delete succeed",Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private final class SpaceItemDecoration extends RecyclerView.ItemDecoration{

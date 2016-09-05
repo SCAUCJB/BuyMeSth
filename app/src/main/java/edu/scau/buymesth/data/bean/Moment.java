@@ -19,6 +19,7 @@ public class Moment extends BmobObject implements MultiItemEntity{
     private int comments;
     private String location;
     private boolean isLike;
+    private boolean authorDelete;
 
     public User getAuthor() {
         return author;
@@ -95,5 +96,13 @@ public class Moment extends BmobObject implements MultiItemEntity{
     @Override
     public int getItemType() {
         return request==null?0:1;
+    }
+
+    public boolean isAuthorDelete() {
+        return authorDelete;
+    }
+
+    public void setAuthorDelete(boolean authorDelete) {
+        this.authorDelete = authorDelete;
     }
 }

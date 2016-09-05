@@ -7,4 +7,13 @@
 		<item name="android:indeterminateDuration">1000</item>
 		<item name="android:indeterminateOnly">true</item>
 	</style>
+
+    <style name="style_dialog" parent="android:style/Theme.Translucent.NoTitleBar.Fullscreen">
+        <!-- Dialog进入及退出动画 -->
+        <item name="android:windowAnimationStyle">@style/BottomToTopAnim</item>
+    </style>
+
+    <style name="BottomToTopAnim" parent="android:Animation">
+        <item name="@android:windowExitAnimation">@android:anim/fade_out</item>
+    </style>
 </resources>

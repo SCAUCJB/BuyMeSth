@@ -1,11 +1,9 @@
 package edu.scau.buymesth.home;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,19 +11,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.Toast;
+
+import com.github.clans.fab.FloatingActionMenu;
 
 import java.util.List;
 
+import adpater.BaseQuickAdapter;
 import adpater.animation.ScaleInAnimation;
+import base.util.ToastUtil;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.HomeAdapter;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.homedetail.RequestDetailActivity;
-import edu.scau.buymesth.publish.PublishActivity;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
@@ -38,39 +37,37 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     private HomeAdapter mHomeAdapter;
     private HomePresenter mPresenter;
     private PtrFrameLayout mPtrFrameLayout;
-    private FloatingActionButton fbAdd;
+
+    private FloatingActionMenu relatedFab;
 
     private View notLoadingView;
+    private String filter;
+    private Object filterKey;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_home_fragment);
-        fbAdd = (FloatingActionButton) view.findViewById(R.id.fb_add);
+//        fbAdd = (FloatingActionButton) view.findViewById(R.id.fb_add);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_10)));
         //初始化代理人
         mPresenter = new HomePresenter();
         mPresenter.setVM(this, new HomeModel());
 
+        if(relatedFab !=null)
         mRecyclerView.addOnScrollListener(new HidingScrollListener() {
             @Override
             public void onHide() {
-                fbAdd.animate().translationY(fbAdd.getHeight() + fbAdd.getBottom()).setInterpolator(new AccelerateInterpolator(2)).start();
+                relatedFab.hideMenu(true);
             }
 
             @Override
             public void onShow() {
-                fbAdd.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+                relatedFab.showMenu(true);
             }
         });
-
-        fbAdd.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), PublishActivity.class);
-            startActivity(intent);
-        });
-
 
         initAdapter();
         initStoreHouse(view);
@@ -95,19 +92,35 @@ public class HomeFragment extends Fragment implements HomeContract.View {
             @Override
             public void onRefreshBegin(final PtrFrameLayout frame) {
                 mPtrFrameLayout = frame;
-                mPresenter.onRefresh();
+                if(filter ==null){
+                    mPresenter.onRefresh();
+                }
+                else
+                    mPresenter.onRefresh(filter, filterKey);
             }
         });
     }
 
+    protected BaseQuickAdapter.OnRecyclerViewItemClickListener getOnRecyclerViewItemClickListener(HomeAdapter homeAdapter){
+        return new BaseQuickAdapter.OnRecyclerViewItemClickListener(){
+            @Override
+            public void onItemClick(View view, int position) {
+                RequestDetailActivity.navigate((AppCompatActivity)getActivity(),homeAdapter.getData().get(position));
+            }
+        };
+    }
+
     private void initAdapter() {
-        mPresenter.initAdapter();
+        if(filter==null)
+            mPresenter.initAdapter();
+        else
+            mPresenter.onRefresh(filter, filterKey);
         mHomeAdapter = new HomeAdapter();
         mHomeAdapter.openLoadAnimation(new ScaleInAnimation());
         mRecyclerView.setAdapter(mHomeAdapter);
-        mHomeAdapter.setOnRecyclerViewItemClickListener((view, position) -> {
-            RequestDetailActivity.navigate((AppCompatActivity)getActivity(),mHomeAdapter.getData().get(position));
-        });
+        mHomeAdapter.setOnRecyclerViewItemClickListener(
+                getOnRecyclerViewItemClickListener(mHomeAdapter)
+        );
         mHomeAdapter.setOnLoadMoreListener(() -> mPresenter.onLoadMore());
         mHomeAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
     }
@@ -168,6 +181,30 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     @Override
     public void setAdapter(List<Request> list) {
         mHomeAdapter.setNewData(list);
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
+    }
+
+    public Object getFilterKey() {
+        return filterKey;
+    }
+
+    public void setFilterKey(Object filterKey) {
+        this.filterKey = filterKey;
+    }
+
+    public FloatingActionMenu getRelatedFab() {
+        return relatedFab;
+    }
+
+    public void setRelatedFab(FloatingActionMenu relatedFab) {
+        this.relatedFab = relatedFab;
     }
 
     private final class SpaceItemDecoration extends RecyclerView.ItemDecoration {

@@ -1,7 +1,10 @@
 package edu.scau.buymesth.discover.list;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.ConnectivityManager;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,11 +16,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import base.BasePresenter;
+import base.util.ToastUtil;
 import cn.bmob.v3.AsyncCustomEndpoints;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.CloudCodeListener;
+import cn.bmob.v3.listener.UpdateListener;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.data.bean.MomentsLike;
@@ -202,7 +207,30 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
         });
     }
 
-    public void DeleteOne(int position){
-
+    public void DeleteOne(Moment moment,int position){
+        if(moment.getAuthor().getObjectId().equals(BmobUser.getCurrentUser().getObjectId())){
+            new AlertDialog.Builder(mContext)
+                    .setTitle(mContext.getResources().getString(R.string.text_delete))
+                    .setMessage("delete ?")
+                    .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Moment deleteMoment = new Moment();
+                            deleteMoment.setObjectId(moment.getObjectId());
+                            deleteMoment.setAuthorDelete(true);
+                            deleteMoment.delete(new UpdateListener() {
+                                @Override
+                                public void done(BmobException e) {
+                                    if(e==null)
+                                        mView.onDeleteSuccess(moment.getObjectId());
+                                    else
+                                        mView.onError(null,e.toString());
+                                }
+                            });
+                        }
+                    })
+                    .setNegativeButton("no",null)
+                    .show();
+        }
     }
 }

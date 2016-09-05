@@ -213,6 +213,39 @@
                             style="@style/theText" />
 
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:id="@+id/ly_delete"
+                        android:layout_marginRight="5dp"
+                        android:clickable="true"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:paddingLeft="2dp"
+                        android:paddingTop="5dp"
+                        android:paddingRight="2dp"
+                        android:paddingBottom="5dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_toStartOf="@+id/ly_likes"
+                        android:visibility="invisible">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:id="@+id/iv_delete"
+                            android:src="@drawable/ic_delete_red"
+                            android:padding="2dp" />
+
+                        <TextView
+                            style="@style/theText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:text="@string/text_delete"
+                            android:id="@+id/tv_delete" />
+                    </LinearLayout>
                 </RelativeLayout>
 
             </LinearLayout>

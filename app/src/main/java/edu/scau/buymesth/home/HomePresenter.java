@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import base.BasePresenter;
+import base.util.ToastUtil;
 import edu.scau.buymesth.data.bean.Request;
 import rx.Observable;
 import rx.Observer;
@@ -19,6 +20,7 @@ import rx.schedulers.Schedulers;
 
 public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContract.View> {
 
+    public static final String FILTER_AUTHOR_ID = "USERID";
     /**
      * 初始化工作写在这里
      */
@@ -106,6 +108,83 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
                         if(isAlive()) tempList.add(request);
                     }
                 });
+    }
+
+    public void onRefresh(String filter , Object key) {
+        if(filter==null) ToastUtil.show("ffffuck");
+        if(filter==FILTER_AUTHOR_ID){
+            mModel.resetPage();
+            List<Request> tempList=new LinkedList<>();
+            mModel.getSomeonesRxRequests(HomeModel.FROM_NETWORK,(String) key).flatMap(new Func1<List<Request>, Observable<Request>>() {
+                @Override
+                public Observable<Request> call(List<Request> requests) {
+                    return Observable.from(requests);
+                }
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<Request>() {
+                        @Override
+                        public void onCompleted() {
+                            if(isAlive())
+                            {
+                                mModel.getDatas().clear();
+                                mModel.setDatas(tempList);
+                                mView.onRefreshComplete(mModel.getDatas());}
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            if (isAlive()){
+                                mView.showError("仿佛网络有点差");
+                                mView.onRefreshFail();
+                            }
+                        }
+
+                        @Override
+                        public void onNext(Request request) {
+                            if(isAlive()) tempList.add(request);
+                        }
+                    });
+        }
+    }
+
+    public void onLoadMore(String filter , Object key) {
+        if(filter==null) return;
+        if(filter==FILTER_AUTHOR_ID){
+            List<Request> tempList = new LinkedList<>();
+            mModel.getSomeonesRxRequests(HomeModel.FROM_NETWORK,(String) key).flatMap(new Func1<List<Request>, Observable<Request>>() {
+                @Override
+                public Observable<Request> call(List<Request> requests) {
+                    return Observable.from(requests);
+                }
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<Request>() {
+                        @Override
+                        public void onCompleted() {
+                            if (isAlive()) {
+                                if (tempList.size() > 0)
+                                    mView.onLoadMoreSuccess(tempList);
+                                else
+                                    mView.onLoadMoreSuccess(null);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            if (isAlive()){
+                                mView.showError("仿佛网络有点差");
+                                mView.onRefreshFail();
+                            }
+
+                        }
+
+                        @Override
+                        public void onNext(Request request) {
+                            if (isAlive()) tempList.add(request);
+                        }
+                    });
+        }
     }
 
     public void initAdapter() {
