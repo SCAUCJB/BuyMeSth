@@ -20,44 +20,47 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
     </android.support.design.widget.AppBarLayout>
+
     <LinearLayout
         android:id="@+id/bottom_bar"
-        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_36"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/background_item_base"
         android:orientation="horizontal">
 
         <TextView
-            android:text="点赞"
-            android:gravity="center"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="点赞" />
 
         <TextView
-            android:text="收藏"
-            android:gravity="center"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="收藏" />
 
         <TextView
             android:id="@+id/tv_create_order"
-            android:text="接单"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@color/red"
             android:clickable="true"
             android:gravity="center"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:text="接单" />
     </LinearLayout>
+
     <android.support.v4.widget.NestedScrollView
-        android:overScrollMode="never"
-        android:fadingEdge="none"
-        android:layout_below="@+id/app_bar_layout"
-        android:layout_above="@+id/bottom_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom_bar"
+        android:layout_below="@+id/app_bar_layout"
+        android:fadingEdge="none"
+        android:overScrollMode="never">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -119,11 +122,24 @@
                     android:text="+ 关注" />
             </RelativeLayout>
 
-            <android.support.v4.view.ViewPager
-                android:id="@+id/vp_images"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:id="@+id/photos_parent">
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/vp_images"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
+                <TextView
+                    android:id="@+id/tv_page_num"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:layout_gravity="bottom|end" />
+            </FrameLayout>
             <TextView
                 android:id="@+id/tv_title"
                 style="@style/theName"
@@ -141,6 +157,7 @@
                 android:paddingLeft="@dimen/content_padding"
                 android:paddingRight="@dimen/content_padding"
                 android:text="" />
+
             <TextView
                 android:id="@+id/tv_price"
                 style="@style/theName"
@@ -149,13 +166,14 @@
                 android:paddingLeft="@dimen/content_padding"
                 android:paddingRight="@dimen/content_padding"
                 android:text="期望价格" />
+
             <edu.scau.buymesth.publish.FlowLayout
-                android:layout_marginTop="@dimen/dp_10"
-                android:layout_marginBottom="@dimen/dp_10"
                 android:id="@+id/fl_tags"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp">
+                android:layout_margin="10dp"
+                android:layout_marginBottom="@dimen/dp_10"
+                android:layout_marginTop="@dimen/dp_10">
 
             </edu.scau.buymesth.publish.FlowLayout>
 
@@ -217,10 +235,11 @@
                     android:clickable="true"
                     android:gravity="center" />
             </LinearLayout>
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_comment"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

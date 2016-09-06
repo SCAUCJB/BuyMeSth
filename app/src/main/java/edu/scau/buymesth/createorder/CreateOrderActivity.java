@@ -29,7 +29,7 @@ import edu.scau.buymesth.publish.FlowLayout;
 import edu.scau.buymesth.util.InputMethodHelper;
 import ui.widget.PickerView;
 
-import static edu.scau.buymesth.homedetail.RequestDetailActivity.EXTRA_REQUEST;
+import static edu.scau.buymesth.request.requestdetail.RequestDetailActivity.EXTRA_REQUEST;
 
 /**
  * Created by John on 2016/8/29.

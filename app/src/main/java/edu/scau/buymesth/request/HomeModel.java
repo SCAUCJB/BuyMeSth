@@ -1,4 +1,4 @@
-package edu.scau.buymesth.home;
+package edu.scau.buymesth.request;
 
 
 import java.util.LinkedList;
@@ -6,11 +6,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.FindListener;
 import edu.scau.Constant;
 import edu.scau.buymesth.data.bean.Request;
-import edu.scau.buymesth.data.bean.User;
 import rx.Observable;
 
 /**

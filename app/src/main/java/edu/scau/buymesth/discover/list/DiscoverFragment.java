@@ -11,7 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -23,8 +22,7 @@ import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.DiscoverAdapter;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.discover.detail.MomentDetailActivity;
-import edu.scau.buymesth.discover.publish.MomentPublishActivity;
-import edu.scau.buymesth.homedetail.RequestDetailActivity;
+import edu.scau.buymesth.request.requestdetail.RequestDetailActivity;
 import gallery.PhotoDialogFragment;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;

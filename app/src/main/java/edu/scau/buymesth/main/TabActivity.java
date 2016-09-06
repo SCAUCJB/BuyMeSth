@@ -19,7 +19,7 @@ import edu.scau.buymesth.adapter.TabAdapter;
 import edu.scau.buymesth.chat.ChatFragment;
 import edu.scau.buymesth.discover.list.DiscoverFragment;
 import edu.scau.buymesth.discover.publish.MomentPublishActivity;
-import edu.scau.buymesth.home.HomeFragment;
+import edu.scau.buymesth.request.HomeFragment;
 import edu.scau.buymesth.publish.PublishActivity;
 import edu.scau.buymesth.user.UserFragment;
 import ui.widget.ChangeColorIconWithTextView;

@@ -1,6 +1,5 @@
-package edu.scau.buymesth.home;
+package edu.scau.buymesth.request;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,7 +9,6 @@ import edu.scau.buymesth.data.bean.Request;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 

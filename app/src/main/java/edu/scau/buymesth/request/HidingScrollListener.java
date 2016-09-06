@@ -1,4 +1,4 @@
-package edu.scau.buymesth.home;
+package edu.scau.buymesth.request;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;

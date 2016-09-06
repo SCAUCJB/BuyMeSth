@@ -1,4 +1,4 @@
-package edu.scau.buymesth.home;
+package edu.scau.buymesth.request;
 
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -19,12 +19,11 @@ import java.util.List;
 
 import adpater.BaseQuickAdapter;
 import adpater.animation.ScaleInAnimation;
-import base.util.ToastUtil;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.HomeAdapter;
 import edu.scau.buymesth.data.bean.Request;
-import edu.scau.buymesth.homedetail.RequestDetailActivity;
+import edu.scau.buymesth.request.requestdetail.RequestDetailActivity;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;

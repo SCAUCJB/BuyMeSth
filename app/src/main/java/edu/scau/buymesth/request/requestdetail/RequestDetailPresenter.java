@@ -1,4 +1,4 @@
-package edu.scau.buymesth.homedetail;
+package edu.scau.buymesth.request.requestdetail;
 
 import java.util.List;
 

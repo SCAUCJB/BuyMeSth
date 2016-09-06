@@ -1,4 +1,4 @@
-package edu.scau.buymesth.homedetail;
+package edu.scau.buymesth.request.requestdetail;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,7 +9,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,19 +21,13 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import base.BaseActivity;
 import base.util.GlideCircleTransform;
 import base.util.SpaceItemDecoration;
 import butterknife.Bind;
-import cache.lru.DiskLruCache;
 import cn.bmob.v3.BmobUser;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
@@ -43,7 +36,6 @@ import edu.scau.buymesth.createorder.CreateOrderActivity;
 import edu.scau.buymesth.data.bean.Comment;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.publish.FlowLayout;
-import edu.scau.buymesth.util.DiskLruCacheHelper;
 
 /**
  * Created by John on 2016/8/20.
@@ -83,11 +75,12 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     FlowLayout flTags;
     @Bind(R.id.tv_price)
     TextView mPriceTv;
+    @Bind(R.id.tv_page_num)
+    TextView mPageNumTv;
     private RequestDetailPresenter presenter;
     private int[] heights;
     private List<ImageView> imageViews;
     private PagerAdapter mAdapter;
-    private ConcurrentLinkedQueue<HttpURLConnection> connections = new ConcurrentLinkedQueue<>();
 
     public static void navigate(Activity activity, Request request) {
         Intent intent = new Intent(activity, RequestDetailActivity.class);
@@ -111,84 +104,16 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         model.setRequest((Request) getIntent().getSerializableExtra(EXTRA_REQUEST));
         presenter = new RequestDetailPresenter();
         presenter.setVM(this, model);
-//        presenter.initUserInfo();
-//        presenter.initCommentBar();
-//        presenter.initContent();
-//        presenter.initComment();
-//        presenter.initTags();
         if(!model.getRequest().getAuthor().getObjectId().equals( BmobUser.getCurrentUser().getObjectId()))
         mCreateOrderBtn.setOnClickListener(v -> CreateOrderActivity.navigateTo(mContext,(Request) getIntent().getSerializableExtra(EXTRA_REQUEST)));
     }
 
 
-    private volatile DiskLruCache mDiskLruCache = null;
-
-//    /**
-//     * 仅仅获取图片的高度，不加载图片
-//     *
-//     * @param urlString
-//     * @return
-//     */
-//    private int getImageHeight(String urlString) {
-//
-//        String heightCache = DiskLruCacheHelper.getAsString(urlString + "height", mDiskLruCache);
-//        if (heightCache != null)
-//            return Integer.valueOf(heightCache);
-//        HttpURLConnection urlConnection = null;
-//        InputStream inputStream = null;
-//        int height = -1;
-//        try {
-//            final URL url = new URL(urlString);
-//            urlConnection = (HttpURLConnection) url.openConnection();
-//            connections.add(urlConnection);
-//            urlConnection.setReadTimeout(50000);
-//            inputStream = urlConnection.getInputStream();
-//            final BitmapFactory.Options options = new BitmapFactory.Options();
-//            options.inJustDecodeBounds = true;
-//            BitmapFactory.decodeStream(inputStream, null, options);
-//            WindowManager manager = getWindow().getWindowManager();
-//            DisplayMetrics outMetrics = new DisplayMetrics();
-//            manager.getDefaultDisplay().getMetrics(outMetrics);
-//            height = (int) ((1.0f * outMetrics.widthPixels / options.outWidth) * options.outHeight);
-//            if(mDiskLruCache!=null)
-//            DiskLruCacheHelper.put(urlString + "height", String.valueOf(height), mDiskLruCache);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (inputStream != null) {
-//                try {
-//                    inputStream.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            if (urlConnection != null) {
-//                urlConnection.disconnect();
-//                if (!connections.isEmpty())
-//                    connections.remove(urlConnection);
-//            }
-//        }
-//        return height;
-//    }
-
     @Override
     protected void onDestroy() {
-        for (HttpURLConnection connection : connections) {
-            if (connection != null)
-                connection.disconnect();
-        }
-        if(!fixedThreadPool.isTerminated())
-        {
-           int unfinished= fixedThreadPool.shutdownNow().size();
-            Log.d("zhx","unfinished thread="+unfinished);
-        }
+
         presenter.onDestroy();
         presenter = null;
-        if (mDiskLruCache != null) try {
-            mDiskLruCache.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         super.onDestroy();
     }
 
@@ -277,7 +202,6 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         String timeString = createdAt + "发布";
         time.setText(timeString);
     }
-    ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
     @Override
     public void setUpViewPager(List<String> picHeights, List<String> picWidths,List<String> urls) {
         imageViews = new ArrayList<>(urls.size());
@@ -285,9 +209,6 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         mViewPager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                if (mDiskLruCache == null) {
-                    mDiskLruCache = DiskLruCacheHelper.create(mContext, "requestDetail");
-                }
                 WindowManager manager = getWindow().getWindowManager();
                  DisplayMetrics outMetrics = new DisplayMetrics();
                manager.getDefaultDisplay().getMetrics(outMetrics);
@@ -298,14 +219,18 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
                    Glide.with(mContext).load(urls.get(i)).into(imageView);
                    imageViews.add(imageView);
                 }
-       //         fixedThreadPool.shutdown();
                 mAdapter.notifyDataSetChanged();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     mViewPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 } else {
                     mViewPager.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 }
-
+                //为ViewPager设置高度
+                ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
+                params.height = heights[0];
+                mViewPager.setLayoutParams(params);
+                if(heights.length>1)
+                mPageNumTv.setText("1/"+heights.length);
             }
         });
         mAdapter = new PagerAdapter() {
@@ -351,7 +276,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
 
             @Override
             public void onPageSelected(int position) {
-
+                mPageNumTv.setText(position+1+"/"+heights.length);
             }
 
             @Override

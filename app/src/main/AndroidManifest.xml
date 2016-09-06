@@ -60,7 +60,7 @@
         <activity
             android:name="me.iwf.photopicker.PhotoPagerActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".homedetail.RequestDetailActivity"
+        <activity android:name=".request.requestdetail.RequestDetailActivity"
             android:theme="@style/AppTheme.SwipeBackLayout"/>
 
         <activity android:name=".discover.detail.MomentDetailActivity"
