@@ -77,7 +77,6 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
         createOrderPresenter = (CreateOrderPresenter) mPresenter;
         CreateOrderModel model = new CreateOrderModel();
         model.setRequest((Request) getIntent().getSerializableExtra(EXTRA_REQUEST));
-
         createOrderPresenter.setVM(this, model);
     }
     private Drawable clickerDrawable;

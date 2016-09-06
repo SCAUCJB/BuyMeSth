@@ -53,7 +53,7 @@ class CreateOrderPresenter extends BasePresenter<CreateOrderContract.Model,Creat
         try {
             mModel.setPrice(Float.valueOf(mView.getPrice()));
         } catch (NumberFormatException e) {
-            mView.showMsg("服务费只能是数字和小数点");
+            mView.showMsg("价格只能是数字和小数点");
             return;
         }
         mView.showLoadingDialog();
