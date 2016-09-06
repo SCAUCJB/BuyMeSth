@@ -17,7 +17,9 @@ public interface PublishContract {
     }
 
     interface Model{
-        void submit(Request request, Subscriber<String> observable, List<String> list);
+        void submit( List<String> picHeights,List<String> picWidths,Subscriber<String> observable, List<String> list);
+
+        void setRequest(Request request);
     }
 
 

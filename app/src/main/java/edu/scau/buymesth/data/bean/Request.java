@@ -13,6 +13,8 @@ public class Request extends BmobObject {
     private String title;
     private String content;
     private List<String> urls;
+    private List<String> picHeights;
+    private List<String> picWidths;
     private User author;
     private Boolean isAnonymous;
     private Integer likes;
@@ -129,5 +131,21 @@ public class Request extends BmobObject {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public List<String> getPicHeights() {
+        return picHeights;
+    }
+
+    public void setPicHeights(List<String> picHeights) {
+        this.picHeights = picHeights;
+    }
+
+    public List<String> getPicWidths() {
+        return picWidths;
+    }
+
+    public void setPicWidths(List<String> picWidths) {
+        this.picWidths = picWidths;
     }
 }

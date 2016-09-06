@@ -35,7 +35,6 @@ public interface RequestDetailContract {
 
          void setTime(String createdAt);
 
-         void setUpViewPager(List<String> urls);
 
          void hideViewPager();
 
@@ -43,6 +42,8 @@ public interface RequestDetailContract {
          void setTagList(List<String> tags);
 
          void setPrice(String price);
+
+         void setUpViewPager(List<String> picHeights, List<String> picWidths, List<String> urls);
      }
     interface Model{
         void setRequest(Request request);

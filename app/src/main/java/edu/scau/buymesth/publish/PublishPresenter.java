@@ -15,20 +15,18 @@ public class PublishPresenter extends BasePresenter<PublishContract.Model, Publi
 
     }
 
-    public void submit(Request request, List<String> list) {
+      void submit( List<String> picHeights,List<String> picWidths, List<String> list) {
 
         Subscriber<String> subscriber = new Subscriber<String>() {
 
             @Override
             public void onCompleted() {
                 mView.onSubmitFinish();
-                mView.closeLoadingDialog();
             }
 
             @Override
             public void onError(Throwable throwable) {
                 mView.onSubmitFail();
-                mView.closeLoadingDialog();
             }
 
             @Override
@@ -36,8 +34,11 @@ public class PublishPresenter extends BasePresenter<PublishContract.Model, Publi
 
             }
         };
-        mModel.submit(request, subscriber, list);
+        mModel.submit(picHeights,picWidths, subscriber, list);
     }
 
 
+    public void setRequest(Request request) {
+        mModel.setRequest(request);
+    }
 }

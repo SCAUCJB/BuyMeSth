@@ -3,7 +3,6 @@ package edu.scau.buymesth.homedetail;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -24,9 +23,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -126,53 +123,53 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
 
     private volatile DiskLruCache mDiskLruCache = null;
 
-    /**
-     * 仅仅获取图片的高度，不加载图片
-     *
-     * @param urlString
-     * @return
-     */
-    private int getImageHeight(String urlString) {
-
-        String heightCache = DiskLruCacheHelper.getAsString(urlString + "height", mDiskLruCache);
-        if (heightCache != null)
-            return Integer.valueOf(heightCache);
-        HttpURLConnection urlConnection = null;
-        InputStream inputStream = null;
-        int height = -1;
-        try {
-            final URL url = new URL(urlString);
-            urlConnection = (HttpURLConnection) url.openConnection();
-            connections.add(urlConnection);
-            urlConnection.setReadTimeout(50000);
-            inputStream = urlConnection.getInputStream();
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(inputStream, null, options);
-            WindowManager manager = getWindow().getWindowManager();
-            DisplayMetrics outMetrics = new DisplayMetrics();
-            manager.getDefaultDisplay().getMetrics(outMetrics);
-            height = (int) ((1.0f * outMetrics.widthPixels / options.outWidth) * options.outHeight);
-            if(mDiskLruCache!=null)
-            DiskLruCacheHelper.put(urlString + "height", String.valueOf(height), mDiskLruCache);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-                if (!connections.isEmpty())
-                    connections.remove(urlConnection);
-            }
-        }
-        return height;
-    }
+//    /**
+//     * 仅仅获取图片的高度，不加载图片
+//     *
+//     * @param urlString
+//     * @return
+//     */
+//    private int getImageHeight(String urlString) {
+//
+//        String heightCache = DiskLruCacheHelper.getAsString(urlString + "height", mDiskLruCache);
+//        if (heightCache != null)
+//            return Integer.valueOf(heightCache);
+//        HttpURLConnection urlConnection = null;
+//        InputStream inputStream = null;
+//        int height = -1;
+//        try {
+//            final URL url = new URL(urlString);
+//            urlConnection = (HttpURLConnection) url.openConnection();
+//            connections.add(urlConnection);
+//            urlConnection.setReadTimeout(50000);
+//            inputStream = urlConnection.getInputStream();
+//            final BitmapFactory.Options options = new BitmapFactory.Options();
+//            options.inJustDecodeBounds = true;
+//            BitmapFactory.decodeStream(inputStream, null, options);
+//            WindowManager manager = getWindow().getWindowManager();
+//            DisplayMetrics outMetrics = new DisplayMetrics();
+//            manager.getDefaultDisplay().getMetrics(outMetrics);
+//            height = (int) ((1.0f * outMetrics.widthPixels / options.outWidth) * options.outHeight);
+//            if(mDiskLruCache!=null)
+//            DiskLruCacheHelper.put(urlString + "height", String.valueOf(height), mDiskLruCache);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } finally {
+//            if (inputStream != null) {
+//                try {
+//                    inputStream.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            if (urlConnection != null) {
+//                urlConnection.disconnect();
+//                if (!connections.isEmpty())
+//                    connections.remove(urlConnection);
+//            }
+//        }
+//        return height;
+//    }
 
     @Override
     protected void onDestroy() {
@@ -282,7 +279,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     }
     ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
     @Override
-    public void setUpViewPager(List<String> urls) {
+    public void setUpViewPager(List<String> picHeights, List<String> picWidths,List<String> urls) {
         imageViews = new ArrayList<>(urls.size());
         heights = new int[urls.size()];
         mViewPager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -291,26 +288,17 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
                 if (mDiskLruCache == null) {
                     mDiskLruCache = DiskLruCacheHelper.create(mContext, "requestDetail");
                 }
+                WindowManager manager = getWindow().getWindowManager();
+                 DisplayMetrics outMetrics = new DisplayMetrics();
+               manager.getDefaultDisplay().getMetrics(outMetrics);
                 for (int i = 0; i < urls.size(); ++i) {
                     ImageView imageView = new ImageView(RequestDetailActivity.this);
-                    final int fi = i;
-                    fixedThreadPool.execute(() -> {
-                        heights[fi] = getImageHeight(urls.get(fi));
-                        RequestDetailActivity.this.runOnUiThread(
-                                () -> {
-                                    if (fi == 0) {
-                                        //ViewPager的初始高度设置为第一个页面的高度
-                                        ViewGroup.LayoutParams layoutParams = mViewPager.getLayoutParams();
-                                        layoutParams.height = heights[0];
-                                        mViewPager.setLayoutParams(layoutParams);
-                                    }
-                                }
-                        );
-                    });
+                    int height = (int) ((1.0f * outMetrics.widthPixels / Integer.parseInt(picWidths.get(i))) * Integer.parseInt(picHeights.get(i)));
+                    heights[i]= height;
                    Glide.with(mContext).load(urls.get(i)).into(imageView);
                    imageViews.add(imageView);
                 }
-                fixedThreadPool.shutdown();
+       //         fixedThreadPool.shutdown();
                 mAdapter.notifyDataSetChanged();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     mViewPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);

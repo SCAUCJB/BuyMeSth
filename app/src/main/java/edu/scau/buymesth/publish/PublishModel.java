@@ -18,12 +18,9 @@ import rx.schedulers.Schedulers;
  * Created by Jammy on 2016/8/16.
  */
 public class PublishModel implements  PublishContract.Model {
-
+    Request request ;
     @Override
-    public void submit(Request request, Subscriber<String> subscriber, List<String> list) {
-
-
-
+    public void submit( List<String> picHeights,List<String> picWidths,Subscriber<String> subscriber, List<String> list) {
          Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -37,6 +34,8 @@ public class PublishModel implements  PublishContract.Model {
                         public void onSuccess(List<BmobFile> files, List<String> urls) {
                             if (urls.size() == fileList.length) {//如果数量相等，则代表文件全部上传完成
                                 request.setUrls(urls);
+                                request.setPicHeights(picHeights);
+                                request.setPicWidths(picWidths);
                                 request.save(new SaveListener<String>() {
                                     @Override
                                     public void done(String s, BmobException e) {
@@ -80,5 +79,10 @@ public class PublishModel implements  PublishContract.Model {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
+    }
+
+    @Override
+    public void setRequest(Request request) {
+        this.request=request;
     }
 }

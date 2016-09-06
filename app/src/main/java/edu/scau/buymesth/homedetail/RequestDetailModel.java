@@ -13,8 +13,8 @@ import rx.Observable;
  */
 
 public class RequestDetailModel implements RequestDetailContract.Model {
-    private Request request=null;
-    private List<Comment> comments=null;
+     Request request=null;
+     List<Comment> comments=null;
     public void setRequest(Request request) {
         this.request = request;
     }

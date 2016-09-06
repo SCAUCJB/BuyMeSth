@@ -56,7 +56,7 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
         mView.setTime(request.getCreatedAt());
 
         if (request.getUrls() != null) {
-            mView.setUpViewPager(request.getUrls());
+            mView.setUpViewPager(request.getPicHeights(),request.getPicWidths(),request.getUrls());
         } else {
             mView.hideViewPager();
         }
