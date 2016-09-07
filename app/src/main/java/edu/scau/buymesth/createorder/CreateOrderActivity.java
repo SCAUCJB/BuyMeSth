@@ -82,6 +82,7 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
     private Drawable unclickerDrawable;
     @Override
     public void initView() {
+        findViewById(R.id.card_view).setOnClickListener(v->toast("i was clicked"));
         clickerDrawable=getResources().getDrawable(R.drawable.rect_accent);
         unclickerDrawable=getResources().getDrawable(R.drawable.rect_grey);
         final EditText editText = new EditText(mContext);
@@ -125,7 +126,11 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
 
     @Override
     protected void setListener() {
-        findViewById(R.id.ll_background).setOnClickListener(v-> InputMethodHelper.toggle(mContext));
+        findViewById(R.id.ll_background).setOnClickListener(v->
+        {
+            if(InputMethodHelper.isOpen(mContext))
+                InputMethodHelper.close(mContext,CreateOrderActivity.this);
+        });
         tvDeliverTime.setOnClickListener(v -> createOrderPresenter.onDeliverTimeClicked());
         tvAdd.setOnClickListener(v -> tagInputDialog.show());
         btnSubmit.setOnClickListener(v->createOrderPresenter.onSubmitClicked());

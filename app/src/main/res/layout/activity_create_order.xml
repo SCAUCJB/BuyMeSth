@@ -49,13 +49,13 @@
                 style="@style/theName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
+                android:layout_alignTop="@+id/iv_avatar_author"
                 android:layout_toEndOf="@+id/iv_avatar_author"
                 android:text="Miracle" />
             <TextView
                 android:id="@+id/tv_price"
                 style="@style/theName"
-                android:layout_toRightOf="@id/tv_name"
+                android:layout_alignParentEnd="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/content_padding"

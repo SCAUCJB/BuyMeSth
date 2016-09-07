@@ -6,9 +6,9 @@
             android:shape="rectangle">
             <!-- 填充颜色 -->
             <solid android:color="@color/white" />
-            <stroke
-                android:width="0.5dp"
-                android:color="@color/colorLightGrey" />
+            <!--<stroke-->
+                <!--android:width="0.5dp"-->
+                <!--android:color="@color/colorLightGrey" />-->
         </shape>
     </item>
 </ripple>

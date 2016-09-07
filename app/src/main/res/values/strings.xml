@@ -25,9 +25,9 @@
 
     <string name="text_delete">Delete</string>
 
-    <string name="text_follow">+Follow</string>
-    <string name="text_followed">Followed</string>
+    <string name="text_follow">+关注</string>
+    <string name="text_followed">已关注</string>
 
-    <string name="text_collect">Collect</string>
-    <string name="text_collected">Collected</string>
+    <string name="text_collect">收藏</string>
+    <string name="text_collected">已收藏</string>
 </resources>

@@ -367,7 +367,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     public void closeLoadingDialog() {
-        if (mDialog == null) {
+        if (mDialog != null) {
             mDialog.dismiss();
         }
     }

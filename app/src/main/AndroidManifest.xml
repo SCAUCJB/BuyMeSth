@@ -70,7 +70,8 @@
         <activity android:name=".discover.publish.MomentPublishActivity"
             android:theme="@style/AppTheme.SwipeBackLayout"
             android:windowSoftInputMode="stateHidden|stateUnchanged"/>
-
+        <activity android:name=".request.requestcomment.CommentActivity"
+            android:theme="@style/AppTheme.SwipeBackLayout"/>
         <receiver android:name="cn.bmob.newim.core.ConnectChangeReceiver" >
             <intent-filter>
                 <action android:name="cn.bmob.action.RECONNECT" />

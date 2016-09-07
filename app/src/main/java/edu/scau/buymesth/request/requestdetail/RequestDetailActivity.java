@@ -34,11 +34,9 @@ import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.RequestCommentAdapter;
 import edu.scau.buymesth.createorder.CreateOrderActivity;
 import edu.scau.buymesth.data.bean.Comment;
-import edu.scau.buymesth.data.bean.Follow;
 import edu.scau.buymesth.data.bean.Request;
-import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.publish.FlowLayout;
-import util.RecycleViewDivider;
+import edu.scau.buymesth.request.requestcomment.CommentActivity;
 
 import static edu.scau.Constant.EXTRA_REQUEST;
 
@@ -85,6 +83,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     private int[] heights;
     private List<ImageView> imageViews;
     private PagerAdapter mAdapter;
+    private boolean mIsSelf;
 
     public static void navigate(Activity activity, Request request) {
         Intent intent = new Intent(activity, RequestDetailActivity.class);
@@ -104,20 +103,25 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         rvComment.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_4)));
         rvComment.setHasFixedSize(true);
         rvComment.setNestedScrollingEnabled(false);
-        rvComment.addItemDecoration(new RecycleViewDivider(
-                mContext, LinearLayoutManager.VERTICAL, 1, getResources().getColor(R.color.lightgrey)));
-
+//        rvComment.addItemDecoration(new RecycleViewDivider(
+//                mContext, LinearLayoutManager.VERTICAL, 1, getResources().getColor(R.color.grey)));
+rvComment.addItemDecoration(new DividerItemDecoration(this,
+                DividerItemDecoration.VERTICAL_LIST));
         RequestDetailModel model = new RequestDetailModel();
         model.setRequest((Request) getIntent().getSerializableExtra(Constant.EXTRA_REQUEST));
-        presenter = new RequestDetailPresenter();
+        mPresenter=presenter = new RequestDetailPresenter();
         presenter.setVM(this, model);
-        if(!model.getRequest().getAuthor().getObjectId().equals( BmobUser.getCurrentUser().getObjectId()))
-        mCreateOrderBtn.setOnClickListener(v -> CreateOrderActivity.navigateTo(mContext,(Request) getIntent().getSerializableExtra(EXTRA_REQUEST)));
+        mIsSelf = model.getRequest().getAuthor().getObjectId().equals(BmobUser.getCurrentUser().getObjectId());
+
+            mCreateOrderBtn.setOnClickListener(v -> {
+                if (!mIsSelf) CreateOrderActivity.navigateTo(mContext, (Request) getIntent().getSerializableExtra(EXTRA_REQUEST));
+                else toast("不能接自己的单");
+            });
     }
 
     @Override
     protected void setListener() {
-      //  comment.setOnClickListener(v->);
+           comment.setOnClickListener(v-> CommentActivity.navigateTo(mContext,presenter.getRequest()));
     }
 
     @Override
@@ -172,17 +176,26 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
 
     @Override
     public void setOnAcceptClicked() {
+
+
         TextView accept = (TextView) findViewById(R.id.tv_accept);
         accept.setOnClickListener((v) -> {
-            presenter.follow();
+            if (!mIsSelf)
+                presenter.follow();
+            else
+                toast("关注自己毫无意义");
         });
+
     }
 
     @Override
     public void setOnCollectClicked() {
         TextView accept = (TextView) findViewById(R.id.tv_collect);
         accept.setOnClickListener((v) -> {
-            presenter.collect();
+            if (!mIsSelf)
+                presenter.collect();
+            else
+                toast("收藏自己毫无意义");
         });
     }
 
@@ -221,23 +234,25 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         String timeString = createdAt + "发布";
         time.setText(timeString);
     }
+
     @Override
-    public void setUpViewPager(List<String> picHeights, List<String> picWidths,List<String> urls) {
-        if(picHeights.size()!=urls.size()||picWidths.size()!=urls.size()||urls.size()==0)return;
+    public void setUpViewPager(List<String> picHeights, List<String> picWidths, List<String> urls) {
+        if (picHeights.size() != urls.size() || picWidths.size() != urls.size() || urls.size() == 0)
+            return;
         imageViews = new ArrayList<>(urls.size());
         heights = new int[urls.size()];
         mViewPager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 WindowManager manager = getWindow().getWindowManager();
-                 DisplayMetrics outMetrics = new DisplayMetrics();
-               manager.getDefaultDisplay().getMetrics(outMetrics);
+                DisplayMetrics outMetrics = new DisplayMetrics();
+                manager.getDefaultDisplay().getMetrics(outMetrics);
                 for (int i = 0; i < urls.size(); ++i) {
                     ImageView imageView = new ImageView(RequestDetailActivity.this);
                     int height = (int) ((1.0f * outMetrics.widthPixels / Integer.parseInt(picWidths.get(i))) * Integer.parseInt(picHeights.get(i)));
-                    heights[i]= height;
-                   Glide.with(mContext).load(urls.get(i)).into(imageView);
-                   imageViews.add(imageView);
+                    heights[i] = height;
+                    Glide.with(mContext).load(urls.get(i)).into(imageView);
+                    imageViews.add(imageView);
                 }
                 mAdapter.notifyDataSetChanged();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -249,8 +264,8 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
                 ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
                 params.height = heights[0];
                 mViewPager.setLayoutParams(params);
-                if(heights.length>1)
-                mPageNumTv.setText("1/"+heights.length);
+                if (heights.length > 1)
+                    mPageNumTv.setText("1/" + heights.length);
             }
         });
         mAdapter = new PagerAdapter() {
@@ -296,7 +311,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
 
             @Override
             public void onPageSelected(int position) {
-                mPageNumTv.setText(position+1+"/"+heights.length);
+                mPageNumTv.setText(position + 1 + "/" + heights.length);
             }
 
             @Override
@@ -309,10 +324,10 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     @Override
     public void setFollow(boolean b) {
         runOnUiThread(() -> {
-            if(b){
-                ((TextView)findViewById(R.id.tv_accept)).setText(getResources().getString(R.string.text_followed));
-            }else {
-                ((TextView)findViewById(R.id.tv_accept)).setText(getResources().getString(R.string.text_follow));
+            if (b) {
+                ((TextView) findViewById(R.id.tv_accept)).setText(getResources().getString(R.string.text_followed));
+            } else {
+                ((TextView) findViewById(R.id.tv_accept)).setText(getResources().getString(R.string.text_follow));
             }
         });
     }
@@ -320,10 +335,10 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     @Override
     public void setCollect(boolean b) {
         runOnUiThread(() -> {
-            if(b){
-                ((TextView)findViewById(R.id.tv_collect)).setText(getResources().getString(R.string.text_collected));
-            }else {
-                ((TextView)findViewById(R.id.tv_collect)).setText(getResources().getString(R.string.text_collect));
+            if (b) {
+                ((TextView) findViewById(R.id.tv_collect)).setText(getResources().getString(R.string.text_collected));
+            } else {
+                ((TextView) findViewById(R.id.tv_collect)).setText(getResources().getString(R.string.text_collect));
             }
         });
     }
@@ -343,6 +358,12 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         requestCommentAdapter.setOnRecyclerViewItemClickListener((v, p) -> {
             Toast.makeText(mContext, "i was click", Toast.LENGTH_SHORT).show();
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        presenter.onResume();
     }
 
     @Override

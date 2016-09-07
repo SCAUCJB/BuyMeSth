@@ -37,11 +37,12 @@
             android:layout_weight="1" />
 
         <TextView
-            android:text="收藏"
-            android:gravity="center"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="收藏"
+            android:id="@+id/tv_collect" />
 
        <TextView
         android:id="@+id/tv_create_order"

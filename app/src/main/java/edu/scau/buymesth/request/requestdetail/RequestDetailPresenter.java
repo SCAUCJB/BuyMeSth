@@ -1,8 +1,5 @@
 package edu.scau.buymesth.request.requestdetail;
 
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,8 +12,6 @@ import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.CloudCodeListener;
 import cn.bmob.v3.listener.FindListener;
-import cn.bmob.v3.listener.SaveListener;
-import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Collect;
 import edu.scau.buymesth.data.bean.Comment;
 import edu.scau.buymesth.data.bean.Follow;
@@ -43,7 +38,7 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
         initCollect();
     }
 
-    public void collect(){
+      void collect(){
         AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
         //第一个参数是上下文对象，第二个参数是云端逻辑的方法名称，第三个参数是上传到云端逻辑的参数列表（JSONObject cloudCodeParams），第四个参数是回调类
         JSONObject params = new JSONObject();
@@ -61,7 +56,7 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
         });
     }
 
-    public void initCollect(){
+      void initCollect(){
         BmobQuery<Collect> bmobQuery = new BmobQuery<>();
         bmobQuery.addWhereEqualTo("user",BmobUser.getCurrentUser());
         bmobQuery.addWhereEqualTo("request",mModel.getRequest());
@@ -78,7 +73,7 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
         });
     }
 
-    public void follow(){
+      void follow(){
         AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
         //第一个参数是上下文对象，第二个参数是云端逻辑的方法名称，第三个参数是上传到云端逻辑的参数列表（JSONObject cloudCodeParams），第四个参数是回调类
         JSONObject params = new JSONObject();
@@ -153,7 +148,7 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
         }
     }
 
-    public void initComment() {
+      void initComment() {
         mModel.getRxComment(mModel.getRequest().getObjectId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<List<Comment>>() {
@@ -177,5 +172,13 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
     public void initTags() {
         if (mModel.getRequest().getTags() != null)
             mView.setTagList(mModel.getRequest().getTags());
+    }
+
+    public Request getRequest() {
+        return mModel.getRequest();
+    }
+
+    void onResume() {
+        initComment();
     }
 }
