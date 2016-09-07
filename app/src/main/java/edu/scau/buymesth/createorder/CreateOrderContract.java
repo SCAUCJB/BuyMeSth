@@ -12,14 +12,19 @@ import rx.Observable;
  */
 
 public interface CreateOrderContract {
-    interface View{
-        void setDeliverTime(int year,int month,int day);
+    interface View {
+        void setDeliverTime(int year, int month, int day);
+
         void showDatePickDialog(int year, int month, int day);
+
         void closeDatePickDialog();
 
-        void setRequestInfo(User buyer, String title, String content, String createdAt);
+        void setPrice(String price);
+
+        void setRequestInfo(User buyer, String title, String content);
 
         void setTagList(List<String> tags);
+
         void initPickerView();
 
         String getTip();
@@ -27,13 +32,17 @@ public interface CreateOrderContract {
         String getPrice();
 
         void showMsg(String msg);
-          void showLoadingDialog();
-          void closeLoadingDialog();
+
+        void showLoadingDialog();
+
+        void closeLoadingDialog();
+
         User getSeller();
 
         void exit();
     }
-    interface Model{
+
+    interface Model {
         Order getOrder();
 
         Request getRequest();
@@ -41,14 +50,19 @@ public interface CreateOrderContract {
         User getBuyer();
 
         User getSeller();
+
         void setSeller(User seller);
+
         int getYear();
 
         int getMonth();
 
         int getDay();
+
         void setYear(int year);
+
         void setMonth(int month);
+
         void setDay(int day);
 
         void setPriceType(String text);

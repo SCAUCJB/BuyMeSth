@@ -14,19 +14,28 @@ import rx.schedulers.Schedulers;
 class CreateOrderPresenter extends BasePresenter<CreateOrderContract.Model,CreateOrderContract.View> {
     @Override
     public void onStart() {
-        mView.setRequestInfo(mModel.getBuyer(), mModel.getRequest().getTitle(), mModel.getRequest().getContent(), mModel.getRequest().getCreatedAt());
+        mView.setRequestInfo(mModel.getBuyer(), mModel.getRequest().getTitle(), mModel.getRequest().getContent());
         if (mModel.getRequest().getTags() != null)
             mView.setTagList(mModel.getRequest().getTags());
         mView.setDeliverTime(mModel.getYear(), mModel.getMonth()+1, mModel.getDay());
         mView.initPickerView();
         mModel.setSeller(mView.getSeller());
         mModel.getOrder().setTags(new LinkedList<>());
+        initPrice();
     }
 
     void onDeliverTimeClicked() {
         mView.showDatePickDialog(mModel.getYear(), mModel.getMonth(), mModel.getDay());
     }
-
+      void initPrice() {
+        Integer high=mModel.getRequest().getMaxPrice();
+        Integer low=mModel.getRequest().getMinPrice();
+        if(low!=null){
+            mView.setPrice("期望价格：￥"+low+"~￥"+high);
+        }else{
+            mView.setPrice("期望价格：￥"+high);
+        }
+    }
     void addTag(String tag) {
         mModel.getOrder().getTags().add(tag);
     }

@@ -2,6 +2,7 @@ package edu.scau.buymesth.createorder;
 
 import java.util.Calendar;
 
+import cn.bmob.v3.datatype.BmobDate;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.data.bean.User;
@@ -116,7 +117,7 @@ public class CreateOrderModel   implements CreateOrderContract.Model {
 
     @Override
     public Observable<String> submit() {
-
+        BmobDate bmobDate=new BmobDate(c.getTime());
         order.setPrice(price);
         order.setPriceType(priceType);
         order.setRequest(request);

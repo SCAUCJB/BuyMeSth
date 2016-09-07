@@ -46,8 +46,6 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
     ImageView ivAvatar;
     @Bind(R.id.tv_name)
     TextView tvNickName;
-    @Bind(R.id.tv_tweet_date)
-    TextView tvTweetDate;
     @Bind(R.id.tv_tweet_title)
     TextView tvTweetTitle;
     @Bind(R.id.tv_tweet_text)
@@ -62,6 +60,8 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
     EditText etPrice;
     @Bind(R.id.btn_submit)
     Button btnSubmit;
+    @Bind(R.id.tv_price)
+    TextView mPriceTv;
     DatePickerDialogFragment dialog = null;
     CreateOrderPresenter createOrderPresenter;
     private AlertDialog tagInputDialog;
@@ -166,10 +166,9 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
     }
 
     @Override
-    public void setRequestInfo(User buyer, String title, String content, String createdAt) {
+    public void setRequestInfo(User buyer, String title, String content) {
         tvTweetTitle.setText(title);
         tvTweetText.setText(content);
-        tvTweetDate.setText(createdAt);
         tvNickName.setText(buyer.getNickname());
         Glide.with(mContext).load(buyer.getAvatar()).into(ivAvatar);
     }
@@ -257,9 +256,12 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
 
     @Override
     public void closeLoadingDialog() {
-        if (mDialog == null) {
+        if (mDialog != null) {
             mDialog.dismiss();
         }
     }
-
+    @Override
+    public void setPrice(String price) {
+        mPriceTv.setText(price);
+    }
 }

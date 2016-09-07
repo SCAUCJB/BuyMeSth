@@ -3,6 +3,7 @@ package edu.scau.buymesth.data.bean;
 import java.util.List;
 
 import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.datatype.BmobDate;
 
 /**
  * Created by John on 2016/8/6.
@@ -16,8 +17,8 @@ public class Order extends BmobObject {
     public static final short STATUS_FINISH=4;
     private Float price;
     private Short status;
-    private String accomplishAt;
-    private String acceptAt;
+    private BmobDate accomplishAt;
+    private BmobDate acceptAt;
     private User seller;
     private User buyer;
     private Request request;
@@ -44,19 +45,19 @@ public class Order extends BmobObject {
         this.status = status;
     }
 
-    public String getAccomplishAt() {
+    public BmobDate getAccomplishAt() {
         return accomplishAt;
     }
 
-    public void setAccomplishAt(String accomplishAt) {
+    public void setAccomplishAt(BmobDate accomplishAt) {
         this.accomplishAt = accomplishAt;
     }
 
-    public String getAcceptAt() {
+    public BmobDate getAcceptAt() {
         return acceptAt;
     }
 
-    public void setAcceptAt(String acceptAt) {
+    public void setAcceptAt(BmobDate acceptAt) {
         this.acceptAt = acceptAt;
     }
 

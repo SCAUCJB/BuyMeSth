@@ -52,15 +52,15 @@
                 android:layout_alignParentTop="true"
                 android:layout_toEndOf="@+id/iv_avatar_author"
                 android:text="Miracle" />
-
             <TextView
-                android:id="@+id/tv_tweet_date"
-                style="@style/theDate"
+                android:id="@+id/tv_price"
+                style="@style/theName"
+                android:layout_toRightOf="@id/tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginRight="@dimen/dp_10"
-                android:text="04/06/13" />
+                android:paddingLeft="@dimen/content_padding"
+                android:paddingRight="@dimen/content_padding"
+                android:text="期望价格" />
 
 
             <TextView
@@ -106,6 +106,14 @@
             android:text="添加标签" />
     </edu.scau.buymesth.publish.FlowLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/colorLightGrey"
+        android:paddingLeft="@dimen/content_padding"
+        android:paddingRight="@dimen/content_padding"
+        />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_60"
@@ -134,7 +142,13 @@
 
     </LinearLayout>
 
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/colorLightGrey"
+        android:paddingLeft="@dimen/content_padding"
+        android:paddingRight="@dimen/content_padding"
+        />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_60"
@@ -164,7 +178,13 @@
             android:layout_width="60dp"
             android:layout_height="60dp" />
     </LinearLayout>
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/colorLightGrey"
+        android:paddingLeft="@dimen/content_padding"
+        android:paddingRight="@dimen/content_padding"
+        />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_60"
