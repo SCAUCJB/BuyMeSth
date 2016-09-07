@@ -118,7 +118,8 @@
                     android:layout_marginRight="@dimen/dp_6"
                     android:background="@drawable/rect_accent"
                     android:gravity="center"
-                    android:text="+ 关注" />
+                    android:text="+ 关注"
+                    android:textColor="#ffffff" />
             </RelativeLayout>
 
             <FrameLayout

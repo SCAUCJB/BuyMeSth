@@ -41,7 +41,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="收藏" />
+            android:text="收藏"
+            android:id="@+id/tv_collect" />
 
         <TextView
             android:id="@+id/tv_create_order"
@@ -119,7 +120,8 @@
                     android:layout_marginRight="@dimen/dp_6"
                     android:background="@drawable/rect_accent"
                     android:gravity="center"
-                    android:text="+ 关注" />
+                    android:text="+ 关注"
+                    android:textColor="#ffffff" />
             </RelativeLayout>
 
             <FrameLayout

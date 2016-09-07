@@ -34,7 +34,9 @@ import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.RequestCommentAdapter;
 import edu.scau.buymesth.createorder.CreateOrderActivity;
 import edu.scau.buymesth.data.bean.Comment;
+import edu.scau.buymesth.data.bean.Follow;
 import edu.scau.buymesth.data.bean.Request;
+import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.publish.FlowLayout;
 import util.RecycleViewDivider;
 
@@ -172,7 +174,15 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     public void setOnAcceptClicked() {
         TextView accept = (TextView) findViewById(R.id.tv_accept);
         accept.setOnClickListener((v) -> {
-            Toast.makeText(mContext, "关注", Toast.LENGTH_SHORT).show();
+            presenter.follow();
+        });
+    }
+
+    @Override
+    public void setOnCollectClicked() {
+        TextView accept = (TextView) findViewById(R.id.tv_collect);
+        accept.setOnClickListener((v) -> {
+            presenter.collect();
         });
     }
 
@@ -292,6 +302,28 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
             @Override
             public void onPageScrollStateChanged(int state) {
 
+            }
+        });
+    }
+
+    @Override
+    public void setFollow(boolean b) {
+        runOnUiThread(() -> {
+            if(b){
+                ((TextView)findViewById(R.id.tv_accept)).setText(getResources().getString(R.string.text_followed));
+            }else {
+                ((TextView)findViewById(R.id.tv_accept)).setText(getResources().getString(R.string.text_follow));
+            }
+        });
+    }
+
+    @Override
+    public void setCollect(boolean b) {
+        runOnUiThread(() -> {
+            if(b){
+                ((TextView)findViewById(R.id.tv_collect)).setText(getResources().getString(R.string.text_collected));
+            }else {
+                ((TextView)findViewById(R.id.tv_collect)).setText(getResources().getString(R.string.text_collect));
             }
         });
     }

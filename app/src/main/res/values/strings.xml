@@ -24,4 +24,10 @@
     <string name="text_share_request">Share Request :</string>
 
     <string name="text_delete">Delete</string>
+
+    <string name="text_follow">+Follow</string>
+    <string name="text_followed">Followed</string>
+
+    <string name="text_collect">Collect</string>
+    <string name="text_collected">Collected</string>
 </resources>

@@ -222,7 +222,7 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
                                 @Override
                                 public void done(BmobException e) {
                                     if(e==null)
-                                        mView.onDeleteSuccess(moment.getObjectId());
+                                        mView.onDeleteSuccess(moment.getObjectId(),position);
                                     else
                                         mView.onError(null,e.toString());
                                 }

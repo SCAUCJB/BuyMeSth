@@ -23,6 +23,8 @@ public interface RequestDetailContract {
 
          void setOnAcceptClicked();
 
+         void setOnCollectClicked();
+
          void setCommentBtn(String commentBtnStr);
 
          void setUserAvatar();
@@ -44,6 +46,10 @@ public interface RequestDetailContract {
          void setPrice(String price);
 
          void setUpViewPager(List<String> picHeights, List<String> picWidths, List<String> urls);
+
+         void setFollow(boolean b);
+
+         void setCollect(boolean b);
      }
     interface Model{
         void setRequest(Request request);
