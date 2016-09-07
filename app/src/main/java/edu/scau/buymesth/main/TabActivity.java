@@ -30,7 +30,7 @@ import ui.widget.ChangeColorIconWithTextView;
  */
 public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeListener {
 
-    List<Fragment> fragmentList = new ArrayList<Fragment>();
+    List<Fragment> fragmentList = new ArrayList<>();
     TabAdapter tabAdapter;
 
     @Bind(R.id.viewPager)
@@ -61,19 +61,13 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
 
         homeFragment.setRelatedFab(fab);
         fab.setClosedOnTouchOutside(true);
-        fab1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(TabActivity.this,PublishActivity.class);
-                startActivity(i);
-            }
+        fab1.setOnClickListener(v -> {
+            Intent i = new Intent(TabActivity.this,PublishActivity.class);
+            startActivity(i);
         });
-        fab2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(TabActivity.this, MomentPublishActivity.class);
-                startActivity(i);
-            }
+        fab2.setOnClickListener(v -> {
+            Intent i = new Intent(TabActivity.this, MomentPublishActivity.class);
+            startActivity(i);
         });
 
         fragmentList.add(homeFragment);
@@ -114,7 +108,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
 
         tabAdapter = new TabAdapter(this.getSupportFragmentManager(), fragmentList);
         viewPager.setAdapter(tabAdapter);
-        viewPager.setOffscreenPageLimit(4);//缓存3个页面
+        viewPager.setOffscreenPageLimit(4);//缓存4个页面
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -177,11 +171,10 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
     @Override
     public void onPageSelected(int position) {
         if (!scrolling) {
-            for (int n = 0; n <= 2; n++) {
+            for (int n = 0; n <= 3; n++) {
                 ChangeColorIconWithTextView cv = (ChangeColorIconWithTextView) tabLayout.getTabAt(n).getCustomView().findViewById(R.id.cv);
                 if (n == position) {
                     cv.setIconAlpha(1);
-                    System.out.println();
                 } else {
                     cv.setIconAlpha(0);
                 }

@@ -11,9 +11,7 @@ import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
-import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.data.bean.MomentsComment;
-import edu.scau.buymesth.data.bean.MomentsLike;
 import edu.scau.buymesth.data.bean.User;
 import rx.Observable;
 import rx.Observer;
@@ -117,7 +115,7 @@ public class MomentDetailPresenter extends BasePresenter<MomentDetailModel,Momen
                 });
     }
 
-    public void postComment(String text){
+     void postComment(String text){
         MomentsComment momentsComment = new MomentsComment();
         momentsComment.setContent(text);
         momentsComment.setUser(BmobUser.getCurrentUser(User.class));

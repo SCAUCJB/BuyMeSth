@@ -23,4 +23,6 @@ public class Constant {
     public static final int IO_BUFFER_SIZE = 8 * 1024;
     public static final int DISK_CACHE_INDEX = 0;
     public static final int APP_VERSION=1;
+
+    public static final String EXTRA_REQUEST = "intent.request";
 }

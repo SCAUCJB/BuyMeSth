@@ -5,22 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/cardview_dark_background"
-        android:gravity="center_horizontal"
-        android:weightSum="4">
-
+ 
         <android.support.design.widget.TabLayout
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/cardview_dark_background"
+            android:elevation="@dimen/dp_6"
             android:id="@+id/tabLayout" />
-
-    </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -33,17 +24,10 @@
             android:overScrollMode="never"
             android:id="@+id/viewPager"/>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="6dp"
-            android:background="@drawable/shadow"></FrameLayout>
-
         <com.github.clans.fab.FloatingActionMenu
             android:id="@+id/fab_menu"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
             android:paddingRight="20dp"
             android:paddingBottom="20dp"
             android:paddingLeft="10dp"

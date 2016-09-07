@@ -22,14 +22,13 @@ import java.util.List;
 import base.BaseActivity;
 import butterknife.Bind;
 import cn.bmob.v3.BmobUser;
+import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.publish.FlowLayout;
 import edu.scau.buymesth.util.InputMethodHelper;
 import ui.widget.PickerView;
-
-import static edu.scau.buymesth.request.requestdetail.RequestDetailActivity.EXTRA_REQUEST;
 
 /**
  * Created by John on 2016/8/29.
@@ -76,7 +75,7 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
         mPresenter = new CreateOrderPresenter();
         createOrderPresenter = (CreateOrderPresenter) mPresenter;
         CreateOrderModel model = new CreateOrderModel();
-        model.setRequest((Request) getIntent().getSerializableExtra(EXTRA_REQUEST));
+        model.setRequest((Request) getIntent().getSerializableExtra(Constant.EXTRA_REQUEST));
         createOrderPresenter.setVM(this, model);
     }
     private Drawable clickerDrawable;
@@ -140,7 +139,7 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
 
     public static void navigateTo(Context context, Request request) {
         Intent intent = new Intent(context, CreateOrderActivity.class);
-        intent.putExtra(EXTRA_REQUEST, request);
+        intent.putExtra(Constant.EXTRA_REQUEST, request);
         context.startActivity(intent);
     }
 

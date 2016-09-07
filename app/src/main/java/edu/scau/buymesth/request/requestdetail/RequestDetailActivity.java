@@ -38,12 +38,13 @@ import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.publish.FlowLayout;
 import util.RecycleViewDivider;
 
+import static edu.scau.Constant.EXTRA_REQUEST;
+
 /**
  * Created by John on 2016/8/20.
  */
 
 public class RequestDetailActivity extends BaseActivity implements RequestDetailContract.View {
-    public static final String EXTRA_REQUEST = "edu.scau.buymesth.homedetail.request";
     @Bind(R.id.tv_content)
     TextView content;
     @Bind(R.id.vp_images)
@@ -105,13 +106,17 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
                 mContext, LinearLayoutManager.VERTICAL, 1, getResources().getColor(R.color.lightgrey)));
 
         RequestDetailModel model = new RequestDetailModel();
-        model.setRequest((Request) getIntent().getSerializableExtra(EXTRA_REQUEST));
+        model.setRequest((Request) getIntent().getSerializableExtra(Constant.EXTRA_REQUEST));
         presenter = new RequestDetailPresenter();
         presenter.setVM(this, model);
         if(!model.getRequest().getAuthor().getObjectId().equals( BmobUser.getCurrentUser().getObjectId()))
         mCreateOrderBtn.setOnClickListener(v -> CreateOrderActivity.navigateTo(mContext,(Request) getIntent().getSerializableExtra(EXTRA_REQUEST)));
     }
 
+    @Override
+    protected void setListener() {
+      //  comment.setOnClickListener(v->);
+    }
 
     @Override
     protected void onDestroy() {
@@ -208,6 +213,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     }
     @Override
     public void setUpViewPager(List<String> picHeights, List<String> picWidths,List<String> urls) {
+        if(picHeights.size()!=urls.size()||picWidths.size()!=urls.size()||urls.size()==0)return;
         imageViews = new ArrayList<>(urls.size());
         heights = new int[urls.size()];
         mViewPager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {

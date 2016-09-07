@@ -79,7 +79,11 @@ public class CompressHelper {
 
         if (scale <= 1 && scale > 0.5625) {
             if (height < 1664) {
-                if (file.length() / 1024 < 150) return filePath;
+                if (file.length() / 1024 < 150) {
+                    picHeight.add(String.valueOf(height));
+                    picWidth.add(String.valueOf(width));
+                    return filePath;
+                }
 
                 size = (width * height) / Math.pow(1664, 2) * 150;
                 size = size < 60 ? 60 : size;
@@ -101,7 +105,11 @@ public class CompressHelper {
                 size = size < 100 ? 100 : size;
             }
         } else if (scale <= 0.5625 && scale > 0.5) {
-            if (height < 1280 && file.length() / 1024 < 200) return filePath;
+            if (height < 1280 && file.length() / 1024 < 200) {
+                picHeight.add(String.valueOf(height));
+                picWidth.add(String.valueOf(width));
+                return filePath;
+            }
 
             int multiple = height / 1280 == 0 ? 1 : height / 1280;
             thumbW = width / multiple;
