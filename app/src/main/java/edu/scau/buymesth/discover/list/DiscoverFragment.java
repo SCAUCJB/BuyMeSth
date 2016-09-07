@@ -189,13 +189,9 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
     }
 
     @Override
-    public void onDeleteSuccess(String msg) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getActivity(),"Delete succeed",Toast.LENGTH_SHORT).show();
-            }
-        });
+    public void onDeleteSuccess(String msg,int position) {
+        mDiscoverAdapter.remove(position);
+//        mDiscoverAdapter.getData().remove(position);
     }
 
     private final class SpaceItemDecoration extends RecyclerView.ItemDecoration{

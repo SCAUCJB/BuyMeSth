@@ -1,10 +1,27 @@
 package edu.scau.buymesth.request.requestdetail;
 
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
 import base.BasePresenter;
+import cn.bmob.v3.AsyncCustomEndpoints;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.CloudCodeListener;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.SaveListener;
+import edu.scau.buymesth.R;
+import edu.scau.buymesth.data.bean.Collect;
 import edu.scau.buymesth.data.bean.Comment;
+import edu.scau.buymesth.data.bean.Follow;
 import edu.scau.buymesth.data.bean.Request;
+import edu.scau.buymesth.data.bean.User;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -22,6 +39,90 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
         initPrice();
         initComment();
         initTags();
+        initFollow();
+        initCollect();
+    }
+
+    public void collect(){
+//        Collect collect = new Collect();
+//        collect.setUser(BmobUser.getCurrentUser(User.class));
+//        collect.setRequest(mModel.getRequest());
+//        collect.save(new SaveListener<String>() {
+//            @Override
+//            public void done(String s, BmobException e) {
+//                if(e==null){
+//                    mView.setCollect(true);
+//                }else {
+//                }
+//            }
+//        });
+
+        AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
+        //第一个参数是上下文对象，第二个参数是云端逻辑的方法名称，第三个参数是上传到云端逻辑的参数列表（JSONObject cloudCodeParams），第四个参数是回调类
+        JSONObject params = new JSONObject();
+        try {
+            params.put("userid",BmobUser.getCurrentUser().getObjectId());
+            params.put("requestid",mModel.getRequest().getObjectId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        ace.callEndpoint("collect",params , new CloudCodeListener() {
+            @Override
+            public void done(Object o, BmobException e) {
+                initCollect();
+
+            }
+        });
+    }
+
+    public void initCollect(){
+        BmobQuery<Collect> bmobQuery = new BmobQuery<>();
+        bmobQuery.addWhereEqualTo("user",BmobUser.getCurrentUser());
+        bmobQuery.addWhereEqualTo("request",mModel.getRequest());
+        bmobQuery.findObjects(new FindListener<Collect>() {
+            @Override
+            public void done(List<Collect> list, BmobException e) {
+                if(list!=null&&list.size()>0){
+                    //collected
+                    mView.setCollect(true);
+                }else {
+                    mView.setCollect(false);
+                }
+            }
+        });
+    }
+
+    public void follow(){
+        Follow follow = new Follow();
+        follow.setFromUser(BmobUser.getCurrentUser(User.class));
+        follow.setToUser(mModel.getRequest().getAuthor());
+        follow.save(new SaveListener<String>() {
+            @Override
+            public void done(String s, BmobException e) {
+                if(e==null){
+                    mView.setFollow(true);
+                }else {
+                }
+            }
+        });
+
+    }
+
+    private void initFollow() {
+        BmobQuery<Follow> bmobQuery = new BmobQuery<>();
+        bmobQuery.addWhereEqualTo("fromUser", BmobUser.getCurrentUser(User.class));
+        bmobQuery.addWhereEqualTo("toUser",mModel.getRequest().getAuthor());
+        bmobQuery.findObjects(new FindListener<Follow>() {
+            @Override
+            public void done(List<Follow> list, BmobException e) {
+                if(list!=null&&list.size()>0){
+                    //followed
+                    mView.setFollow(true);
+                }else {
+                    mView.setFollow(false);
+                }
+            }
+        });
     }
 
     private void initPrice() {
@@ -41,6 +142,8 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
         mView.setAuthorName(request.getAuthor().getNickname());
         mView.setAuthorOnClicked();
         mView.setOnAcceptClicked();
+        //
+        mView.setOnCollectClicked();
     }
 
     public void initCommentBar() {
