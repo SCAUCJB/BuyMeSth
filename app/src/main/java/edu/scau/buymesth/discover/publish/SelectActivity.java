@@ -3,6 +3,9 @@ package edu.scau.buymesth.discover.publish;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import base.BaseActivity;
 import cn.bmob.v3.BmobUser;
 import edu.scau.buymesth.R;
@@ -28,8 +31,11 @@ public class SelectActivity extends BaseActivity{
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
         HomeFragment homeFragment = new HomeFragment();
-        homeFragment.setFilter(HomePresenter.FILTER_AUTHOR_ID);
-        homeFragment.setFilterKey(BmobUser.getCurrentUser().getObjectId());
+        homeFragment.setFilter(HomePresenter.FILTER_AUTHOR_IDS);
+        List<String> ids = new ArrayList<>();
+        ids.add(BmobUser.getCurrentUser().getObjectId());
+        ids.add("cccfb9de88");
+        homeFragment.setFilterKey(ids);
         transaction.replace(R.id.content_fragment, homeFragment);
         transaction.commit();
     }

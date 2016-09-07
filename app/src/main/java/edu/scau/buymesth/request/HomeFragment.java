@@ -91,11 +91,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
             @Override
             public void onRefreshBegin(final PtrFrameLayout frame) {
                 mPtrFrameLayout = frame;
-                if(filter ==null){
-                    mPresenter.onRefresh();
-                }
-                else
-                    mPresenter.onRefresh(filter, filterKey);
+                mPresenter.onRefresh(filter, filterKey);
             }
         });
     }
@@ -110,17 +106,14 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     }
 
     private void initAdapter() {
-        if(filter==null)
-            mPresenter.initAdapter();
-        else
-            mPresenter.onRefresh(filter, filterKey);
+        mPresenter.onRefresh(filter, filterKey);
         mHomeAdapter = new HomeAdapter();
         mHomeAdapter.openLoadAnimation(new ScaleInAnimation());
         mRecyclerView.setAdapter(mHomeAdapter);
         mHomeAdapter.setOnRecyclerViewItemClickListener(
                 getOnRecyclerViewItemClickListener(mHomeAdapter)
         );
-        mHomeAdapter.setOnLoadMoreListener(() -> mPresenter.onLoadMore());
+        mHomeAdapter.setOnLoadMoreListener(() -> mPresenter.onLoadMore(filter,filterKey));
         mHomeAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
     }
 
@@ -182,16 +175,14 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         mHomeAdapter.setNewData(list);
     }
 
-    public String getFilter() {
-        return filter;
+    public void setFilter(String filter,Object filterKey) {
+        this.filter = filter;
+        this.filterKey = filterKey;
+        mPresenter.onRefresh(filter,filterKey);
     }
 
     public void setFilter(String filter) {
         this.filter = filter;
-    }
-
-    public Object getFilterKey() {
-        return filterKey;
     }
 
     public void setFilterKey(Object filterKey) {
@@ -216,8 +207,6 @@ public class HomeFragment extends Fragment implements HomeContract.View {
 
         @Override
         public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-//TODO  @止园哥 这里建议换成 getChildAdapterPosition(View) 或者 getChildLayoutPosition(View)
-            if (parent.getChildPosition(view) != 0)
                 outRect.top = space;
         }
     }

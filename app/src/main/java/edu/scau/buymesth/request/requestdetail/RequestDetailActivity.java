@@ -37,6 +37,7 @@ import edu.scau.buymesth.data.bean.Comment;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.publish.FlowLayout;
 import edu.scau.buymesth.request.requestcomment.CommentActivity;
+import edu.scau.buymesth.util.DividerItemDecoration;
 
 import static edu.scau.Constant.EXTRA_REQUEST;
 
@@ -105,7 +106,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         rvComment.setNestedScrollingEnabled(false);
 //        rvComment.addItemDecoration(new RecycleViewDivider(
 //                mContext, LinearLayoutManager.VERTICAL, 1, getResources().getColor(R.color.grey)));
-rvComment.addItemDecoration(new DividerItemDecoration(this,
+        rvComment.addItemDecoration(new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL_LIST));
         RequestDetailModel model = new RequestDetailModel();
         model.setRequest((Request) getIntent().getSerializableExtra(Constant.EXTRA_REQUEST));

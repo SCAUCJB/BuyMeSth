@@ -1,6 +1,7 @@
 package edu.scau.buymesth.request;
 
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -8,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import cn.bmob.v3.BmobQuery;
 import edu.scau.Constant;
 import edu.scau.buymesth.data.bean.Request;
+import edu.scau.buymesth.data.bean.User;
 import rx.Observable;
 
 /**
@@ -70,6 +72,63 @@ public class HomeModel implements HomeContract.Model {
         query.order("-createdAt");
         query.include("author");
         query.addWhereEqualTo("author",userId);
+        query.setLimit(Constant.NUMBER_PER_PAGE);
+        query.setSkip(Constant.NUMBER_PER_PAGE * (pageNum++));
+        if(policy==FROM_CACHE&&query.hasCachedResult(Request.class))
+            query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ELSE_NETWORK);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
+        else
+            query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);//先从缓存再从网络
+
+        return query.findObjectsObservable(Request.class);
+    }
+
+    @Override
+    public Observable<List<Request>> getSomeonesRxRequests(int policy,List<String> userIds) {
+        BmobQuery<Request> query=new BmobQuery<>();
+        query.setMaxCacheAge(TimeUnit.DAYS.toMillis(1));//此表示缓存一天，可以用来优化下拉刷新而清空了的加载更多
+        query.order("-createdAt");
+        query.include("author");
+//        BmobQuery<User> innerQuery = new BmobQuery<User>();
+//        innerQuery.addWhereContains("nickname","j");
+//        query.addWhereMatchesQuery("author","_User",innerQuery);
+        query.addWhereContainedIn("author",userIds);
+        query.setLimit(Constant.NUMBER_PER_PAGE);
+        query.setSkip(Constant.NUMBER_PER_PAGE * (pageNum++));
+        if(policy==FROM_CACHE&&query.hasCachedResult(Request.class))
+            query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ELSE_NETWORK);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
+        else
+            query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);//先从缓存再从网络
+
+        return query.findObjectsObservable(Request.class);
+    }
+
+    @Override
+    public Observable<List<Request>> getFuzzySearchRxRequests(int policy,String key) {
+        BmobQuery<Request> query=new BmobQuery<>();
+        query.setMaxCacheAge(TimeUnit.DAYS.toMillis(1));//此表示缓存一天，可以用来优化下拉刷新而清空了的加载更多
+        query.order("-createdAt");
+        query.include("author");
+
+        BmobQuery<Request> q1 = new BmobQuery<Request>();
+        BmobQuery<Request> q2 = new BmobQuery<Request>();
+        BmobQuery<Request> q3 = new BmobQuery<Request>();
+        BmobQuery<Request> q4 = new BmobQuery<Request>();
+
+        BmobQuery<User> innerQuery = new BmobQuery<User>();
+        innerQuery.addWhereContains("nickname",key);
+        q1.addWhereMatchesQuery("author","_User",innerQuery);
+        q2.addWhereContains("tags",key);
+        q3.addWhereContains("title",key);
+        q4.addWhereContains("content",key);
+
+        List<BmobQuery<Request>> mq = new ArrayList<>();
+        mq.add(q1);
+        mq.add(q2);
+        mq.add(q3);
+        mq.add(q4);
+
+        query.or(mq);
+
         query.setLimit(Constant.NUMBER_PER_PAGE);
         query.setSkip(Constant.NUMBER_PER_PAGE * (pageNum++));
         if(policy==FROM_CACHE&&query.hasCachedResult(Request.class))

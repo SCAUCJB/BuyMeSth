@@ -25,5 +25,7 @@ public interface HomeContract {
         void resetPage();
         Observable<List<Request>> getRxRequests(int policy);
         Observable<List<Request>> getSomeonesRxRequests(int policy,String userId);
+        Observable<List<Request>> getSomeonesRxRequests(int policy,List<String> userIds);
+        Observable<List<Request>> getFuzzySearchRxRequests(int policy,String key);
     }
 }

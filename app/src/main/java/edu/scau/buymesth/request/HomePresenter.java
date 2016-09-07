@@ -19,6 +19,8 @@ import rx.schedulers.Schedulers;
 public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContract.View> {
 
     public static final String FILTER_AUTHOR_ID = "USERID";
+    public static final String FILTER_AUTHOR_IDS = "USERIDS";
+    public static final String FILTER_FUZZY_SEARCH = "FUZZY";
     /**
      * 初始化工作写在这里
      */
@@ -109,80 +111,98 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
     }
 
     public void onRefresh(String filter , Object key) {
-        if(filter==null) ToastUtil.show("ffffuck");
+        Observable<List<Request>> requestObservable;
+        mModel.resetPage();
+        List<Request> tempList=new LinkedList<>();
+
         if(filter==FILTER_AUTHOR_ID){
-            mModel.resetPage();
-            List<Request> tempList=new LinkedList<>();
-            mModel.getSomeonesRxRequests(HomeModel.FROM_NETWORK,(String) key).flatMap(new Func1<List<Request>, Observable<Request>>() {
-                @Override
-                public Observable<Request> call(List<Request> requests) {
-                    return Observable.from(requests);
-                }
-            }).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<Request>() {
-                        @Override
-                        public void onCompleted() {
-                            if(isAlive())
-                            {
-                                mModel.getDatas().clear();
-                                mModel.setDatas(tempList);
-                                mView.onRefreshComplete(mModel.getDatas());}
-                        }
-
-                        @Override
-                        public void onError(Throwable throwable) {
-                            if (isAlive()){
-                                mView.showError("仿佛网络有点差");
-                                mView.onRefreshFail();
-                            }
-                        }
-
-                        @Override
-                        public void onNext(Request request) {
-                            if(isAlive()) tempList.add(request);
-                        }
-                    });
+            requestObservable = mModel.getSomeonesRxRequests(HomeModel.FROM_NETWORK,(String) key);
+        }else if(filter==FILTER_AUTHOR_IDS){
+            requestObservable = mModel.getSomeonesRxRequests(HomeModel.FROM_NETWORK,(List<String>)key);
+        }else if(filter==FILTER_FUZZY_SEARCH){
+            requestObservable = mModel.getFuzzySearchRxRequests(HomeModel.FROM_NETWORK,(String)key);
+        }else {
+            requestObservable = mModel.getRxRequests(HomeModel.FROM_NETWORK);
         }
+
+        requestObservable.flatMap(new Func1<List<Request>, Observable<Request>>() {
+            @Override
+            public Observable<Request> call(List<Request> requests) {
+                return Observable.from(requests);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Request>() {
+                    @Override
+                    public void onCompleted() {
+                        if(isAlive())
+                        {
+                            mModel.getDatas().clear();
+                            mModel.setDatas(tempList);
+                            mView.onRefreshComplete(mModel.getDatas());}
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        if (isAlive()){
+                            mView.showError("仿佛网络有点差");
+                            mView.onRefreshFail();
+                        }
+                    }
+
+                    @Override
+                    public void onNext(Request request) {
+                        if(isAlive()) tempList.add(request);
+                    }
+                });
     }
 
     public void onLoadMore(String filter , Object key) {
-        if(filter==null) return;
+        Observable<List<Request>> requestObservable;
+        List<Request> tempList = new LinkedList<>();
+
         if(filter==FILTER_AUTHOR_ID){
-            List<Request> tempList = new LinkedList<>();
-            mModel.getSomeonesRxRequests(HomeModel.FROM_NETWORK,(String) key).flatMap(new Func1<List<Request>, Observable<Request>>() {
-                @Override
-                public Observable<Request> call(List<Request> requests) {
-                    return Observable.from(requests);
-                }
-            }).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<Request>() {
-                        @Override
-                        public void onCompleted() {
-                            if (isAlive()) {
-                                if (tempList.size() > 0)
-                                    mView.onLoadMoreSuccess(tempList);
-                                else
-                                    mView.onLoadMoreSuccess(null);
-                            }
-                        }
-
-                        @Override
-                        public void onError(Throwable throwable) {
-                            if (isAlive()){
-                                mView.showError("仿佛网络有点差");
-                                mView.onRefreshFail();
-                            }
-
-                        }
-
-                        @Override
-                        public void onNext(Request request) {
-                            if (isAlive()) tempList.add(request);
-                        }
-                    });
+            requestObservable = mModel.getSomeonesRxRequests(HomeModel.FROM_NETWORK,(String) key);
+        }else if(filter==FILTER_AUTHOR_IDS){
+            requestObservable = mModel.getSomeonesRxRequests(HomeModel.FROM_NETWORK,(List<String>)key);
+        }else if(filter==FILTER_FUZZY_SEARCH){
+            requestObservable = mModel.getFuzzySearchRxRequests(HomeModel.FROM_NETWORK,(String)key);
+        }else {
+            requestObservable = mModel.getRxRequests(HomeModel.FROM_NETWORK);
         }
+
+        requestObservable.flatMap(new Func1<List<Request>, Observable<Request>>() {
+            @Override
+            public Observable<Request> call(List<Request> requests) {
+                return Observable.from(requests);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Request>() {
+                    @Override
+                    public void onCompleted() {
+                        if (isAlive()) {
+                            if (tempList.size() > 0)
+                                mView.onLoadMoreSuccess(tempList);
+                            else
+                                mView.onLoadMoreSuccess(null);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        if (isAlive()){
+                            mView.showError("仿佛网络有点差");
+                            mView.onRefreshFail();
+                        }
+
+                    }
+
+                    @Override
+                    public void onNext(Request request) {
+                        if (isAlive()) tempList.add(request);
+                    }
+                });
     }
 
     public void initAdapter() {

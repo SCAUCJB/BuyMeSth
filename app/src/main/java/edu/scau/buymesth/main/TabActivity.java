@@ -1,10 +1,13 @@
 package edu.scau.buymesth.main;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.widget.EditText;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -21,6 +24,7 @@ import edu.scau.buymesth.discover.list.DiscoverFragment;
 import edu.scau.buymesth.discover.publish.MomentPublishActivity;
 import edu.scau.buymesth.request.HomeFragment;
 import edu.scau.buymesth.publish.PublishActivity;
+import edu.scau.buymesth.request.HomePresenter;
 import edu.scau.buymesth.user.UserFragment;
 import ui.widget.ChangeColorIconWithTextView;
 
@@ -46,6 +50,12 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
     @Bind(R.id.fab3)
     FloatingActionButton fab3;
 
+    private DiscoverFragment discoverFragment;
+    private HomeFragment homeFragment;
+    private ChatFragment chatFragment;
+    private AlertDialog searchDialog;
+    private EditText et;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_tab;
@@ -55,9 +65,9 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
     public void initView() {
         tabLayout.setSelectedTabIndicatorHeight(0);
         UserFragment userFragment = new UserFragment();
-        DiscoverFragment discoverFragment = new DiscoverFragment();
-        HomeFragment homeFragment = new HomeFragment();
-        ChatFragment chatFragment = new ChatFragment();
+        discoverFragment = new DiscoverFragment();
+        homeFragment = new HomeFragment();
+        chatFragment = new ChatFragment();
 
         homeFragment.setRelatedFab(fab);
         fab.setClosedOnTouchOutside(true);
@@ -68,6 +78,25 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         fab2.setOnClickListener(v -> {
             Intent i = new Intent(TabActivity.this, MomentPublishActivity.class);
             startActivity(i);
+        });
+        fab3.setOnClickListener(v -> {
+            if(et==null)et = new EditText(TabActivity.this);
+            if(searchDialog==null)
+                searchDialog = new AlertDialog.Builder(TabActivity.this).setTitle("搜索")
+                        .setView(et)
+                        .setPositiveButton("确定",
+                        (dialog, which) -> {
+                            homeFragment.setFilter(HomePresenter.FILTER_FUZZY_SEARCH,et.getText().toString());
+                        })
+                        .setNegativeButton("取消", null)
+                        .setNeutralButton("清除", (dialog, which) -> {
+                            et.setText("");
+                            homeFragment.setFilter(null,null);
+                        })
+                        .show();
+            else
+                searchDialog.show();
+            fab.close(true);
         });
 
         fragmentList.add(homeFragment);
