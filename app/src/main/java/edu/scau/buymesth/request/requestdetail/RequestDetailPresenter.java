@@ -44,19 +44,6 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
     }
 
     public void collect(){
-//        Collect collect = new Collect();
-//        collect.setUser(BmobUser.getCurrentUser(User.class));
-//        collect.setRequest(mModel.getRequest());
-//        collect.save(new SaveListener<String>() {
-//            @Override
-//            public void done(String s, BmobException e) {
-//                if(e==null){
-//                    mView.setCollect(true);
-//                }else {
-//                }
-//            }
-//        });
-
         AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
         //第一个参数是上下文对象，第二个参数是云端逻辑的方法名称，第三个参数是上传到云端逻辑的参数列表（JSONObject cloudCodeParams），第四个参数是回调类
         JSONObject params = new JSONObject();
@@ -70,7 +57,6 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
             @Override
             public void done(Object o, BmobException e) {
                 initCollect();
-
             }
         });
     }
@@ -93,19 +79,21 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
     }
 
     public void follow(){
-        Follow follow = new Follow();
-        follow.setFromUser(BmobUser.getCurrentUser(User.class));
-        follow.setToUser(mModel.getRequest().getAuthor());
-        follow.save(new SaveListener<String>() {
+        AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
+        //第一个参数是上下文对象，第二个参数是云端逻辑的方法名称，第三个参数是上传到云端逻辑的参数列表（JSONObject cloudCodeParams），第四个参数是回调类
+        JSONObject params = new JSONObject();
+        try {
+            params.put("fromUser",BmobUser.getCurrentUser().getObjectId());
+            params.put("toUser",mModel.getRequest().getAuthor().getObjectId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        ace.callEndpoint("follow",params , new CloudCodeListener() {
             @Override
-            public void done(String s, BmobException e) {
-                if(e==null){
-                    mView.setFollow(true);
-                }else {
-                }
+            public void done(Object o, BmobException e) {
+                initFollow();
             }
         });
-
     }
 
     private void initFollow() {
