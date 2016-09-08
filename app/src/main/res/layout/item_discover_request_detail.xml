@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingTop="20dp"
+    android:paddingBottom="20dp">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:background="@color/white"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
 
         <LinearLayout
             android:orientation="horizontal"
@@ -74,7 +79,7 @@
                 </RelativeLayout>
 
                 <TextView
-                    android:id="@+id/tv_content"
+                    android:id="@+id/tv_text"
                     style="@style/theText"
                     android:layout_below="@+id/tv_tweet_title"
                     android:layout_alignStart="@+id/tv_tweet_title"
@@ -94,15 +99,6 @@
                     android:id="@+id/nine_grid_layout"
                     android:layout_marginTop="8dp"
                     appa:sapcing="4dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/text_share_request"
-                    android:id="@+id/textView3"
-                    style="@style/theTextSmall"
-                    android:layout_marginTop="10dp" />
 
                 <LinearLayout
                     android:orientation="horizontal"
@@ -220,4 +216,5 @@
 
 
     </RelativeLayout>
+
 </LinearLayout>

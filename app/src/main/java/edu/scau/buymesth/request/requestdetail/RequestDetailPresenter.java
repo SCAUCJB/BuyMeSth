@@ -86,7 +86,13 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
         ace.callEndpoint("follow",params , new CloudCodeListener() {
             @Override
             public void done(Object o, BmobException e) {
-                initFollow();
+                if(o!=null){
+                    if(((String)o).equals("true")){
+                        mView.setFollow(true);
+                    }else {
+                        mView.setFollow(false);
+                    }
+                }
             }
         });
     }

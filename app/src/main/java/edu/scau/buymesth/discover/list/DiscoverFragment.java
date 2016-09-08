@@ -85,9 +85,7 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
         mDiscoverAdapter.setOnRecyclerViewItemClickListener(new BaseQuickAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent i = new Intent(getActivity(), MomentDetailActivity.class);
-                i.putExtra(Moment.class.getName(),(Moment)mDiscoverAdapter.getItem(position));
-                startActivity(i);
+                MomentDetailActivity.navigate(getActivity(),(Moment)mDiscoverAdapter.getItem(position));
             }
         });
         mDiscoverAdapter.openLoadAnimation();

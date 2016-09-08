@@ -1,5 +1,7 @@
 package edu.scau.buymesth.discover.detail;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +16,7 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
+import adpater.BaseQuickAdapter;
 import base.BaseActivity;
 import base.util.GlideCircleTransform;
 import butterknife.Bind;
@@ -21,6 +24,7 @@ import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.data.bean.MomentsComment;
+import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.util.ColorChangeHelper;
 import edu.scau.buymesth.util.DateFormatHelper;
 import edu.scau.buymesth.util.DividerItemDecoration;
@@ -28,6 +32,8 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
 import ui.layout.NineGridLayout;
+
+import static edu.scau.Constant.EXTRA_REQUEST;
 
 /**
  * Created by IamRabbit on 2016/8/23.
@@ -41,8 +47,19 @@ public class MomentDetailActivity extends BaseActivity implements  MomentDetailC
     private MomentDetailPresenter mPresenter;
     private MomentDetailAdapter mMomentDetailAdapter;
     private View momentView;
-    private Moment moment;
     private View notLoadingView;
+
+    public static void navigate(Activity activity, String momentId) {
+        Intent intent = new Intent(activity, MomentDetailActivity.class);
+        intent.putExtra(Moment.class.getName(), momentId);
+        activity.startActivity(intent);
+    }
+
+    public static void navigate(Activity activity, Moment moment) {
+        Intent intent = new Intent(activity, MomentDetailActivity.class);
+        intent.putExtra(Moment.class.getName(), moment);
+        activity.startActivity(intent);
+    }
 
     @Override
     protected int getLayoutId() {
@@ -52,7 +69,14 @@ public class MomentDetailActivity extends BaseActivity implements  MomentDetailC
     @Override
     public void initView() {
         initToolBar();
-        moment = (Moment) getIntent().getSerializableExtra(Moment.class.getName());
+        String momentId = getIntent().getStringExtra(Moment.class.getName());
+        Moment moment;
+        if(momentId==null)
+            moment = (Moment) getIntent().getSerializableExtra(Moment.class.getName());
+        else{
+            moment = new Moment();
+            moment.setObjectId(momentId);
+        }
         //初始化代理人
         mPresenter=new MomentDetailPresenter(this);
         mPresenter.setVM(this,new MomentDetailModel(moment));
@@ -77,28 +101,40 @@ public class MomentDetailActivity extends BaseActivity implements  MomentDetailC
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void initMomentView(){
-//        if(mPresenter.mModel.getMoment().getRequest()==null){
-            momentView = getLayoutInflater().inflate(R.layout.item_discover_norequest_detail,(ViewGroup) mRecyclerView.getParent(),false);
-//        }
-//        else{
-//            momentView = getLayoutInflater().inflate(R.layout.item_discover_request_detail,(ViewGroup) mRecyclerView.getParent(),false);
-//        }
-        ((TextView)momentView.findViewById(R.id.tv_name)).setText(moment.getUser().getNickname());
-        ((TextView)momentView.findViewById(R.id.tv_level)).setText("LV "+moment.getUser().getExp()/10);
-        ((TextView)momentView.findViewById(R.id.tv_text)).setText(moment.getContent());
-        ((TextView)momentView.findViewById(R.id.tv_likes)).setText(""+moment.getLikes());
-        ((TextView)momentView.findViewById(R.id.tv_comments)).setText(""+moment.getComments());
-        ((TextView)momentView.findViewById(R.id.tv_date)).setText(DateFormatHelper.dateFormat(moment.getCreatedAt()));
-        momentView.findViewById(R.id.tv_level).setBackground(ColorChangeHelper.tintDrawable(mContext.getResources().getDrawable(R.drawable.rect_black),
-                ColorStateList.valueOf(ColorChangeHelper.IntToColorValue((moment.getUser().getExp())))));
-        Glide.with(mContext).load(moment.getUser().getAvatar())
-                .crossFade()
-                .placeholder(R.mipmap.def_head)
-                .transform(new GlideCircleTransform(mContext))
-                .into((ImageView) momentView.findViewById(R.id.iv_avatar));
-        if(moment.getImages()!=null&&moment.getImages().size()>0)
-            ((NineGridLayout)momentView.findViewById(R.id.nine_grid_layout)).setUrlList(moment.getImages());
+    public void setLike(Boolean like){
+        runOnUiThread(() -> {
+            if(like)
+                ((ImageView)momentView.findViewById(R.id.iv_likes)).setImageDrawable(getResources().getDrawable(R.drawable.ic_favorite_red));
+            else
+                ((ImageView)momentView.findViewById(R.id.iv_likes)).setImageDrawable(getResources().getDrawable(R.drawable.ic_favorite));
+        });
+    }
+
+    public void initMomentView(){
+        runOnUiThread(() -> {
+            if(momentView==null){
+                if(mPresenter.mModel.getMoment().getRequest()==null)
+                    momentView = getLayoutInflater().inflate(R.layout.item_discover_norequest_detail,(ViewGroup) mRecyclerView.getParent(),false);
+                else
+                    momentView = getLayoutInflater().inflate(R.layout.item_discover_request_detail,(ViewGroup) mRecyclerView.getParent(),false);
+            }
+            Moment moment = mPresenter.mModel.getMoment();
+            ((TextView)momentView.findViewById(R.id.tv_name)).setText(moment.getUser().getNickname());
+            ((TextView)momentView.findViewById(R.id.tv_level)).setText("LV "+moment.getUser().getExp()/10);
+            ((TextView)momentView.findViewById(R.id.tv_text)).setText(moment.getContent());
+            ((TextView)momentView.findViewById(R.id.tv_likes)).setText(""+moment.getLikes());
+            ((TextView)momentView.findViewById(R.id.tv_comments)).setText(""+moment.getComments());
+            ((TextView)momentView.findViewById(R.id.tv_date)).setText(DateFormatHelper.dateFormat(moment.getCreatedAt()));
+            momentView.findViewById(R.id.tv_level).setBackground(ColorChangeHelper.tintDrawable(mContext.getResources().getDrawable(R.drawable.rect_black),
+                    ColorStateList.valueOf(ColorChangeHelper.IntToColorValue((moment.getUser().getExp())))));
+            Glide.with(mContext).load(moment.getUser().getAvatar())
+                    .crossFade()
+                    .placeholder(R.mipmap.def_head)
+                    .transform(new GlideCircleTransform(mContext))
+                    .into((ImageView) momentView.findViewById(R.id.iv_avatar));
+            if(moment.getImages()!=null&&moment.getImages().size()>0)
+                ((NineGridLayout)momentView.findViewById(R.id.nine_grid_layout)).setUrlList(moment.getImages());
+        });
     }
 
     private void initAdapter(){
@@ -106,24 +142,18 @@ public class MomentDetailActivity extends BaseActivity implements  MomentDetailC
         mMomentDetailAdapter.openLoadAnimation();
         mMomentDetailAdapter.addHeaderView(momentView);
         mRecyclerView.setAdapter(mMomentDetailAdapter);
-//        mDiscoverAdapter.setOnRecyclerViewItemClickListener((view, position) -> {
-//            Intent intent =new Intent(getActivity(), HomeDetailActivity.class);
-//            startActivity(intent);
-//        });
-//        mMomentDetailAdapter.setOnItemsContentClickListener(new DiscoverAdapter.OnItemsContentClickListener() {
-//            @Override
-//            public void onItemsContentClick(View v, Moment item, int position) {
-//                switch (v.getId()){
-//                    case R.id.ly_likes:
-//                        mPresenter.AddLike(v,item , position);
-//                        break;
-//                    case R.id.ly_comments:
-//                        break;
-//                    default:
-//                        break;
-//                }
-//            }
-//        });
+
+        mMomentDetailAdapter.setOnRecyclerViewItemChildClickListener(new BaseQuickAdapter.OnRecyclerViewItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                switch (view.getId()){
+                    case R.id.ly_likes:
+                        mPresenter.like();
+                        break;
+                }
+            }
+        });
+
         mMomentDetailAdapter.setOnLoadMoreListener(() -> mPresenter.LoadMore());
         mMomentDetailAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
     }
@@ -224,7 +254,7 @@ public class MomentDetailActivity extends BaseActivity implements  MomentDetailC
     public void onPostCommentSuccess(String msg) {
         toast(msg);
         ((TextView)findViewById(R.id.intput_comment)).setText(null);
-        mPresenter.Refresh();
+        mPresenter.RefreshComments();
     }
 
 }

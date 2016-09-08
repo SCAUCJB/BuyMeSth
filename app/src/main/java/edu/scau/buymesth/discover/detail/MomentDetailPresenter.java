@@ -2,18 +2,30 @@ package edu.scau.buymesth.discover.detail;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import base.BasePresenter;
+import cn.bmob.v3.AsyncCustomEndpoints;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.CloudCodeListener;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
+import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.data.bean.MomentsComment;
+import edu.scau.buymesth.data.bean.MomentsLike;
 import edu.scau.buymesth.data.bean.User;
 import rx.Observable;
 import rx.Observer;
@@ -46,6 +58,32 @@ public class MomentDetailPresenter extends BasePresenter<MomentDetailModel,Momen
     }
 
     public void Refresh(){
+        if(mModel.getMoment()==null)return;
+        BmobQuery<Moment> bmobQuery = new BmobQuery<>();
+        bmobQuery.include("user");
+        bmobQuery.getObject(mModel.getMoment().getObjectId(), new QueryListener<Moment>() {
+            @Override
+            public void done(Moment moment, BmobException e) {
+                mModel.setMoment(moment);
+                mView.initMomentView();
+            }
+        });
+        BmobQuery<MomentsLike> bmobQuery1 = new BmobQuery<>();
+        bmobQuery1.addWhereEqualTo("liker",BmobUser.getCurrentUser().getObjectId());
+        bmobQuery1.addWhereEqualTo("moment",mModel.getMoment().getObjectId());
+        bmobQuery1.findObjects(new FindListener<MomentsLike>() {
+            @Override
+            public void done(List<MomentsLike> list, BmobException e) {
+                if(list!=null&&list.size()>0)
+                    mView.setLike(true);
+                else
+                    mView.setLike(false);
+            }
+        });
+        RefreshComments();
+    }
+
+    public void RefreshComments(){
         if(mModel.getMoment()!=null){
             mModel.resetPage();
             mModel.getDatas().clear();
@@ -140,5 +178,29 @@ public class MomentDetailPresenter extends BasePresenter<MomentDetailModel,Momen
                  System.out.println(e==null?"PPPPPPPPPPPP":e.toString());
              }
          });
+    }
+
+    public void like(){
+        AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
+        //第一个参数是上下文对象，第二个参数是云端逻辑的方法名称，第三个参数是上传到云端逻辑的参数列表（JSONObject cloudCodeParams），第四个参数是回调类
+        JSONObject params = new JSONObject();
+        try {
+            params.put("liker",BmobUser.getCurrentUser().getObjectId());
+            params.put("moment",mModel.getMoment().getObjectId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        ace.callEndpoint("like",params , new CloudCodeListener() {
+            @Override
+            public void done(Object o, BmobException e) {
+                if(o!=null){
+                    if(((String)o).equals("true")){
+                        mView.setLike(true);
+                    }else {
+                        mView.setLike(false);
+                    }
+                }
+            }
+        });
     }
 }
