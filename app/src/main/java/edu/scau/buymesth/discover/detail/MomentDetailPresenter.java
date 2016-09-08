@@ -11,6 +11,8 @@ import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
+import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.data.bean.MomentsComment;
 import edu.scau.buymesth.data.bean.User;
 import rx.Observable;
@@ -116,17 +118,27 @@ public class MomentDetailPresenter extends BasePresenter<MomentDetailModel,Momen
     }
 
      void postComment(String text){
-        MomentsComment momentsComment = new MomentsComment();
-        momentsComment.setContent(text);
-        momentsComment.setUser(BmobUser.getCurrentUser(User.class));
-        momentsComment.setMoment(mModel.getMoment());
-        momentsComment.save(new SaveListener<String>() {
-            @Override
-            public void done(String s, BmobException e) {
-                if(e==null){
-                    mView.onPostCommentSuccess(s);
-                }
-            }
-        });
+         //应改写在云逻辑上
+         MomentsComment momentsComment = new MomentsComment();
+         momentsComment.setContent(text);
+         momentsComment.setUser(BmobUser.getCurrentUser(User.class));
+         momentsComment.setMoment(mModel.getMoment());
+         momentsComment.save(new SaveListener<String>() {
+             @Override
+             public void done(String s, BmobException e) {
+                 if(e==null){
+                     mView.onPostCommentSuccess(s);
+                 }
+             }
+         });
+         Moment moment = new Moment();
+         moment.setObjectId(mModel.getMoment().getObjectId());
+         moment.increment("comments");
+         moment.update(new UpdateListener() {
+             @Override
+             public void done(BmobException e) {
+                 System.out.println(e==null?"PPPPPPPPPPPP":e.toString());
+             }
+         });
     }
 }

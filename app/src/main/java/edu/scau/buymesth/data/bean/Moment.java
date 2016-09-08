@@ -14,8 +14,8 @@ public class Moment extends BmobObject implements MultiItemEntity{
     private List<String> images;
     private String url;
     private Request request;
-    private int likes;
-    private int comments;
+    private Integer likes;
+    private Integer comments;
     private String location;
     private boolean isLike;
     private boolean authorDelete;
@@ -60,19 +60,19 @@ public class Moment extends BmobObject implements MultiItemEntity{
         this.request = request;
     }
 
-    public int getLikes() {
+    public Integer getLikes() {
         return likes;
     }
 
-    public void setLikes(int likes) {
+    public void setLikes(Integer likes) {
         this.likes = likes;
     }
 
-    public int getComments() {
+    public Integer getComments() {
         return comments;
     }
 
-    public void setComments(int comments) {
+    public void setComments(Integer comments) {
         this.comments = comments;
     }
 
