@@ -15,7 +15,7 @@ public class Request extends BmobObject {
     private List<String> urls;
     private List<String> picHeights;
     private List<String> picWidths;
-    private User author;
+    private User user;
     private Boolean isAnonymous;
     private Integer likes;
     private Integer comments;
@@ -60,12 +60,12 @@ public class Request extends BmobObject {
     /**
      * 发表人
      */
-    public User getAuthor() {
-        return author;
+    public User getUser() {
+        return user;
     }
 
-    public void setAuthor(User author) {
-        this.author = author;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     /**

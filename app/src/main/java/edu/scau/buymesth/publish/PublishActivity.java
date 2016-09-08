@@ -285,7 +285,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                 Request request = new Request();
                 request.setTitle(etTitle.getText().toString());
                 request.setContent(etDetail.getText().toString());
-                request.setAuthor(BmobUser.getCurrentUser(User.class));
+                request.setUser(BmobUser.getCurrentUser(User.class));
                 if (mSelectableSeekBar.getSelectedPosition() == 1) {
                     try {
                         request.setMaxPrice(Integer.valueOf(high));

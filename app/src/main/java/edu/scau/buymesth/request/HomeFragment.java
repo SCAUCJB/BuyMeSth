@@ -185,6 +185,10 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         this.filter = filter;
     }
 
+    public String getFilter() {
+        return this.filter;
+    }
+
     public void setFilterKey(Object filterKey) {
         this.filterKey = filterKey;
     }

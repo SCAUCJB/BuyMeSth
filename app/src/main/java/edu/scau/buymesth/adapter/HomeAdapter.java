@@ -23,13 +23,13 @@ public class HomeAdapter extends BaseQuickAdapter<Request> {
     @Override
     protected void convert(BaseViewHolder helper, Request item) {
             helper.setText(R.id.tv_name,
-                    item.getAuthor().getNickname())
+                    item.getUser().getNickname())
             .setText(R.id.tv_tweet_date,item.getCreatedAt())
             .setText(R.id.tv_tweet_title,item.getTitle())
             .setText(R.id.tv_tweet_text,item.getContent())
-            .setText(R.id.tv_level,"LV "+ item.getAuthor().getExp()/10);
+            .setText(R.id.tv_level,"LV "+ item.getUser().getExp()/10);
 
-           Glide.with(mContext).load(item.getAuthor().getAvatar()).crossFade().placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into((ImageView) helper.getView(R.id.iv_avatar_author));
+           Glide.with(mContext).load(item.getUser().getAvatar()).crossFade().placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into((ImageView) helper.getView(R.id.iv_avatar_author));
         if(item!=null&&item.getUrls()!=null&&!item.getUrls().isEmpty())
         {
             helper.setVisible(R.id.iv_tweet_image,true);

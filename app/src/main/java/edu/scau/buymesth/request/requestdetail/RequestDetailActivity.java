@@ -112,7 +112,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         model.setRequest((Request) getIntent().getSerializableExtra(Constant.EXTRA_REQUEST));
         mPresenter=presenter = new RequestDetailPresenter();
         presenter.setVM(this, model);
-        mIsSelf = model.getRequest().getAuthor().getObjectId().equals(BmobUser.getCurrentUser().getObjectId());
+        mIsSelf = model.getRequest().getUser().getObjectId().equals(BmobUser.getCurrentUser().getObjectId());
 
             mCreateOrderBtn.setOnClickListener(v -> {
                 if (!mIsSelf) CreateOrderActivity.navigateTo(mContext, (Request) getIntent().getSerializableExtra(EXTRA_REQUEST));

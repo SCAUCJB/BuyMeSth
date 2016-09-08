@@ -37,7 +37,7 @@ public class CreateOrderModel   implements CreateOrderContract.Model {
 
     public void setRequest(Request request) {
         this.request = request;
-        setBuyer(request.getAuthor());
+        setBuyer(request.getUser());
     }
 
     @Override

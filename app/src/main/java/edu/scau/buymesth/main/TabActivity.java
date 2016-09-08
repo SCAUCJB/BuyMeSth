@@ -49,6 +49,8 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
     FloatingActionButton fab2;
     @Bind(R.id.fab3)
     FloatingActionButton fab3;
+    @Bind(R.id.fab4)
+    FloatingActionButton fab4;
 
     private DiscoverFragment discoverFragment;
     private HomeFragment homeFragment;
@@ -97,6 +99,15 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
             else
                 searchDialog.show();
             fab.close(true);
+        });
+        fab4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(homeFragment.getFilter()!=HomePresenter.FILTER_FOLLOW_ONLY)
+                    homeFragment.setFilter(HomePresenter.FILTER_FOLLOW_ONLY,null);
+                else homeFragment.setFilter(null,null);
+                fab.close(true);
+            }
         });
 
         fragmentList.add(homeFragment);

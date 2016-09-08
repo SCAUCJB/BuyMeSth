@@ -5,6 +5,7 @@ import java.util.List;
 
 import base.BasePresenter;
 import base.util.ToastUtil;
+import cn.bmob.v3.datatype.BmobQueryResult;
 import edu.scau.buymesth.data.bean.Request;
 import rx.Observable;
 import rx.Observer;
@@ -21,6 +22,7 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
     public static final String FILTER_AUTHOR_ID = "USERID";
     public static final String FILTER_AUTHOR_IDS = "USERIDS";
     public static final String FILTER_FUZZY_SEARCH = "FUZZY";
+    public static final String FILTER_FOLLOW_ONLY = "FOLLOW";
     /**
      * 初始化工作写在这里
      */
@@ -121,7 +123,40 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
             requestObservable = mModel.getSomeonesRxRequests(HomeModel.FROM_NETWORK,(List<String>)key);
         }else if(filter==FILTER_FUZZY_SEARCH){
             requestObservable = mModel.getFuzzySearchRxRequests(HomeModel.FROM_NETWORK,(String)key);
-        }else {
+        }else if(filter == FILTER_FOLLOW_ONLY){
+            Observable<BmobQueryResult<Request>> bqlRequestObservable = mModel.getFollowedRxRequests(HomeModel.FROM_NETWORK, (String) key);
+            bqlRequestObservable.flatMap(new Func1<BmobQueryResult<Request>, Observable<Request>>() {
+                @Override
+                public Observable<Request> call(BmobQueryResult<Request> requestBmobQueryResult) {
+                    return Observable.from(requestBmobQueryResult.getResults());
+                }
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<Request>() {
+                        @Override
+                        public void onCompleted() {
+                            if(isAlive())
+                            {
+                                mModel.getDatas().clear();
+                                mModel.setDatas(tempList);
+                                mView.onRefreshComplete(mModel.getDatas());}
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            if (isAlive()){
+                                mView.showError("仿佛网络有点差");
+                                mView.onRefreshFail();
+                            }
+                        }
+
+                        @Override
+                        public void onNext(Request request) {
+                            if(isAlive()) tempList.add(request);
+                        }
+                    });
+            return;
+        } else {
             requestObservable = mModel.getRxRequests(HomeModel.FROM_NETWORK);
         }
 
@@ -167,6 +202,41 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
             requestObservable = mModel.getSomeonesRxRequests(HomeModel.FROM_NETWORK,(List<String>)key);
         }else if(filter==FILTER_FUZZY_SEARCH){
             requestObservable = mModel.getFuzzySearchRxRequests(HomeModel.FROM_NETWORK,(String)key);
+        }else if(filter == FILTER_FOLLOW_ONLY){
+            Observable<BmobQueryResult<Request>> bqlRequestObservable = mModel.getFollowedRxRequests(HomeModel.FROM_NETWORK, (String) key);
+            bqlRequestObservable.flatMap(new Func1<BmobQueryResult<Request>, Observable<Request>>() {
+                @Override
+                public Observable<Request> call(BmobQueryResult<Request> requestBmobQueryResult) {
+                    return Observable.from(requestBmobQueryResult.getResults());
+                }
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<Request>() {
+                        @Override
+                        public void onCompleted() {
+                            if (isAlive()) {
+                                if (tempList.size() > 0)
+                                    mView.onLoadMoreSuccess(tempList);
+                                else
+                                    mView.onLoadMoreSuccess(null);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            if (isAlive()){
+                                mView.showError("仿佛网络有点差");
+                                mView.onRefreshFail();
+                            }
+
+                        }
+
+                        @Override
+                        public void onNext(Request request) {
+                            if (isAlive()) tempList.add(request);
+                        }
+                    });;
+            return;
         }else {
             requestObservable = mModel.getRxRequests(HomeModel.FROM_NETWORK);
         }

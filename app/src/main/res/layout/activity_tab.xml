@@ -59,6 +59,13 @@
                 fab:fab_size="mini"
                 fab:fab_label="Search" />
 
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fab4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                fab:fab_size="mini"
+                fab:fab_label="Follow Only" />
+
         </com.github.clans.fab.FloatingActionMenu>
 
     </FrameLayout>

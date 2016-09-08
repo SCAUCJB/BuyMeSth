@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,7 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import base.BasePresenter;
-import base.util.ToastUtil;
 import cn.bmob.v3.AsyncCustomEndpoints;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
@@ -208,7 +206,7 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
     }
 
     public void DeleteOne(Moment moment,int position){
-        if(moment.getAuthor().getObjectId().equals(BmobUser.getCurrentUser().getObjectId())){
+        if(moment.getUser().getObjectId().equals(BmobUser.getCurrentUser().getObjectId())){
             new AlertDialog.Builder(mContext)
                     .setTitle(mContext.getResources().getString(R.string.text_delete))
                     .setMessage("delete ?")

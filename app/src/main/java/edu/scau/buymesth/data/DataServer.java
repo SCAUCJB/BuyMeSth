@@ -34,7 +34,7 @@ public class DataServer {
             urls.add("http://www.dota2.com.cn/images/heroes/antimage_vert.jpg");
             request.setUrls(urls);
             request.setComments(30);
-            request.setAuthor(user);
+            request.setUser(user);
             list.add(request);
         }
         return list;
@@ -53,7 +53,7 @@ public class DataServer {
 //            urls.add("http://www.dota2.com.cn/images/heroes/antimage_vert.jpg");
             moment.setImages(urls);
 //            moment.setComments(30);
-            moment.setAuthor(user);
+            moment.setUser(user);
             list.add(moment);
         }
         return list;

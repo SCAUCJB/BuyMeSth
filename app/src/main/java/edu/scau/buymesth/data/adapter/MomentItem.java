@@ -11,7 +11,7 @@ public class MomentItem extends Moment{
     private int commentsCount = 0;
 
     public MomentItem(Moment moment){
-        this.setAuthor(moment.getAuthor());
+        this.setUser(moment.getUser());
         this.setLikes(moment.getLikes());
         this.setObjectId(moment.getObjectId());
         this.setImages(moment.getImages());

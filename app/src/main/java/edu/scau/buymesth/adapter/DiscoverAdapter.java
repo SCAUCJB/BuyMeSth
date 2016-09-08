@@ -39,10 +39,10 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
     @Override
     protected void convert(BaseViewHolder helper, Moment item) {
         helper.setText(R.id.tv_name,
-                item.getAuthor().getNickname())
+                item.getUser().getNickname())
                 .setText(R.id.tv_tweet_date, DateFormatHelper.dateFormat(item.getCreatedAt()))
                 .setText(R.id.tv_tweet_text,item.getContent())
-                .setText(R.id.tv_level,"LV "+ item.getAuthor().getExp()/10)
+                .setText(R.id.tv_level,"LV "+ item.getUser().getExp()/10)
                 .setText(R.id.tv_likes,""+item.getLikes())
                 .setText(R.id.tv_comments,""+item.getComments());
 
@@ -58,7 +58,7 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
 
         helper.getView(R.id.tv_level).setBackground(
                 ColorChangeHelper.tintDrawable(mContext.getResources().getDrawable(R.drawable.rect_black),
-                        ColorStateList.valueOf(ColorChangeHelper.IntToColorValue(item.getAuthor().getExp())))
+                        ColorStateList.valueOf(ColorChangeHelper.IntToColorValue(item.getUser().getExp())))
         );
 
         if(item.isLike()){
@@ -71,7 +71,7 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
         }
 
 
-        Glide.with(mContext).load(item.getAuthor().getAvatar())
+        Glide.with(mContext).load(item.getUser().getAvatar())
                 .crossFade()
                 .placeholder(R.mipmap.def_head)
                 .transform(new GlideCircleTransform(mContext))
@@ -85,7 +85,7 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
                 onItemsContentClickListener.onItemsContentClick(v,item,helper.getAdapterPosition());
             }
         };
-        if(item.getAuthor().getObjectId().equals(BmobUser.getCurrentUser().getObjectId())){
+        if(item.getUser().getObjectId().equals(BmobUser.getCurrentUser().getObjectId())){
             helper.getView(R.id.ly_delete).setVisibility(View.VISIBLE);
             helper.getView(R.id.ly_delete).setOnClickListener(defaultOnClickListener);
         }else {

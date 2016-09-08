@@ -4,13 +4,12 @@ import java.util.List;
 
 import adpater.MultiItemEntity;
 import cn.bmob.v3.BmobObject;
-import cn.bmob.v3.datatype.BmobRelation;
 
 /**
  * Created by IamRabbit on 2016/8/12.
  */
 public class Moment extends BmobObject implements MultiItemEntity{
-    private User author;
+    private User user;
     private String content;
     private List<String> images;
     private String url;
@@ -21,12 +20,12 @@ public class Moment extends BmobObject implements MultiItemEntity{
     private boolean isLike;
     private boolean authorDelete;
 
-    public User getAuthor() {
-        return author;
+    public User getUser() {
+        return user;
     }
 
-    public void setAuthor(User author) {
-        this.author = author;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getContent() {

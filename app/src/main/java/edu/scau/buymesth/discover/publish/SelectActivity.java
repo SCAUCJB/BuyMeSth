@@ -34,7 +34,6 @@ public class SelectActivity extends BaseActivity{
         homeFragment.setFilter(HomePresenter.FILTER_AUTHOR_IDS);
         List<String> ids = new ArrayList<>();
         ids.add(BmobUser.getCurrentUser().getObjectId());
-        ids.add("cccfb9de88");
         homeFragment.setFilterKey(ids);
         transaction.replace(R.id.content_fragment, homeFragment);
         transaction.commit();

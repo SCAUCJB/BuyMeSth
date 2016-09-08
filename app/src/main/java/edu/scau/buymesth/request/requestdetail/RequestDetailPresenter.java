@@ -79,7 +79,7 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
         JSONObject params = new JSONObject();
         try {
             params.put("fromUser",BmobUser.getCurrentUser().getObjectId());
-            params.put("toUser",mModel.getRequest().getAuthor().getObjectId());
+            params.put("toUser",mModel.getRequest().getUser().getObjectId());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -94,7 +94,7 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
     private void initFollow() {
         BmobQuery<Follow> bmobQuery = new BmobQuery<>();
         bmobQuery.addWhereEqualTo("fromUser", BmobUser.getCurrentUser(User.class));
-        bmobQuery.addWhereEqualTo("toUser",mModel.getRequest().getAuthor());
+        bmobQuery.addWhereEqualTo("toUser",mModel.getRequest().getUser());
         bmobQuery.findObjects(new FindListener<Follow>() {
             @Override
             public void done(List<Follow> list, BmobException e) {
@@ -120,9 +120,9 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
 
     public void initUserInfo() {
         Request request = mModel.getRequest();
-        mView.setAuthorAvatar(request.getAuthor().getAvatar());
-        mView.setAuthorExp(request.getAuthor().getExp());
-        mView.setAuthorName(request.getAuthor().getNickname());
+        mView.setAuthorAvatar(request.getUser().getAvatar());
+        mView.setAuthorExp(request.getUser().getExp());
+        mView.setAuthorName(request.getUser().getNickname());
         mView.setAuthorOnClicked();
         mView.setOnAcceptClicked();
         //

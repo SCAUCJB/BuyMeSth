@@ -2,6 +2,7 @@ package edu.scau.buymesth.request;
 
 import java.util.List;
 
+import cn.bmob.v3.datatype.BmobQueryResult;
 import edu.scau.buymesth.data.bean.Request;
 import rx.Observable;
 
@@ -27,5 +28,6 @@ public interface HomeContract {
         Observable<List<Request>> getSomeonesRxRequests(int policy,String userId);
         Observable<List<Request>> getSomeonesRxRequests(int policy,List<String> userIds);
         Observable<List<Request>> getFuzzySearchRxRequests(int policy,String key);
+        Observable<BmobQueryResult<Request>> getFollowedRxRequests(int policy, String key);
     }
 }

@@ -84,15 +84,15 @@ public class MomentDetailActivity extends BaseActivity implements  MomentDetailC
 //        else{
 //            momentView = getLayoutInflater().inflate(R.layout.item_discover_request_detail,(ViewGroup) mRecyclerView.getParent(),false);
 //        }
-        ((TextView)momentView.findViewById(R.id.tv_name)).setText(moment.getAuthor().getNickname());
-        ((TextView)momentView.findViewById(R.id.tv_level)).setText("LV "+moment.getAuthor().getExp()/10);
+        ((TextView)momentView.findViewById(R.id.tv_name)).setText(moment.getUser().getNickname());
+        ((TextView)momentView.findViewById(R.id.tv_level)).setText("LV "+moment.getUser().getExp()/10);
         ((TextView)momentView.findViewById(R.id.tv_text)).setText(moment.getContent());
         ((TextView)momentView.findViewById(R.id.tv_likes)).setText(""+moment.getLikes());
         ((TextView)momentView.findViewById(R.id.tv_comments)).setText(""+moment.getComments());
         ((TextView)momentView.findViewById(R.id.tv_date)).setText(DateFormatHelper.dateFormat(moment.getCreatedAt()));
         momentView.findViewById(R.id.tv_level).setBackground(ColorChangeHelper.tintDrawable(mContext.getResources().getDrawable(R.drawable.rect_black),
-                ColorStateList.valueOf(ColorChangeHelper.IntToColorValue((moment.getAuthor().getExp())))));
-        Glide.with(mContext).load(moment.getAuthor().getAvatar())
+                ColorStateList.valueOf(ColorChangeHelper.IntToColorValue((moment.getUser().getExp())))));
+        Glide.with(mContext).load(moment.getUser().getAvatar())
                 .crossFade()
                 .placeholder(R.mipmap.def_head)
                 .transform(new GlideCircleTransform(mContext))

@@ -109,7 +109,7 @@ public class MomentPublishActivity extends BaseActivity{
                             urlList = urls;
                             if(urls.size()>=localUrlList.size()){
                                 Moment moment = new Moment();
-                                moment.setAuthor(BmobUser.getCurrentUser(User.class));
+                                moment.setUser(BmobUser.getCurrentUser(User.class));
                                 moment.setContent(momentContent.getText().toString());
                                 moment.setImages(urlList);
                                 moment.save(new SaveListener<String>() {
@@ -149,7 +149,7 @@ public class MomentPublishActivity extends BaseActivity{
                 }
                 else {
                     Moment moment = new Moment();
-                    moment.setAuthor(BmobUser.getCurrentUser(User.class));
+                    moment.setUser(BmobUser.getCurrentUser(User.class));
                     moment.setContent(momentContent.getText().toString());
                     moment.setImages(urlList);
                     moment.save(new SaveListener<String>() {
