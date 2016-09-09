@@ -14,8 +14,8 @@ public class Moment extends BmobObject implements MultiItemEntity{
     private List<String> images;
     private String url;
     private Request request;
-    private Integer likes;
-    private Integer comments;
+    private Integer likes = 0;
+    private Integer comments = 0;
     private String location;
     private boolean isLike;
     private boolean authorDelete;

@@ -21,6 +21,8 @@ public class MomentDetailContract {
         void onRefreshInterrupt();
         void onLoadMoreInterrupt();
         void onPostCommentSuccess(String msg);
+        void initMomentView();
+        void setLike(Boolean b,int i);
     }
 
     interface Model{

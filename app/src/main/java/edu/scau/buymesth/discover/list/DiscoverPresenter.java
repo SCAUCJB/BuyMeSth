@@ -139,67 +139,29 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
                 });
     }
 
-    public void AddLike(View v, Moment item, int position){
-        User user = BmobUser.getCurrentUser(User.class);
+    public void like(View v, Moment item){
         AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
         //第一个参数是上下文对象，第二个参数是云端逻辑的方法名称，第三个参数是上传到云端逻辑的参数列表（JSONObject cloudCodeParams），第四个参数是回调类
         JSONObject params = new JSONObject();
         try {
-            params.put("userid",user.getObjectId());
-            params.put("momentsid",item.getObjectId());
+            params.put("liker",BmobUser.getCurrentUser().getObjectId());
+            params.put("moment",item.getObjectId());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        ace.callEndpoint("likemoment",params , new CloudCodeListener() {
+        ace.callEndpoint("like",params , new CloudCodeListener() {
             @Override
             public void done(Object o, BmobException e) {
-                if(!((String)o).contains("succeed")){
-                    DisLike(v,item,position);
-                }else {
-                    mView.onError(null,o.toString());
-                    item.setLikes(item.getLikes()+1);
-                    v.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((ImageView)v.findViewById(R.id.iv_likes))
-                                    .setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_favorite_red)
-                            );
-                            ((TextView)v.findViewById(R.id.tv_likes)).setText(String.valueOf(item.getLikes()));
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    public void DisLike(View v, Moment item, int position){
-        User user = BmobUser.getCurrentUser(User.class);
-        AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
-        //第一个参数是上下文对象，第二个参数是云端逻辑的方法名称，第三个参数是上传到云端逻辑的参数列表（JSONObject cloudCodeParams），第四个参数是回调类
-        JSONObject params = new JSONObject();
-        try {
-            params.put("userid",user.getObjectId());
-            params.put("momentsid",item.getObjectId());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        ace.callEndpoint("dislikemoment",params , new CloudCodeListener() {
-            @Override
-            public void done(Object o, BmobException e) {
-                if(((String)o).contains("succeed")){
-                    mView.onError(null,o.toString());
-                    item.setLikes(item.getLikes()-1);
-                    v.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((ImageView)v.findViewById(R.id.iv_likes))
-                                    .setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_favorite)
-                            );
-                            ((TextView)v.findViewById(R.id.tv_likes)).setText(String.valueOf(item.getLikes()));
-                        }
-                    });
-                }else {
-                    mView.onError(null,o.toString());
+                if(o!=null){
+                    if(((String)o).equals("true")){
+                        if(item.isLike())return;
+                        item.setLikes(item.getLikes()+1);
+                        mView.setLike(v,item,true);
+                    }else {
+                        if(!item.isLike())return;
+                        item.setLikes(item.getLikes()-1);
+                        mView.setLike(v,item,false);
+                    }
                 }
             }
         });

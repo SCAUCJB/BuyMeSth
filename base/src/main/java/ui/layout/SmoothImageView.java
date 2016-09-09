@@ -42,7 +42,7 @@ public class SmoothImageView extends PhotoView {
     private Bitmap mBitmap;
     private boolean mTransformStart = false;
     private Transfrom mTransfrom;
-    private final int mBgColor = 0x00000000;
+    private final int mBgColor = 0xFF000000;
     private int mBgAlpha = 0;
     private Paint mPaint;
 
@@ -289,8 +289,7 @@ public class SmoothImageView extends PhotoView {
                 Log.d("Dean", "mTransfrom.rect:"+mTransfrom.rect.toString());
             }
 
-//            mPaint.setAlpha(mBgAlpha);
-//            mPaint.setAlpha(0);
+            mPaint.setAlpha(mBgAlpha);
             canvas.drawPaint(mPaint);
 
             int saveCount = canvas.getSaveCount();
@@ -308,8 +307,8 @@ public class SmoothImageView extends PhotoView {
             }
         } else {
             //当Transform In变化完成后，把背景改为黑色，使得Activity不透明
-//            mPaint.setAlpha(255);
-//            canvas.drawPaint(mPaint);
+            mPaint.setAlpha(255);
+            canvas.drawPaint(mPaint);
             super.onDraw(canvas);
         }
     }
@@ -355,7 +354,7 @@ public class SmoothImageView extends PhotoView {
         valueAnimator.addListener(new ValueAnimator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-                mTransformListener.onTransformStart();
+
             }
 
             @Override

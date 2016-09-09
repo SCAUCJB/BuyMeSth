@@ -31,7 +31,7 @@ public class RatioImageView extends ImageView {
 
     public RatioImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        this.setBackgroundColor(Color.GRAY);
+//        this.setBackgroundColor(Color.GRAY);
     }
 
     public RatioImageView(Context context, AttributeSet attrs) {
@@ -40,12 +40,12 @@ public class RatioImageView extends ImageView {
 
         mRatio = typedArray.getFloat(R.styleable.RatioImageView_ratio, 0f);
         typedArray.recycle();
-        this.setBackgroundColor(Color.GRAY);
+//        this.setBackgroundColor(Color.GRAY);
     }
 
     public RatioImageView(Context context) {
         super(context);
-        this.setBackgroundColor(Color.GRAY);
+//        this.setBackgroundColor(Color.GRAY);
     }
 
     /**

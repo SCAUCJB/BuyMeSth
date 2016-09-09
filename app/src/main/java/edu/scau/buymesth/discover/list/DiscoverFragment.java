@@ -11,6 +11,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -45,6 +47,7 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
         View view = inflater.inflate(R.layout.fragment_discover,container,false);
         mRecyclerView= (RecyclerView) view.findViewById(R.id.rv_discover_fragment);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setItemViewCacheSize(10);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_10)));
         //初始化代理人
         mPresenter=new DiscoverPresenter(getContext());
@@ -108,7 +111,7 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
                         mPresenter.DeleteOne((Moment) item,position);
                         break;
                     case R.id.ly_likes:
-                        mPresenter.AddLike(v, (Moment) item, position);
+                        mPresenter.like(v, (Moment) item);
                         break;
                     case R.id.ly_comments:
                         break;
@@ -130,6 +133,21 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
         });
         mDiscoverAdapter.setOnLoadMoreListener(() -> mPresenter.LoadMore());
         mDiscoverAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
+    }
+
+    @Override
+    public void setLike(View v,Moment moment,Boolean like){
+        moment.setLike(like);
+        v.post(() -> {
+            if(like){
+                ((ImageView)v.findViewById(R.id.iv_likes)).setImageDrawable(getResources().getDrawable(R.drawable.ic_favorite_red));
+                ((TextView)v.findViewById(R.id.tv_likes)).setText(String.valueOf(moment.getLikes()));
+            }
+            else{
+                ((ImageView)v.findViewById(R.id.iv_likes)).setImageDrawable(getResources().getDrawable(R.drawable.ic_favorite));
+                ((TextView)v.findViewById(R.id.tv_likes)).setText(String.valueOf(moment.getLikes()));
+            }
+        });
     }
 
     @Override

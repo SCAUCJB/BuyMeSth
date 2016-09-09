@@ -1,15 +1,22 @@
 package edu.scau.buymesth.adapter;
 
 import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import adpater.BaseMultiItemQuickAdapter;
 import adpater.BaseViewHolder;
 import base.util.GlideCircleTransform;
+import base.util.SpaceItemDecoration;
 import cn.bmob.v3.BmobUser;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Moment;
@@ -23,21 +30,23 @@ import ui.layout.NineGridLayout;
 public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
 
     private OnItemsContentClickListener onItemsContentClickListener;
-    private String myID;
+    private Drawable mIconRedHeart,mIconGrayHeart;
 
-//    public DiscoverAdapter(int dataSize) {
-//        myID = BmobUser.getCurrentUser().getObjectId();
-//    }
+    private Map<Integer,Drawable> mLevelDrawableChache;
 
     public DiscoverAdapter(List<Moment> data) {
         super(data);
         addItemType(0, R.layout.item_discover_view_normal);
         addItemType(1, R.layout.item_discover_view_request);
-        myID = BmobUser.getCurrentUser().getObjectId();
+        mLevelDrawableChache = new HashMap<>();
     }
 
     @Override
     protected void convert(BaseViewHolder helper, Moment item) {
+        if(mIconGrayHeart==null||mIconRedHeart==null){
+            mIconRedHeart = mContext.getResources().getDrawable(R.drawable.ic_favorite_red);
+            mIconGrayHeart = mContext.getResources().getDrawable(R.drawable.ic_favorite);
+        }
         helper.setText(R.id.tv_name,
                 item.getUser().getNickname())
                 .setText(R.id.tv_tweet_date, DateFormatHelper.dateFormat(item.getCreatedAt()))
@@ -55,19 +64,20 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
                 helper.getView(R.id.iv_request_cover).setVisibility(View.INVISIBLE);
             }
         }
-
-        helper.getView(R.id.tv_level).setBackground(
-                ColorChangeHelper.tintDrawable(mContext.getResources().getDrawable(R.drawable.rect_black),
-                        ColorStateList.valueOf(ColorChangeHelper.IntToColorValue(item.getUser().getExp())))
-        );
+        Drawable levelBg = mLevelDrawableChache.get(item.getUser().getExp()/10*10);
+        if(levelBg==null){
+            levelBg = ColorChangeHelper.tintDrawable(mContext.getResources().getDrawable(R.drawable.rect_black),
+                    ColorStateList.valueOf(ColorChangeHelper.IntToColorValue(item.getUser().getExp()/10*10)));
+            mLevelDrawableChache.put(item.getUser().getExp()/10*10,levelBg);
+        }
+        helper.getView(R.id.tv_level).setBackground(levelBg);
 
         if(item.isLike()){
             ((ImageView)helper.getView(R.id.iv_likes))
-                    .setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_favorite_red)
-            );
+                    .setImageDrawable(mIconRedHeart);
         }else {
             ((ImageView)helper.getView(R.id.iv_likes))
-                    .setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_favorite));
+                    .setImageDrawable(mIconGrayHeart);
         }
 
 
@@ -76,8 +86,15 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
                 .placeholder(R.mipmap.def_head)
                 .transform(new GlideCircleTransform(mContext))
                 .into((ImageView) helper.getView(R.id.iv_avatar));
-        if(item.getImages()!=null&&item.getImages().size()>0)
-            ((NineGridLayout)helper.getView(R.id.nine_grid_layout)).setUrlList(item.getImages());
+
+        if(item.getImages()!=null&&item.getImages().size()>0){
+            NineGridLayout nineGridLayout = helper.getView(R.id.nine_grid_layout);
+            nineGridLayout.setVisibility(View.VISIBLE);
+            nineGridLayout.setUrlList(item.getImages());
+        }else {
+            NineGridLayout nineGridLayout = helper.getView(R.id.nine_grid_layout);
+            nineGridLayout.setVisibility(View.GONE);
+        }
 
         View.OnClickListener defaultOnClickListener = new View.OnClickListener() {
             @Override

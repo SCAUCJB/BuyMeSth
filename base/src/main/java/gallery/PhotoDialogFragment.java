@@ -3,9 +3,11 @@ package gallery;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,11 +26,12 @@ import ui.layout.SmoothImageView;
  */
 public class PhotoDialogFragment extends DialogFragment{
 
-    View rootView;
-    MyPagerAdapter pagerAdapter;
+    View mRootView;
+    MyPagerAdapter mPagerAdapter;
     List<View> mViewList;
-    boolean inited = false;
-    SimpleViewTarget[] simpleViewTargets;
+    boolean mInited = false;
+    SimpleViewTarget[] mSimpleViewTargets;
+    HackyViewPager mViewPager;
 
     @Deprecated
     public static void navigate(Activity activity, View iv ,List<String> urls , int position) {
@@ -83,17 +86,49 @@ public class PhotoDialogFragment extends DialogFragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.style_dialog);
-        simpleViewTargets = (SimpleViewTarget[]) getArguments().getSerializable("viewTargetList");
+        setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+//        setStyle(DialogFragment.STYLE_NORMAL, R.style.style_dialog);
+        mSimpleViewTargets = (SimpleViewTarget[]) getArguments().getSerializable("viewTargetList");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        rootView = inflater.inflate(R.layout.fragment_photo, container);
-        return rootView;
+        mRootView = inflater.inflate(R.layout.fragment_photo, container);
+
+        getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
+            Boolean backPress = false;
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                if(keyCode == KeyEvent.KEYCODE_BACK&&!backPress){
+                    backPress=true;
+                    int position = mViewPager.getCurrentItem();
+                    SmoothImageView smoothImageView = (SmoothImageView) mPagerAdapter.getPrimaryItem();
+                    int mLocationX = mSimpleViewTargets[position].getLocationX();
+                    int mLocationY = mSimpleViewTargets[position].getLocationY();
+                    int mWidth = mSimpleViewTargets[position].getWidth();
+                    int mHeight = mSimpleViewTargets[position].getHeight();
+                    smoothImageView.setOriginalInfo(mWidth, mHeight, mLocationX, mLocationY);
+                    smoothImageView.setOnTransformListener(new SmoothImageView.TransformListener() {
+                        @Override
+                        public void onTransformComplete(int mode) {
+                            getDialog().cancel();
+                        }
+
+                        @Override
+                        public void onTransformStart() {
+
+                        }
+                    });
+                    smoothImageView.transformOut();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        return mRootView;
     }
 
 
@@ -106,13 +141,13 @@ public class PhotoDialogFragment extends DialogFragment{
         Object[] urls = (Object[]) data.getSerializable("urls");
         int posi = data.getInt("urlposition",0);
 
-        pagerAdapter = new MyPagerAdapter(urls,posi);
-        HackyViewPager viewPager = (HackyViewPager) rootView.findViewById(R.id.view_pager);
-        viewPager.setAdapter(pagerAdapter);
-        viewPager.setCurrentItem(posi);
+        mPagerAdapter = new MyPagerAdapter(urls,posi);
+        mViewPager = (HackyViewPager) mRootView.findViewById(R.id.view_pager);
+        mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setCurrentItem(posi);
 
-        IndicatorView indicatorView = (IndicatorView) rootView.findViewById(R.id.id_indicator);
-        indicatorView.setViewPager(viewPager);
+        IndicatorView indicatorView = (IndicatorView) mRootView.findViewById(R.id.id_indicator);
+        indicatorView.setViewPager(mViewPager);
 
     }
 
@@ -126,6 +161,17 @@ public class PhotoDialogFragment extends DialogFragment{
         private List<View> viewList;
         private Object[] murls;
         private int position;
+
+        private View mCurrentView;
+
+        @Override
+        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+            mCurrentView = (View)object;
+        }
+
+        public View getPrimaryItem() {
+            return mCurrentView;
+        }
 
         public MyPagerAdapter(Object[] urls,int position) {
             viewList = new ArrayList<>();
@@ -142,13 +188,13 @@ public class PhotoDialogFragment extends DialogFragment{
         public Object instantiateItem(ViewGroup container, int position) {
             SmoothImageView imageView = new SmoothImageView(getActivity());
             imageView.setId(0);
-            if(position == this.position&&inited==false){
-                inited=true;
+            if(position == this.position&& mInited ==false){
+                mInited =true;
 
-                int mLocationX = simpleViewTargets[position].getLocationX();
-                int mLocationY = simpleViewTargets[position].getLocationY();
-                int mWidth = simpleViewTargets[position].getWidth();
-                int mHeight = simpleViewTargets[position].getHeight();
+                int mLocationX = mSimpleViewTargets[position].getLocationX();
+                int mLocationY = mSimpleViewTargets[position].getLocationY();
+                int mWidth = mSimpleViewTargets[position].getWidth();
+                int mHeight = mSimpleViewTargets[position].getHeight();
 
                 Bitmap bitmap = getArguments().getParcelable("viewShot");
 
@@ -156,18 +202,6 @@ public class PhotoDialogFragment extends DialogFragment{
                 imageView.setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
                 imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 container.addView(imageView,0);
-                imageView.setOnTransformListener(new SmoothImageView.TransformListener() {
-                    @Override
-                    public void onTransformComplete(int mode) {
-
-                    }
-
-                    @Override
-                    public void onTransformStart() {
-                        View backgroundView = rootView.findViewById(R.id.background_view);
-                        ObjectAnimator.ofFloat(backgroundView,"alpha",0f,1f).setDuration(300).start();
-                    }
-                });
                 imageView.setImageBitmap(bitmap);
                 Glide.with(getActivity()).load((String) murls[position])
                         .asBitmap()

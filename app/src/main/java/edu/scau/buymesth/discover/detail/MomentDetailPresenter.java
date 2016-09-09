@@ -36,7 +36,7 @@ import rx.schedulers.Schedulers;
 /**
  * Created by IamRabbit on 2016/8/24.
  */
-public class MomentDetailPresenter extends BasePresenter<MomentDetailModel,MomentDetailActivity>{
+public class MomentDetailPresenter extends BasePresenter<MomentDetailContract.Model,MomentDetailContract.View>{
     private Context mContext;
 
     public MomentDetailPresenter(Context context) {
@@ -74,10 +74,14 @@ public class MomentDetailPresenter extends BasePresenter<MomentDetailModel,Momen
         bmobQuery1.findObjects(new FindListener<MomentsLike>() {
             @Override
             public void done(List<MomentsLike> list, BmobException e) {
-                if(list!=null&&list.size()>0)
-                    mView.setLike(true);
-                else
-                    mView.setLike(false);
+                if(list!=null&&list.size()>0){
+                    mModel.getMoment().setLike(true);
+                    mView.setLike(true,0);
+                }
+                else{
+                    mModel.getMoment().setLike(true);
+                    mView.setLike(false,0);
+                }
             }
         });
         RefreshComments();
@@ -195,9 +199,11 @@ public class MomentDetailPresenter extends BasePresenter<MomentDetailModel,Momen
             public void done(Object o, BmobException e) {
                 if(o!=null){
                     if(((String)o).equals("true")){
-                        mView.setLike(true);
+                        if(mModel.getMoment().isLike())return;
+                        mView.setLike(true,1);
                     }else {
-                        mView.setLike(false);
+                        if(!mModel.getMoment().isLike())return;
+                        mView.setLike(false,0);
                     }
                 }
             }

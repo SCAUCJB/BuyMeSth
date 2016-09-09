@@ -86,12 +86,8 @@ public class MomentDetailActivity extends BaseActivity implements  MomentDetailC
         mRecyclerView.addItemDecoration( new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL_LIST));
         initAdapter();
-        findViewById(R.id.bt_send_comment).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.postComment(((TextView)findViewById(R.id.intput_comment)).getText().toString());
-            }
-        });
+        findViewById(R.id.bt_send_comment).setOnClickListener(v ->
+                mPresenter.postComment(((TextView)findViewById(R.id.intput_comment)).getText().toString()));
     }
 
     protected void initToolBar() {
@@ -101,12 +97,17 @@ public class MomentDetailActivity extends BaseActivity implements  MomentDetailC
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    public void setLike(Boolean like){
+    public void setLike(Boolean like ,int i){
+        mPresenter.mModel.getMoment().setLike(like);
         runOnUiThread(() -> {
-            if(like)
+            if(like){
                 ((ImageView)momentView.findViewById(R.id.iv_likes)).setImageDrawable(getResources().getDrawable(R.drawable.ic_favorite_red));
-            else
+                ((TextView)momentView.findViewById(R.id.tv_likes)).setText(String.valueOf(mPresenter.mModel.getMoment().getLikes()+i));
+            }
+            else{
                 ((ImageView)momentView.findViewById(R.id.iv_likes)).setImageDrawable(getResources().getDrawable(R.drawable.ic_favorite));
+                ((TextView)momentView.findViewById(R.id.tv_likes)).setText(String.valueOf(mPresenter.mModel.getMoment().getLikes()+i));
+            }
         });
     }
 
@@ -117,6 +118,7 @@ public class MomentDetailActivity extends BaseActivity implements  MomentDetailC
                     momentView = getLayoutInflater().inflate(R.layout.item_discover_norequest_detail,(ViewGroup) mRecyclerView.getParent(),false);
                 else
                     momentView = getLayoutInflater().inflate(R.layout.item_discover_request_detail,(ViewGroup) mRecyclerView.getParent(),false);
+                momentView.findViewById(R.id.ly_likes).setOnClickListener(v -> mPresenter.like());
             }
             Moment moment = mPresenter.mModel.getMoment();
             ((TextView)momentView.findViewById(R.id.tv_name)).setText(moment.getUser().getNickname());
@@ -137,22 +139,29 @@ public class MomentDetailActivity extends BaseActivity implements  MomentDetailC
         });
     }
 
+    public void updateLike(Boolean like){
+        if(like){
+            momentView.post(() -> {
+                ((ImageView)momentView.findViewById(R.id.iv_likes))
+                        .setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_favorite_red)
+                        );
+                ((TextView)momentView.findViewById(R.id.tv_likes)).setText(String.valueOf(mPresenter.mModel.getMoment().getLikes()+1));
+            });
+        }else {
+            momentView.post(() -> {
+                ((ImageView)momentView.findViewById(R.id.iv_likes))
+                        .setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_favorite)
+                        );
+                ((TextView)momentView.findViewById(R.id.tv_likes)).setText(String.valueOf(mPresenter.mModel.getMoment().getLikes()-1));
+            });
+        }
+    }
+
     private void initAdapter(){
         mMomentDetailAdapter = new MomentDetailAdapter(mPresenter.mModel.getDatas());
         mMomentDetailAdapter.openLoadAnimation();
         mMomentDetailAdapter.addHeaderView(momentView);
         mRecyclerView.setAdapter(mMomentDetailAdapter);
-
-        mMomentDetailAdapter.setOnRecyclerViewItemChildClickListener(new BaseQuickAdapter.OnRecyclerViewItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                switch (view.getId()){
-                    case R.id.ly_likes:
-                        mPresenter.like();
-                        break;
-                }
-            }
-        });
 
         mMomentDetailAdapter.setOnLoadMoreListener(() -> mPresenter.LoadMore());
         mMomentDetailAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
