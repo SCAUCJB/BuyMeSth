@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.scau.base.R;
+import photoview.PhotoViewAttacher;
 import ui.layout.SmoothImageView;
 
 /**
@@ -213,6 +214,60 @@ public class PhotoDialogFragment extends DialogFragment{
                 container.addView(imageView,0);
                 Glide.with(getActivity()).load((String) murls[position]).into(imageView);
             }
+            imageView.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
+                Boolean tap = false;
+                @Override
+                public void onPhotoTap(View view, float x, float y) {
+                    if(!tap){
+                        tap=true;
+                        int position = mViewPager.getCurrentItem();
+                        SmoothImageView smoothImageView = (SmoothImageView) view;
+                        int mLocationX = mSimpleViewTargets[position].getLocationX();
+                        int mLocationY = mSimpleViewTargets[position].getLocationY();
+                        int mWidth = mSimpleViewTargets[position].getWidth();
+                        int mHeight = mSimpleViewTargets[position].getHeight();
+                        smoothImageView.setOriginalInfo(mWidth, mHeight, mLocationX, mLocationY);
+                        smoothImageView.setOnTransformListener(new SmoothImageView.TransformListener() {
+                            @Override
+                            public void onTransformComplete(int mode) {
+                                getDialog().cancel();
+                            }
+
+                            @Override
+                            public void onTransformStart() {
+
+                            }
+                        });
+                        smoothImageView.transformOut();
+                    }
+                }
+
+                @Override
+                public void onOutsidePhotoTap() {
+                    if(!tap){
+                        tap=true;
+                        int position = mViewPager.getCurrentItem();
+                        SmoothImageView smoothImageView = (SmoothImageView) mPagerAdapter.getPrimaryItem();
+                        int mLocationX = mSimpleViewTargets[position].getLocationX();
+                        int mLocationY = mSimpleViewTargets[position].getLocationY();
+                        int mWidth = mSimpleViewTargets[position].getWidth();
+                        int mHeight = mSimpleViewTargets[position].getHeight();
+                        smoothImageView.setOriginalInfo(mWidth, mHeight, mLocationX, mLocationY);
+                        smoothImageView.setOnTransformListener(new SmoothImageView.TransformListener() {
+                            @Override
+                            public void onTransformComplete(int mode) {
+                                getDialog().cancel();
+                            }
+
+                            @Override
+                            public void onTransformStart() {
+
+                            }
+                        });
+                        smoothImageView.transformOut();
+                    }
+                }
+            });
             return imageView;
         }
 

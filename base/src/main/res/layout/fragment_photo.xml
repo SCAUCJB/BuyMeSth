@@ -5,6 +5,12 @@
     android:background="#00838383"
     android:id="@+id/photos_parent">
 
+    <gallery.HackyViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/view_pager"
+        android:overScrollMode="never"/>
+
     <gallery.IndicatorView
         xmlns:indv="http://schemas.android.com/apk/res-auto"
         android:id="@+id/id_indicator"
@@ -16,10 +22,4 @@
         indv:indicator_margin="5dp"
         indv:indicator_smooth="true"
         android:layout_gravity="bottom" />
-
-    <gallery.HackyViewPager
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/view_pager"
-        android:overScrollMode="never"/>
 </FrameLayout>

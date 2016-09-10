@@ -108,6 +108,7 @@ public class SmoothImageView extends PhotoView {
     public void transformIn() {
         mState = STATE_TRANSFORM_IN;
         mTransformStart = true;
+        mBgAlpha = 0;
         invalidate();
     }
 
@@ -117,6 +118,7 @@ public class SmoothImageView extends PhotoView {
     public void transformOut() {
         mState = STATE_TRANSFORM_OUT;
         mTransformStart = true;
+        mBgAlpha = 255;
         invalidate();
     }
 
