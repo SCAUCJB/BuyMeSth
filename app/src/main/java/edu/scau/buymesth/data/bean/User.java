@@ -12,6 +12,7 @@ public class User extends BmobUser {
     private String gender = "secret";//性别
     private Integer exp = 0;//经验值
     private String avatar="";
+    private String signature="";
     public String getNickname() {
         return nickname;
     }
@@ -50,5 +51,13 @@ public class User extends BmobUser {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 }

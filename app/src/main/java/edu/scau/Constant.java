@@ -17,6 +17,7 @@ public class Constant {
     public static final String KEY_EXP="exp";
     public static final String KEY_AGE="age";
     public static final String KEY_GENDA="genda";
+    public static final String KEY_SIGNATURE = "signature";
     public static final String KEY_ID="id";
     public static final String CURRENT_USER="current_user";
     public static final long DISK_CACHE_SIZE = 1024 * 1024 * 25;

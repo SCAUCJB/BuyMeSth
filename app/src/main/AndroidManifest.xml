@@ -99,6 +99,8 @@
 
         <activity android:name="gallery.PhotoActivity"
             android:theme="@style/AppTheme.SwipeBackLayout"/>
+        <activity android:name=".user.setting.UserSettingActivity"
+            android:theme="@style/AppTheme.SwipeBackLayout"/>
     </application>
 
 </manifest>

@@ -11,5 +11,5 @@
         android:gravity="top|start"
         android:hint="请输入"
         android:inputType="textMultiLine"
-        android:minLines="6" />
+          />
 </LinearLayout>

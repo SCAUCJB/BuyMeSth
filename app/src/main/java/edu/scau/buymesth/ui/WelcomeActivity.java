@@ -115,7 +115,7 @@ public class WelcomeActivity extends BaseActivity {
         editor.putString(Constant.KEY_AVATAR, user.getAvatar());
         editor.putString(Constant.KEY_NICKNAME, user.getNickname());
         editor.putInt(Constant.KEY_EXP, user.getExp());
-
+        editor.putString(Constant.KEY_SIGNATURE, user.getSignature());
 //完成提交
         editor.apply();
 
