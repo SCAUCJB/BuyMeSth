@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,9 +78,8 @@ public class SettingInputFragment extends BaseFragment {
             @Override
             public void done(BmobException e) {
                 if(e==null){
-                    Log.d("zhx","success");
+                    ((UserSettingActivity)getActivity()).toast("修改成功");
                 }else{
-                    Log.d("zhx",e.getMessage());
                 }
             }
         });
