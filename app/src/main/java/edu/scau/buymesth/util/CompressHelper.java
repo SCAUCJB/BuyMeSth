@@ -12,9 +12,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
-import static top.zibin.luban.Preconditions.checkNotNull;
 
 /**
  * Created by John on 2016/9/6.
@@ -161,8 +161,8 @@ public class CompressHelper {
 
         return BitmapFactory.decodeFile(imagePath, options);
     }
-    List<String>picWidth;
-    List<String>picHeight;
+    List<String>picWidth=new LinkedList<>();
+    List<String>picHeight=new LinkedList<>();
     public void setWidthList(List<String> picWidth){
         this.picWidth=picWidth;
     }
@@ -220,7 +220,7 @@ public class CompressHelper {
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
     private String saveImage(String filePath, Bitmap bitmap, long size) {
-        checkNotNull(bitmap, "bitmap cannot be null");
+
 
         File result = new File(filePath.substring(0, filePath.lastIndexOf("/")));
 

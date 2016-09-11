@@ -11,11 +11,9 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.CountDownLatch;
 
 import base.BaseActivity;
 import base.util.SpaceItemDecoration;
@@ -29,12 +27,9 @@ import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.PictureAdapter;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.data.bean.User;
+import edu.scau.buymesth.util.CompressHelper;
 import gallery.PhotoActivity;
 import me.iwf.photopicker.PhotoPicker;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import top.zibin.luban.Luban;
 
 /**
  * Created by ！ on 2016/8/29.
@@ -175,7 +170,7 @@ public class MomentPublishActivity extends BaseActivity{
             if (data != null) {
                 ArrayList<String> photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
                 new Thread(() -> {
-                    compressWithRx(photos);
+                    compress(photos);
                 }).start();
     //            adapter.setList(photos);
             }
@@ -184,36 +179,27 @@ public class MomentPublishActivity extends BaseActivity{
     /**
      * 压缩单张图片 RxJava 方式
      */
-    private void compressWithRx(ArrayList<String> photos) {
-        List<String> list = Collections.synchronizedList(new LinkedList<>());
-        AtomicInteger count = new AtomicInteger(photos.size());
-        Semaphore semaphore = new Semaphore(1);
-        for (String path : photos) {
-            try {
-                semaphore.acquire();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            Luban.get(this)
-                    .load(new File(path))
-                    .putGear(Luban.THIRD_GEAR)
-                    .asObservable()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnError(throwable -> throwable.printStackTrace())
-                    .onErrorResumeNext(throwable -> {
-                        return Observable.empty();
-                    })
-                    .subscribe(file -> {
-                        list.add(file.getAbsolutePath());
-                        semaphore.release();
-                        if (count.decrementAndGet() == 0)
-                        {
+    private void compress(ArrayList<String> photos) {
+
+            if (photos.size() > 1) {
+                new Thread(() -> {
+                    CompressHelper compressHelper = new CompressHelper(mContext);
+                    List<String> list = new LinkedList<>();
+                    CountDownLatch countDownLatch = new CountDownLatch(photos.size() - 1);
+                    for (int i = 0; i < photos.size() - 1; ++i) {
+                        list.add(compressHelper.thirdCompress(new File(photos.get(i))));
+                        countDownLatch.countDown();
+                    }
+                    try {
+                        countDownLatch.await();
+                        MomentPublishActivity.this.runOnUiThread(() -> {
                             adapter.setList(list);
-                            localUrlList=list;
-                        }
-                    });
-        }
+                            localUrlList=list;} );
+                    } catch (InterruptedException e) {
+
+                    }
+                }).start();
+            }
     }
     @Override
     public boolean canSwipeBack() {

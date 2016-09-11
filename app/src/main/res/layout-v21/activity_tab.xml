@@ -67,6 +67,7 @@
                 fab:fab_size="mini"
                 fab:fab_label="Follow Only" />
 
+
         </com.github.clans.fab.FloatingActionMenu>
 
     </FrameLayout>

@@ -38,9 +38,6 @@ import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.util.CompressHelper;
 import gallery.PhotoActivity;
 import me.iwf.photopicker.PhotoPicker;
-import rx.Observable;
-import rx.schedulers.Schedulers;
-import top.zibin.luban.Luban;
 import ui.widget.SelectableSeekBar;
 
 /**
@@ -174,42 +171,42 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     List<String> dstList;
     volatile Semaphore semaphore = new Semaphore(1);
 
-    /**
-     * 压缩单张图片 RxJava 方式
-     */
-    private void compress(List<String> photos) {
-        if (photos.size() <= 1) return;
-        List<String> list = Collections.synchronizedList(new LinkedList<>());
-        CountDownLatch countDownLatch = new CountDownLatch(photos.size() - 1);
-        for (int i = 0; i < photos.size() - 1; ++i) {
-            try {
-                semaphore.acquire();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            Luban.get(this)
-                    .load(new File(photos.get(i)))
-                    .putGear(Luban.THIRD_GEAR)
-                    .asObservable()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.io())
-                    .doOnError(Throwable::printStackTrace)
-                    .onErrorResumeNext(throwable -> {
-                        return Observable.empty();
-                    })
-                    .subscribe(file -> {
-                        list.add(file.getAbsolutePath());
-                        countDownLatch.countDown();
-                        semaphore.release();
-                    });
-        }
-        try {
-            countDownLatch.await();
-            dstList = list;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+//    /**
+//     * 压缩单张图片 RxJava 方式
+//     */
+//    private void compress(List<String> photos) {
+//        if (photos.size() <= 1) return;
+//        List<String> list = Collections.synchronizedList(new LinkedList<>());
+//        CountDownLatch countDownLatch = new CountDownLatch(photos.size() - 1);
+//        for (int i = 0; i < photos.size() - 1; ++i) {
+//            try {
+//                semaphore.acquire();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            Luban.get(this)
+//                    .load(new File(photos.get(i)))
+//                    .putGear(Luban.THIRD_GEAR)
+//                    .asObservable()
+//                    .subscribeOn(Schedulers.io())
+//                    .observeOn(Schedulers.io())
+//                    .doOnError(Throwable::printStackTrace)
+//                    .onErrorResumeNext(throwable -> {
+//                        return Observable.empty();
+//                    })
+//                    .subscribe(file -> {
+//                        list.add(file.getAbsolutePath());
+//                        countDownLatch.countDown();
+//                        semaphore.release();
+//                    });
+//        }
+//        try {
+//            countDownLatch.await();
+//            dstList = list;
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     CompressHelper compressHelper = null;
     List<String> picWidths =new LinkedList<>();

@@ -16,7 +16,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/icon"
+                android:id="@+id/iv_avatar"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginLeft="10dp"
@@ -26,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
-                android:layout_toRightOf="@+id/icon"
+                android:layout_toRightOf="@+id/iv_avatar"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:weightSum="4">
@@ -40,7 +40,7 @@
 
                     <TextView
                         style="@style/textView_user"
-                        android:text="发布的订单" />
+                        android:text="被赞" />
 
                     <TextView
                         style="@style/textView_userNum"
@@ -61,7 +61,7 @@
 
                     <TextView
                         style="@style/textView_user"
-                        android:text="订单" />
+                        android:text="被收藏" />
 
                     <TextView
                         style="@style/textView_userNum"
@@ -206,7 +206,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:gravity="center"
-                android:text="赞" />
+                android:text="订单" />
         </LinearLayout>
 
         <LinearLayout

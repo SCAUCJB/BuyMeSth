@@ -35,7 +35,7 @@ public class PhotoActivity extends BaseActivity{
 
         data.putInt("urlposition",position);
         ivs.get(position).setDrawingCacheEnabled(true);
-        data.putParcelable("viewShot",ivs.get(position).getDrawingCache());
+    //    data.putParcelable("viewShot",ivs.get(position).getDrawingCache());
         data.putSerializable("urls",urls.toArray());
 
         Intent intent = new Intent(activity,PhotoActivity.class);
@@ -51,7 +51,7 @@ public class PhotoActivity extends BaseActivity{
         data.putSerializable("viewTargetList",simpleViewTargets);
         data.putInt("urlposition",position);
         iv.setDrawingCacheEnabled(true);
-        data.putParcelable("viewShot",iv.getDrawingCache());
+   //     data.putParcelable("viewShot",iv.getDrawingCache());
         String[] urls = {url};
         data.putSerializable("urls",urls);
 
@@ -72,7 +72,7 @@ public class PhotoActivity extends BaseActivity{
 
         data.putInt("urlposition",position);
         ivs.get(position).setDrawingCacheEnabled(true);
-        data.putParcelable("viewShot",ivs.get(position).getDrawingCache());
+    //    data.putParcelable("viewShot",ivs.get(position).getDrawingCache());
         data.putSerializable("urls",urls.toArray());
 
         Intent intent = new Intent(activity,PhotoActivity.class);

@@ -1,8 +1,6 @@
 package gallery;
 
-import android.app.Activity;
 import android.app.Fragment;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
@@ -189,13 +187,13 @@ public class PhotoFragment extends Fragment {
                 int mWidth = mSimpleViewTargets[position].getWidth();
                 int mHeight = mSimpleViewTargets[position].getHeight();
 
-                Bitmap bitmap = getArguments().getParcelable("viewShot");
+     //           Bitmap bitmap = getArguments().getParcelable("viewShot");
 
                 imageView.setOriginalInfo(mWidth, mHeight, mLocationX, mLocationY);
                 imageView.setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
                 imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 container.addView(imageView,0);
-                imageView.setImageBitmap(bitmap);
+       //         imageView.setImageBitmap(bitmap);
                 Glide.with(getActivity()).load((String) murls[position])
                         .asBitmap()
                         .into(imageView);

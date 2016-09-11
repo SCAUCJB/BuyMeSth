@@ -1,4 +1,4 @@
-package edu.scau.buymesth.request.requestcomment;
+package edu.scau.buymesth.request.comment;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -44,7 +44,7 @@ public class CommentActivity extends BaseActivity {
     protected void initToolBar() {
         Toolbar toolbar = (Toolbar) findViewById(getToolBarId());
         setSupportActionBar(toolbar);
-         toolbar.setNavigationOnClickListener((v) -> onBackPressed());
+        toolbar.setNavigationOnClickListener((v) -> onBackPressed());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }

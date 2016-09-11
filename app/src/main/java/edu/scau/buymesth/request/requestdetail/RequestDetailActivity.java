@@ -36,7 +36,7 @@ import edu.scau.buymesth.createorder.CreateOrderActivity;
 import edu.scau.buymesth.data.bean.Comment;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.publish.FlowLayout;
-import edu.scau.buymesth.request.requestcomment.CommentActivity;
+import edu.scau.buymesth.request.comment.CommentActivity;
 import edu.scau.buymesth.util.DividerItemDecoration;
 
 import static edu.scau.Constant.EXTRA_REQUEST;
