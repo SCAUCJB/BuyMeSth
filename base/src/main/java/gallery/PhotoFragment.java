@@ -28,7 +28,7 @@ public class PhotoFragment extends Fragment {
     private boolean mInited = false;
     private SimpleViewTarget[] mSimpleViewTargets;
     private HackyViewPager mViewPager;
-    private boolean transrormOuting = false;
+    private boolean transforming = false;
     private OnTransformListener onTransformListener;
     private PhotoViewAttacher.OnPhotoTapListener onPhotoTapListener;
 
@@ -92,8 +92,8 @@ public class PhotoFragment extends Fragment {
     }
 
     public void transformOut(){
-        if(!isTransrormOuting()){
-            transrormOuting=true;
+        if(!isTransforming()){
+            transforming =true;
             int position = mViewPager.getCurrentItem();
             SmoothImageView smoothImageView = (SmoothImageView) mPagerAdapter.getPrimaryItem();
             int mLocationX = mSimpleViewTargets[position].getLocationX();
@@ -106,22 +106,22 @@ public class PhotoFragment extends Fragment {
                 public void onTransformComplete(int mode) {
                     if(getOnTransformListener() !=null)
                         getOnTransformListener().onTransformCompete(OnTransformListener.TRANSFORM_OUT);
-                    transrormOuting = false;
+                    transforming = false;
                 }
 
                 @Override
                 public void onTransformStart() {
                     if(getOnTransformListener() !=null)
                         getOnTransformListener().onTransformStart(OnTransformListener.TRANSFORM_OUT);
-                    transrormOuting = true;
+                    transforming = true;
                 }
             });
             smoothImageView.transformOut();
         }
     }
 
-    public boolean isTransrormOuting() {
-        return transrormOuting;
+    public boolean isTransforming() {
+        return transforming;
     }
 
     public OnTransformListener getOnTransformListener() {
@@ -187,16 +187,25 @@ public class PhotoFragment extends Fragment {
                 int mWidth = mSimpleViewTargets[position].getWidth();
                 int mHeight = mSimpleViewTargets[position].getHeight();
 
-     //           Bitmap bitmap = getArguments().getParcelable("viewShot");
-
                 imageView.setOriginalInfo(mWidth, mHeight, mLocationX, mLocationY);
                 imageView.setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
                 imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 container.addView(imageView,0);
-       //         imageView.setImageBitmap(bitmap);
+
                 Glide.with(getActivity()).load((String) murls[position])
                         .asBitmap()
                         .into(imageView);
+                imageView.setOnTransformListener(new SmoothImageView.TransformListener() {
+                    @Override
+                    public void onTransformComplete(int mode) {
+                        transforming = false;
+                    }
+
+                    @Override
+                    public void onTransformStart() {
+                        transforming = true;
+                    }
+                });
                 imageView.transformIn();
             }
             else {
