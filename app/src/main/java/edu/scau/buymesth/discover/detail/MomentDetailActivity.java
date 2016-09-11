@@ -16,7 +16,6 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-import adpater.BaseQuickAdapter;
 import base.BaseActivity;
 import base.util.GlideCircleTransform;
 import butterknife.Bind;
@@ -24,16 +23,14 @@ import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.data.bean.MomentsComment;
-import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.util.ColorChangeHelper;
 import edu.scau.buymesth.util.DateFormatHelper;
 import edu.scau.buymesth.util.DividerItemDecoration;
+import gallery.PhotoActivity;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
 import ui.layout.NineGridLayout;
-
-import static edu.scau.Constant.EXTRA_REQUEST;
 
 /**
  * Created by IamRabbit on 2016/8/23.
@@ -119,6 +116,15 @@ public class MomentDetailActivity extends BaseActivity implements  MomentDetailC
                 else
                     momentView = getLayoutInflater().inflate(R.layout.item_discover_request_detail,(ViewGroup) mRecyclerView.getParent(),false);
                 momentView.findViewById(R.id.ly_likes).setOnClickListener(v -> mPresenter.like());
+                ((NineGridLayout)momentView.findViewById(R.id.nine_grid_layout)).setOnImageClickListener(new NineGridLayout.OnImageClickListener() {
+                    @Override
+                    public void onClickImage(int position, String url, List<String> urlList) {
+                        PhotoActivity.navigate(MomentDetailActivity.this,
+                                (NineGridLayout)momentView.findViewById(R.id.nine_grid_layout),
+                                mPresenter.mModel.getMoment().getImages(),
+                                position);
+                    }
+                });
             }
             Moment moment = mPresenter.mModel.getMoment();
             ((TextView)momentView.findViewById(R.id.tv_name)).setText(moment.getUser().getNickname());

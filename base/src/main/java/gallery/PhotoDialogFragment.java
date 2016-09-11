@@ -1,6 +1,5 @@
 package gallery;
 
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -25,6 +24,7 @@ import ui.layout.SmoothImageView;
 /**
  * Created by ！ on 2016/8/31.
  */
+@Deprecated
 public class PhotoDialogFragment extends DialogFragment{
 
     View mRootView;
@@ -89,7 +89,13 @@ public class PhotoDialogFragment extends DialogFragment{
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
 //        setStyle(DialogFragment.STYLE_NORMAL, R.style.style_dialog);
-        mSimpleViewTargets = (SimpleViewTarget[]) getArguments().getSerializable("viewTargetList");
+//        mSimpleViewTargets = (SimpleViewTarget[]) getArguments().getSerializable("viewTargetList");
+        Object[] args = (Object[]) getArguments().getSerializable("viewTargetList");
+        SimpleViewTarget[] viewTargetList = new SimpleViewTarget[args.length];
+        for(int i = 0;i<args.length;i++){
+            viewTargetList[i] = (SimpleViewTarget) args[i];
+        }
+        mSimpleViewTargets = viewTargetList;
     }
 
     @Override
@@ -128,7 +134,6 @@ public class PhotoDialogFragment extends DialogFragment{
                 return false;
             }
         });
-
         return mRootView;
     }
 

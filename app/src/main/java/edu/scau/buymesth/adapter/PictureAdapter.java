@@ -30,7 +30,7 @@ public class PictureAdapter extends BaseQuickAdapter<String> {
             list.add(null);
         setNewData(list);
     }
-    @Deprecated
+
     public PictureAdapter(List<String> data) {
         super(R.layout.item_picture, data);
         setList(data);

@@ -91,6 +91,8 @@
 
         <activity android:name=".discover.publish.SelectActivity"
             android:theme="@style/AppTheme.SwipeBackLayout"/>
+        <activity android:name="gallery.PhotoActivity"
+            android:theme="@style/AppTheme.SwipeBackLayout"/>
     </application>
 
 

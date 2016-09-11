@@ -1,6 +1,5 @@
 package edu.scau.buymesth.discover.list;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -15,17 +14,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import adpater.BaseQuickAdapter;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.DiscoverAdapter;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.discover.detail.MomentDetailActivity;
 import edu.scau.buymesth.request.requestdetail.RequestDetailActivity;
-import gallery.PhotoDialogFragment;
+import gallery.PhotoActivity;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
@@ -58,19 +55,17 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
         return view;
     }
 
-
     private void initStoreHouse(View view) {
-        final PtrFrameLayout frame = (PtrFrameLayout) view.findViewById(R.id.store_house_ptr_frame);
+        mPtrFrameLayout = (PtrFrameLayout) view.findViewById(R.id.store_house_ptr_frame);
         final StoreHouseHeader header = new StoreHouseHeader(getActivity());
         header.setPadding(0, 80, 0,50);
         header.initWithString("Buy Me Sth");
         header.setTextColor(Color.BLACK);
-        frame.setDurationToCloseHeader(1500);
-        frame.setHeaderView(header);
-        frame.addPtrUIHandler(header);
-//        frame.postDelayed(() -> frame.autoRefresh(false), 0);
-        frame.postDelayed(()-> mPresenter.Refresh(),0);
-        frame.setPtrHandler(new PtrHandler() {
+        mPtrFrameLayout.setDurationToCloseHeader(1500);
+        mPtrFrameLayout.setHeaderView(header);
+        mPtrFrameLayout.addPtrUIHandler(header);
+        mPtrFrameLayout.post(() -> mPresenter.Refresh());
+        mPtrFrameLayout.setPtrHandler(new PtrHandler() {
             @Override
             public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
                 return  !mRecyclerView.canScrollVertically(-1);
@@ -78,34 +73,22 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
 
             @Override
             public void onRefreshBegin(final PtrFrameLayout frame) {
-                mPtrFrameLayout=frame;
                 mPresenter.Refresh();
             }
         });
     }
     private void initAdapter(){
         mDiscoverAdapter = new DiscoverAdapter(mPresenter.mModel.getDatas());
-        mDiscoverAdapter.setOnRecyclerViewItemClickListener(new BaseQuickAdapter.OnRecyclerViewItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                MomentDetailActivity.navigate(getActivity(),(Moment)mDiscoverAdapter.getItem(position));
-            }
+        mDiscoverAdapter.setOnRecyclerViewItemClickListener((view, position) -> {
+            if(mPtrFrameLayout.isRefreshing())return;
+            MomentDetailActivity.navigate(getActivity(),(Moment)mDiscoverAdapter.getItem(position));
         });
         mDiscoverAdapter.openLoadAnimation();
         mRecyclerView.setAdapter(mDiscoverAdapter);
-//        mDiscoverAdapter.setOnRecyclerViewItemClickListener((view, position) -> {
-//            Intent intent =new Intent(getActivity(), HomeDetailActivity.class);
-//            startActivity(intent);
-//        });
-//        mDiscoverAdapter.setOnRecyclerViewItemChildClickListener(new BaseQuickAdapter.OnRecyclerViewItemChildClickListener() {
-//            @Override
-//            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-//
-//            }
-//        });
         mDiscoverAdapter.setOnItemsContentClickListener(new DiscoverAdapter.OnItemsContentClickListener() {
             @Override
             public void onItemsContentClick(View v, Object item, int position) {
+                if(mPtrFrameLayout.isRefreshing())return;
                 switch (v.getId()){
                     case R.id.ly_delete:
                         mPresenter.DeleteOne((Moment) item,position);
@@ -119,12 +102,7 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
                         RequestDetailActivity.navigate(getActivity(),((Moment)item).getRequest());
                         break;
                     case R.id.nine_grid_layout:
-                        Toast.makeText(getContext(),"click on image position : "+position,Toast.LENGTH_SHORT).show();
-                        List<View> views = new ArrayList<View>();
-                        for(int i = ((NineGridLayout)v).getChildCount()-1;i>=0;i--){
-                            views.add(0,((NineGridLayout)v).getChildAt(i));
-                        }
-                        PhotoDialogFragment.navigate(getActivity(),views,((List<String>)item),position);
+                        PhotoActivity.navigate(getActivity(),(NineGridLayout)v,((List<String>)item),position);
                         break;
                     default:
                         break;

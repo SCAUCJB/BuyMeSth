@@ -36,6 +36,7 @@ import edu.scau.buymesth.adapter.PictureAdapter;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.util.CompressHelper;
+import gallery.PhotoActivity;
 import me.iwf.photopicker.PhotoPicker;
 import rx.Observable;
 import rx.schedulers.Schedulers;
@@ -150,7 +151,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                         .setPreviewEnabled(true)
                         .start(PublishActivity.this, PhotoPicker.REQUEST_CODE);
             } else {
-                //TODO: 使用ImageLoader来放大查看图片
+                PhotoActivity.navigate(PublishActivity.this,view,adapter.getItem(position),position);
             }
         });
         initToolBar();

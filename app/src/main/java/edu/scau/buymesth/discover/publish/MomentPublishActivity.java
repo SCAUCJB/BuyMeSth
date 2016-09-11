@@ -29,7 +29,7 @@ import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.PictureAdapter;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.data.bean.User;
-import gallery.PhotoDialogFragment;
+import gallery.PhotoActivity;
 import me.iwf.photopicker.PhotoPicker;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -82,7 +82,7 @@ public class MomentPublishActivity extends BaseActivity{
                         .setPreviewEnabled(true)
                         .start(MomentPublishActivity.this, PhotoPicker.REQUEST_CODE);
             } else {
-                PhotoDialogFragment.navigate(MomentPublishActivity.this,view.findViewById(R.id.iv),localUrlList.get(position),position);
+                PhotoActivity.navigate(MomentPublishActivity.this,recyclerView,localUrlList,position);
             }
         });
 

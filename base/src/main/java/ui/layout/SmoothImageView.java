@@ -14,7 +14,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.ImageView;
 
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 
@@ -41,10 +40,12 @@ public class SmoothImageView extends PhotoView {
     private Matrix mSmoothMatrix;
     private Bitmap mBitmap;
     private boolean mTransformStart = false;
-    private Transfrom mTransfrom;
+    private Transform mTransform;
     private final int mBgColor = 0xFF000000;
     private int mBgAlpha = 0;
     private Paint mPaint;
+    private boolean mInitOrigin = false;
+    private TransformListener mTransformListener;
 
     public SmoothImageView(Context context) {
         super(context);
@@ -74,32 +75,6 @@ public class SmoothImageView extends PhotoView {
         mOriginalHeight = height;
         mOriginalLocationX = locationX;
         mOriginalLocationY = locationY;
-//        // 因为是屏幕坐标，所以要转换为该视图内的坐标，因为我所用的该视图是MATCH_PARENT，所以不用定位该视图的位置,如果不是的话，还需要定位视图的位置，然后计算mOriginalLocationX和mOriginalLocationY
-//        mOriginalLocationY = mOriginalLocationY - getStatusBarHeight(getContext());
-    }
-
-    /**
-     * 获取状态栏高度
-     *
-     * @return
-     */
-    public static int getStatusBarHeight(Context context) {
-        Class<?> c = null;
-        Object obj = null;
-        java.lang.reflect.Field field = null;
-        int x = 0;
-        int statusBarHeight = 0;
-        try {
-            c = Class.forName("com.android.internal.R$dimen");
-            obj = c.newInstance();
-            field = c.getField("status_bar_height");
-            x = Integer.parseInt(field.get(obj).toString());
-            statusBarHeight = context.getResources().getDimensionPixelSize(x);
-            return statusBarHeight;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return statusBarHeight;
     }
 
     /**
@@ -122,7 +97,7 @@ public class SmoothImageView extends PhotoView {
         invalidate();
     }
 
-    private class Transfrom {
+    private class Transform {
         float startScale;// 图片开始的缩放值
         float endScale;// 图片结束的缩放值
         float scale;// 属性ValueAnimator计算出来的值
@@ -164,25 +139,25 @@ public class SmoothImageView extends PhotoView {
                 mBitmap = ((BitmapDrawable) getDrawable()).getBitmap();
         }
         //防止mTransfrom重复的做同样的初始化
-        if (mTransfrom != null) {
+        if (mTransform != null) {
             return;
         }
         if (getWidth() == 0 || getHeight() == 0) {
             return;
         }
-        mTransfrom = new Transfrom();
+        mTransform = new Transform();
 
         /** 下面为缩放的计算 */
 		/* 计算初始的缩放值，初始值因为是CENTR_CROP效果，所以要保证图片的宽和高至少1个能匹配原始的宽和高，另1个大于 */
         float xSScale = mOriginalWidth / ((float) mBitmap.getWidth());
         float ySScale = mOriginalHeight / ((float) mBitmap.getHeight());
         float startScale = xSScale > ySScale ? xSScale : ySScale;
-        mTransfrom.startScale = startScale;
+        mTransform.startScale = startScale;
 		/* 计算结束时候的缩放值，结束值因为要达到FIT_CENTER效果，所以要保证图片的宽和高至少1个能匹配原始的宽和高，另1个小于 */
         float xEScale = getWidth() / ((float) mBitmap.getWidth());
         float yEScale = getHeight() / ((float) mBitmap.getHeight());
         float endScale = xEScale < yEScale ? xEScale : yEScale;
-        mTransfrom.endScale = endScale;
+        mTransform.endScale = endScale;
 
         /**
          * 下面计算Canvas Clip的范围，也就是图片的显示的范围，因为图片是慢慢变大，并且是等比例的，所以这个效果还需要裁减图片显示的区域
@@ -191,21 +166,21 @@ public class SmoothImageView extends PhotoView {
          * ，他就包括左上顶点坐标，和宽高，最后转为Canvas裁减的Rect.
          */
 		/* 开始区域 */
-        mTransfrom.startRect = new LocationSizeF();
-        mTransfrom.startRect.left = mOriginalLocationX;
-        mTransfrom.startRect.top = mOriginalLocationY;
-        mTransfrom.startRect.width = mOriginalWidth;
-        mTransfrom.startRect.height = mOriginalHeight;
+        mTransform.startRect = new LocationSizeF();
+        mTransform.startRect.left = mOriginalLocationX;
+        mTransform.startRect.top = mOriginalLocationY;
+        mTransform.startRect.width = mOriginalWidth;
+        mTransform.startRect.height = mOriginalHeight;
 		/* 结束区域 */
-        mTransfrom.endRect = new LocationSizeF();
-        float bitmapEndWidth = mBitmap.getWidth() * mTransfrom.endScale;// 图片最终的宽度
-        float bitmapEndHeight = mBitmap.getHeight() * mTransfrom.endScale;// 图片最终的宽度
-        mTransfrom.endRect.left = (getWidth() - bitmapEndWidth) / 2;
-        mTransfrom.endRect.top = (getHeight() - bitmapEndHeight) / 2;
-        mTransfrom.endRect.width = bitmapEndWidth;
-        mTransfrom.endRect.height = bitmapEndHeight;
+        mTransform.endRect = new LocationSizeF();
+        float bitmapEndWidth = mBitmap.getWidth() * mTransform.endScale;// 图片最终的宽度
+        float bitmapEndHeight = mBitmap.getHeight() * mTransform.endScale;// 图片最终的宽度
+        mTransform.endRect.left = (getWidth() - bitmapEndWidth) / 2;
+        mTransform.endRect.top = (getHeight() - bitmapEndHeight) / 2;
+        mTransform.endRect.width = bitmapEndWidth;
+        mTransform.endRect.height = bitmapEndHeight;
 
-        mTransfrom.rect = new LocationSizeF();
+        mTransform.rect = new LocationSizeF();
     }
 
     private class LocationSizeF implements Cloneable{
@@ -247,16 +222,27 @@ public class SmoothImageView extends PhotoView {
         if (getDrawable() == null) {
             return;
         }
-        if (mTransfrom == null) {
+        if (mTransform == null) {
             return;
         }
         if (mBitmap == null || mBitmap.isRecycled()) {
             mBitmap = ((BitmapDrawable) getDrawable()).getBitmap();
         }
 		/* 下面实现了CENTER_CROP的功能 */
-        mSmoothMatrix.setScale(mTransfrom.scale, mTransfrom.scale);
-        mSmoothMatrix.postTranslate(-(mTransfrom.scale * mBitmap.getWidth() / 2 - mTransfrom.rect.width / 2),
-                -(mTransfrom.scale * mBitmap.getHeight() / 2 - mTransfrom.rect.height / 2));
+        mSmoothMatrix.setScale(mTransform.scale, mTransform.scale);
+        mSmoothMatrix.postTranslate(-(mTransform.scale * mBitmap.getWidth() / 2 - mTransform.rect.width / 2),
+                -(mTransform.scale * mBitmap.getHeight() / 2 - mTransform.rect.height / 2));
+    }
+
+    /**
+     * 测量view的位置 将获得的图片屏幕位置转为view内相对位置 为什么作者不这样写呢
+     */
+    private void initOrigin(){
+        mInitOrigin = true;
+        int[] location = new int[2];
+        getLocationOnScreen(location);
+        mOriginalLocationY = mOriginalLocationY - location[1];
+        mOriginalLocationX = mOriginalLocationX - location[0];
     }
 
     @Override
@@ -264,31 +250,32 @@ public class SmoothImageView extends PhotoView {
         if (getDrawable() == null) {
             return; // couldn't resolve the URI
         }
-
         if (mState == STATE_TRANSFORM_IN || mState == STATE_TRANSFORM_OUT) {
             if (mTransformStart) {
+                if(!mInitOrigin)
+                    initOrigin();
                 initTransform();
             }
-            if (mTransfrom == null) {
+            if (mTransform == null) {
                 super.onDraw(canvas);
                 return;
             }
 
             if (mTransformStart) {
                 if (mState == STATE_TRANSFORM_IN) {
-                    mTransfrom.initStartIn();
+                    mTransform.initStartIn();
                 } else {
-                    mTransfrom.initStartOut();
+                    mTransform.initStartOut();
                 }
             }
 
             if(mTransformStart){
-                Log.d("Dean", "mTransfrom.startScale:"+mTransfrom.startScale);
-                Log.d("Dean", "mTransfrom.startScale:"+mTransfrom.endScale);
-                Log.d("Dean", "mTransfrom.scale:"+mTransfrom.scale);
-                Log.d("Dean", "mTransfrom.startRect:"+mTransfrom.startRect.toString());
-                Log.d("Dean", "mTransfrom.endRect:"+mTransfrom.endRect.toString());
-                Log.d("Dean", "mTransfrom.rect:"+mTransfrom.rect.toString());
+                Log.d("Dean", "mTransfrom.startScale:"+ mTransform.startScale);
+                Log.d("Dean", "mTransfrom.startScale:"+ mTransform.endScale);
+                Log.d("Dean", "mTransfrom.scale:"+ mTransform.scale);
+                Log.d("Dean", "mTransfrom.startRect:"+ mTransform.startRect.toString());
+                Log.d("Dean", "mTransfrom.endRect:"+ mTransform.endRect.toString());
+                Log.d("Dean", "mTransfrom.rect:"+ mTransform.rect.toString());
             }
 
             mPaint.setAlpha(mBgAlpha);
@@ -298,8 +285,8 @@ public class SmoothImageView extends PhotoView {
             canvas.save();
             // 先得到图片在此刻的图像Matrix矩阵
             getBmpMatrix();
-            canvas.translate(mTransfrom.rect.left, mTransfrom.rect.top);
-            canvas.clipRect(0, 0, mTransfrom.rect.width, mTransfrom.rect.height);
+            canvas.translate(mTransform.rect.left, mTransform.rect.top);
+            canvas.clipRect(0, 0, mTransform.rect.width, mTransform.rect.height);
             canvas.concat(mSmoothMatrix);
             getDrawable().draw(canvas);
             canvas.restoreToCount(saveCount);
@@ -316,26 +303,26 @@ public class SmoothImageView extends PhotoView {
     }
 
     private void startTransform(final int state) {
-        if (mTransfrom == null) {
+        if (mTransform == null) {
             return;
         }
         ValueAnimator valueAnimator = new ValueAnimator();
         valueAnimator.setDuration(300);
         valueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
         if (state == STATE_TRANSFORM_IN) {
-            PropertyValuesHolder scaleHolder = PropertyValuesHolder.ofFloat("scale", mTransfrom.startScale, mTransfrom.endScale);
-            PropertyValuesHolder leftHolder = PropertyValuesHolder.ofFloat("left", mTransfrom.startRect.left, mTransfrom.endRect.left);
-            PropertyValuesHolder topHolder = PropertyValuesHolder.ofFloat("top", mTransfrom.startRect.top, mTransfrom.endRect.top);
-            PropertyValuesHolder widthHolder = PropertyValuesHolder.ofFloat("width", mTransfrom.startRect.width, mTransfrom.endRect.width);
-            PropertyValuesHolder heightHolder = PropertyValuesHolder.ofFloat("height", mTransfrom.startRect.height, mTransfrom.endRect.height);
+            PropertyValuesHolder scaleHolder = PropertyValuesHolder.ofFloat("scale", mTransform.startScale, mTransform.endScale);
+            PropertyValuesHolder leftHolder = PropertyValuesHolder.ofFloat("left", mTransform.startRect.left, mTransform.endRect.left);
+            PropertyValuesHolder topHolder = PropertyValuesHolder.ofFloat("top", mTransform.startRect.top, mTransform.endRect.top);
+            PropertyValuesHolder widthHolder = PropertyValuesHolder.ofFloat("width", mTransform.startRect.width, mTransform.endRect.width);
+            PropertyValuesHolder heightHolder = PropertyValuesHolder.ofFloat("height", mTransform.startRect.height, mTransform.endRect.height);
             PropertyValuesHolder alphaHolder = PropertyValuesHolder.ofInt("alpha", 0, 255);
             valueAnimator.setValues(scaleHolder, leftHolder, topHolder, widthHolder, heightHolder, alphaHolder);
         } else {
-            PropertyValuesHolder scaleHolder = PropertyValuesHolder.ofFloat("scale", mTransfrom.endScale, mTransfrom.startScale);
-            PropertyValuesHolder leftHolder = PropertyValuesHolder.ofFloat("left", mTransfrom.endRect.left, mTransfrom.startRect.left);
-            PropertyValuesHolder topHolder = PropertyValuesHolder.ofFloat("top", mTransfrom.endRect.top, mTransfrom.startRect.top);
-            PropertyValuesHolder widthHolder = PropertyValuesHolder.ofFloat("width", mTransfrom.endRect.width, mTransfrom.startRect.width);
-            PropertyValuesHolder heightHolder = PropertyValuesHolder.ofFloat("height", mTransfrom.endRect.height, mTransfrom.startRect.height);
+            PropertyValuesHolder scaleHolder = PropertyValuesHolder.ofFloat("scale", mTransform.endScale, mTransform.startScale);
+            PropertyValuesHolder leftHolder = PropertyValuesHolder.ofFloat("left", mTransform.endRect.left, mTransform.startRect.left);
+            PropertyValuesHolder topHolder = PropertyValuesHolder.ofFloat("top", mTransform.endRect.top, mTransform.startRect.top);
+            PropertyValuesHolder widthHolder = PropertyValuesHolder.ofFloat("width", mTransform.endRect.width, mTransform.startRect.width);
+            PropertyValuesHolder heightHolder = PropertyValuesHolder.ofFloat("height", mTransform.endRect.height, mTransform.startRect.height);
             PropertyValuesHolder alphaHolder = PropertyValuesHolder.ofInt("alpha", 255, 0);
             valueAnimator.setValues(scaleHolder, leftHolder, topHolder, widthHolder, heightHolder, alphaHolder);
         }
@@ -343,11 +330,11 @@ public class SmoothImageView extends PhotoView {
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public synchronized void onAnimationUpdate(ValueAnimator animation) {
-                mTransfrom.scale = (Float) animation.getAnimatedValue("scale");
-                mTransfrom.rect.left = (Float) animation.getAnimatedValue("left");
-                mTransfrom.rect.top = (Float) animation.getAnimatedValue("top");
-                mTransfrom.rect.width = (Float) animation.getAnimatedValue("width");
-                mTransfrom.rect.height = (Float) animation.getAnimatedValue("height");
+                mTransform.scale = (Float) animation.getAnimatedValue("scale");
+                mTransform.rect.left = (Float) animation.getAnimatedValue("left");
+                mTransform.rect.top = (Float) animation.getAnimatedValue("top");
+                mTransform.rect.width = (Float) animation.getAnimatedValue("width");
+                mTransform.rect.height = (Float) animation.getAnimatedValue("height");
                 mBgAlpha = (Integer) animation.getAnimatedValue("alpha");
                 invalidate();
                 ((Activity)getContext()).getWindow().getDecorView().invalidate();
@@ -390,8 +377,6 @@ public class SmoothImageView extends PhotoView {
     public void setOnTransformListener(TransformListener listener) {
         mTransformListener = listener;
     }
-
-    private TransformListener mTransformListener;
 
     public static interface TransformListener {
         /**

@@ -37,7 +37,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(getLayoutId());
         ButterKnife.bind(this);
         //设置透明状态栏
-        setTranslucentStatus();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP)
+            setTranslucentStatus();
         initToolBar();
         initView();
         initPresenter();
@@ -80,8 +81,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         return DEFAULT_TOOLBAR_ID;
     }
 
-    private void setTranslucentStatus() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
+    public void setTranslucentStatus() {
             //透明化状态栏
             WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
             localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS |
@@ -89,7 +89,6 @@ public abstract class BaseActivity extends AppCompatActivity {
             //设置状态栏颜色
             if (showColorStatusBar() && colorStatus != null)
                 colorStatus.setBackgroundColor(getResources().getColor(getStatusColorResources()));
-        }
     }
 
     private int getStatusBarHeight() {
