@@ -10,6 +10,10 @@ import base.BaseActivity;
 import butterknife.Bind;
 import edu.scau.buymesth.R;
 
+import static edu.scau.buymesth.user.setting.SettingInputFragment.TYPE_NICKNAME;
+import static edu.scau.buymesth.user.setting.SettingInputFragment.TYPE_RESIDENCE;
+import static edu.scau.buymesth.user.setting.SettingInputFragment.TYPE_SIGNATURE;
+
 /**
  * Created by John on 2016/9/9.
  */
@@ -57,7 +61,7 @@ public class UserSettingActivity extends BaseActivity implements UserSettingFrag
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         SettingInputFragment settingInputFragment = new SettingInputFragment();
         Bundle args=new Bundle();
-        args.putByte("type",SettingInputFragment.TYPE_SIGNATURE);
+        args.putByte("type", TYPE_SIGNATURE);
         settingInputFragment.setArguments(args);
         transaction.replace(R.id.container, settingInputFragment);
         transaction.addToBackStack(null);
@@ -71,7 +75,7 @@ public class UserSettingActivity extends BaseActivity implements UserSettingFrag
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         SettingInputFragment settingInputFragment = new SettingInputFragment();
         Bundle args=new Bundle();
-        args.putByte("type",SettingInputFragment.TYPE_NICKNAME);
+        args.putByte("type", TYPE_NICKNAME);
         settingInputFragment.setArguments(args);
         transaction.replace(R.id.container, settingInputFragment);
         transaction.addToBackStack(null);
@@ -81,12 +85,24 @@ public class UserSettingActivity extends BaseActivity implements UserSettingFrag
     }
 
     @Override
+    public void onResidenceClicked() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        SettingInputFragment settingInputFragment = new SettingInputFragment();
+        Bundle args=new Bundle();
+        args.putByte("type", TYPE_RESIDENCE);
+        settingInputFragment.setArguments(args);
+        transaction.replace(R.id.container, settingInputFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+        mSubmitBtn.setVisibility(View.VISIBLE);
+        mTitleTv.setText("请输入常住地");
+    }
+
+
+
+    @Override
     public void onInputCompleted(String input,byte type) {
         UserSettingFragment userSettingFragment = new UserSettingFragment();
-//        Bundle args = new Bundle();
-//        args.putString("input", input);
-//        args.putByte("type",type);
-//        userSettingFragment.setArguments(args);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         getSupportFragmentManager().popBackStack();
         getSupportFragmentManager().popBackStack();

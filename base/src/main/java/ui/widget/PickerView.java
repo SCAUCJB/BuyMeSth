@@ -108,7 +108,7 @@ import java.util.TimerTask;
     public void setData(List<String> datas)
     {
         mDataList = datas;
-        mCurrentSelected = datas.size() / 2;
+        mCurrentSelected = 0;
         performSelect();
         invalidate();
     }

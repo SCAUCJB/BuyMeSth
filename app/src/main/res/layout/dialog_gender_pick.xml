@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/content_padding"
+    android:orientation="vertical">
+    <TextView
+        android:text="请选择你的性别"
+        style="@style/theName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ui.widget.PickerView
+        android:layout_gravity="center"
+        android:id="@+id/pv_gender"
+        android:layout_width="90dp"
+        android:layout_height="90dp"/>
+</LinearLayout>

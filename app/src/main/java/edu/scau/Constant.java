@@ -15,7 +15,7 @@ public class Constant {
     public static final String KEY_AVATAR="avatar";
     public static final String KEY_NICKNAME="nickname";
     public static final String KEY_EXP="exp";
-    public static final String KEY_AGE="age";
+    public static final String KEY_RESIDENCE="residence";
     public static final String KEY_GENDA="genda";
     public static final String KEY_SIGNATURE = "signature";
     public static final String KEY_ID="id";

@@ -110,7 +110,7 @@ public class WelcomeActivity extends BaseActivity {
 //让setting处于编辑状态
         SharedPreferences.Editor editor = settings.edit();
 //存放数据
-        editor.putInt(Constant.KEY_AGE, user.getAge());
+        editor.putString(Constant.KEY_RESIDENCE, user.getResidence());
         editor.putString(Constant.KEY_GENDA, user.getGender());
         editor.putString(Constant.KEY_AVATAR, user.getAvatar());
         editor.putString(Constant.KEY_NICKNAME, user.getNickname());

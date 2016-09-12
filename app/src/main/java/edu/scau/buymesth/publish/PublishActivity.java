@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Semaphore;
 
 import base.BaseActivity;
 import base.util.SpaceItemDecoration;
@@ -169,7 +168,6 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     }
 
     List<String> dstList;
-    volatile Semaphore semaphore = new Semaphore(1);
 
     CompressHelper compressHelper = null;
     List<String> picWidths =new LinkedList<>();

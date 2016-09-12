@@ -26,6 +26,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class SettingInputFragment extends BaseFragment {
     public static final byte TYPE_NICKNAME=0;
     public static final byte TYPE_SIGNATURE=1;
+    public static final byte TYPE_RESIDENCE=3;
     private   byte type;
     EditText mInputEt;
     OnInputCompletedListener mCallback;
@@ -60,6 +61,8 @@ public class SettingInputFragment extends BaseFragment {
                 editor.putString(Constant.KEY_NICKNAME, mInputEt.getText().toString());
             else if(type==TYPE_SIGNATURE)
             editor.putString(Constant.KEY_SIGNATURE, mInputEt.getText().toString());
+            else  if(type==TYPE_RESIDENCE)
+                editor.putString(Constant.KEY_RESIDENCE, mInputEt.getText().toString());
             editor.apply();
             mCallback.onInputCompleted(mInputEt.getText().toString(),type);
         });
@@ -68,18 +71,20 @@ public class SettingInputFragment extends BaseFragment {
 
     private void submitToBmob(String input, byte type) {
         User user = new User();
-
         if(type==TYPE_NICKNAME)
             user.setNickname(input);
         else if(type==TYPE_SIGNATURE)
             user.setSignature(input);
+        else  if(type==TYPE_RESIDENCE)
+            user.setResidence(input);
         BmobUser bmobUser = BmobUser.getCurrentUser( );
         user.update(bmobUser.getObjectId(),new UpdateListener() {
             @Override
             public void done(BmobException e) {
                 if(e==null){
-                    ((UserSettingActivity)getActivity()).toast("修改成功");
+             //       getActivity().runOnUiThread(() -> ( (UserSettingActivity) getActivity()).toast("修改成功"));
                 }else{
+              //      getActivity().runOnUiThread(() -> ( (UserSettingActivity) getActivity()).toast("网络太差，修改失败"));
                 }
             }
         });

@@ -210,15 +210,15 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
     @Override
     public void initPickerView() {
         ArrayList<String> list1 = new ArrayList<>();
+        list1.add("人民币");
         list1.add("美元");
         list1.add("港币");
-        list1.add("人民币");
         list1.add("%");
         pvTip.setOnSelectListener(text -> createOrderPresenter.setTipType(text));
         pvTip.setData(list1);
         ArrayList<String> list2 = new ArrayList<>();
-        list2.add("美元");
         list2.add("人民币");
+        list2.add("美元");
         list2.add("港币");
         pvPrice.setOnSelectListener(text -> createOrderPresenter.setPriceType(text));
         pvPrice.setData(list2);

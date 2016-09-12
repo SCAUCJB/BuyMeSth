@@ -22,8 +22,8 @@
 
         <ImageView
             android:id="@+id/iv_avatar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:src="@mipmap/def_head" />
 
         <TextView
@@ -119,6 +119,7 @@
             android:src="@drawable/ic_chevron_right_grey600_24dp" />
 
         <TextView
+            android:id="@+id/tv_residence"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -152,6 +153,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:text="还没没有信息耶~" />
+            android:text="还没有信息耶~" />
     </RelativeLayout>
 </LinearLayout>

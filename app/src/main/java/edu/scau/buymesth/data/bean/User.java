@@ -8,11 +8,12 @@ import cn.bmob.v3.BmobUser;
  */
 public class User extends BmobUser {
     private String nickname;//昵称
-    private Integer age = 0;//年龄
-    private String gender = "secret";//性别
-    private Integer exp = 0;//经验值
-    private String avatar="";
-    private String signature="";
+    private Integer age ;//年龄
+    private String gender ;//性别
+    private Integer exp ;//经验值
+    private String avatar;
+    private String signature;
+    private String residence;
     public String getNickname() {
         return nickname;
     }
@@ -59,5 +60,13 @@ public class User extends BmobUser {
 
     public void setSignature(String signature) {
         this.signature = signature;
+    }
+
+    public String getResidence() {
+        return residence;
+    }
+
+    public void setResidence(String residence) {
+        this.residence = residence;
     }
 }
