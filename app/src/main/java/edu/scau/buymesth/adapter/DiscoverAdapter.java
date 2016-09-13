@@ -58,6 +58,7 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
         if(item.getRequest()!=null){
             helper.setText(R.id.tv_request_title,item.getRequest().getTitle());
             if(item.getRequest().getUrls()!=null&&item.getRequest().getUrls().size()>0){
+                helper.getView(R.id.iv_request_cover).setVisibility(View.VISIBLE);
                 Glide.with(mContext).load(item.getRequest().getUrls().get(0))
                         .into((ImageView) helper.getView(R.id.iv_request_cover));
             }else {

@@ -12,6 +12,7 @@ import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.CloudCodeListener;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.QueryListener;
 import edu.scau.buymesth.data.bean.Collect;
 import edu.scau.buymesth.data.bean.Comment;
 import edu.scau.buymesth.data.bean.Follow;
@@ -28,17 +29,39 @@ import rx.schedulers.Schedulers;
 public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.Model, RequestDetailContract.View> {
     @Override
     public void onStart() {
-        initUserInfo();
-        initCommentBar();
-        initContent();
-        initPrice();
-        initComment();
-        initTags();
-        initFollow();
-        initCollect();
+        initRequest();
+//
+//        initUserInfo();
+//        initCommentBar();
+//        initContent();
+//        initPrice();
+//        initComment();
+//        initTags();
+//        initFollow();
+//        initCollect();
     }
 
-      void collect(){
+    private void initRequest() {
+        BmobQuery<Request> bmobQuery = new BmobQuery<>();
+        bmobQuery.include("user");
+        bmobQuery.getObject(mModel.getRequest().getObjectId(), new QueryListener<Request>() {
+            @Override
+            public void done(Request request, BmobException e) {
+                mModel.setRequest(request);
+
+                initUserInfo();
+                initCommentBar();
+                initContent();
+                initPrice();
+                initComment();
+                initTags();
+                initFollow();
+                initCollect();
+            }
+        });
+    }
+
+    void collect(){
         AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
         //第一个参数是上下文对象，第二个参数是云端逻辑的方法名称，第三个参数是上传到云端逻辑的参数列表（JSONObject cloudCodeParams），第四个参数是回调类
         JSONObject params = new JSONObject();

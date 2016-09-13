@@ -92,7 +92,6 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         activity.startActivity(intent);
     }
 
-
     @Override
     protected int getLayoutId() {
         return R.layout.activity_requestdetail;
