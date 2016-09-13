@@ -17,13 +17,16 @@ import java.util.concurrent.CountDownLatch;
 import base.BaseActivity;
 import base.util.SpaceItemDecoration;
 import butterknife.Bind;
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadBatchListener;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Moment;
+import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.util.CompressHelper;
 import gallery.PhotoActivity;
@@ -44,6 +47,7 @@ public class MomentPublishActivity extends BaseActivity{
     TextView tvRequest;
     ArrayList<String> mUrlList;
     MyPictureAdapter adapter;
+    Request mRequest;
     boolean mCompressing = false;
     @Override
     protected int getLayoutId() {
@@ -79,7 +83,8 @@ public class MomentPublishActivity extends BaseActivity{
 
         tvRequest.setOnClickListener(v -> {
             Intent intent = new Intent(MomentPublishActivity.this,SelectActivity.class);
-            startActivity(intent);
+            intent.putExtra("selectRequest",true);
+            startActivityForResult(intent,0);
         });
 
         momentSendButton.setOnClickListener(new View.OnClickListener() {
@@ -104,6 +109,7 @@ public class MomentPublishActivity extends BaseActivity{
                                 mUrlList.clear();
                                 mUrlList.addAll(urls);
                                 moment.setImages(mUrlList);
+                                if(mRequest!=null)moment.setRequest(mRequest);
                                 moment.save(new SaveListener<String>() {
                                     @Override
                                     public void done(String s, BmobException e) {
@@ -143,6 +149,7 @@ public class MomentPublishActivity extends BaseActivity{
                     Moment moment = new Moment();
                     moment.setUser(BmobUser.getCurrentUser(User.class));
                     moment.setContent(momentContent.getText().toString());
+                    if(mRequest!=null)moment.setRequest(mRequest);
                     moment.save(new SaveListener<String>() {
                         @Override
                         public void done(String s, BmobException e) {
@@ -172,6 +179,22 @@ public class MomentPublishActivity extends BaseActivity{
                     compress();
                 }).start();
             }
+        } if(resultCode == RESULT_OK && requestCode == 0){
+            String id = data.getStringExtra("requestId");
+            if(id==null)return;
+            BmobQuery<Request> bmobQuery = new BmobQuery<>();
+            bmobQuery.getObject(id, new QueryListener<Request>() {
+                @Override
+                public void done(Request request, BmobException e) {
+                    mRequest = request;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tvRequest.setText(request.getTitle());
+                        }
+                    });
+                }
+            });
         }
     }
 

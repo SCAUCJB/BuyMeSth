@@ -43,4 +43,9 @@ public class SelectActivity extends BaseActivity{
     public boolean canSwipeBack() {
         return false;
     }
+
+    @Override
+    public int getStatusColorResources() {
+        return R.color.colorPrimaryDark;
+    }
 }

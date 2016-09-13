@@ -1,5 +1,7 @@
 package edu.scau.buymesth.request;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -96,23 +98,24 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         });
     }
 
-    protected BaseQuickAdapter.OnRecyclerViewItemClickListener getOnRecyclerViewItemClickListener(HomeAdapter homeAdapter){
-        return new BaseQuickAdapter.OnRecyclerViewItemClickListener(){
-            @Override
-            public void onItemClick(View view, int position) {
-                RequestDetailActivity.navigate((AppCompatActivity)getActivity(),homeAdapter.getData().get(position));
-            }
-        };
-    }
-
     private void initAdapter() {
         mPresenter.onRefresh(filter, filterKey);
         mHomeAdapter = new HomeAdapter();
         mHomeAdapter.openLoadAnimation(new ScaleInAnimation());
         mRecyclerView.setAdapter(mHomeAdapter);
-        mHomeAdapter.setOnRecyclerViewItemClickListener(
-                getOnRecyclerViewItemClickListener(mHomeAdapter)
-        );
+        if(getActivity().getIntent().getBooleanExtra("selectRequest",false)){
+            mHomeAdapter.setOnRecyclerViewItemClickListener(
+                    (view, position) -> {
+                        Intent i = new Intent();
+                        i.putExtra("requestId",mHomeAdapter.getData().get(position).getObjectId());
+                        getActivity().setResult(Activity.RESULT_OK,i);
+                        getActivity().finish();
+                    });
+        }else {
+            mHomeAdapter.setOnRecyclerViewItemClickListener(
+                    (view, position) -> RequestDetailActivity.navigate(getActivity(),mHomeAdapter.getData().get(position))
+            );
+        }
         mHomeAdapter.setOnLoadMoreListener(() -> mPresenter.onLoadMore(filter,filterKey));
         mHomeAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
     }

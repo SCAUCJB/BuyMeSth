@@ -44,7 +44,6 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
         View view = inflater.inflate(R.layout.fragment_discover,container,false);
         mRecyclerView= (RecyclerView) view.findViewById(R.id.rv_discover_fragment);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setItemViewCacheSize(10);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_10)));
         //初始化代理人
         mPresenter=new DiscoverPresenter(getContext());

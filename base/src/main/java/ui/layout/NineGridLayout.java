@@ -189,6 +189,7 @@ public class NineGridLayout extends ViewGroup {
 
     public void setUrlList(List<String> urls){
         this.mUrlList.clear();
+        if(urls!=null)
         this.mUrlList.addAll(urls);
         if(getListSize(this.mUrlList)>0){
             setVisibility(VISIBLE);
