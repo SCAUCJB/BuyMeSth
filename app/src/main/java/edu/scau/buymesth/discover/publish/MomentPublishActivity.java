@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -24,7 +23,6 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadBatchListener;
 import edu.scau.buymesth.R;
-import edu.scau.buymesth.adapter.PictureAdapter;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.util.CompressHelper;
@@ -44,10 +42,9 @@ public class MomentPublishActivity extends BaseActivity{
     EditText momentContent;
     @Bind(R.id.tv_request)
     TextView tvRequest;
-    List<String> localUrlList;
-    List<String> urlList;
-    List<String> photoInfoList;
-    PictureAdapter adapter;
+    ArrayList<String> mUrlList;
+    MyPictureAdapter adapter;
+    boolean mCompressing = false;
     @Override
     protected int getLayoutId() {
         return R.layout.activity_moment_publish;
@@ -55,16 +52,14 @@ public class MomentPublishActivity extends BaseActivity{
 
     @Override
     public void initView() {
-        localUrlList = new ArrayList<>();
-        urlList = new ArrayList<>();
-        photoInfoList = new ArrayList<>();
+        mUrlList = new ArrayList<>();
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
-        adapter = new PictureAdapter(photoInfoList);
+        adapter = new MyPictureAdapter(mUrlList);
         recyclerView.setAdapter(adapter);
 
         adapter.setOnRecyclerViewItemClickListener((view, position) -> {
@@ -75,38 +70,40 @@ public class MomentPublishActivity extends BaseActivity{
                         .setShowCamera(true)
                         .setShowGif(false)
                         .setPreviewEnabled(true)
+                        .setSelected(mUrlList)
                         .start(MomentPublishActivity.this, PhotoPicker.REQUEST_CODE);
             } else {
-                PhotoActivity.navigate(MomentPublishActivity.this,recyclerView,localUrlList,position);
+                PhotoActivity.navigate(MomentPublishActivity.this,recyclerView, mUrlList,position);
             }
         });
 
-        tvRequest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MomentPublishActivity.this,SelectActivity.class);
-                startActivity(intent);
-            }
+        tvRequest.setOnClickListener(v -> {
+            Intent intent = new Intent(MomentPublishActivity.this,SelectActivity.class);
+            startActivity(intent);
         });
 
         momentSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //upload images
-                if(localUrlList.size()>1) {
-                    localUrlList.remove(localUrlList.size()-1);
-                    String[] sendList = new String[localUrlList.size()];
-                    localUrlList.toArray(sendList);
+                if(mUrlList.size()>0) {
+                    if(mCompressing){
+                        toast("压缩中");
+                        return;
+                    }
+                    String[] sendList = new String[mUrlList.size()];
+                    mUrlList.toArray(sendList);
 
                     BmobFile.uploadBatch(sendList, new UploadBatchListener() {
                         @Override
                         public void onSuccess(List<BmobFile> files, List<String> urls) {
-                            urlList = urls;
-                            if(urls.size()>=localUrlList.size()){
+                            if(urls.size()>= mUrlList.size()){
                                 Moment moment = new Moment();
                                 moment.setUser(BmobUser.getCurrentUser(User.class));
                                 moment.setContent(momentContent.getText().toString());
-                                moment.setImages(urlList);
+                                mUrlList.clear();
+                                mUrlList.addAll(urls);
+                                moment.setImages(mUrlList);
                                 moment.save(new SaveListener<String>() {
                                     @Override
                                     public void done(String s, BmobException e) {
@@ -146,7 +143,6 @@ public class MomentPublishActivity extends BaseActivity{
                     Moment moment = new Moment();
                     moment.setUser(BmobUser.getCurrentUser(User.class));
                     moment.setContent(momentContent.getText().toString());
-                    moment.setImages(urlList);
                     moment.save(new SaveListener<String>() {
                         @Override
                         public void done(String s, BmobException e) {
@@ -169,38 +165,40 @@ public class MomentPublishActivity extends BaseActivity{
         if (resultCode == RESULT_OK && requestCode == PhotoPicker.REQUEST_CODE) {
             if (data != null) {
                 ArrayList<String> photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
+                mUrlList.clear();
+                mUrlList.addAll(photos);
+                adapter.setList(mUrlList);
                 new Thread(() -> {
-                    compress(photos);
+                    compress();
                 }).start();
-    //            adapter.setList(photos);
             }
         }
     }
-    /**
-     * 压缩单张图片 RxJava 方式
-     */
-    private void compress(ArrayList<String> photos) {
 
-            if (photos.size() > 1) {
-                new Thread(() -> {
-                    CompressHelper compressHelper = new CompressHelper(mContext);
-                    List<String> list = new LinkedList<>();
-                    CountDownLatch countDownLatch = new CountDownLatch(photos.size() - 1);
-                    for (int i = 0; i < photos.size() - 1; ++i) {
-                        list.add(compressHelper.thirdCompress(new File(photos.get(i))));
-                        countDownLatch.countDown();
-                    }
-                    try {
-                        countDownLatch.await();
-                        MomentPublishActivity.this.runOnUiThread(() -> {
-                            adapter.setList(list);
-                            localUrlList=list;} );
-                    } catch (InterruptedException e) {
-
-                    }
+    private void compress() {
+        new Thread(() -> {
+            mCompressing = true;
+            CompressHelper compressHelper = new CompressHelper(mContext);
+            CountDownLatch countDownLatch = new CountDownLatch(mUrlList.size());
+            for (int i = 0; i < mUrlList.size(); i++) {
+                final int finalI = i;
+                new Thread(()->{
+                    compressHelper.setFilename("cc_"+finalI);
+                    mUrlList.set(finalI,compressHelper.thirdCompress(new File(mUrlList.get(finalI))));
+                    countDownLatch.countDown();
                 }).start();
             }
+            try {
+                countDownLatch.await();
+                runOnUiThread(() -> {toast("压缩完成");
+                    adapter.setList(mUrlList);});
+                mCompressing = false;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
+
     @Override
     public boolean canSwipeBack() {
         return true;

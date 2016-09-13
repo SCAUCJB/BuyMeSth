@@ -61,7 +61,7 @@ public class CompressHelper {
     public String thirdCompress(@NonNull File file) {
         String thumb = mCacheDir.getAbsolutePath() + "/" + System.currentTimeMillis();
 
-        thumb = filename == null || filename.isEmpty() ? thumb : filename;
+        thumb = filename == null || filename.isEmpty() ? thumb : thumb+filename;
 
         double size;
         String filePath = file.getAbsolutePath();

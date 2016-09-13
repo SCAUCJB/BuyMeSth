@@ -87,14 +87,9 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
                 .transform(new GlideCircleTransform(mContext))
                 .into((ImageView) helper.getView(R.id.iv_avatar));
 
-        if(item.getImages()!=null&&item.getImages().size()>0){
-            NineGridLayout nineGridLayout = helper.getView(R.id.nine_grid_layout);
-            nineGridLayout.setVisibility(View.VISIBLE);
-            nineGridLayout.setUrlList(item.getImages());
-        }else {
-            NineGridLayout nineGridLayout = helper.getView(R.id.nine_grid_layout);
-            nineGridLayout.setVisibility(View.GONE);
-        }
+        NineGridLayout nineGridLayout = helper.getView(R.id.nine_grid_layout);
+        nineGridLayout.setUrlList(item.getImages());
+        System.out.println("!!!!!"+"setting URLLLLLLLLLLLLLLLL");
 
         View.OnClickListener defaultOnClickListener = new View.OnClickListener() {
             @Override
@@ -112,12 +107,12 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
         helper.getView(R.id.ly_comments).setOnClickListener(defaultOnClickListener);
         if(item.getRequest()!=null)
         helper.getView(R.id.request_view).setOnClickListener(defaultOnClickListener);
-        ((NineGridLayout)helper.getView(R.id.nine_grid_layout)).setOnImageClickListener(new NineGridLayout.OnImageClickListener() {
+        ((NineGridLayout)helper.getView(R.id.nine_grid_layout)).setOnItemClickListener(new NineGridLayout.OnItemClickListener() {
             @Override
-            public void onClickImage(int position, String url, List<String> urlList) {
+            public void onClick(View view, int position, List<String> urls, int itemType) {
                 onItemsContentClickListener.onItemsContentClick(
                         helper.getView(R.id.nine_grid_layout),
-                        urlList,position);
+                        urls,position);
             }
         });
     }

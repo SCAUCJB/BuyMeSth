@@ -116,9 +116,9 @@ public class MomentDetailActivity extends BaseActivity implements  MomentDetailC
                 else
                     momentView = getLayoutInflater().inflate(R.layout.item_discover_request_detail,(ViewGroup) mRecyclerView.getParent(),false);
                 momentView.findViewById(R.id.ly_likes).setOnClickListener(v -> mPresenter.like());
-                ((NineGridLayout)momentView.findViewById(R.id.nine_grid_layout)).setOnImageClickListener(new NineGridLayout.OnImageClickListener() {
+                ((NineGridLayout)momentView.findViewById(R.id.nine_grid_layout)).setOnItemClickListener(new NineGridLayout.OnItemClickListener() {
                     @Override
-                    public void onClickImage(int position, String url, List<String> urlList) {
+                    public void onClick(View view, int position, List<String> urls, int itemType) {
                         PhotoActivity.navigate(MomentDetailActivity.this,
                                 (NineGridLayout)momentView.findViewById(R.id.nine_grid_layout),
                                 mPresenter.mModel.getMoment().getImages(),

@@ -10,58 +10,47 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.scau.base.R;
-import util.DensityUtil;
 
 /**
- * 描述:
- * 作者：HMY
- * 时间：2016/5/10
+ * Created by ！ on 2016/9/12.
  */
 public class NineGridLayout extends ViewGroup {
 
-    protected static final int MAX_W_H_RATIO = 3;
+    public static final int TYPE_IMAGE = 0;
+    public static final int TYPE_TEXT = 1;
 
+    private static final int DEFUALT_COLUMN = 3;
     private static final float DEFUALT_SPACING = 3f;
-    private static final int MAX_COUNT = 9;
-
-    protected Context mContext;
     private float mSpacing = DEFUALT_SPACING;
-    private int mColumns;
-    private int mRows;
-    private int mTotalWidth;
-    private int mSingleWidth;
-
-    private boolean mIsShowAll = false;
-    private boolean mIsFirst = true;
-
-    public List<String> getUrlList() {
-        return mUrlList;
-    }
-
     private List<String> mUrlList = new ArrayList<>();
+    private int mLayoutHeight;
+    private int mLayoutWidth;//useless
+    private float mSingleWidth = 90;//单个imageview的宽度
+    private float mSingleHeight = 90;//单个imageview的高度
+    private int mMaxColumn = DEFUALT_COLUMN;//3
+    private int mMaxRow = DEFUALT_COLUMN;//3
+    private int mColumn = DEFUALT_COLUMN;//3
+    private int mRow = 0;
 
-    private OnImageClickListener onImageClickListener;
+    private boolean mSetOneImageLayout = false;
+    private int mOneImageHeight = -1;
+    private int mOneImageWidth = -1;
 
-    public static final String DEFAULT_PLUS_PIC = "@Add";
+    private boolean mChildrenAdded = false;
+    private boolean mShowAll = false;
 
-    public List<View> imageViewList = new ArrayList<>();
-
+    private OnItemClickListener onItemClickListener;
 
     public NineGridLayout(Context context) {
         super(context);
-        init(context);
     }
 
     public NineGridLayout(Context context, AttributeSet attrs) {
@@ -70,243 +59,13 @@ public class NineGridLayout extends ViewGroup {
 
         mSpacing = typedArray.getDimension(R.styleable.NineGridLayout_sapcing, DEFUALT_SPACING);
         typedArray.recycle();
-        init(context);
-    }
-
-    private void init(Context context) {
-        mContext = context;
-        if (getListSize(mUrlList) == 0) {
-            setVisibility(GONE);
-        }
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        mTotalWidth = right - left;
-        mSingleWidth = (int) ((mTotalWidth - mSpacing * (3 - 1)) / 3);
-        if (mIsFirst) {
-            notifyDataSetChanged();
-            mIsFirst = false;
-        }
-    }
-
-    /**
-     * 设置间隔
-     *
-     * @param spacing
-     */
-    public void setSpacing(float spacing) {
-        mSpacing = spacing;
-    }
-
-    /**
-     * 设置是否显示所有图片（超过最大数时）
-     *
-     * @param isShowAll
-     */
-    public void setIsShowAll(boolean isShowAll) {
-        mIsShowAll = isShowAll;
-    }
-
-    public void setUrlList(List<String> urlList) {
-        if (getListSize(urlList) == 0) {
-            setVisibility(GONE);
-            return;
-        }
-        setVisibility(VISIBLE);
-
-//        mUrlList.clear();
-//        mUrlList.addAll(urlList);
-        mUrlList = urlList;
-
-        if (!mIsFirst) {
-            notifyDataSetChanged();
-        }
-    }
-
-    public void notifyDataSetChanged() {
-        removeAllViews();
-        int size = getListSize(mUrlList);
-        if (size > 0) {
-            setVisibility(VISIBLE);
-        } else {
-            setVisibility(GONE);
-        }
-
-        if (size == 1) {
-            String url = mUrlList.get(0);
-            RatioImageView imageView = createImageView(0, url);
-
-            //避免在ListView中一张图未加载成功时，布局高度受其他item影响
-            LayoutParams params = getLayoutParams();
-            params.height = mSingleWidth;
-            setLayoutParams(params);
-            imageView.layout(0, 0, mSingleWidth, mSingleWidth);
-
-            boolean isShowDefualt = displayOneImage(imageView, url, mTotalWidth);
-            if (isShowDefualt) {
-                layoutImageView(imageView, 0, url, false);
-            } else {
-                addView(imageView);
-            }
-            return;
-        }
-
-        generateChildrenLayout(size);
-        layoutParams();
-
-        for (int i = 0; i < size; i++) {
-            String url = mUrlList.get(i);
-            RatioImageView imageView;
-            if (!mIsShowAll) {
-                if (i < MAX_COUNT - 1) {
-                    imageView = createImageView(i, url);
-                    layoutImageView(imageView, i, url, false);
-                } else { //第9张时
-                    if (size <= MAX_COUNT) {//刚好第9张
-                        imageView = createImageView(i, url);
-                        layoutImageView(imageView, i, url, false);
-                    } else {//超过9张
-                        imageView = createImageView(i, url);
-                        layoutImageView(imageView, i, url, true);
-                        break;
-                    }
-                }
-            } else {
-                imageView = createImageView(i, url);
-                layoutImageView(imageView, i, url, false);
-            }
-        }
-    }
-
-    private void layoutParams() {
-        int singleHeight = mSingleWidth;
-
-        //根据子view数量确定高度
-        LayoutParams params = getLayoutParams();
-        params.height = (int) (singleHeight * mRows + mSpacing * (mRows - 1));
-        setLayoutParams(params);
-    }
-
-    private RatioImageView createImageView(final int i, final String url) {
-        RatioImageView imageView = new RatioImageView(mContext);
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(onImageClickListener==null){
-//                    onImageClickListener = new DefaultOnImageClickListener();
-                }
-                else{
-                    onImageClickListener.onClickImage(i, url, mUrlList);
-                }
-            }
-        });
-        return imageView;
-    }
-
-    /**
-     * @param imageView
-     * @param url
-     * @param showNumFlag 是否在最大值的图片上显示还有未显示的图片张数
-     */
-    private void layoutImageView(RatioImageView imageView, int i, String url, boolean showNumFlag) {
-        final int singleWidth = (int) ((mTotalWidth - mSpacing * (3 - 1)) / 3);
-        int singleHeight = singleWidth;
-
-        int[] position = findPosition(i);
-        int left = (int) ((singleWidth + mSpacing) * position[1]);
-        int top = (int) ((singleHeight + mSpacing) * position[0]);
-        int right = left + singleWidth;
-        int bottom = top + singleHeight;
-
-        imageView.layout(left, top, right, bottom);
-
-        addView(imageView);
-        if (showNumFlag) {//添加超过最大显示数量的文本
-            int overCount = getListSize(mUrlList) - MAX_COUNT;
-            if (overCount > 0) {
-                float textSize = 30;
-                final TextView textView = new TextView(mContext);
-                textView.setText("+" + String.valueOf(overCount));
-                textView.setTextColor(Color.WHITE);
-                textView.setPadding(0, singleHeight / 2 - getFontHeight(textSize), 0, 0);
-                textView.setTextSize(textSize);
-                textView.setGravity(Gravity.CENTER);
-                textView.setBackgroundColor(Color.BLACK);
-                textView.getBackground().setAlpha(120);
-
-                textView.layout(left, top, right, bottom);
-                addView(textView);
-            }
-        }
-        displayImage(imageView, url);
-    }
-
-    private int[] findPosition(int childNum) {
-        int[] position = new int[2];
-        for (int i = 0; i < mRows; i++) {
-            for (int j = 0; j < mColumns; j++) {
-                if ((i * mColumns + j) == childNum) {
-                    position[0] = i;//行
-                    position[1] = j;//列
-                    break;
-                }
-            }
-        }
-        return position;
-    }
-
-    /**
-     * 根据图片个数确定行列数量
-     *
-     * @param length
-     */
-    private void generateChildrenLayout(int length) {
-        if (length <= 3) {
-            mRows = 1;
-            mColumns = length;
-        } else if (length <= 6) {
-            mRows = 2;
-            mColumns = 3;
-            if (length == 4) {
-                mColumns = 2;
-            }
-        } else {
-            mColumns = 3;
-            if (mIsShowAll) {
-                mRows = length / 3;
-                int b = length % 3;
-                if (b > 0) {
-                    mRows++;
-                }
-            } else {
-                mRows = 3;
-            }
-        }
-
-    }
-
-    protected void setOneImageLayoutParams(RatioImageView imageView, int width, int height) {
-        imageView.setLayoutParams(new LayoutParams(width, height));
-        imageView.layout(0, 0, width, height);
-
-        LayoutParams params = getLayoutParams();
-//        params.width = width;
-        params.height = height;
-        setLayoutParams(params);
     }
 
     private int getListSize(List<String> list) {
-        if (list == null || list.size() == 0) {
+        if (list == null || list.size() == 0)
             return 0;
-        }
-        return list.size();
+        else
+            return list.size();
     }
 
     private int getFontHeight(float fontSize) {
@@ -316,76 +75,178 @@ public class NineGridLayout extends ViewGroup {
         return (int) Math.ceil(fm.descent - fm.ascent);
     }
 
-    /**
-     * @param imageView
-     * @param url
-     * @param parentWidth 父控件宽度
-     * @return true 代表按照九宫格默认大小显示，false 代表按照自定义宽高显示
-     */
-//    protected abstract boolean displayOneImage(RatioImageView imageView, String url, int parentWidth);
-    protected boolean displayOneImage(RatioImageView imageView, String url, int parentWidth){
-        if(url.equals(DEFAULT_PLUS_PIC)){
-            imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
-            imageView.setBackgroundColor(Color.TRANSPARENT);
-            imageView.setPadding(10,10,10,10);
-            return false;
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        System.out.println("!!!!!"+"onMeasure");
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int sizeWidth = MeasureSpec.getSize(widthMeasureSpec);
+        int sizeHeight = MeasureSpec.getSize(heightMeasureSpec);
+
+        if(widthMode != MeasureSpec.AT_MOST){
+            mSingleWidth = (sizeWidth-mSpacing*(getmMaxColumn() -1))/(float) getmMaxColumn();
+            mSingleHeight = mSingleWidth;
         }
 
-        setOneImageLayoutParams(imageView, imageView.getWidth(), 260);
-
-        SimpleTarget<GlideDrawable> simpleTarget = new SimpleTarget<GlideDrawable>() {
-            @Override
-            public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                int width = resource.getIntrinsicWidth();
-                int height = resource.getIntrinsicHeight();
-                int newW;
-                newW = (int) (width*DensityUtil.dip2px(getContext(),260)/(double)height);
-                if(DensityUtil.px2dip(getContext(),newW)>parentWidth){
-                    imageView.layout(0, 0, parentWidth, 260);
-                }else {
-                    imageView.layout(0, 0, DensityUtil.px2dip(getContext(),newW), 260);
-                }
-                Glide.with(getContext()).load(url)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(imageView);
+        //根据子url数量确定高度
+        int size = getListSize(mUrlList);
+        if(!mShowAll&&size> getmMaxColumn() * getmMaxRow())size = getmMaxColumn() * getmMaxRow();
+        if(size==1){
+            if(!mSetOneImageLayout){
+                mOneImageHeight = (int) mSingleHeight;
+                mOneImageWidth = (int) mSingleWidth;
             }
-        };
-        Glide.with(getContext()).load(url)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(simpleTarget);
-        return false;
+            mLayoutHeight = mOneImageHeight;
+        }
+        else {
+            while(size>mRow* getmMaxColumn()){
+                mRow++;
+            }
+            mLayoutHeight = (int) (mRow * mSingleHeight + (mRow-1)*mSpacing);
+        }
+
+        setMeasuredDimension((widthMode == MeasureSpec.EXACTLY) ? sizeWidth
+                : sizeWidth, (heightMode == MeasureSpec.EXACTLY) ? sizeHeight
+                : mLayoutHeight);
     }
 
-    protected void displayImage(RatioImageView imageView, String url){
-        if(url.equals(DEFAULT_PLUS_PIC)){
-            imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
-            imageView.setBackgroundColor(Color.TRANSPARENT);
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        System.out.println("!!!!!"+"onLayout");
+        if(mChildrenAdded)return;
+        if(getListSize(mUrlList)==0){
+            removeAllViews();
             return;
         }
+        mChildrenAdded = true;
+        removeAllViews();
+        int childLeft = 0, childTop = 0, childRight = 0, childBottom = 0;
+        if(getListSize(mUrlList) == 1){
+            ImageView imageView = createImageView(0,mUrlList.get(0));
+            imageView.layout(0, 0,mOneImageWidth , mOneImageHeight);
+            addView(imageView);
+            displayImage(imageView,mUrlList.get(0));
+            return;
+        }
+        for(int i = 0;i<getListSize(mUrlList);i++){
+            if(!ismShowAll() &&i>= getmMaxColumn() * getmMaxRow())break;
+            ImageView imageView = createImageView(i,mUrlList.get(i));
+            //计算位置
+            childLeft = (int) ((mSingleWidth+mSpacing)*(i% getmMaxColumn()));
+            childRight = (int) (childLeft + mSingleWidth);
+            int row = 0;
+            while(row* getmMaxColumn() <i+1)row++;
+            childTop = (int) ((mSingleHeight+mSpacing)*(row-1));
+            childBottom = (int) (childTop+mSingleHeight);
+            //设置
+            imageView.layout(childLeft, childTop, childRight, childBottom);
+            addView(imageView);
+            displayImage(imageView,mUrlList.get(i));
+        }
+        if(!ismShowAll() && getmMaxColumn() * getmMaxRow() <getListSize(mUrlList)){//超出可显示的数量
+            int overCount = getListSize(mUrlList) - getmMaxColumn() * getmMaxRow();
+            float textSize = 30;
+            TextView textView = new TextView(getContext());
+            textView.setOnClickListener(v -> {
+                if(getOnItemClickListener() !=null)
+                    getOnItemClickListener().onClick(v,getmMaxColumn() * getmMaxRow(),null,TYPE_IMAGE);
+                showAll();
+            });
+            textView.setText("+" + String.valueOf(overCount));
+            textView.setTextColor(Color.WHITE);
+            textView.setPadding(0, (int) (mSingleHeight / 2 - getFontHeight(textSize)), 0, 0);
+            textView.setTextSize(textSize);
+            textView.setGravity(Gravity.CENTER);
+            textView.setBackgroundColor(Color.BLACK);
+            textView.getBackground().setAlpha(120);
+            //设置
+            textView.layout(childLeft, childTop, childRight, childBottom);
+            addView(textView);
+        }
+    }
+
+    public void showAll(){
+        setmShowAll(true);
+        mChildrenAdded = false;
+        requestLayout();
+    }
+
+    protected ImageView createImageView(final int i, final String url) {
+        ImageView imageView = new ImageView(getContext());
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        imageView.setOnClickListener(v -> {
+            if(getOnItemClickListener() !=null)
+                getOnItemClickListener().onClick(v,i,mUrlList,TYPE_IMAGE);
+        });
+        return imageView;
+    }
+
+    protected void displayImage(ImageView imageView, String url){
         Glide.with(getContext()).load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imageView);
     }
 
-    public OnImageClickListener getOnImageClickListener() {
-        return onImageClickListener;
-    }
-
-    public void setOnImageClickListener(OnImageClickListener onImageClickListener) {
-        this.onImageClickListener = onImageClickListener;
-    }
-
-//    protected abstract void onClickImage(int position, String url, List<String> urlList);
-
-    public interface OnImageClickListener {
-        void onClickImage(int position, String url, List<String> urlList);
-    }
-
-    public class DefaultOnImageClickListener implements OnImageClickListener{
-
-        @Override
-        public void onClickImage(int position, String url, List<String> urlList) {
-            Toast.makeText(getContext(),"click "+position,Toast.LENGTH_SHORT).show();
+    public void setUrlList(List<String> urls){
+        this.mUrlList.clear();
+        this.mUrlList.addAll(urls);
+        if(getListSize(this.mUrlList)>0){
+            setVisibility(VISIBLE);
+            System.out.println("!!!!!"+"setting URL");
         }
+        else setVisibility(GONE);
+        initData();
+        requestLayout();
+    }
+
+    private void initData(){
+        mChildrenAdded = false;
+        mRow = 0;
+        mColumn = 0;
+        mOneImageHeight = -1;
+        mOneImageWidth = -1;
+    }
+
+    public int getmMaxColumn() {
+        return mMaxColumn;
+    }
+
+    public void setmMaxColumn(int mMaxColumn) {
+        this.mMaxColumn = mMaxColumn;
+    }
+
+    public int getmMaxRow() {
+        return mMaxRow;
+    }
+
+    public void setmMaxRow(int mMaxRow) {
+        this.mMaxRow = mMaxRow;
+    }
+
+    public boolean ismShowAll() {
+        return mShowAll;
+    }
+
+    public void setmShowAll(boolean mShowAll) {
+        this.mShowAll = mShowAll;
+    }
+
+    public void setOneImageLayout(int width,int height){
+        System.out.println("!!!!!"+"set layout");
+        mOneImageWidth = width;
+        mOneImageHeight = height;
+        mSetOneImageLayout = true;
+    }
+
+    public OnItemClickListener getOnItemClickListener() {
+        return onItemClickListener;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
+    public interface OnItemClickListener{
+        public void onClick(View view,int position,List<String> urls,int itemType);
     }
 }

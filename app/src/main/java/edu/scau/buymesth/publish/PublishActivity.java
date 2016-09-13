@@ -147,7 +147,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                         .setPreviewEnabled(true)
                         .start(PublishActivity.this, PhotoPicker.REQUEST_CODE);
             } else {
-                PhotoActivity.navigate(PublishActivity.this,view,adapter.getItem(position),position);
+                PhotoActivity.navigate(PublishActivity.this, view, adapter.getItem(position), position);
             }
         });
         initToolBar();
@@ -170,27 +170,30 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     List<String> dstList;
 
     CompressHelper compressHelper = null;
-    List<String> picWidths =new LinkedList<>();
-    List<String> picHeights =new LinkedList<>();
+    List<String> picWidths = new LinkedList<>();
+    List<String> picHeights = new LinkedList<>();
+
     public void compressAndSubmit(List<String> photos) {
         if (photos.size() > 1) {
             new Thread(() -> {
-                compressHelper = new CompressHelper(mContext);
-                compressHelper.setWidthList(picWidths);
-                compressHelper.setHeightList(picHeights);
-                List<String> list = new LinkedList<>();
                 CountDownLatch countDownLatch = new CountDownLatch(photos.size() - 1);
+                dstList=new ArrayList<String>(photos.size() - 1);
+                List<String> list = new LinkedList<>();
                 for (int i = 0; i < photos.size() - 1; ++i) {
-                    list.add(compressHelper.thirdCompress(new File(photos.get(i))));
-                    countDownLatch.countDown();
+                    final int fi = i;
+                    new Thread(() -> {
+                        compressHelper = new CompressHelper(mContext);
+                        compressHelper.setWidthList(picWidths);
+                        compressHelper.setHeightList(picHeights);
+                        dstList.set(fi,compressHelper.thirdCompress(new File(photos.get(fi))));
+                        countDownLatch.countDown();
+                    }).start();
                 }
                 try {
                     countDownLatch.await();
-                    dstList = list;
-                    PublishActivity.this.runOnUiThread(() -> presenter.submit(picHeights, picWidths,dstList));
+                    PublishActivity.this.runOnUiThread(() -> presenter.submit(picHeights, picWidths, dstList));
                 } catch (InterruptedException e) {
-                    dstList = null;
-                    PublishActivity.this.runOnUiThread(this::closeLoadingDialog);
+                    e.printStackTrace();
                 }
             }).start();
         }
