@@ -2,17 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="@dimen/content_padding"
     android:orientation="vertical">
-
     <EditText
-        android:id="@+id/et_low"
-        android:inputType="number"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <EditText
-        android:id="@+id/et_high"
-        android:inputType="number"
+        android:inputType="text"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:id="@+id/et_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </LinearLayout>

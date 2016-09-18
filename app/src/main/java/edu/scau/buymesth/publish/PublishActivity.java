@@ -207,19 +207,21 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
             else if (mSelectableSeekBar.getSelectedPosition() == 1)
                 mPriceNumber.setText(rangePrice);
         });
-        final EditText editText = new EditText(mContext);
+        View view=getLayoutInflater().inflate(R.layout.dialog_input,null);
+        EditText editText= (EditText) view.findViewById(R.id.et_input);
+        editText.requestFocus();
         editText.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
-        priceInputDialog = new AlertDialog.Builder(mContext).setView(editText).setPositiveButton("确定", (dialog, which) -> {
+         priceInputDialog = new AlertDialog.Builder(mContext).setTitle("请输入价格").setView(view).setNegativeButton("取消",null).setPositiveButton("确定", (dialog, which) -> {
             price = editText.getText().toString();
             if (!price.equals("")) {
                 thePrice = "￥" + price;
             }
             mPriceNumber.setText(thePrice);
         }).create();
-        View view = getLayoutInflater().inflate(R.layout.dialog_price_range, null);
-        EditText etLow = (EditText) view.findViewById(R.id.et_low);
-        EditText etHigh = (EditText) view.findViewById(R.id.et_high);
-        priceRangeDialog = new AlertDialog.Builder(mContext).setView(view).setPositiveButton("确定", (dialog, which) -> {
+
+        priceRangeDialog = new AlertDialog.Builder(mContext).setTitle("请输入价格范围").setView(R.layout.dialog_price_range).setNegativeButton("取消",null).setPositiveButton("确定", (dialog, which) -> {
+            EditText etLow = (EditText)  findViewById(R.id.et_low);
+            EditText etHigh = (EditText)  findViewById(R.id.et_high);
             low = etLow.getText().toString();
             high = etHigh.getText().toString();
             if (!low.equals("") && !high.equals("") && Integer.valueOf(low) < Integer.valueOf(high))
@@ -279,15 +281,16 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                 break;
 
             case R.id.tv_add:
-                EditText et = new EditText(mContext);
-                AlertDialog dialog = new AlertDialog.Builder(mContext).setView(et).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                AlertDialog dialog = new AlertDialog.Builder(mContext).setTitle("请输入标签").setView(R.layout.dialog_input).setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        EditText editText = (EditText) findViewById(R.id.et_input);
+
                         TextView tv = (TextView) LayoutInflater.from(PublishActivity.this).inflate(R.layout.tv_tag, null);
                         ViewGroup.MarginLayoutParams marginLayoutParams = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                         marginLayoutParams.setMargins(4, 4, 4, 4);
                         tv.setLayoutParams(marginLayoutParams);
-                        tv.setText(et.getText());
+                        tv.setText(editText.getText());
                         flowlayout.addView(tv);
                         tagList.add(tv);
                         tv.setOnClickListener(v1 -> {

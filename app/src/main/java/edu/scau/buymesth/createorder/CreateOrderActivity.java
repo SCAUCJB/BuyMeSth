@@ -78,15 +78,18 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
         model.setRequest((Request) getIntent().getSerializableExtra(Constant.EXTRA_REQUEST));
         createOrderPresenter.setVM(this, model);
     }
+
     private Drawable clickerDrawable;
     private Drawable unclickerDrawable;
+
     @Override
     public void initView() {
-        findViewById(R.id.card_view).setOnClickListener(v->toast("i was clicked"));
-        clickerDrawable=getResources().getDrawable(R.drawable.rect_accent);
-        unclickerDrawable=getResources().getDrawable(R.drawable.rect_grey);
-        final EditText editText = new EditText(mContext);
-        tagInputDialog = new AlertDialog.Builder(mContext).setView(editText).setPositiveButton("确定", (dialog, which) -> {
+        findViewById(R.id.card_view).setOnClickListener(v -> toast("i was clicked"));
+        clickerDrawable = getResources().getDrawable(R.drawable.rect_accent);
+        unclickerDrawable = getResources().getDrawable(R.drawable.rect_grey);
+
+        tagInputDialog = new AlertDialog.Builder(mContext).setTitle("请输入标签").setView(R.layout.dialog_input).setNegativeButton("取消", null).setPositiveButton("确定", (dialog, which) -> {
+                    EditText editText = (EditText) findViewById(R.id.et_input);
                     String tag = editText.getText().toString();
                     TextView tvTag = (TextView) LayoutInflater.from(mContext).inflate(R.layout.tv_tag, null);
                     ViewGroup.MarginLayoutParams marginLayoutParams = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -99,6 +102,7 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
                     tvTag.setOnClickListener(
                             new View.OnClickListener() {
                                 boolean flag = false;
+
                                 @Override
                                 public void onClick(View v) {
                                     if (flag) {
@@ -111,14 +115,14 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
                                         flag = true;
                                     }
                                 }
+                            }
+                    );
+                    flTags.addView(tvTag);
                 }
-        );
-        flTags.addView(tvTag);
-    }
-    ).
-    create();
+        ).
+                create();
 
-}
+    }
 
     protected int getToolBarId() {
         return R.id.toolbar;
@@ -126,14 +130,14 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
 
     @Override
     protected void setListener() {
-        findViewById(R.id.ll_background).setOnClickListener(v->
+        findViewById(R.id.ll_background).setOnClickListener(v ->
         {
-            if(InputMethodHelper.isOpen(mContext))
-                InputMethodHelper.close(mContext,CreateOrderActivity.this);
+            if (InputMethodHelper.isOpen(mContext))
+                InputMethodHelper.close(mContext, CreateOrderActivity.this);
         });
         tvDeliverTime.setOnClickListener(v -> createOrderPresenter.onDeliverTimeClicked());
         tvAdd.setOnClickListener(v -> tagInputDialog.show());
-        btnSubmit.setOnClickListener(v->createOrderPresenter.onSubmitClicked());
+        btnSubmit.setOnClickListener(v -> createOrderPresenter.onSubmitClicked());
     }
 
     @Override
@@ -189,6 +193,7 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
             tv.setOnClickListener(
                     new View.OnClickListener() {
                         boolean flag = true;
+
                         @Override
                         public void onClick(View v) {
                             if (flag) {
@@ -241,13 +246,14 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
 
     @Override
     public User getSeller() {
-        return  BmobUser.getCurrentUser(User.class);
+        return BmobUser.getCurrentUser(User.class);
     }
 
     @Override
     public void exit() {
         finish();
     }
+
     @Override
     public void showLoadingDialog() {
         if (mDialog == null) {
@@ -264,6 +270,7 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
             mDialog.dismiss();
         }
     }
+
     @Override
     public void setPrice(String price) {
         mPriceTv.setText(price);

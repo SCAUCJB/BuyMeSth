@@ -115,6 +115,7 @@
         />
 
     <LinearLayout
+        android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_60"
         android:background="@drawable/background_item_base"
@@ -150,6 +151,7 @@
         android:paddingRight="@dimen/content_padding"
         />
     <LinearLayout
+        android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_60"
         android:background="@drawable/background_item_base"
@@ -186,6 +188,7 @@
         android:paddingRight="@dimen/content_padding"
         />
     <LinearLayout
+        android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_60"
         android:background="@drawable/background_item_base"

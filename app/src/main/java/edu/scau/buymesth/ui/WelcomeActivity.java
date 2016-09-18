@@ -9,6 +9,8 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.util.concurrent.TimeUnit;
+
 import base.BaseActivity;
 import butterknife.Bind;
 import cn.bmob.v3.BmobQuery;
@@ -18,7 +20,7 @@ import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.main.TabActivity;
 import rx.SingleSubscriber;
-import rx.android.schedulers.AndroidSchedulers;
+import rx.Subscription;
 import rx.schedulers.Schedulers;
 
 /**
@@ -28,6 +30,7 @@ public class WelcomeActivity extends BaseActivity {
     private volatile User bmobUser;
     @Bind(R.id.welcome_image)
     ImageView welcomeImage;
+    private Subscription mSubscription;
 
 
     @Override
@@ -75,7 +78,7 @@ public class WelcomeActivity extends BaseActivity {
     private void queryUser() {
         User user = BmobUser.getCurrentUser(User.class);
         BmobQuery<User> query = new BmobQuery<>();
-        query.getObjectObservable(User.class, user.getObjectId()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).toSingle().subscribe(new SingleSubscriber<User>() {
+        mSubscription = query.getObjectObservable(User.class, user.getObjectId()).timeout(2, TimeUnit.SECONDS).subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).toSingle().subscribe(new SingleSubscriber<User>() {
             @Override
             public void onSuccess(User user) {
                 storeToSharePreference(user);
@@ -83,7 +86,7 @@ public class WelcomeActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                finish();
+                jumpToNextActivity();
             }
         });
     }
@@ -120,6 +123,12 @@ public class WelcomeActivity extends BaseActivity {
         editor.apply();
 
         jumpToNextActivity();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (!mSubscription.isUnsubscribed()) mSubscription.unsubscribe();
+        super.onDestroy();
     }
 
     @Override

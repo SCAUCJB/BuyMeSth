@@ -5,6 +5,7 @@
     android:padding="@dimen/content_padding"
     android:orientation="vertical">
     <TextView
+        android:layout_gravity="center"
         android:text="请选择你的性别"
         style="@style/theName"
         android:layout_width="wrap_content"
