@@ -101,6 +101,17 @@
             android:theme="@style/AppTheme.SwipeBackLayout"/>
         <activity android:name=".user.setting.UserSettingActivity"
             android:theme="@style/AppTheme.SwipeBackLayout"/>
+
+        <!--/////process用来定义线程的名字-->
+        <service android:name=".chat.RequestService"
+            android:process=":remote"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.RESPOND_VIA_MESSAGE"/>
+            </intent-filter>
+
+        </service>
+
     </application>
 
 </manifest>

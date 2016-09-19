@@ -1,6 +1,7 @@
 package edu.scau.buymesth;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.squareup.leakcanary.LeakCanary;
 
@@ -9,6 +10,7 @@ import java.io.File;
 import java.io.FileReader;
 
 import cn.bmob.newim.BmobIM;
+import cn.bmob.v3.Bmob;
 import crush.CustomActivityOnCrash;
 import edu.scau.buymesth.chat.DemoMessageHandler;
 
@@ -30,6 +32,7 @@ public class App extends Application {
         //只有主进程运行的时候才需要初始化
         if (getApplicationInfo().packageName.equals(getMyProcessName())){
             //im初始化
+            Log.v("1111","2222");
             BmobIM.init(this);
             //注册消息接收器
             BmobIM.registerDefaultMessageHandler(new DemoMessageHandler(this));

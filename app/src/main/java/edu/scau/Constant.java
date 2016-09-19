@@ -25,5 +25,7 @@ public class Constant {
     public static final int DISK_CACHE_INDEX = 0;
     public static final int APP_VERSION=1;
 
+    public static final int START_SERVICE = 1;
+
     public static final String EXTRA_REQUEST = "intent.request";
 }

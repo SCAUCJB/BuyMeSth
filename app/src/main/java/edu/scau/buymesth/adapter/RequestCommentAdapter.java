@@ -23,8 +23,8 @@ public class RequestCommentAdapter extends BaseQuickAdapter<Comment> {
 
     @Override
     protected void convert(BaseViewHolder helper, Comment item) {
-        Glide.with(mContext).load(item.getAuthor().getAvatar()).placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into((ImageView) helper.getView(R.id.iv_comment_avatar));
-        helper.setText(R.id.tv_comment_name,item.getAuthor().getNickname())
+        Glide.with(mContext).load(item.getAuthor().getAvatar()).placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into((ImageView) helper.getView(R.id.iv_icon));
+        helper.setText(R.id.tv_name,item.getAuthor().getNickname())
                 .setText(R.id.tv_comment,item.getContent())
                 .setText(R.id.tv_comment_date,item.getCreatedAt());
     }

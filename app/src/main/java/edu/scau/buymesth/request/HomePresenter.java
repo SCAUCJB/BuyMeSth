@@ -9,6 +9,7 @@ import cn.bmob.v3.datatype.BmobQueryResult;
 import edu.scau.buymesth.data.bean.Request;
 import rx.Observable;
 import rx.Observer;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -23,11 +24,21 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
     public static final String FILTER_AUTHOR_IDS = "USERIDS";
     public static final String FILTER_FUZZY_SEARCH = "FUZZY";
     public static final String FILTER_FOLLOW_ONLY = "FOLLOW";
+    private Subscription mSubscription=null;
+
     /**
      * 初始化工作写在这里
      */
     @Override
     public void onStart() {
+
+    }
+
+    @Override
+    public void onDestroy() {
+        if(mSubscription!=null&&!mSubscription.isUnsubscribed())
+        mSubscription.unsubscribe();
+        super.onDestroy();
 
     }
 
@@ -160,7 +171,7 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
             requestObservable = mModel.getRxRequests(HomeModel.FROM_NETWORK);
         }
 
-        requestObservable.flatMap(new Func1<List<Request>, Observable<Request>>() {
+        mSubscription=requestObservable.flatMap(new Func1<List<Request>, Observable<Request>>() {
             @Override
             public Observable<Request> call(List<Request> requests) {
                 return Observable.from(requests);
@@ -235,7 +246,7 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
                         public void onNext(Request request) {
                             if (isAlive()) tempList.add(request);
                         }
-                    });;
+                    });
             return;
         }else {
             requestObservable = mModel.getRxRequests(HomeModel.FROM_NETWORK);
