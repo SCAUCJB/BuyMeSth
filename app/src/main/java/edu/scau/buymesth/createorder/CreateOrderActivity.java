@@ -87,9 +87,11 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
         findViewById(R.id.card_view).setOnClickListener(v -> toast("i was clicked"));
         clickerDrawable = getResources().getDrawable(R.drawable.rect_accent);
         unclickerDrawable = getResources().getDrawable(R.drawable.rect_grey);
+        View view = getLayoutInflater().inflate(R.layout.dialog_input, null);
+        EditText editText = (EditText) view.findViewById(R.id.et_input);
 
-        tagInputDialog = new AlertDialog.Builder(mContext).setTitle("请输入标签").setView(R.layout.dialog_input).setNegativeButton("取消", null).setPositiveButton("确定", (dialog, which) -> {
-                    EditText editText = (EditText) findViewById(R.id.et_input);
+        tagInputDialog = new AlertDialog.Builder(mContext).setTitle("请输入标签").setView(view).setNegativeButton("取消", null).setPositiveButton("确定", (dialog, which) -> {
+
                     String tag = editText.getText().toString();
                     TextView tvTag = (TextView) LayoutInflater.from(mContext).inflate(R.layout.tv_tag, null);
                     ViewGroup.MarginLayoutParams marginLayoutParams = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -120,7 +122,7 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
                     flTags.addView(tvTag);
                 }
         ).
-                create();
+      create();
 
     }
 

@@ -36,7 +36,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="@dimen/dp_10"
-            android:src="@mipmap/def_head"
+            android:src="@drawable/ic_favorite"
             android:layout_width="@dimen/dp_14"
             android:layout_height="@dimen/dp_14" />
         <TextView

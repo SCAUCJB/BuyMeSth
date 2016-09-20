@@ -35,7 +35,7 @@ import me.iwf.photopicker.PhotoPicker;
 /**
  * Created by ！ on 2016/8/29.
  */
-public class MomentPublishActivity extends BaseActivity{
+public class MomentPublishActivity extends BaseActivity {
 
     @Bind(R.id.rv_images)
     RecyclerView recyclerView;
@@ -49,6 +49,7 @@ public class MomentPublishActivity extends BaseActivity{
     MyPictureAdapter adapter;
     Request mRequest;
     boolean mCompressing = false;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_moment_publish;
@@ -77,22 +78,22 @@ public class MomentPublishActivity extends BaseActivity{
                         .setSelected(mUrlList)
                         .start(MomentPublishActivity.this, PhotoPicker.REQUEST_CODE);
             } else {
-                PhotoActivity.navigate(MomentPublishActivity.this,recyclerView, mUrlList,position);
+                PhotoActivity.navigate(MomentPublishActivity.this, recyclerView, mUrlList, position);
             }
         });
 
         tvRequest.setOnClickListener(v -> {
-            Intent intent = new Intent(MomentPublishActivity.this,SelectActivity.class);
-            intent.putExtra("selectRequest",true);
-            startActivityForResult(intent,0);
+            Intent intent = new Intent(MomentPublishActivity.this, SelectActivity.class);
+            intent.putExtra("selectRequest", true);
+            startActivityForResult(intent, 0);
         });
 
         momentSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //upload images
-                if(mUrlList.size()>0) {
-                    if(mCompressing){
+                if (mUrlList.size() > 0) {
+                    if (mCompressing) {
                         toast("压缩中");
                         return;
                     }
@@ -102,21 +103,21 @@ public class MomentPublishActivity extends BaseActivity{
                     BmobFile.uploadBatch(sendList, new UploadBatchListener() {
                         @Override
                         public void onSuccess(List<BmobFile> files, List<String> urls) {
-                            if(urls.size()>= mUrlList.size()){
+                            if (urls.size() >= mUrlList.size()) {
                                 Moment moment = new Moment();
                                 moment.setUser(BmobUser.getCurrentUser(User.class));
                                 moment.setContent(momentContent.getText().toString());
                                 mUrlList.clear();
                                 mUrlList.addAll(urls);
                                 moment.setImages(mUrlList);
-                                if(mRequest!=null)moment.setRequest(mRequest);
+                                if (mRequest != null) moment.setRequest(mRequest);
                                 moment.save(new SaveListener<String>() {
                                     @Override
                                     public void done(String s, BmobException e) {
-                                        if(e==null){
+                                        if (e == null) {
                                             //succeed
                                             finish();
-                                        }else {
+                                        } else {
                                             toast(e.toString());
                                         }
                                     }
@@ -130,9 +131,9 @@ public class MomentPublishActivity extends BaseActivity{
                             //2、curPercent--表示当前上传文件的进度值（百分比）
                             //3、total--表示总的上传文件数
                             //4、totalPercent--表示总的上传进度（百分比）
-                            View view = recyclerView.getChildAt(curIndex-1);
+                            View view = recyclerView.getChildAt(curIndex - 1);
                             ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress_upload);
-                            if(progressBar!=null){
+                            if (progressBar != null) {
                                 progressBar.setVisibility(View.VISIBLE);
                                 progressBar.setMax(100);
                                 progressBar.setProgress(curPercent);
@@ -144,19 +145,18 @@ public class MomentPublishActivity extends BaseActivity{
                             toast(s);
                         }
                     });
-                }
-                else {
+                } else {
                     Moment moment = new Moment();
                     moment.setUser(BmobUser.getCurrentUser(User.class));
                     moment.setContent(momentContent.getText().toString());
-                    if(mRequest!=null)moment.setRequest(mRequest);
+                    if (mRequest != null) moment.setRequest(mRequest);
                     moment.save(new SaveListener<String>() {
                         @Override
                         public void done(String s, BmobException e) {
-                            if(e==null){
+                            if (e == null) {
                                 //succeed
                                 finish();
-                            }else {
+                            } else {
                                 toast(e.toString());
                             }
                         }
@@ -165,6 +165,7 @@ public class MomentPublishActivity extends BaseActivity{
             }
         });
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -175,13 +176,12 @@ public class MomentPublishActivity extends BaseActivity{
                 mUrlList.clear();
                 mUrlList.addAll(photos);
                 adapter.setList(mUrlList);
-                new Thread(() -> {
-                    compress();
-                }).start();
+                new Thread(this::compress).start();
             }
-        } if(resultCode == RESULT_OK && requestCode == 0){
+        }
+        if (resultCode == RESULT_OK && requestCode == 0) {
             String id = data.getStringExtra("requestId");
-            if(id==null)return;
+            if (id == null) return;
             BmobQuery<Request> bmobQuery = new BmobQuery<>();
             bmobQuery.getObject(id, new QueryListener<Request>() {
                 @Override
@@ -199,27 +199,27 @@ public class MomentPublishActivity extends BaseActivity{
     }
 
     private void compress() {
-        new Thread(() -> {
-            mCompressing = true;
-            CompressHelper compressHelper = new CompressHelper(mContext);
-            CountDownLatch countDownLatch = new CountDownLatch(mUrlList.size());
-            for (int i = 0; i < mUrlList.size(); i++) {
-                final int finalI = i;
-                new Thread(()->{
-                    compressHelper.setFilename("cc_"+finalI);
-                    mUrlList.set(finalI,compressHelper.thirdCompress(new File(mUrlList.get(finalI))));
-                    countDownLatch.countDown();
-                }).start();
-            }
-            try {
-                countDownLatch.await();
-                runOnUiThread(() -> {toast("压缩完成");
-                    adapter.setList(mUrlList);});
-                mCompressing = false;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
+        mCompressing = true;
+        CompressHelper compressHelper = new CompressHelper(mContext);
+        CountDownLatch countDownLatch = new CountDownLatch(mUrlList.size());
+        for (int i = 0; i < mUrlList.size(); i++) {
+            final int finalI = i;
+            new Thread(() -> {
+                compressHelper.setFilename("cc_" + finalI);
+                mUrlList.set(finalI, compressHelper.thirdCompress(new File(mUrlList.get(finalI))));
+                countDownLatch.countDown();
+            }).start();
+        }
+        try {
+            countDownLatch.await();
+            runOnUiThread(() -> {
+                toast("压缩完成");
+                adapter.setList(mUrlList);
+            });
+            mCompressing = false;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

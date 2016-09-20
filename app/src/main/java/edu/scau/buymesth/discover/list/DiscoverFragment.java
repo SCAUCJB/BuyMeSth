@@ -28,9 +28,7 @@ import in.srain.cube.views.ptr.PtrHandler;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
 import ui.layout.NineGridLayout;
 
-/**
- * Created by Jammy on 2016/8/1.
- */
+
 public class DiscoverFragment extends Fragment implements DiscoverContract.View{
     private RecyclerView mRecyclerView;
     private DiscoverAdapter mDiscoverAdapter;

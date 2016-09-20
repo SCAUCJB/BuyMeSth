@@ -27,26 +27,41 @@ import rx.schedulers.Schedulers;
  */
 
 public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.Model, RequestDetailContract.View> {
+    public boolean mNeedQueryRequest = false;
+
     @Override
     public void onStart() {
-        initRequest();
-//
-//        initUserInfo();
-//        initCommentBar();
-//        initContent();
-//        initPrice();
-//        initComment();
-//        initTags();
-//        initFollow();
-//        initCollect();
+        if (mNeedQueryRequest) {
+            try {
+                initRequestUgly();
+            } catch (RuntimeException e) {
+                mView.toast("请打开网络");
+            }
+        } else {
+            try {
+                initUserInfo();
+                initCommentBar();
+                initContent();
+                initPrice();
+                initComment();
+                initTags();
+                initFollow();
+                initCollect();
+            } catch (RuntimeException e) {
+                mView.toast("请打开网络");
+            }
+        }
     }
 
-    private void initRequest() {
+    private void initRequestUgly() {
         BmobQuery<Request> bmobQuery = new BmobQuery<>();
         bmobQuery.include("user");
+
+
         bmobQuery.getObject(mModel.getRequest().getObjectId(), new QueryListener<Request>() {
             @Override
             public void done(Request request, BmobException e) {
+                if (e != null) return;
                 mModel.setRequest(request);
 
                 initUserInfo();
@@ -61,17 +76,17 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
         });
     }
 
-    void collect(){
+    void collect() {
         AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
         //第一个参数是上下文对象，第二个参数是云端逻辑的方法名称，第三个参数是上传到云端逻辑的参数列表（JSONObject cloudCodeParams），第四个参数是回调类
         JSONObject params = new JSONObject();
         try {
-            params.put("userid",BmobUser.getCurrentUser().getObjectId());
-            params.put("requestid",mModel.getRequest().getObjectId());
+            params.put("userid", BmobUser.getCurrentUser().getObjectId());
+            params.put("requestid", mModel.getRequest().getObjectId());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        ace.callEndpoint("collect",params , new CloudCodeListener() {
+        ace.callEndpoint("collect", params, new CloudCodeListener() {
             @Override
             public void done(Object o, BmobException e) {
                 initCollect();
@@ -79,40 +94,42 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
         });
     }
 
-      void initCollect(){
+    void initCollect() {
         BmobQuery<Collect> bmobQuery = new BmobQuery<>();
-        bmobQuery.addWhereEqualTo("user",BmobUser.getCurrentUser());
-        bmobQuery.addWhereEqualTo("request",mModel.getRequest());
+        bmobQuery.addWhereEqualTo("user", BmobUser.getCurrentUser());
+        bmobQuery.addWhereEqualTo("request", mModel.getRequest());
         bmobQuery.findObjects(new FindListener<Collect>() {
             @Override
             public void done(List<Collect> list, BmobException e) {
-                if(list!=null&&list.size()>0){
+                if (e != null) return;
+                if (list != null && list.size() > 0) {
                     //collected
                     mView.setCollect(true);
-                }else {
+                } else {
                     mView.setCollect(false);
                 }
             }
         });
     }
 
-      void follow(){
+    void follow() {
         AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
         //第一个参数是上下文对象，第二个参数是云端逻辑的方法名称，第三个参数是上传到云端逻辑的参数列表（JSONObject cloudCodeParams），第四个参数是回调类
         JSONObject params = new JSONObject();
         try {
-            params.put("fromUser",BmobUser.getCurrentUser().getObjectId());
-            params.put("toUser",mModel.getRequest().getUser().getObjectId());
+            params.put("fromUser", BmobUser.getCurrentUser().getObjectId());
+            params.put("toUser", mModel.getRequest().getUser().getObjectId());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        ace.callEndpoint("follow",params , new CloudCodeListener() {
+        ace.callEndpoint("follow", params, new CloudCodeListener() {
             @Override
             public void done(Object o, BmobException e) {
-                if(o!=null){
-                    if(((String)o).equals("true")){
+                if (e != null) return;
+                if (o != null) {
+                    if (((String) o).equals("true")) {
                         mView.setFollow(true);
-                    }else {
+                    } else {
                         mView.setFollow(false);
                     }
                 }
@@ -123,14 +140,15 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
     private void initFollow() {
         BmobQuery<Follow> bmobQuery = new BmobQuery<>();
         bmobQuery.addWhereEqualTo("fromUser", BmobUser.getCurrentUser(User.class));
-        bmobQuery.addWhereEqualTo("toUser",mModel.getRequest().getUser());
+        bmobQuery.addWhereEqualTo("toUser", mModel.getRequest().getUser());
         bmobQuery.findObjects(new FindListener<Follow>() {
             @Override
             public void done(List<Follow> list, BmobException e) {
-                if(list!=null&&list.size()>0){
+                if (e != null) return;
+                if (list != null && list.size() > 0) {
                     //followed
                     mView.setFollow(true);
-                }else {
+                } else {
                     mView.setFollow(false);
                 }
             }
@@ -138,12 +156,12 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
     }
 
     private void initPrice() {
-        Integer high=mModel.getRequest().getMaxPrice();
-        Integer low=mModel.getRequest().getMinPrice();
-        if(low!=null){
-            mView.setPrice("期望价格：￥"+low+"~￥"+high);
-        }else{
-            mView.setPrice("期望价格：￥"+high);
+        Integer high = mModel.getRequest().getMaxPrice();
+        Integer low = mModel.getRequest().getMinPrice();
+        if (low != null) {
+            mView.setPrice("期望价格：￥" + low + "~￥" + high);
+        } else {
+            mView.setPrice("期望价格：￥" + high);
         }
     }
 
@@ -171,13 +189,13 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
         mView.setTime(request.getCreatedAt());
 
         if (request.getUrls() != null) {
-            mView.setUpViewPager(request.getPicHeights(),request.getPicWidths(),request.getUrls());
+            mView.setUpViewPager(request.getPicHeights(), request.getPicWidths(), request.getUrls());
         } else {
             mView.hideViewPager();
         }
     }
 
-      void initComment() {
+    void initComment() {
         mModel.getRxComment(mModel.getRequest().getObjectId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<List<Comment>>() {
@@ -210,4 +228,5 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
     void onResume() {
         initComment();
     }
+
 }

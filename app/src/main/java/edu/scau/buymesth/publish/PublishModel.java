@@ -20,12 +20,13 @@ import rx.schedulers.Schedulers;
 public class PublishModel implements  PublishContract.Model {
     Request request ;
     @Override
-    public void submit( List<String> picHeights,List<String> picWidths,Subscriber<String> subscriber, List<String> list) {
-         Observable.create(new Observable.OnSubscribe<String>() {
+    public void submit( List<String> picHeights,List<String> picWidths,Subscriber<Integer> subscriber, List<String> list) {
+         Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
-            public void call(Subscriber<? super String> subscriber) {
-
-                if (list != null && !list.isEmpty()) {
+            public void call(Subscriber<? super Integer> subscriber) {
+                //排除加号图片的URL
+                if (list .size()>1) {
+                    list.remove(list.size()-1);
                     String[] fileList = new String[list.size()];
                     list.toArray(fileList);
 
@@ -52,8 +53,12 @@ public class PublishModel implements  PublishContract.Model {
                         }
 
                         @Override
-                        public void onProgress(int i, int i1, int i2, int i3) {
-
+                        public void onProgress(int curIndex, int curPercent, int total, int totalPercent) {
+                            //1、curIndex--表示当前第几个文件正在上传
+                            //2、curPercent--表示当前上传文件的进度值（百分比）
+                            //3、total--表示总的上传文件数
+                            //4、totalPercent--表示总的上传进度（百分比）
+                            subscriber.onNext(curPercent);
                         }
 
                         @Override

@@ -50,6 +50,8 @@ public interface RequestDetailContract {
          void setFollow(boolean b);
 
          void setCollect(boolean b);
+
+         void toast(String msg);
      }
     interface Model{
         void setRequest(Request request);

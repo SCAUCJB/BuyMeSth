@@ -5,8 +5,6 @@ import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,7 +22,6 @@ import cn.bmob.v3.listener.UpdateListener;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.data.bean.MomentsLike;
-import edu.scau.buymesth.data.bean.User;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -139,7 +136,7 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
                 });
     }
 
-    public void like(View v, Moment item){
+      void like(View v, Moment item){
         AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
         //第一个参数是上下文对象，第二个参数是云端逻辑的方法名称，第三个参数是上传到云端逻辑的参数列表（JSONObject cloudCodeParams），第四个参数是回调类
         JSONObject params = new JSONObject();

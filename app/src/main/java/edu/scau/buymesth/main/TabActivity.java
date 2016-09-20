@@ -2,6 +2,7 @@ package edu.scau.buymesth.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -9,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -174,13 +176,20 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
 
         viewPager.setOnPageChangeListener(this);
     }
-
+    private boolean mIsExit;
+    private Handler handler=new Handler();
     @Override
     public void onBackPressed() {
         if(fab.isOpened()){
             fab.close(true);
         }else {
-            super.onBackPressed();
+            if (mIsExit) {
+                this.finish();
+            } else {
+                Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
+                mIsExit = true;
+                handler.postDelayed(() -> mIsExit = false, 2000);
+            }
 
         }
     }

@@ -50,7 +50,7 @@ public class SettingInputFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_setting_input,container,false);
-        mInputEt= (EditText) view.findViewById(R.id.et_input);
+        mInputEt= (EditText) view.findViewById(R.id.et_input_setting);
         type=getArguments().getByte("type", (byte) 127);
         ((UserSettingActivity)getActivity()).mSubmitBtn.setOnClickListener(v-> {
             if(type==(byte)127) return;

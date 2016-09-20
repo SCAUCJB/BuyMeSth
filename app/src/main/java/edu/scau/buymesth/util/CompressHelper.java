@@ -21,14 +21,17 @@ import java.util.List;
  */
 
 public class CompressHelper {
-    private static final String TAG ="CompressHelper" ;
-    private static final String CACHE_NAME ="compress_disk_cache" ;
-    private String filename=null;
+    private static final String TAG = "CompressHelper";
+    private static final String CACHE_NAME = "compress_disk_cache";
+    private String filename = null;
     private File mCacheDir;
-    public CompressHelper(Context context){
-        mCacheDir=getPhotoCacheDir(context,CACHE_NAME);
+
+    public CompressHelper(Context context) {
+        cleanCache();
+        mCacheDir = getPhotoCacheDir(context, CACHE_NAME);
     }
-    private  File getPhotoCacheDir(Context context, String cacheName) {
+
+    private File getPhotoCacheDir(Context context, String cacheName) {
         File cacheDir = context.getCacheDir();
         if (cacheDir != null) {
             File result = new File(cacheDir, cacheName);
@@ -43,25 +46,27 @@ public class CompressHelper {
         }
         return null;
     }
+
     public void setFilename(String filename) {
         this.filename = filename;
     }
-    public boolean cleanCache(Context context){
-        File cacheDir = context.getCacheDir();
-        if (cacheDir != null) {
-            File result = new File(cacheDir, CACHE_NAME);
-            if (!result.mkdirs() && (!result.exists() || !result.isDirectory())) {
-                // File wasn't able to create a directory, or the result exists but not a directory
-                return false;
+
+    public boolean cleanCache() {
+        if (mCacheDir != null) {
+            File result = new File(mCacheDir, CACHE_NAME);
+            if (result.exists() && result.isDirectory()) {
+                for (File file : result.listFiles())
+                    file.delete();
+                return true;
             }
-            return result.delete();
         }
-        return  false;
+        return false;
     }
+
     public String thirdCompress(@NonNull File file) {
         String thumb = mCacheDir.getAbsolutePath() + "/" + System.currentTimeMillis();
 
-        thumb = filename == null || filename.isEmpty() ? thumb : thumb+filename;
+        thumb = filename == null || filename.isEmpty() ? thumb : thumb + filename;
 
         double size;
         String filePath = file.getAbsolutePath();
@@ -126,6 +131,7 @@ public class CompressHelper {
 
         return compress(filePath, thumb, thumbW, thumbH, angle, (long) size);
     }
+
     private Bitmap compress(String imagePath, int width, int height) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -161,14 +167,18 @@ public class CompressHelper {
 
         return BitmapFactory.decodeFile(imagePath, options);
     }
-    List<String>picWidth=new LinkedList<>();
-    List<String>picHeight=new LinkedList<>();
-    public void setWidthList(List<String> picWidth){
-        this.picWidth=picWidth;
+
+    List<String> picWidth = new LinkedList<>();
+    List<String> picHeight = new LinkedList<>();
+
+    public void setWidthList(List<String> picWidth) {
+        this.picWidth = picWidth;
     }
-    public void setHeightList(List<String> picHeight){
-        this.picHeight=picHeight;
+
+    public void setHeightList(List<String> picHeight) {
+        this.picHeight = picHeight;
     }
+
     private String compress(String largeImagePath, String thumbFilePath, int width, int height, int angle, long size) {
         Bitmap thbBitmap = compress(largeImagePath, width, height);
 
@@ -177,6 +187,7 @@ public class CompressHelper {
         picWidth.add(String.valueOf(thbBitmap.getWidth()));
         return saveImage(thumbFilePath, thbBitmap, size);
     }
+
     private int getImageSpinAngle(String path) {
         int degree = 0;
         try {
@@ -198,6 +209,7 @@ public class CompressHelper {
         }
         return degree;
     }
+
     public int[] getImageSize(String imagePath) {
         int[] res = new int[2];
 
@@ -211,6 +223,7 @@ public class CompressHelper {
 
         return res;
     }
+
     private static Bitmap rotatingImage(int angle, Bitmap bitmap) {
         //rotate image
         Matrix matrix = new Matrix();
@@ -219,6 +232,7 @@ public class CompressHelper {
         //create a new image
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
+
     private String saveImage(String filePath, Bitmap bitmap, long size) {
 
 
@@ -229,13 +243,15 @@ public class CompressHelper {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         int options = 100;
         bitmap.compress(Bitmap.CompressFormat.JPEG, options, stream);
-
-        while (stream.toByteArray().length / 1024 > size && options > 6) {
-            stream.reset();
-            options -= 6;
-            bitmap.compress(Bitmap.CompressFormat.JPEG, options, stream);
+        try {
+            while (stream.toByteArray().length / 1024 > size && options > 6) {
+                stream.reset();
+                options -= 6;
+                bitmap.compress(Bitmap.CompressFormat.JPEG, options, stream);
+            }
+        } catch (OutOfMemoryError e) {
+            Log.e("compress", "picture is too big");
         }
-
         try {
             FileOutputStream fos = new FileOutputStream(filePath);
             fos.write(stream.toByteArray());

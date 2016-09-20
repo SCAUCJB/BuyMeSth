@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -53,7 +54,7 @@ public class UserSettingFragment extends BaseFragment {
     private TextView mGenderTv;
     private ProgressDialog mDialog;
     private SharedPreferences mUserInfoSp;
-    private GenderDialogFragment dialog;
+    private GenderDialogFragment mGenderDialogFragment;
 
     interface OnItemClickedListener {
         void onSignatureClicked();
@@ -88,7 +89,7 @@ public class UserSettingFragment extends BaseFragment {
         mGender = view.findViewById(R.id.rl_gender);
         mGenderTv = (TextView) view.findViewById(R.id.tv_gender);
         mResidence = view.findViewById(R.id.rl_residence);
-        mResidenceTv =(TextView) view.findViewById(R.id.tv_residence);
+        mResidenceTv = (TextView) view.findViewById(R.id.tv_residence);
         mSignature = view.findViewById(R.id.rl_signature);
         mSignatureTv = (TextView) view.findViewById(R.id.tv_signature);
 
@@ -110,7 +111,7 @@ public class UserSettingFragment extends BaseFragment {
         if (!signature.equals("")) {
             mSignatureTv.setText(signature);
         }
-        if(!residence.equals("")){
+        if (!residence.equals("")) {
             mResidenceTv.setText(residence);
         }
 
@@ -137,7 +138,11 @@ public class UserSettingFragment extends BaseFragment {
         new Thread(() -> {
             CompressHelper compressHelper = new CompressHelper(getContext());
             String filepath = compressHelper.thirdCompress(new File(photos.get(0)));
-            submit(filepath);
+            try {
+                submit(filepath);
+            } catch (Exception e) {
+                getActivity().runOnUiThread(() -> Toast.makeText(getActivity(), "上传失败", Toast.LENGTH_SHORT).show());
+            }
         }).start();
     }
 
@@ -164,7 +169,12 @@ public class UserSettingFragment extends BaseFragment {
             }
 
             @Override
-            public void onProgress(int i, int i1, int i2, int i3) {
+            public void onProgress(int curIndex, int curPercent, int total, int totalPercent) {
+                //1、curIndex--表示当前第几个文件正在上传
+                //2、curPercent--表示当前上传文件的进度值（百分比）
+                //3、total--表示总的上传文件数
+                //4、totalPercent--表示总的上传进度（百分比）
+                mDialog.setProgress(curPercent);
 
             }
 
@@ -180,7 +190,8 @@ public class UserSettingFragment extends BaseFragment {
         if (mDialog == null) {
             mDialog = new ProgressDialog(getContext());
             mDialog.setCancelable(false);
-            mDialog.setMessage("上传中");
+            mDialog.setMax(100);
+            mDialog.setMessage("请稍等");
         }
         mDialog.show();
     }
@@ -238,14 +249,14 @@ public class UserSettingFragment extends BaseFragment {
     }
 
     public void showGenderPickDialog() {
-        if (dialog == null) {
-            dialog = new GenderDialogFragment();
-            dialog.setOnGenderPickListener(gender -> {
+        if (mGenderDialogFragment == null) {
+            mGenderDialogFragment = new GenderDialogFragment();
+            mGenderDialogFragment.setOnGenderPickListener(gender -> {
                         mGenderTv.setText(gender);
                         getActivity().getSharedPreferences(Constant.SHARE_PREFERENCE_USER_INFO, MODE_PRIVATE).edit().putString(Constant.KEY_GENDA, gender).apply();
                     }
             );
         }
-        dialog.show(getFragmentManager(), "GenderPick");
+        mGenderDialogFragment.show(getFragmentManager(), "GenderPick");
     }
 }

@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ScrollView;
@@ -157,14 +156,14 @@ public class SelectableSeekBar extends View {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mIsUp = false;
-                mSlipperPaint.setColor(Color.WHITE);
+                mSlipperPaint.setColor(Color.YELLOW);
                 mSlipperRadius+=8;
                 parent.requestDisallowInterceptTouchEvent(true);
                 mCurrentX = event.getX();
                 return true;
             case MotionEvent.ACTION_MOVE:
                 mIsUp=false;
-                mSlipperPaint.setColor(Color.WHITE);
+                mSlipperPaint.setColor(Color.YELLOW);
                 mCurrentX = event.getX();
                 parent.requestDisallowInterceptTouchEvent(true);
                 invalidate();

@@ -8,6 +8,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 
 import base.BaseActivity;
 import base.util.SpaceItemDecoration;
@@ -38,6 +40,8 @@ import edu.scau.buymesth.util.CompressHelper;
 import gallery.PhotoActivity;
 import me.iwf.photopicker.PhotoPicker;
 import ui.widget.SelectableSeekBar;
+
+import static java.util.concurrent.Executors.newFixedThreadPool;
 
 /**
  * Created by Jammy on 2016/8/11.
@@ -80,7 +84,9 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     private String thePrice = "￥0";
 
     ItemTouchHelper helper;
-
+    private AlertDialog mTagInputDialog = null;
+    private volatile  List<String> mUrlList = new ArrayList<>(9);
+    private volatile boolean mCompressing;
 
     @Override
     protected int getLayoutId() {
@@ -95,7 +101,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
-        mRecyclerView.setHasFixedSize(true);
+    //    mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setNestedScrollingEnabled(false);
         helper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
             @Override
@@ -110,7 +116,10 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
 
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-
+                if (mCompressing) {
+                    toast("正在压缩图片");
+                    return false;
+                }
                 int fromPosition = viewHolder.getAdapterPosition();
                 int toPosition = target.getAdapterPosition();
                 if (adapter.getItemId(fromPosition) == 1) return false;
@@ -162,42 +171,52 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         if (resultCode == RESULT_OK && requestCode == PhotoPicker.REQUEST_CODE) {
             if (data != null) {
                 ArrayList<String> photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
-                adapter.setList(photos);
+                mUrlList.clear();
+                mUrlList.addAll(photos);
+               adapter.setList(mUrlList);
+                new Thread(this::compress).start();
             }
         }
     }
 
-    List<String> dstList;
-
-    CompressHelper compressHelper = null;
-    List<String> picWidths = new LinkedList<>();
-    List<String> picHeights = new LinkedList<>();
-
-    public void compressAndSubmit(List<String> photos) {
-        if (photos.size() > 1) {
-            new Thread(() -> {
-                CountDownLatch countDownLatch = new CountDownLatch(photos.size() - 1);
-                dstList=new ArrayList<String>(photos.size() - 1);
-                List<String> list = new LinkedList<>();
-                for (int i = 0; i < photos.size() - 1; ++i) {
-                    final int fi = i;
-                    new Thread(() -> {
-                        compressHelper = new CompressHelper(mContext);
-                        compressHelper.setWidthList(picWidths);
-                        compressHelper.setHeightList(picHeights);
-                        dstList.set(fi,compressHelper.thirdCompress(new File(photos.get(fi))));
-                        countDownLatch.countDown();
-                    }).start();
-                }
-                try {
-                    countDownLatch.await();
-                    PublishActivity.this.runOnUiThread(() -> presenter.submit(picHeights, picWidths, dstList));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }).start();
+    private void compress() {
+        mCompressing = true;
+        mUrlList=Collections.synchronizedList(mUrlList);
+        CompressHelper compressHelper = new CompressHelper(mContext);
+        //判断是否包含空
+        int count=mUrlList.size()==9?mUrlList.size():mUrlList.size()-1;
+        CountDownLatch countDownLatch = new CountDownLatch(count);
+        for (int i = 0; i <count ; i++) {
+            final  int finalI = i;
+            threadPoolExecutor.execute(() -> {
+                compressHelper.setFilename("cc_" + finalI);
+                compressHelper.setWidthList(picWidths);
+                compressHelper.setHeightList(picHeights);
+                mUrlList.set(finalI, compressHelper.thirdCompress(new File(mUrlList.get(finalI))));
+                Log.d("zhx","urlList="+mUrlList.get(finalI));
+                countDownLatch.countDown();
+            });
+        }
+        try {
+            countDownLatch.await();
+            runOnUiThread(() -> {
+                toast("压缩完成");
+                //因为会自动加上一个NULL，这里要把之前被加上的null去除。。。
+                if(mUrlList.size()!=9)
+                  mUrlList.remove(mUrlList.size() - 1);
+                adapter.setList(mUrlList);
+            });
+            mCompressing = false;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
+
+
+    List<String> picWidths = new LinkedList<>();
+    List<String> picHeights = new LinkedList<>();
+    ExecutorService threadPoolExecutor = newFixedThreadPool(3);
+
 
     private void initPriceSelect() {
         mSelectableSeekBar.setParent(parent);
@@ -207,23 +226,23 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
             else if (mSelectableSeekBar.getSelectedPosition() == 1)
                 mPriceNumber.setText(rangePrice);
         });
-        View view=getLayoutInflater().inflate(R.layout.dialog_input,null);
-        EditText editText= (EditText) view.findViewById(R.id.et_input);
-        editText.requestFocus();
-        editText.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
-         priceInputDialog = new AlertDialog.Builder(mContext).setTitle("请输入价格").setView(view).setNegativeButton("取消",null).setPositiveButton("确定", (dialog, which) -> {
-            price = editText.getText().toString();
+        View priceInputView = getLayoutInflater().inflate(R.layout.dialog_input, null);
+        EditText priceInputEt = (EditText) priceInputView.findViewById(R.id.et_input);
+        //     editText.requestFocus();
+        priceInputEt.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+        priceInputDialog = new AlertDialog.Builder(mContext).setTitle("请输入价格").setView(priceInputView).setNegativeButton("取消", null).setPositiveButton("确定", (dialog, which) -> {
+            price = priceInputEt.getText().toString();
             if (!price.equals("")) {
                 thePrice = "￥" + price;
             }
             mPriceNumber.setText(thePrice);
         }).create();
-
-        priceRangeDialog = new AlertDialog.Builder(mContext).setTitle("请输入价格范围").setView(R.layout.dialog_price_range).setNegativeButton("取消",null).setPositiveButton("确定", (dialog, which) -> {
-            EditText etLow = (EditText)  findViewById(R.id.et_low);
-            EditText etHigh = (EditText)  findViewById(R.id.et_high);
-            low = etLow.getText().toString();
-            high = etHigh.getText().toString();
+        View priceRangeView=getLayoutInflater().inflate(R.layout.dialog_price_range,null);
+        EditText priceLowEt = (EditText)priceRangeView.findViewById(R.id.et_low);
+        EditText priceHighEt = (EditText) priceRangeView.findViewById(R.id.et_high);
+        priceRangeDialog = new AlertDialog.Builder(mContext).setTitle("请输入价格范围").setView(priceRangeView).setNegativeButton("取消", null).setPositiveButton("确定", (dialog, which) -> {
+            low = priceLowEt.getText().toString();
+            high = priceHighEt.getText().toString();
             if (!low.equals("") && !high.equals("") && Integer.valueOf(low) < Integer.valueOf(high))
                 rangePrice = "￥" + low + "~￥" + high;
             mPriceNumber.setText(rangePrice);
@@ -246,6 +265,10 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_submit:
+                if (mCompressing) {
+                    toast("还在压缩图片，请稍等");
+                    return;
+                }
                 Request request = new Request();
                 request.setTitle(etTitle.getText().toString());
                 request.setContent(etDetail.getText().toString());
@@ -274,42 +297,45 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                 }
                 request.setTags(tag);
                 presenter.setRequest(request);
-                list = adapter.getData();
                 showLoadingDialog();
-                //压缩图片
-                compressAndSubmit(list);
+                presenter.submit(picHeights, picWidths, mUrlList);
                 break;
 
             case R.id.tv_add:
-                AlertDialog dialog = new AlertDialog.Builder(mContext).setTitle("请输入标签").setView(R.layout.dialog_input).setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        EditText editText = (EditText) findViewById(R.id.et_input);
-
-                        TextView tv = (TextView) LayoutInflater.from(PublishActivity.this).inflate(R.layout.tv_tag, null);
-                        ViewGroup.MarginLayoutParams marginLayoutParams = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                        marginLayoutParams.setMargins(4, 4, 4, 4);
-                        tv.setLayoutParams(marginLayoutParams);
-                        tv.setText(editText.getText());
-                        flowlayout.addView(tv);
-                        tagList.add(tv);
-                        tv.setOnClickListener(v1 -> {
-                            AlertDialog dialog1 = new AlertDialog.Builder(mContext).setTitle("是否删除").setPositiveButton("确定", (dialog2, which1) -> {
-                                flowlayout.removeView(tv);
-                                tagList.remove(tv);
-                            }).create();
-                            dialog1.show();
-                        });
-                    }
-                }).create();
-                dialog.show();
+                if (mTagInputDialog == null)
+                    initTagInputDialog();
+                mTagInputDialog.show();
                 break;
         }
     }
 
+    private void initTagInputDialog() {
+        View view = getLayoutInflater().inflate(R.layout.dialog_input, null);
+        EditText editText = (EditText) view.findViewById(R.id.et_input);
+        mTagInputDialog = new AlertDialog.Builder(mContext).setTitle("请输入标签").setView(view).setNegativeButton("取消",null).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (editText.getText() == null) return;
+                TextView tv = (TextView) LayoutInflater.from(PublishActivity.this).inflate(R.layout.tv_tag, null);
+                ViewGroup.MarginLayoutParams marginLayoutParams = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                marginLayoutParams.setMargins(4, 4, 4, 4);
+                tv.setLayoutParams(marginLayoutParams);
+                tv.setText(editText.getText());
+                flowlayout.addView(tv);
+                tagList.add(tv);
+                tv.setOnClickListener(v1 -> {
+                    AlertDialog dialog1 = new AlertDialog.Builder(mContext).setTitle("是否删除").setPositiveButton("确定", (dialog2, which1) -> {
+                        flowlayout.removeView(tv);
+                        tagList.remove(tv);
+                    }).create();
+                    dialog1.show();
+                });
+            }
+        }).create();
+    }
+
     @Override
     public void onSubmitFinish() {
-        compressHelper.cleanCache(mContext);
         closeLoadingDialog();
         this.finish();
     }
@@ -325,7 +351,9 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         if (mDialog == null) {
             mDialog = new ProgressDialog(mContext);
             mDialog.setCancelable(false);
-            mDialog.setMessage("上传中");
+            mDialog.setMessage("请稍等");
+            mDialog.setMax(100);
+            mDialog.setProgress(0);
         }
         mDialog.show();
     }
@@ -334,6 +362,14 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     public void closeLoadingDialog() {
         if (mDialog != null) {
             mDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void setProgress(Integer progress) {
+        if (mDialog != null) {
+            mDialog.setProgress(progress);
+            Log.d("zhx", "progress=" + progress);
         }
     }
 
@@ -348,6 +384,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         super.onDestroy();
         presenter.onDestroy();
         presenter = null;
+        threadPoolExecutor.shutdownNow();
     }
 
 }

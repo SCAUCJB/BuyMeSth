@@ -23,6 +23,8 @@ public class MomentDetailContract {
         void onPostCommentSuccess(String msg);
         void initMomentView();
         void setLike(Boolean b,int i);
+
+        void toast(String msg);
     }
 
     interface Model{

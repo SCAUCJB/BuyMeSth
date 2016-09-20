@@ -17,7 +17,7 @@ public class PublishPresenter extends BasePresenter<PublishContract.Model, Publi
 
       void submit( List<String> picHeights,List<String> picWidths, List<String> list) {
 
-        Subscriber<String> subscriber = new Subscriber<String>() {
+        Subscriber<Integer> subscriber = new Subscriber<Integer>() {
 
             @Override
             public void onCompleted() {
@@ -30,8 +30,8 @@ public class PublishPresenter extends BasePresenter<PublishContract.Model, Publi
             }
 
             @Override
-            public void onNext(String s) {
-
+            public void onNext(Integer progress) {
+                mView.setProgress(progress);
             }
         };
         mModel.submit(picHeights,picWidths, subscriber, list);

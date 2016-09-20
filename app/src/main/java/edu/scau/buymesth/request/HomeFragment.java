@@ -7,7 +7,6 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,11 +18,10 @@ import com.github.clans.fab.FloatingActionMenu;
 
 import java.util.List;
 
-import adpater.BaseQuickAdapter;
 import adpater.animation.ScaleInAnimation;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
-import edu.scau.buymesth.adapter.HomeAdapter;
+import edu.scau.buymesth.adapter.RequestListAdapter;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.request.requestdetail.RequestDetailActivity;
 import in.srain.cube.views.ptr.PtrFrameLayout;
@@ -35,7 +33,7 @@ import in.srain.cube.views.ptr.header.StoreHouseHeader;
  */
 public class HomeFragment extends Fragment implements HomeContract.View {
     private RecyclerView mRecyclerView;
-    private HomeAdapter mHomeAdapter;
+    private RequestListAdapter mRequestListAdapter;
     private HomePresenter mPresenter;
     private PtrFrameLayout mPtrFrameLayout;
 
@@ -57,18 +55,18 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         mPresenter = new HomePresenter();
         mPresenter.setVM(this, new HomeModel());
 
-        if(relatedFab !=null)
-        mRecyclerView.addOnScrollListener(new HidingScrollListener() {
-            @Override
-            public void onHide() {
-                relatedFab.hideMenu(true);
-            }
+        if (relatedFab != null)
+            mRecyclerView.addOnScrollListener(new HidingScrollListener() {
+                @Override
+                public void onHide() {
+                    relatedFab.hideMenu(true);
+                }
 
-            @Override
-            public void onShow() {
-                relatedFab.showMenu(true);
-            }
-        });
+                @Override
+                public void onShow() {
+                    relatedFab.showMenu(true);
+                }
+            });
 
         initAdapter();
         initStoreHouse(view);
@@ -99,25 +97,27 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     }
 
     private void initAdapter() {
-        mPresenter.onRefresh(filter, filterKey);
-        mHomeAdapter = new HomeAdapter();
-        mHomeAdapter.openLoadAnimation(new ScaleInAnimation());
-        mRecyclerView.setAdapter(mHomeAdapter);
-        if(getActivity().getIntent().getBooleanExtra("selectRequest",false)){
-            mHomeAdapter.setOnRecyclerViewItemClickListener(
+
+        mRequestListAdapter = new RequestListAdapter();
+        mRequestListAdapter.openLoadAnimation(new ScaleInAnimation());
+        if (getActivity().getIntent().getBooleanExtra("selectRequest", false)) {
+            mPresenter.onRefresh(filter, filterKey);
+            mRequestListAdapter.setOnRecyclerViewItemClickListener(
                     (view, position) -> {
                         Intent i = new Intent();
-                        i.putExtra("requestId",mHomeAdapter.getData().get(position).getObjectId());
-                        getActivity().setResult(Activity.RESULT_OK,i);
+                        i.putExtra("requestId", mRequestListAdapter.getData().get(position).getObjectId());
+                        getActivity().setResult(Activity.RESULT_OK, i);
                         getActivity().finish();
                     });
-        }else {
-            mHomeAdapter.setOnRecyclerViewItemClickListener(
-                    (view, position) -> RequestDetailActivity.navigate(getActivity(),mHomeAdapter.getData().get(position))
+        } else {
+            mPresenter.initAdapter();
+            mRequestListAdapter.setOnRecyclerViewItemClickListener(
+                    (view, position) -> RequestDetailActivity.navigate(getActivity(), mRequestListAdapter.getData().get(position))
             );
         }
-        mHomeAdapter.setOnLoadMoreListener(() -> mPresenter.onLoadMore(filter,filterKey));
-        mHomeAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
+        mRecyclerView.setAdapter(mRequestListAdapter);
+        mRequestListAdapter.setOnLoadMoreListener(() -> mPresenter.onLoadMore(filter, filterKey));
+        mRequestListAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
     }
 
     /**
@@ -128,13 +128,13 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     @Override
     public void onLoadMoreSuccess(List<Request> list) {
         if (list != null)
-            mHomeAdapter.notifyDataChangedAfterLoadMore(list, true);
+            mRequestListAdapter.notifyDataChangedAfterLoadMore(list, true);
         else {
-            mHomeAdapter.notifyDataChangedAfterLoadMore(false);
+            mRequestListAdapter.notifyDataChangedAfterLoadMore(false);
             if (notLoadingView == null) {
                 notLoadingView = getActivity().getWindow().getLayoutInflater().inflate(R.layout.not_loading, (ViewGroup) mRecyclerView.getParent(), false);
             }
-            mHomeAdapter.addFooterView(notLoadingView);
+            mRequestListAdapter.addFooterView(notLoadingView);
         }
     }
 
@@ -145,7 +145,9 @@ public class HomeFragment extends Fragment implements HomeContract.View {
      */
     @Override
     public void showError(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+        getActivity().runOnUiThread(() -> {
+            Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+        });
     }
 
     /**
@@ -155,9 +157,9 @@ public class HomeFragment extends Fragment implements HomeContract.View {
      */
     @Override
     public void onRefreshComplete(List<Request> list) {
-        mHomeAdapter.setNewData(list);
-        mHomeAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
-        mHomeAdapter.removeAllFooterView();
+        mRequestListAdapter.setNewData(list);
+        mRequestListAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
+        mRequestListAdapter.removeAllFooterView();
         if (mPtrFrameLayout != null)
             mPtrFrameLayout.refreshComplete();
     }
@@ -175,13 +177,13 @@ public class HomeFragment extends Fragment implements HomeContract.View {
      */
     @Override
     public void setAdapter(List<Request> list) {
-        mHomeAdapter.setNewData(list);
+        mRequestListAdapter.setNewData(list);
     }
 
-    public void setFilter(String filter,Object filterKey) {
+    public void setFilter(String filter, Object filterKey) {
         this.filter = filter;
         this.filterKey = filterKey;
-        mPresenter.onRefresh(filter,filterKey);
+        mPresenter.onRefresh(filter, filterKey);
     }
 
     public void setFilter(String filter) {
@@ -214,7 +216,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
 
         @Override
         public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                outRect.top = space;
+            outRect.top = space;
         }
     }
 

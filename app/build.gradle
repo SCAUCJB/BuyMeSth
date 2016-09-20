@@ -47,7 +47,6 @@ dependencies {
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
     //Clans/FloatingActionButton
     compile 'com.github.clans:fab:1.6.4'
-//鲁班图片压缩
     compile 'me.iwf.photopicker:PhotoPicker:0.8.5@aar'
     compile 'com.nineoldandroids:library:2.4.0'
 }

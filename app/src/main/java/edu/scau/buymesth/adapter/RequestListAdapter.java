@@ -15,8 +15,8 @@ import edu.scau.buymesth.data.bean.Request;
  * Created by John on 2016/8/4.
  */
 
-public class HomeAdapter extends BaseQuickAdapter<Request> {
-    public HomeAdapter( ) {
+public class RequestListAdapter extends BaseQuickAdapter<Request> {
+    public RequestListAdapter( ) {
         super(R.layout.item_home_view,null);
     }
 

@@ -14,10 +14,12 @@ public interface PublishContract {
         void onSubmitFail();
         void showLoadingDialog();
         void closeLoadingDialog();
+
+        void setProgress(Integer progress);
     }
 
     interface Model{
-        void submit( List<String> picHeights,List<String> picWidths,Subscriber<String> observable, List<String> list);
+        void submit( List<String> picHeights,List<String> picWidths,Subscriber<Integer> observable, List<String> list);
 
         void setRequest(Request request);
     }

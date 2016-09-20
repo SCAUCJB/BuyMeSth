@@ -127,7 +127,7 @@ public class WelcomeActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        if (!mSubscription.isUnsubscribed()) mSubscription.unsubscribe();
+        if (mSubscription!=null&&!mSubscription.isUnsubscribed()) mSubscription.unsubscribe();
         super.onDestroy();
     }
 

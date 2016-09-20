@@ -11,7 +11,7 @@ public class Comment extends BmobObject {
     private String content;
     private Request request;
     private User author;
-
+    private Integer likes;
     /**
      * 评论的内容
      */
@@ -44,4 +44,14 @@ public class Comment extends BmobObject {
     public void setAuthor(User author) {
         this.author = author;
     }
+
+    public Integer getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Integer likes) {
+        this.likes = likes;
+    }
+
+
 }
