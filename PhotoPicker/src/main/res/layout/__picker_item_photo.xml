@@ -2,8 +2,8 @@
 <me.iwf.photopicker.widget.SquareItemLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/iv_parent"
     >
+
   <ImageView
       android:padding="1dip"
       android:layout_gravity="center"
@@ -15,16 +15,21 @@
       android:layout_height="match_parent"
       android:adjustViewBounds="true"
       />
-
   <ImageView
-      android:layout_margin="5dp"
+
+      android:paddingTop="10dp"
+      android:paddingRight="10dp"
+      android:paddingBottom="20dp"
+      android:paddingLeft="20dp"
+      android:layout_width="50dp"
+      android:layout_height="50dp"
       android:layout_alignParentTop="true"
       android:layout_alignParentRight="true"
       android:clickable="true"
       android:id="@+id/v_selected"
       android:src="@drawable/__picker_checkbox_bg"
-      android:layout_width="20dp"
-      android:layout_height="20dp"
+
       />
+
 
 </me.iwf.photopicker.widget.SquareItemLayout>

@@ -29,7 +29,6 @@ import edu.scau.buymesth.discover.publish.MomentPublishActivity;
 import edu.scau.buymesth.publish.PublishActivity;
 import edu.scau.buymesth.request.HomeFragment;
 import edu.scau.buymesth.request.HomePresenter;
-import edu.scau.buymesth.request.requestdetail.RequestDetailActivity;
 import edu.scau.buymesth.user.UserFragment;
 import ui.widget.ChangeColorIconWithTextView;
 
@@ -192,6 +191,14 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
             }
 
         }
+    }
+
+    @Override
+    protected void onPause() {
+        if(fab.isOpened()){
+            fab.close(true);
+        }
+        super.onPause();
     }
 
     @Override
