@@ -18,44 +18,52 @@ import edu.scau.buymesth.R;
 /**
  * Created by ! on 2016/9/13.
  */
-public class MyPictureAdapter extends BaseQuickAdapter<String> {
+public class MyPictureAdapter extends BaseQuickAdapter<MyPictureAdapter.ImageItem> {
 
-    public List<String> dataAdd;
-    public List<String> oriData;
-    public List<String> tempData;
+    public List<ImageItem> dataAdd;
+    public List<ImageItem> oriData;
+//    public List<String> tempData;
+    private int mImageGroup = 0;
 
-    public void setList(List<String> list,List<String> tempList) {
+    public void setList(List<ImageItem> list) {
         oriData = list;
-        tempData = tempList;
         dataAdd.clear();
         dataAdd.addAll(list);
         if(dataAdd.size()<9)dataAdd.add(null);
         setNewData(dataAdd);
     }
 
-    public MyPictureAdapter(List<String> data,List<String> tempData) {
+    public void setList(List<ImageItem> list,int group) {
+        oriData = list;
+        dataAdd.clear();
+        dataAdd.addAll(list);
+        if(dataAdd.size()<9)dataAdd.add(null);
+        mImageGroup = group;
+        setNewData(dataAdd);
+    }
+
+    public MyPictureAdapter(List<ImageItem> data) {
         super(R.layout.item_picture, data);
         dataAdd = new ArrayList<>();
         oriData = data;
-        this.tempData = tempData;
-        setList(data,tempData);
+        setList(data);
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, String item) {
+    protected void convert(BaseViewHolder helper, ImageItem item) {
         if (item ==null) {
             ImageView btn = helper.getView(R.id.btn_cancle);
             btn.setVisibility(View.GONE);
             Glide.with(mContext).load(R.drawable.ic_add).centerCrop().into((ImageView) helper.getView(R.id.iv));
         } else {
-            Glide.with(mContext).load(item).thumbnail(0.1f).centerCrop().into((ImageView) helper.getView(R.id.iv));
+            Glide.with(mContext).load(mImageGroup==0?item.sourceImage:item.compressedImage)
+                    .thumbnail(0.1f).centerCrop().into((ImageView) helper.getView(R.id.iv));
 
             ImageView btn = helper.getView(R.id.btn_cancle);
             btn.setVisibility(View.VISIBLE);
             btn.setOnClickListener(v -> {
                 getData().remove(item);
                 oriData.remove(item);
-                tempData.remove(item);
                 if(dataAdd.get(dataAdd.size()-1)!=null)dataAdd.add(null);
                 notifyDataSetChanged();
             });
@@ -69,9 +77,27 @@ public class MyPictureAdapter extends BaseQuickAdapter<String> {
         return 1;
     }
 
-    public class ImageItem{
+    public int getmImageGroup() {
+        return mImageGroup;
+    }
+
+    public void setmImageGroup(int mImageGroup) {
+        this.mImageGroup = mImageGroup;
+    }
+
+    public static class ImageItem{
         public String compressedImage;
         public String sourceImage;
+
+        public ImageItem() {
+            this.compressedImage = null;
+            this.sourceImage = null;
+        }
+
+        public ImageItem(String sourceImage,String compressedImage) {
+            this.compressedImage = compressedImage;
+            this.sourceImage = sourceImage;
+        }
     }
 
 }

@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -56,12 +57,14 @@ public class MomentPublishActivity extends BaseActivity {
     TextView tvSize;
     @Bind(R.id.sw_compress)
     Switch swCompress;
-    ArrayList<String> mUrlList;
-    ArrayList<String> mTempUrlList;
+    ArrayList<MyPictureAdapter.ImageItem> mUrlList;
+    List<String> mImagesUrlOnBmob;
+//    ArrayList<String> mTempUrlList;
     MyPictureAdapter adapter;
     Request mRequest;
     boolean mCompressing = false;
     boolean mCompressed = false;
+    boolean mCompress = false;
     long mImageSize = 0;
     @Override
     protected int getLayoutId() {
@@ -71,48 +74,45 @@ public class MomentPublishActivity extends BaseActivity {
     @Override
     public void initView() {
         mUrlList = new ArrayList<>();
-        mTempUrlList = new ArrayList<>();
+//        mTempUrlList = new ArrayList<>();
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
-        adapter = new MyPictureAdapter(mUrlList,mTempUrlList);
+        adapter = new MyPictureAdapter(mUrlList);
         recyclerView.setAdapter(adapter);
-
         adapter.setOnRecyclerViewItemClickListener((view, position) -> {
             ////这里设置点击事件
+            ArrayList<String> selectImages = new ArrayList<>();
             if (adapter.getItemId(position) == 1) {
+                for(MyPictureAdapter.ImageItem ii : mUrlList) selectImages.add(ii.sourceImage);
                 PhotoPicker.builder()
                         .setPhotoCount(9)
                         .setShowCamera(true)
                         .setShowGif(false)
                         .setPreviewEnabled(true)
-                        .setSelected(mUrlList)
+                        .setSelected(selectImages)
                         .start(MomentPublishActivity.this, PhotoPicker.REQUEST_CODE);
             } else {
-                PhotoActivity.navigate(MomentPublishActivity.this,recyclerView, mUrlList,position);
+                for(MyPictureAdapter.ImageItem ii : mUrlList) selectImages.add(mCompress?ii.compressedImage:ii.sourceImage);
+                PhotoActivity.navigate(MomentPublishActivity.this,recyclerView, selectImages,position);
             }
         });
 
-        swCompress.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked&&!mCompressed&&!mCompressing){
-                    compress();
-                }else if(mCompressed&&!mCompressing){
-                    ArrayList<String> temp = mUrlList;
-                    mUrlList = mTempUrlList;
-                    mTempUrlList = temp;
-                    mImageSize = 0;
-                    adapter.setList(mUrlList,mTempUrlList);
-                    Observable.from(mUrlList)
-                            .map(filePath -> new File(filePath))
-                            .subscribe(file -> mImageSize += file.length(),
-                                    o->{},
-                                    () -> tvSize.setText("图片大小："+Byte2String.convert(mImageSize)));
-                }
+        swCompress.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            mCompress = isChecked;
+            if(isChecked&&!mCompressed&&!mCompressing){
+                compress();
+            }else if(mCompressed&&!mCompressing){
+                mImageSize = 0;
+                adapter.setList(mUrlList,mCompress?1:0);
+                Observable.from(mUrlList)
+                        .map(imageItem -> new File(mCompress?imageItem.compressedImage:imageItem.sourceImage))
+                        .subscribe(file -> mImageSize += file.length(),
+                                o->{},
+                                () -> tvSize.setText("图片大小："+Byte2String.convert(mImageSize)));
             }
         });
 
@@ -129,8 +129,11 @@ public class MomentPublishActivity extends BaseActivity {
                     toast("压缩中");
                     return;
                 }
-                String[] sendList = new String[mUrlList.size()];
-                mUrlList.toArray(sendList);
+                momentSendButton.setEnabled(false);
+                ArrayList<String> selectImages = new ArrayList<>();
+                for(MyPictureAdapter.ImageItem ii : mUrlList) selectImages.add(mCompress?ii.compressedImage:ii.sourceImage);
+                String[] sendList = new String[selectImages.size()];
+                selectImages.toArray(sendList);
 
                 BmobFile.uploadBatch(sendList, new UploadBatchListener() {
                     @Override
@@ -139,9 +142,10 @@ public class MomentPublishActivity extends BaseActivity {
                             Moment moment = new Moment();
                             moment.setUser(BmobUser.getCurrentUser(User.class));
                             moment.setContent(momentContent.getText().toString());
-                            mUrlList.clear();
-                            mUrlList.addAll(urls);
-                            moment.setImages(mUrlList);
+                            mImagesUrlOnBmob = new ArrayList<>();
+                            mImagesUrlOnBmob.clear();
+                            mImagesUrlOnBmob.addAll(urls);
+                            moment.setImages(mImagesUrlOnBmob);
                             if(mRequest!=null)moment.setRequest(mRequest);
                             moment.save(new SaveListener<String>() {
                                 @Override
@@ -206,16 +210,18 @@ public class MomentPublishActivity extends BaseActivity {
             if (data != null) {
                 ArrayList<String> photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
                 mUrlList.clear();
-                mUrlList.addAll(photos);
-                adapter.setList(mUrlList,mTempUrlList);
+                for(String url : photos){
+                    mUrlList.add(new MyPictureAdapter.ImageItem(url,null));
+                }
+                adapter.setList(mUrlList,mCompress?1:0);
                 mImageSize = 0;
                 mCompressed = false;
                 Observable.from(mUrlList)
-                        .map(File::new)
+                        .map(imageItem -> new File(mCompress?imageItem.compressedImage:imageItem.sourceImage))
                         .subscribe(file -> mImageSize += file.length(),
                                 o -> {},
                                 () -> tvSize.setText("图片大小："+ Byte2String.convert(mImageSize)));
-//                new Thread(this::compress).start();
+                if(mCompress) compress();
             }
         } if(resultCode == RESULT_OK && requestCode == 0){
             String id = data.getStringExtra("requestId");
@@ -234,7 +240,6 @@ public class MomentPublishActivity extends BaseActivity {
     private void compress() {
         swCompress.setEnabled(false);
         tvSize.setText("压缩中");
-        mTempUrlList.addAll(mUrlList);
         new Thread(() -> {
             mCompressing = true;
             CompressHelper compressHelper = new CompressHelper(mContext);
@@ -243,7 +248,8 @@ public class MomentPublishActivity extends BaseActivity {
                 final int finalI = i;
                 new Thread(()->{
                     compressHelper.setFilename("cc_"+finalI);
-                    mUrlList.set(finalI,compressHelper.thirdCompress(new File(mUrlList.get(finalI))));
+//                    mUrlList.set(finalI,compressHelper.thirdCompress(new File(mUrlList.get(finalI))));
+                    mUrlList.get(finalI).compressedImage = compressHelper.thirdCompress(new File(mUrlList.get(finalI).sourceImage));
                     countDownLatch.countDown();
                 }).start();
             }
@@ -253,11 +259,11 @@ public class MomentPublishActivity extends BaseActivity {
                     toast("压缩完成");
                     mImageSize = 0;
                     Observable.from(mUrlList)
-                            .map(File::new)
+                            .map(imageItem -> new File(mCompress?imageItem.compressedImage:imageItem.sourceImage))
                             .subscribe(file -> mImageSize += file.length(),
                                     o -> {},
                                     () -> tvSize.setText("图片大小："+Byte2String.convert(mImageSize)));
-                    adapter.setList(mUrlList,mTempUrlList);
+                    adapter.setList(mUrlList,mCompress?1:0);
                     swCompress.setEnabled(true);
                 });
                 mCompressing = false;
