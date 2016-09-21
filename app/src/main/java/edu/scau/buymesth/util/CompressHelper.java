@@ -228,7 +228,6 @@ public class CompressHelper {
         //rotate image
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
-
         //create a new image
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }

@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.FileReader;
 
 import cn.bmob.newim.BmobIM;
-import cn.bmob.v3.Bmob;
 import crush.CustomActivityOnCrash;
 import edu.scau.buymesth.chat.DemoMessageHandler;
 
@@ -27,12 +26,12 @@ public class App extends Application {
         //在这里进行初始化的操作
 //        Bmob.initialize(this, "211614edac96ab4c9492179cf459993a");
 
-
+       Log.d("zhx","on app create");
 
         //只有主进程运行的时候才需要初始化
         if (getApplicationInfo().packageName.equals(getMyProcessName())){
             //im初始化
-            Log.v("1111","2222");
+            Log.d("zhx","BmobIM init");
             BmobIM.init(this);
             //注册消息接收器
             BmobIM.registerDefaultMessageHandler(new DemoMessageHandler(this));

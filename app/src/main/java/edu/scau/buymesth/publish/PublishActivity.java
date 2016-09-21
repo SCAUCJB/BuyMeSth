@@ -174,6 +174,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                 mUrlList.clear();
                 mUrlList.addAll(photos);
                adapter.setList(mUrlList);
+                toast("开始压缩图片");
                 new Thread(this::compress).start();
             }
         }
@@ -181,10 +182,9 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
 
     private void compress() {
         mCompressing = true;
-        mUrlList=Collections.synchronizedList(mUrlList);
         CompressHelper compressHelper = new CompressHelper(mContext);
-        //判断是否包含空
-        int count=mUrlList.size()==9?mUrlList.size():mUrlList.size()-1;
+        //判断最后一个元素是否包含空
+        int count=mUrlList.get(mUrlList.size()-1)!=null?mUrlList.size():mUrlList.size()-1;
         CountDownLatch countDownLatch = new CountDownLatch(count);
         for (int i = 0; i <count ; i++) {
             final  int finalI = i;
@@ -193,7 +193,6 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                 compressHelper.setWidthList(picWidths);
                 compressHelper.setHeightList(picHeights);
                 mUrlList.set(finalI, compressHelper.thirdCompress(new File(mUrlList.get(finalI))));
-                Log.d("zhx","urlList="+mUrlList.get(finalI));
                 countDownLatch.countDown();
             });
         }
@@ -215,7 +214,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
 
     List<String> picWidths = new LinkedList<>();
     List<String> picHeights = new LinkedList<>();
-    ExecutorService threadPoolExecutor = newFixedThreadPool(3);
+    ExecutorService threadPoolExecutor = newFixedThreadPool(4);
 
 
     private void initPriceSelect() {
