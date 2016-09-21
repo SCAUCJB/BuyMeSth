@@ -20,8 +20,6 @@ public class DiscoverContract {
         void onAddOneItem(Moment moment);
         void onItemChanged();
         void onRefreshInterrupt();
-        void onDeleteSuccess(String msg,int position);
-        void setLike(android.view.View v,Moment moment,Boolean like);
     }
 
     interface Model{

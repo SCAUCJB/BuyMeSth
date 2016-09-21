@@ -1,6 +1,7 @@
 package gallery;
 
 import android.app.Fragment;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
@@ -9,6 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.module.GlideModule;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -194,7 +199,13 @@ public class PhotoFragment extends Fragment {
 
                 Glide.with(getActivity()).load((String) murls[position])
                         .asBitmap()
-                        .into(imageView);
+                        .thumbnail(0.4f)
+                        .into(new SimpleTarget<Bitmap>(){
+                            @Override
+                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                imageView.setImageBitmap(resource);
+                            }
+                        });
                 imageView.setOnTransformListener(new SmoothImageView.TransformListener() {
                     @Override
                     public void onTransformComplete(int mode) {
@@ -211,7 +222,15 @@ public class PhotoFragment extends Fragment {
             else {
                 viewList.add(imageView);
                 container.addView(imageView,0);
-                Glide.with(getActivity()).load((String) murls[position]).into(imageView);
+                Glide.with(getActivity()).load((String) murls[position])
+                        .asBitmap()
+                        .thumbnail(0.4f)
+                        .into(new SimpleTarget<Bitmap>(){
+                            @Override
+                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                imageView.setImageBitmap(resource);
+                            }
+                        });
             }
             imageView.setOnPhotoTapListener(onPhotoTapListener);
             return imageView;

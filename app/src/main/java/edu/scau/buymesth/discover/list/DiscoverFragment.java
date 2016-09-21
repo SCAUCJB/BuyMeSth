@@ -46,7 +46,7 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
 //        mRecyclerView.addItemDecoration( new DividerItemDecoration(getContext(),
 //                DividerItemDecoration.VERTICAL_LIST));
         //初始化代理人
-        mPresenter=new DiscoverPresenter(getContext());
+        mPresenter=new DiscoverPresenter(getActivity().getBaseContext());
         mPresenter.setVM(this,new DiscoverModel());
         initAdapter();
         initStoreHouse(view);
@@ -77,54 +77,15 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
         });
     }
     private void initAdapter(){
-        mDiscoverAdapter = new DiscoverAdapter(mPresenter.mModel.getDatas());
+        mDiscoverAdapter = new DiscoverAdapter(getActivity(),mPresenter.mModel.getDatas());
         mDiscoverAdapter.setOnRecyclerViewItemClickListener((view, position) -> {
             if(mPtrFrameLayout.isRefreshing())return;
             MomentDetailActivity.navigate(getActivity(),(Moment)mDiscoverAdapter.getItem(position));
         });
         mDiscoverAdapter.openLoadAnimation();
         mRecyclerView.setAdapter(mDiscoverAdapter);
-        mDiscoverAdapter.setOnItemsContentClickListener(new DiscoverAdapter.OnItemsContentClickListener() {
-            @Override
-            public void onItemsContentClick(View v, Object item, int position) {
-                if(mPtrFrameLayout.isRefreshing())return;
-                switch (v.getId()){
-                    case R.id.ly_delete:
-                        mPresenter.DeleteOne((Moment) item,position);
-                        break;
-                    case R.id.ly_likes:
-                        mPresenter.like(v, (Moment) item);
-                        break;
-                    case R.id.ly_comments:
-                        break;
-                    case R.id.request_view:
-                        RequestDetailActivity.navigate(getActivity(),((Moment)item).getRequest());
-                        break;
-                    case R.id.nine_grid_layout:
-                        PhotoActivity.navigate(getActivity(),(NineGridLayout)v,((List<String>)item),position);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
         mDiscoverAdapter.setOnLoadMoreListener(() -> mPresenter.LoadMore());
         mDiscoverAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
-    }
-
-    @Override
-    public void setLike(View v,Moment moment,Boolean like){
-        moment.setLike(like);
-        v.post(() -> {
-            if(like){
-                ((ImageView)v.findViewById(R.id.iv_likes)).setImageDrawable(getResources().getDrawable(R.drawable.ic_favorite_red));
-                ((TextView)v.findViewById(R.id.tv_likes)).setText(String.valueOf(moment.getLikes()));
-            }
-            else{
-                ((ImageView)v.findViewById(R.id.iv_likes)).setImageDrawable(getResources().getDrawable(R.drawable.ic_favorite));
-                ((TextView)v.findViewById(R.id.tv_likes)).setText(String.valueOf(moment.getLikes()));
-            }
-        });
     }
 
     @Override
@@ -179,12 +140,6 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
         if(mPtrFrameLayout!=null)
             mPtrFrameLayout.refreshComplete();
         mDiscoverAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onDeleteSuccess(String msg,int position) {
-        mDiscoverAdapter.remove(position);
-//        mDiscoverAdapter.getData().remove(position);
     }
 
     private final class SpaceItemDecoration extends RecyclerView.ItemDecoration{

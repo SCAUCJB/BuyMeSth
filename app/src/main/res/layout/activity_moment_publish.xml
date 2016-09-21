@@ -59,6 +59,34 @@
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:overScrollMode="never"/>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp">
+
+                    <TextView
+                        style="@style/theTextLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Size"
+                        android:id="@+id/tv_size"
+                        android:paddingLeft="20dp"
+                        android:paddingTop="8dp"
+                        android:paddingRight="20dp"
+                        android:paddingBottom="8dp"
+                        android:clickable="true"
+                        android:background="@drawable/selectable_item_background" />
+
+                    <Switch
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Compress"
+                        android:id="@+id/sw_compress" />
+                </LinearLayout>
+
             </LinearLayout>
 
             <LinearLayout

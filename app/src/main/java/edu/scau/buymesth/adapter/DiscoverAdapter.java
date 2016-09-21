@@ -1,13 +1,19 @@
 package edu.scau.buymesth.adapter;
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,11 +23,17 @@ import adpater.BaseMultiItemQuickAdapter;
 import adpater.BaseViewHolder;
 import base.util.GlideCircleTransform;
 import base.util.SpaceItemDecoration;
+import cn.bmob.v3.AsyncCustomEndpoints;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.CloudCodeListener;
+import cn.bmob.v3.listener.UpdateListener;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Moment;
+import edu.scau.buymesth.request.requestdetail.RequestDetailActivity;
 import edu.scau.buymesth.util.ColorChangeHelper;
 import edu.scau.buymesth.util.DateFormatHelper;
+import gallery.PhotoActivity;
 import ui.layout.NineGridLayout;
 
 /**
@@ -29,16 +41,17 @@ import ui.layout.NineGridLayout;
  */
 public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
 
-    private OnItemsContentClickListener onItemsContentClickListener;
     private Drawable mIconRedHeart,mIconGrayHeart;
+    private Activity mActivity;
 
     private Map<Integer,Drawable> mLevelDrawableChache;
 
-    public DiscoverAdapter(List<Moment> data) {
+    public DiscoverAdapter(Activity activity,List<Moment> data) {
         super(data);
         addItemType(0, R.layout.item_discover_view_normal);
         addItemType(1, R.layout.item_discover_view_request);
         mLevelDrawableChache = new HashMap<>();
+        mActivity = activity;
     }
 
     @Override
@@ -52,7 +65,6 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
                 .setText(R.id.tv_tweet_date, DateFormatHelper.dateFormat(item.getCreatedAt()))
                 .setText(R.id.tv_tweet_text,item.getContent())
                 .setText(R.id.tv_level,"LV "+ item.getUser().getExp()/10)
-                .setText(R.id.tv_likes,""+item.getLikes())
                 .setText(R.id.tv_comments,""+item.getComments());
 
         if(item.getRequest()!=null){
@@ -73,14 +85,7 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
         }
         helper.getView(R.id.tv_level).setBackground(levelBg);
 
-        if(item.isLike()){
-            ((ImageView)helper.getView(R.id.iv_likes))
-                    .setImageDrawable(mIconRedHeart);
-        }else {
-            ((ImageView)helper.getView(R.id.iv_likes))
-                    .setImageDrawable(mIconGrayHeart);
-        }
-
+        setLike(helper,item.isLike(),item);
 
         Glide.with(mContext).load(item.getUser().getAvatar())
                 .crossFade()
@@ -90,14 +95,9 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
 
         NineGridLayout nineGridLayout = helper.getView(R.id.nine_grid_layout);
         nineGridLayout.setUrlList(item.getImages());
-        System.out.println("!!!!!"+"setting URLLLLLLLLLLLLLLLL");
 
-        View.OnClickListener defaultOnClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onItemsContentClickListener.onItemsContentClick(v,item,helper.getAdapterPosition());
-            }
-        };
+        View.OnClickListener defaultOnClickListener = v -> onItemsContentClick(helper,v,item,helper.getAdapterPosition());
+
         if(item.getUser().getObjectId().equals(BmobUser.getCurrentUser().getObjectId())){
             helper.getView(R.id.ly_delete).setVisibility(View.VISIBLE);
             helper.getView(R.id.ly_delete).setOnClickListener(defaultOnClickListener);
@@ -108,25 +108,77 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
         helper.getView(R.id.ly_comments).setOnClickListener(defaultOnClickListener);
         if(item.getRequest()!=null)
         helper.getView(R.id.request_view).setOnClickListener(defaultOnClickListener);
-        ((NineGridLayout)helper.getView(R.id.nine_grid_layout)).setOnItemClickListener(new NineGridLayout.OnItemClickListener() {
-            @Override
-            public void onClick(View view, int position, List<String> urls, int itemType) {
-                onItemsContentClickListener.onItemsContentClick(
-                        helper.getView(R.id.nine_grid_layout),
-                        urls,position);
-            }
-        });
+        ((NineGridLayout)helper.getView(R.id.nine_grid_layout)).setOnItemClickListener((view, position, urls, itemType) ->
+                PhotoActivity.navigate(mActivity,(NineGridLayout)helper.getView(R.id.nine_grid_layout),item.getImages(),position));
     }
 
-    public OnItemsContentClickListener getOnItemsContentClickListener() {
-        return onItemsContentClickListener;
+    private void setLike(BaseViewHolder helper, boolean like ,Moment item) {
+        item.setLike(like);
+        helper.setText(R.id.tv_likes,""+item.getLikes());
+        if(like){
+            ((ImageView)helper.getView(R.id.iv_likes))
+                    .setImageDrawable(mIconRedHeart);
+        }else {
+            ((ImageView)helper.getView(R.id.iv_likes))
+                    .setImageDrawable(mIconGrayHeart);
+        }
     }
 
-    public void setOnItemsContentClickListener(OnItemsContentClickListener onItemsContentClickListener) {
-        this.onItemsContentClickListener = onItemsContentClickListener;
-    }
-
-    public interface OnItemsContentClickListener{
-        public void onItemsContentClick(View v, Object item, int adapterPosition);
+    public void onItemsContentClick(BaseViewHolder helper,View v, Object item, int adapterPosition){
+        switch (v.getId()){
+            case R.id.ly_delete:
+                if((((Moment) item).getUser().getObjectId().equals(BmobUser.getCurrentUser().getObjectId()))){
+                    new AlertDialog.Builder(mContext)
+                            .setTitle(mContext.getResources().getString(R.string.text_delete))
+                            .setMessage("delete ?")
+                            .setPositiveButton("yes", (dialog, which) -> {
+                                Moment deleteMoment = new Moment();
+                                deleteMoment.setObjectId(((Moment) item).getObjectId());
+                                deleteMoment.setAuthorDelete(true);
+                                deleteMoment.delete(new UpdateListener() {
+                                    @Override
+                                    public void done(BmobException e) {
+                                        if(e==null)
+                                            remove(adapterPosition);
+                                    }
+                                });
+                            })
+                            .setNegativeButton("no",null)
+                            .show();
+                }
+                break;
+            case R.id.ly_likes:
+                AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
+                //第一个参数是上下文对象，第二个参数是云端逻辑的方法名称，第三个参数是上传到云端逻辑的参数列表（JSONObject cloudCodeParams），第四个参数是回调类
+                JSONObject params = new JSONObject();
+                try {
+                    params.put("liker",BmobUser.getCurrentUser().getObjectId());
+                    params.put("moment",((Moment) item).getObjectId());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                ace.callEndpoint("like",params , new CloudCodeListener() {
+                    @Override
+                    public void done(Object o, BmobException e) {
+                        if(o!=null){
+                            if(((String)o).equals("true")){
+                                if(((Moment) item).isLike())return;
+                                ((Moment) item).setLikes(((Moment) item).getLikes()+1);
+                                setLike(helper,true, (Moment) item);
+                            }else {
+                                if(!((Moment) item).isLike())return;
+                                ((Moment) item).setLikes(((Moment) item).getLikes()-1);
+                                setLike(helper,false, (Moment) item);
+                            }
+                        }
+                    }
+                });
+                break;
+            case R.id.request_view:
+                RequestDetailActivity.navigate(mActivity,((Moment)item).getRequest());
+                break;
+            default:
+                break;
+        }
     }
 }

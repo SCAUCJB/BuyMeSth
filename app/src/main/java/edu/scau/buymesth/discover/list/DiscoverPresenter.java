@@ -44,12 +44,8 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
     }
 
     private boolean isOpenNetwork() {
-        ConnectivityManager connManager = (ConnectivityManager)mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(connManager.getActiveNetworkInfo()!=null){
-            return connManager.getActiveNetworkInfo().isAvailable();
-        }else {
-            return false;
-        }
+        ConnectivityManager connManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return connManager.getActiveNetworkInfo() != null && connManager.getActiveNetworkInfo().isAvailable();
     }
 
     public void Refresh(){
@@ -134,60 +130,5 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
                         tempList.add(moment);
                     }
                 });
-    }
-
-      void like(View v, Moment item){
-        AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
-        //第一个参数是上下文对象，第二个参数是云端逻辑的方法名称，第三个参数是上传到云端逻辑的参数列表（JSONObject cloudCodeParams），第四个参数是回调类
-        JSONObject params = new JSONObject();
-        try {
-            params.put("liker",BmobUser.getCurrentUser().getObjectId());
-            params.put("moment",item.getObjectId());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        ace.callEndpoint("like",params , new CloudCodeListener() {
-            @Override
-            public void done(Object o, BmobException e) {
-                if(o!=null){
-                    if(((String)o).equals("true")){
-                        if(item.isLike())return;
-                        item.setLikes(item.getLikes()+1);
-                        mView.setLike(v,item,true);
-                    }else {
-                        if(!item.isLike())return;
-                        item.setLikes(item.getLikes()-1);
-                        mView.setLike(v,item,false);
-                    }
-                }
-            }
-        });
-    }
-
-    public void DeleteOne(Moment moment,int position){
-        if(moment.getUser().getObjectId().equals(BmobUser.getCurrentUser().getObjectId())){
-            new AlertDialog.Builder(mContext)
-                    .setTitle(mContext.getResources().getString(R.string.text_delete))
-                    .setMessage("delete ?")
-                    .setPositiveButton("yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Moment deleteMoment = new Moment();
-                            deleteMoment.setObjectId(moment.getObjectId());
-                            deleteMoment.setAuthorDelete(true);
-                            deleteMoment.delete(new UpdateListener() {
-                                @Override
-                                public void done(BmobException e) {
-                                    if(e==null)
-                                        mView.onDeleteSuccess(moment.getObjectId(),position);
-                                    else
-                                        mView.onError(null,e.toString());
-                                }
-                            });
-                        }
-                    })
-                    .setNegativeButton("no",null)
-                    .show();
-        }
     }
 }
