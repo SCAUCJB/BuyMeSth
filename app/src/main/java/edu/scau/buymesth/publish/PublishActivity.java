@@ -85,7 +85,8 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
 
     ItemTouchHelper helper;
     private AlertDialog mTagInputDialog = null;
-    private volatile  List<String> mUrlList = new ArrayList<>(9);
+    private   ArrayList<String> mUrlList = new ArrayList<>(9);
+    private volatile  ArrayList<String> mCompressList = new ArrayList<>(9);
     private volatile boolean mCompressing;
 
     @Override
@@ -154,6 +155,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                         .setShowCamera(true)
                         .setShowGif(false)
                         .setPreviewEnabled(true)
+                        .setSelected(mUrlList)
                         .start(PublishActivity.this, PhotoPicker.REQUEST_CODE);
             } else {
                 PhotoActivity.navigate(PublishActivity.this, view, adapter.getItem(position), position);
@@ -170,10 +172,11 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
 
         if (resultCode == RESULT_OK && requestCode == PhotoPicker.REQUEST_CODE) {
             if (data != null) {
-                ArrayList<String> photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
-                mUrlList.clear();
-                mUrlList.addAll(photos);
-               adapter.setList(mUrlList);
+                mCompressList=data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
+                Log.d("zhx","size="+mCompressList.size());
+                for(int i=0;i<mCompressList.size();++i)
+                    mUrlList.add(i,mCompressList.get(i));
+                adapter.setList(mCompressList);
                 toast("开始压缩图片");
                 new Thread(this::compress).start();
             }
@@ -184,7 +187,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         mCompressing = true;
         CompressHelper compressHelper = new CompressHelper(mContext);
         //判断最后一个元素是否包含空
-        int count=mUrlList.get(mUrlList.size()-1)!=null?mUrlList.size():mUrlList.size()-1;
+        int count=mCompressList.get(mCompressList.size()-1)!=null?mCompressList.size():mCompressList.size()-1;
         CountDownLatch countDownLatch = new CountDownLatch(count);
         for (int i = 0; i <count ; i++) {
             final  int finalI = i;
@@ -192,7 +195,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                 compressHelper.setFilename("cc_" + finalI);
                 compressHelper.setWidthList(picWidths);
                 compressHelper.setHeightList(picHeights);
-                mUrlList.set(finalI, compressHelper.thirdCompress(new File(mUrlList.get(finalI))));
+                mCompressList.set(finalI, compressHelper.thirdCompress(new File(mCompressList.get(finalI))));
                 countDownLatch.countDown();
             });
         }
@@ -201,9 +204,9 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
             runOnUiThread(() -> {
                 toast("压缩完成");
                 //因为会自动加上一个NULL，这里要把之前被加上的null去除。。。
-                if(mUrlList.size()!=9)
-                  mUrlList.remove(mUrlList.size() - 1);
-                adapter.setList(mUrlList);
+                if(mCompressList.size()!=9)
+                    mCompressList.remove(mCompressList.size() - 1);
+                adapter.setList(mCompressList);
             });
             mCompressing = false;
         } catch (InterruptedException e) {

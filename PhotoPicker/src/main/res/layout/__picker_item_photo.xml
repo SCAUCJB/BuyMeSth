@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<me.iwf.photopicker.widget.SquareItemLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/iv_parent"
+    >
+  <ImageView
+      android:padding="1dip"
+      android:layout_gravity="center"
+      android:clickable="true"
+      android:id="@+id/iv_photo"
+      android:scaleType="centerCrop"
+      android:layout_width="match_parent"
+      android:background="@drawable/__picker_photo_bg"
+      android:layout_height="match_parent"
+      android:adjustViewBounds="true"
+      />
+
+  <ImageView
+      android:layout_margin="5dp"
+      android:layout_alignParentTop="true"
+      android:layout_alignParentRight="true"
+      android:clickable="true"
+      android:id="@+id/v_selected"
+      android:src="@drawable/__picker_checkbox_bg"
+      android:layout_width="20dp"
+      android:layout_height="20dp"
+      />
+
+</me.iwf.photopicker.widget.SquareItemLayout>
