@@ -82,6 +82,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         frame.setDurationToCloseHeader(1500);
         frame.setHeaderView(header);
         frame.addPtrUIHandler(header);
+        frame.postDelayed(()->frame.autoRefresh(false),1000);
         frame.setPtrHandler(new PtrHandler() {
             @Override
             public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {

@@ -31,6 +31,8 @@ public class UserFragment extends Fragment implements UserContract.View {
     ViewPager mContentVp;
     TabLayout mContentTb;
     UserPresenter mPresenter;
+    private boolean mHasExpand=false;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -38,8 +40,8 @@ public class UserFragment extends Fragment implements UserContract.View {
         mContentTb = (TabLayout) view.findViewById(R.id.tl_content);
         mContentVp = (ViewPager) view.findViewById(R.id.vp_content);
         HomePagerAdapter adapter=new HomePagerAdapter(getFragmentManager());
-        adapter.addTab(new RequsetFragment(),"request");
-        adapter.addTab(new MomentFragment(),"moment");
+        adapter.addTab(new RequsetFragment(),"我的请求");
+        adapter.addTab(new MomentFragment(),"我的动态");
 
         mContentVp.setAdapter(adapter);
         mContentTb.setupWithViewPager(mContentVp);
@@ -52,12 +54,10 @@ public class UserFragment extends Fragment implements UserContract.View {
         CoordinatorLayout coordinatorLayout = (CoordinatorLayout) view.findViewById(R.id.cl);
         View bottomSheet = coordinatorLayout.findViewById(R.id.bottom_sheet);
         final BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
+
         behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                //这里是bottomSheet 状态的改变回调
-                Log.d("zhx","onState changed");
-                Log.d("zhx","newState="+newState);
             }
 
             @Override

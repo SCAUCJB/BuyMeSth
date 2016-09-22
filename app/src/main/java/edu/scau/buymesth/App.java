@@ -30,11 +30,12 @@ public class App extends Application {
 
         //只有主进程运行的时候才需要初始化
         if (getApplicationInfo().packageName.equals(getMyProcessName())){
-            //im初始化
-            Log.d("zhx","BmobIM init");
+
+//            //im初始化
+//            Log.d("zhx","BmobIM init");
             BmobIM.init(this);
-            //注册消息接收器
-            BmobIM.registerDefaultMessageHandler(new DemoMessageHandler(this));
+//            //注册消息接收器
+             BmobIM.registerDefaultMessageHandler(new DemoMessageHandler(this));
         }
     }
 

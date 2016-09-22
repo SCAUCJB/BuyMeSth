@@ -3,7 +3,6 @@ package edu.scau.buymesth.ui;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -45,12 +44,12 @@ public class WelcomeActivity extends BaseActivity {
 
     @Override
     public void initView() {
-        AlphaAnimation animation = new AlphaAnimation(0f, 1f);
-        animation.setDuration(500);
+
         Glide.with(this).load("http://cdn.duitang.com/uploads/item/201312/03/20131203154448_WUTaC.thumb.700_0.jpeg")
+                .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .animate(animation)
                 .into(welcomeImage);
+
     }
 
     @Override
@@ -66,13 +65,14 @@ public class WelcomeActivity extends BaseActivity {
         //放到了Application里面，防止不经过这个页面就进入Activity导致context空指针
 
         bmobUser = BmobUser.getCurrentUser(User.class);
-        jumpToNextActivity();
 //        if (bmobUser != null)
-//            queryUser();
-//            //完成初始化
-//        else {
-//            jumpToNextActivity();
-//        }
+//        jumpToNextActivity();
+        if (bmobUser != null)
+            queryUser();
+            //完成初始化
+        else {
+            jumpToNextActivity();
+        }
 
     }
 
@@ -100,6 +100,8 @@ public class WelcomeActivity extends BaseActivity {
     private void jumpToNextActivity() {
         if (bmobUser != null) {
             Intent intent = new Intent(WelcomeActivity.this, TabActivity.class);
+            int flag = Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP;
+            intent.setFlags(flag);
             startActivity(intent);
             finish();
         } else {
