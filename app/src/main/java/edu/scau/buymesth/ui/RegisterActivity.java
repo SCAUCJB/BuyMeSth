@@ -13,6 +13,7 @@ import cn.bmob.v3.listener.SaveListener;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.main.TabActivity;
+import util.HideIMEHelper;
 
 /**
  * Created by IamRabbit on 2016/8/4.
@@ -40,6 +41,8 @@ public class RegisterActivity extends BaseActivity{
 
     @Override
     public void initView() {
+        //hide the input method automatically
+        HideIMEHelper.wrap(this);
         String account = getIntent().getStringExtra("username");
         if(account!=null)
             inputAccount.setText(account);

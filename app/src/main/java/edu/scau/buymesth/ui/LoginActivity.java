@@ -13,6 +13,7 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.main.TabActivity;
+import util.HideIMEHelper;
 
 /**
  * Created by IamRabbit on 2016/8/3.
@@ -36,6 +37,8 @@ public class LoginActivity extends BaseActivity{
 
     @Override
     public void initView() {
+        //hide the input method automatically
+        HideIMEHelper.wrap(this);
         BmobUser bmobUser = BmobUser.getCurrentUser();
         if(bmobUser!=null){
             inputAccount.setText(bmobUser.getUsername());

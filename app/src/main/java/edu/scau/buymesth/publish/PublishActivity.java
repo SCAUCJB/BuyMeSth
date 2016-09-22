@@ -300,7 +300,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                 request.setTags(tag);
                 presenter.setRequest(request);
                 showLoadingDialog();
-                presenter.submit(picHeights, picWidths, mUrlList);
+                presenter.submit(picHeights, picWidths, mCompressList);
                 break;
 
             case R.id.tv_add:

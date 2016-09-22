@@ -10,4 +10,7 @@ public class UserPresenter extends BasePresenter<UserContract.Model,UserContract
     public void onStart() {
 
     }
+    public UserPresenter(UserContract.View v,UserContract.Model m){
+        setVM(v,m);
+    }
 }
