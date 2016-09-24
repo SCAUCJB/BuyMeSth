@@ -1,12 +1,10 @@
 package edu.scau.buymesth.adapter;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -15,14 +13,11 @@ import com.bumptech.glide.Glide;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import adpater.BaseMultiItemQuickAdapter;
 import adpater.BaseViewHolder;
 import base.util.GlideCircleTransform;
-import base.util.SpaceItemDecoration;
 import cn.bmob.v3.AsyncCustomEndpoints;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
@@ -44,13 +39,13 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
     private Drawable mIconRedHeart,mIconGrayHeart;
     private Activity mActivity;
 
-    private Map<Integer,Drawable> mLevelDrawableChache;
+    private SparseArray< Drawable> mLevelDrawableCache;
 
     public DiscoverAdapter(Activity activity,List<Moment> data) {
         super(data);
         addItemType(0, R.layout.item_discover_view_normal);
         addItemType(1, R.layout.item_discover_view_request);
-        mLevelDrawableChache = new HashMap<>();
+        mLevelDrawableCache = new SparseArray<>();
         mActivity = activity;
     }
 
@@ -77,11 +72,11 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
                 helper.getView(R.id.iv_request_cover).setVisibility(View.INVISIBLE);
             }
         }
-        Drawable levelBg = mLevelDrawableChache.get(item.getUser().getExp()/10*10);
+        Drawable levelBg = mLevelDrawableCache.get(item.getUser().getExp()/10*10);
         if(levelBg==null){
             levelBg = ColorChangeHelper.tintDrawable(mContext.getResources().getDrawable(R.drawable.rect_black),
                     ColorStateList.valueOf(ColorChangeHelper.IntToColorValue(item.getUser().getExp()/10*10)));
-            mLevelDrawableChache.put(item.getUser().getExp()/10*10,levelBg);
+            mLevelDrawableCache.put(item.getUser().getExp()/10*10,levelBg);
         }
         helper.getView(R.id.tv_level).setBackground(levelBg);
 
@@ -175,7 +170,7 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
                 });
                 break;
             case R.id.request_view:
-                RequestDetailActivity.navigate(mActivity,((Moment)item).getRequest());
+                RequestDetailActivity.navigate(mActivity,((Moment)item).getRequest(),true);
                 break;
             default:
                 break;

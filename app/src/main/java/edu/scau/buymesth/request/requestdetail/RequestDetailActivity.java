@@ -39,6 +39,7 @@ import edu.scau.buymesth.publish.FlowLayout;
 import edu.scau.buymesth.request.comment.CommentActivity;
 import edu.scau.buymesth.util.DividerItemDecoration;
 
+import static edu.scau.Constant.EXTRA_NEEDQUERY;
 import static edu.scau.Constant.EXTRA_REQUEST;
 
 /**
@@ -91,7 +92,12 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         intent.putExtra(EXTRA_REQUEST, request);
         activity.startActivity(intent);
     }
-
+    public static void navigate(Activity activity, Request request,boolean needQueryRequest) {
+        Intent intent = new Intent(activity, RequestDetailActivity.class);
+        intent.putExtra(EXTRA_REQUEST, request);
+        intent.putExtra(EXTRA_NEEDQUERY, needQueryRequest);
+        activity.startActivity(intent);
+    }
     @Override
     protected int getLayoutId() {
         return R.layout.activity_requestdetail;
@@ -110,6 +116,8 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         RequestDetailModel model = new RequestDetailModel();
         model.setRequest((Request) getIntent().getSerializableExtra(Constant.EXTRA_REQUEST));
         mPresenter=presenter = new RequestDetailPresenter();
+        //需要联网查询
+        presenter.mNeedQueryRequest=getIntent().getBooleanExtra(EXTRA_NEEDQUERY,false);
         presenter.setVM(this, model);
         mIsSelf = model.getRequest().getUser().getObjectId().equals(BmobUser.getCurrentUser().getObjectId());
         mCreateOrderBtn.setOnClickListener(v -> {
