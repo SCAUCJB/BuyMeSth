@@ -4,11 +4,13 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
@@ -28,12 +30,12 @@ public class MomentFragment extends Fragment implements MomentContract.View{
     private DiscoverAdapter mDiscoverAdapter;
     private MomentPresenter mPresenter;
     private View notLoadingView;
-
+    private TextView mHintTv;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_moment,container,false);
-        if(savedInstanceState==null){
+        TextView mHintTv = (TextView) view.findViewById(R.id.tv_hint);
         mRecyclerView= (RecyclerView) view.findViewById(R.id.rv_discover_fragment);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new  SpaceItemDecoration(2));
@@ -43,11 +45,28 @@ public class MomentFragment extends Fragment implements MomentContract.View{
         mPresenter=new MomentPresenter(getActivity().getBaseContext());
         mPresenter.setVM(this,new MomentModel());
         initAdapter();
-        mPresenter.Refresh();}
+        mPresenter.Refresh();
+        //没滑到顶部之前不允许嵌套滑动
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if(mParent==null) return;
+                if(mRecyclerView.canScrollVertically(-1))
+                {
+                    mParent.setNestedScrollingEnabled(false);
+                }
+                else
+                    mParent.setNestedScrollingEnabled(true);
+            }
+        });
+
         return view;
 
     }
-
+    NestedScrollView mParent;
+    public void disallowIntercept(NestedScrollView parent){
+        mParent=parent;
+    }
 
     private void initAdapter(){
         mDiscoverAdapter = new DiscoverAdapter(getActivity(),mPresenter.mModel.getDatas());
@@ -86,6 +105,9 @@ public class MomentFragment extends Fragment implements MomentContract.View{
 
     @Override
     public void onRefreshComplete(List<Moment> list) {
+        if(list==null||list.size()==0){
+            mHintTv.setVisibility(View.VISIBLE);
+        }
         mDiscoverAdapter.notifyDataSetChanged();
         mDiscoverAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
         mDiscoverAdapter.removeAllFooterView();

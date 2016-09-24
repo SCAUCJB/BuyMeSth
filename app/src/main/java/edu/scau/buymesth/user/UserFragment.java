@@ -2,16 +2,14 @@ package edu.scau.buymesth.user;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
+import android.support.v4.widget.NestedScrollView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +19,7 @@ import java.util.List;
 
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.user.moment.MomentFragment;
-import edu.scau.buymesth.user.request.RequsetFragment;
+import edu.scau.buymesth.user.request.RequestFragment;
 import edu.scau.buymesth.user.setting.UserSettingActivity;
 
 /**
@@ -40,8 +38,11 @@ public class UserFragment extends Fragment implements UserContract.View {
         mContentTb = (TabLayout) view.findViewById(R.id.tl_content);
         mContentVp = (ViewPager) view.findViewById(R.id.vp_content);
         HomePagerAdapter adapter=new HomePagerAdapter(getFragmentManager());
-        adapter.addTab(new RequsetFragment(),"我的请求");
-        adapter.addTab(new MomentFragment(),"我的动态");
+        MomentFragment momentFragment=new MomentFragment();
+        RequestFragment requestFragment=new RequestFragment();
+
+        adapter.addTab(requestFragment,"我的请求");
+        adapter.addTab(momentFragment,"我的动态");
 
         mContentVp.setAdapter(adapter);
         mContentTb.setupWithViewPager(mContentVp);
@@ -52,21 +53,11 @@ public class UserFragment extends Fragment implements UserContract.View {
 
 
         CoordinatorLayout coordinatorLayout = (CoordinatorLayout) view.findViewById(R.id.cl);
-        View bottomSheet = coordinatorLayout.findViewById(R.id.bottom_sheet);
-        final BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
 
-        behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-            }
+        NestedScrollView bottomSheet = (NestedScrollView) coordinatorLayout.findViewById(R.id.bottom_sheet);
 
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                //这里是拖拽中的回调，根据slideOffset可以做一些动画
-                Log.d("zhx","onSlide  ");
-                Log.d("zhx","slideOffset="+slideOffset);
-            }
-        });
+         momentFragment.disallowIntercept(bottomSheet);
+         requestFragment.disallowIntercept(bottomSheet);
         //   mPresenter = new UserPresenter();
         return view;
     }

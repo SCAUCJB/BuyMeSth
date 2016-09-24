@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import base.BasePresenter;
-import base.util.ToastUtil;
 import cn.bmob.v3.datatype.BmobQueryResult;
 import edu.scau.buymesth.data.bean.Request;
 import rx.Observable;
@@ -124,6 +123,7 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
     }
 
     public void onRefresh(String filter , Object key) {
+        if(!isAlive())return ;
         Observable<List<Request>> requestObservable;
         mModel.resetPage();
         List<Request> tempList=new LinkedList<>();

@@ -112,8 +112,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         mPresenter=presenter = new RequestDetailPresenter();
         presenter.setVM(this, model);
         mIsSelf = model.getRequest().getUser().getObjectId().equals(BmobUser.getCurrentUser().getObjectId());
-
-            mCreateOrderBtn.setOnClickListener(v -> {
+        mCreateOrderBtn.setOnClickListener(v -> {
                 if (!mIsSelf) CreateOrderActivity.navigateTo(mContext, (Request) getIntent().getSerializableExtra(EXTRA_REQUEST));
                 else toast("不能接自己的单");
             });
@@ -176,8 +175,6 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
 
     @Override
     public void setOnAcceptClicked() {
-
-
         TextView accept = (TextView) findViewById(R.id.tv_accept);
         accept.setOnClickListener((v) -> {
             if (!mIsSelf)
@@ -355,9 +352,9 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         }
         RequestCommentAdapter requestCommentAdapter = new RequestCommentAdapter(commentList);
         rvComment.setAdapter(requestCommentAdapter);
-        requestCommentAdapter.setOnRecyclerViewItemClickListener((v, p) -> {
-            Toast.makeText(mContext, "i was click", Toast.LENGTH_SHORT).show();
-        });
+//        requestCommentAdapter.setOnRecyclerViewItemClickListener((v, p) -> {
+//            Toast.makeText(mContext, "i was click", Toast.LENGTH_SHORT).show();
+//        });
     }
 
     @Override

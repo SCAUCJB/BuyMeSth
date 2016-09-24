@@ -42,10 +42,12 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     private View notLoadingView;
     private String filter;
     private Object filterKey;
+    private PtrHandler ptrHandler;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_home_fragment);
 //        fbAdd = (FloatingActionButton) view.findViewById(R.id.fb_add);
@@ -69,32 +71,36 @@ public class HomeFragment extends Fragment implements HomeContract.View {
             });
 
         initAdapter();
-        initStoreHouse(view);
+        initStoreHouse(view, savedInstanceState);
         return view;
     }
 
-    private void initStoreHouse(View view) {
-        final PtrFrameLayout frame = (PtrFrameLayout) view.findViewById(R.id.store_house_ptr_frame);
+    private void initStoreHouse(View view, Bundle savedInstanceState) {
+        mPtrFrameLayout = (PtrFrameLayout) view.findViewById(R.id.store_house_ptr_frame);
         final StoreHouseHeader header = new StoreHouseHeader(getActivity());
         header.setPadding(0, 80, 0, 50);
         header.initWithString("Buy Me Sth");
         header.setTextColor(Color.BLACK);
-        frame.setDurationToCloseHeader(1500);
-        frame.setHeaderView(header);
-        frame.addPtrUIHandler(header);
-        frame.postDelayed(()->frame.autoRefresh(false),1000);
-        frame.setPtrHandler(new PtrHandler() {
+        mPtrFrameLayout.setDurationToCloseHeader(1500);
+        mPtrFrameLayout.setHeaderView(header);
+        mPtrFrameLayout.addPtrUIHandler(header);
+        if(savedInstanceState==null)//屏幕旋转以后就不用再自动刷新了
+        mPtrFrameLayout.post(() -> mPtrFrameLayout.autoRefresh(false));
+        ptrHandler = new PtrHandler() {
             @Override
             public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
-                return !mRecyclerView.canScrollVertically(-1);
+                return !mRecyclerView.canScrollVertically(-1) && mPresenter != null;
             }
 
             @Override
             public void onRefreshBegin(final PtrFrameLayout frame) {
+                //屏幕旋转的话presenter被销毁，上面的自动刷新会调用到这里，会引起空指针
+                if (mPresenter == null) return;
                 mPtrFrameLayout = frame;
                 mPresenter.onRefresh(filter, filterKey);
             }
-        });
+        };
+        mPtrFrameLayout.setPtrHandler(ptrHandler);
     }
 
     private void initAdapter() {

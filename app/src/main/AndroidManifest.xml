@@ -48,7 +48,10 @@
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
             android:name=".main.TabActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".publish.PublishActivity"
             android:theme="@style/AppTheme.SwipeBackLayout"
@@ -61,12 +64,14 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".request.requestdetail.RequestDetailActivity"
+            android:label="请求详情"
             android:theme="@style/AppTheme.SwipeBackLayout" />
         <activity
             android:name=".discover.detail.MomentDetailActivity"
             android:theme="@style/AppTheme.SwipeBackLayout" />
         <activity
             android:name=".createorder.CreateOrderActivity"
+            android:label="创建订单"
             android:theme="@style/AppTheme.SwipeBackLayout" />
         <activity
             android:name=".discover.publish.MomentPublishActivity"
@@ -74,6 +79,7 @@
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
             android:name=".request.comment.CommentActivity"
+            android:label="评论"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
         <receiver android:name="cn.bmob.newim.core.ConnectChangeReceiver">
