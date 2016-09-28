@@ -8,7 +8,6 @@ import base.BasePresenter;
 public class UserPresenter extends BasePresenter<UserContract.Model,UserContract.View>{
     @Override
     public void onStart() {
-
     }
     public UserPresenter(UserContract.View v,UserContract.Model m){
         setVM(v,m);

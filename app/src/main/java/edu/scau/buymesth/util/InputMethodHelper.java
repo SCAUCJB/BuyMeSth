@@ -28,4 +28,9 @@ public class InputMethodHelper {
         InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
         return imm.isActive();
     }
+
+    public static void closeFromView(Context context ,View view){
+        InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+    }
 }

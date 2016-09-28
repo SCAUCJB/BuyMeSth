@@ -1,5 +1,7 @@
 package edu.scau.buymesth.data.bean;
 
+import android.content.Intent;
+
 import cn.bmob.v3.BmobUser;
 
 /**

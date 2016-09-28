@@ -35,7 +35,7 @@ public class MomentFragment extends Fragment implements MomentContract.View{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_moment,container,false);
-        TextView mHintTv = (TextView) view.findViewById(R.id.tv_hint);
+        mHintTv = (TextView) view.findViewById(R.id.tv_hint);
         mRecyclerView= (RecyclerView) view.findViewById(R.id.rv_discover_fragment);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new  SpaceItemDecoration(2));

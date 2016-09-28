@@ -38,11 +38,11 @@ public class UserFragment extends Fragment implements UserContract.View {
         mContentTb = (TabLayout) view.findViewById(R.id.tl_content);
         mContentVp = (ViewPager) view.findViewById(R.id.vp_content);
         HomePagerAdapter adapter=new HomePagerAdapter(getFragmentManager());
-        MomentFragment momentFragment=new MomentFragment();
+  //      MomentFragment momentFragment=new MomentFragment();
         RequestFragment requestFragment=new RequestFragment();
 
         adapter.addTab(requestFragment,"我的请求");
-        adapter.addTab(momentFragment,"我的动态");
+   //     adapter.addTab(momentFragment,"我的动态");
 
         mContentVp.setAdapter(adapter);
         mContentTb.setupWithViewPager(mContentVp);
@@ -56,7 +56,7 @@ public class UserFragment extends Fragment implements UserContract.View {
 
         NestedScrollView bottomSheet = (NestedScrollView) coordinatorLayout.findViewById(R.id.bottom_sheet);
 
-         momentFragment.disallowIntercept(bottomSheet);
+    //     momentFragment.disallowIntercept(bottomSheet);
          requestFragment.disallowIntercept(bottomSheet);
         //   mPresenter = new UserPresenter();
         return view;

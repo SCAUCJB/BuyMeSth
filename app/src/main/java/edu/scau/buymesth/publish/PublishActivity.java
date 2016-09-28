@@ -1,8 +1,11 @@
 package edu.scau.buymesth.publish;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.IBinder;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -37,6 +41,7 @@ import edu.scau.buymesth.adapter.PictureAdapter;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.util.CompressHelper;
+import edu.scau.buymesth.util.InputMethodHelper;
 import gallery.PhotoActivity;
 import me.iwf.photopicker.PhotoPicker;
 import ui.widget.SelectableSeekBar;
@@ -238,6 +243,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                 thePrice = "￥" + price;
             }
             mPriceNumber.setText(thePrice);
+            hideBroad();
         }).create();
         View priceRangeView=getLayoutInflater().inflate(R.layout.dialog_price_range,null);
         EditText priceLowEt = (EditText)priceRangeView.findViewById(R.id.et_low);
@@ -387,6 +393,16 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         presenter.onDestroy();
         presenter = null;
         threadPoolExecutor.shutdownNow();
+    }
+
+    public void hideBroad(){
+        InputMethodHelper.toggle(this);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                InputMethodHelper.closeFromView(mContext,etTitle);
+            }
+        },100);
     }
 
 }

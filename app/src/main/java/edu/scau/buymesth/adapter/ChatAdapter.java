@@ -14,13 +14,16 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
+import adpater.BaseMultiItemQuickAdapter;
 import adpater.BaseQuickAdapter;
 import adpater.BaseViewHolder;
+import base.util.GlideCircleTransform;
 import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.QueryListener;
+import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.Request;
@@ -34,82 +37,46 @@ import static edu.scau.Constant.EXTRA_REQUEST;
 /**
  * Created by Jammy on 2016/9/6.
  */
-public class ChatAdapter extends BaseQuickAdapter<Order> {
+public class ChatAdapter extends BaseMultiItemQuickAdapter<Order> {
 
-    ////TODO：1.保存订单信息   2.提交订单时传过来的json解析问题
-
-
-    Activity activity;
-
-    public void setActivity(Activity activity){
-        this.activity = activity;
-    }
-
-    public ChatAdapter(int layoutResId, List<Order> data) {
-        super(layoutResId, data);
+    public ChatAdapter(List<Order> data) {
+        super(data);
+        addItemType(Constant.BUYER_STATUS_CREATE,R.layout.buyer_create);
+        addItemType(Constant.SELLER_STATUS_CREATE,R.layout.seller_create);
     }
 
     @Override
     protected void convert(BaseViewHolder helper, Order item) {
-        BmobQuery<User> bmobQuery = new BmobQuery<User>();
-        bmobQuery.getObject(item.getSeller().getObjectId(), new QueryListener<User>() {
-            @Override
-            public void done(User object, BmobException e) {
-                if (e == null) {
-                    Glide.with(mContext).load(object.getAvatar()).centerCrop().into((ImageView) helper.getView(R.id.chat_icon));
-                    helper.setText(R.id.tv_chat_name, object.getNickname());
-                } else {
-                    //TODO：若请求失败？
+        switch (helper.getItemViewType()){
+            case Constant.BUYER_STATUS_CREATE:
+                helper.setText(R.id.tv_chat_name,item.getSeller().getNickname());
+                helper.setText(R.id.tv_level,String.valueOf(item.getSeller().getExp()));
+                Glide.with(mContext).load(item.getSeller().getAvatar()).placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into((ImageView) helper.getView(R.id.chat_icon));
+                helper.setText(R.id.tv_chat_time,"用户于"+item.getCreatedAt()+"接收了你的订单");
+                helper.setText(R.id.thing_price,"物品价格:"+item.getPrice()+item.getPriceType());
+                helper.setText(R.id.tv_tip,"索要小费:"+item.getTip()+item.getTipType());
+                if(item.getRequest().getUrls()!=null){
+                    Glide.with(mContext).load(item.getRequest().getUrls().get(0)).placeholder(R.mipmap.def_head).into((ImageView) helper.getView(R.id.iv_main_pic));
                 }
-            }
-        });
-        BmobQuery<Request> requestBmobQuery = new BmobQuery<>();
-        requestBmobQuery.getObject(item.getRequest().getObjectId(), new QueryListener<Request>() {
-            @Override
-            public void done(Request request, BmobException e) {
-                if (e == null) {
-                    if (request.getUrls() != null){
-                        Glide.with(mContext).load(request.getUrls().get(0)).centerCrop().into((ImageView) helper.getView(R.id.iv_main_pic));
-                        helper.getView(R.id.rl_main).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                ////TODO：跳转至订单界面,这样写会内存泄漏
-                                RequestDetailActivity.navigate(activity,request);
-                            }
-                        });
+                break;
+
+            case Constant.SELLER_STATUS_CREATE:
+                helper.setText(R.id.tv_text,"你于"+item.getUpdatedAt()+"接收了订单,等待买家确认");
+                if (item.getRequest() != null) {
+                    helper.setText(R.id.request_title, item.getRequest().getTitle());
+                    if (item.getRequest().getUrls() != null && item.getRequest().getUrls().size() > 0) {
+                        Glide.with(mContext).load(item.getRequest().getUrls().get(0))
+                                .into((ImageView) helper.getView(R.id.request_icon));
                     }
-                    else helper.getView(R.id.iv_main_pic).setVisibility(View.GONE);
-                } else {
-                    //TODO：若请求失败？
                 }
-            }
-        });
-        helper.setText(R.id.thing_price, "物品价格：" + item.getPrice() + item.getPriceType());
-        helper.setText(R.id.tv_tip, "索要小费：" + item.getTip() + item.getTipType());
-        helper.setText(R.id.tv_chat_time, "用户于：" + item.getUpdatedAt() + "接收了你的订单");
-
-        for (String tag : item.getTags()) {
-            TextView tv = (TextView) LayoutInflater.from(mContext).inflate(R.layout.tv_tag, null);
-            ViewGroup.MarginLayoutParams marginLayoutParams = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            marginLayoutParams.setMargins(4, 4, 4, 4);
-            tv.setLayoutParams(marginLayoutParams);
-            tv.setText(tag);
-            tv.setClickable(true);
-            ((FlowLayout) helper.getView(R.id.chat_tag)).addView(tv);
+                helper.setText(R.id.tv_price,"你的出价："+item.getPrice()+item.getPriceType());
+                helper.setText(R.id.tv_tip,"索要小费："+item.getTip()+item.getTipType());
+                break;
         }
-        helper.getView(R.id.btn_chat_ok).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /////TODO:确认接单的操作
-            }
-        });
+    }
 
-        helper.getView(R.id.btn_chat_cancle).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ////TODO：不接单的操作
-            }
-        });
-
+    @Override
+    public Object getItem(int position) {
+        return super.getItem(position);
     }
 }

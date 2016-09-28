@@ -48,4 +48,12 @@ dependencies {
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
     //Clans/FloatingActionButton
     compile 'com.github.clans:fab:1.6.4'
+//    compile 'me.iwf.photopicker:PhotoPicker:0.8.5@aar'
+    compile 'com.nineoldandroids:library:2.4.0'
+    //数据库依赖
+//    compile 'com.squareup.sqlbrite:sqlbrite:0.7.0'
+    compile('com.squareup.sqlbrite:sqlbrite:0.7.0'){
+        exclude group: 'io.reactivex'
+        exclude group: 'com.android.support'
+    }
 }
