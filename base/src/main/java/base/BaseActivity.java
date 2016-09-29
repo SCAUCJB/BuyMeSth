@@ -1,5 +1,6 @@
 package base;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,7 +30,24 @@ public abstract class BaseActivity extends AppCompatActivity {
     private ImageView ivShadow;
     private ImageView colorStatus;
     private static final int DEFAULT_TOOLBAR_ID = -1;
+    private ProgressDialog mDialog = null;
 
+    public void showLoadingDialog() {
+        if (mDialog == null) {
+            mDialog = new ProgressDialog(mContext);
+            mDialog.setCancelable(false);
+            mDialog.setMessage("请稍等");
+
+        }
+        mDialog.show();
+    }
+
+
+    public void closeLoadingDialog() {
+        if (mDialog != null) {
+            mDialog.dismiss();
+        }
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +94,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener((v) -> onBackPressed());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     /**
@@ -98,7 +115,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 colorStatus.setBackgroundColor(getResources().getColor(getStatusColorResources()));
     }
 
-    private int getStatusBarHeight() {
+    public int getStatusBarHeight() {
         int result = 0;
         int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0) {

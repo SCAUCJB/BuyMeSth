@@ -1,11 +1,11 @@
-package edu.scau.buymesth.user;
-
+package edu.scau.buymesth.userinfo;
 
 /**
- * Created by Jammy on 2016/8/31.
+ * Created by John on 2016/9/24.
  */
-public interface UserContract {
-    interface View {
+
+public interface Contract  {
+    interface View{
         void setUserName(String name);
         void setAvatar(String url);
         void setLevel(Integer level);
@@ -13,16 +13,17 @@ public interface UserContract {
         void setSignature(String description);
         void setScore(String score);
         void setPopulation(String population);
+        void showMsg(String msg);
+        boolean hasNet();
+
         void setRatingBar(Float score);
+
         void initTab();
     }
-
-    interface Presenter {
+    interface Presenter{
         void subscribe();
         void unsubscribe();
         void showUserInfo();
         void showTab();
     }
-
-
 }

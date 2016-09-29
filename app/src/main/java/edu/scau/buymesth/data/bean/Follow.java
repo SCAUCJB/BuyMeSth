@@ -6,6 +6,10 @@ import cn.bmob.v3.BmobObject;
  * Created by ！ on 2016/9/5.
  */
 public class Follow extends BmobObject{
+    public static final String TABLE = "collect";
+    public static final String ID = "_id";
+    public static final String FROM_USER_ID = "id_from_user";
+    public static final String TO_USER_ID  = "id_to_user";
     private User fromUser;
     private User toUser;
 

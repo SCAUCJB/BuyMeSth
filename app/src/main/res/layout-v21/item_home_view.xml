@@ -85,37 +85,51 @@
         </RelativeLayout>
 
         <LinearLayout
-            android:orientation="vertical"
+            android:id="@+id/text_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/iv_tweet_image"
             android:layout_alignStart="@+id/iv_tweet_image"
+            android:layout_below="@+id/iv_tweet_image"
+            android:orientation="vertical"
+            android:paddingBottom="5dp"
             android:paddingLeft="8dp"
-            android:paddingTop="5dp"
             android:paddingRight="8dp"
-            android:paddingBottom="5dp">
+            android:paddingTop="5dp">
 
             <TextView
                 android:id="@+id/tv_tweet_title"
                 style="@style/theTitleSmall"
-                android:text="标题"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignStart="@+id/iv_tweet_image"
                 android:layout_below="@+id/iv_tweet_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:text="标题" />
 
             <TextView
                 android:id="@+id/tv_tweet_text"
                 style="@style/theText"
-                android:layout_below="@+id/tv_tweet_title"
-                android:layout_alignStart="@+id/tv_tweet_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/tv_tweet_title"
+                android:layout_below="@+id/tv_tweet_title"
 
-                android:textColor="@android:color/darker_gray"
+                android:layout_marginTop="@dimen/title_to_content"
                 android:text="Hello world!"
-                android:layout_marginTop="@dimen/title_to_content" />
+                android:textColor="@android:color/darker_gray" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_price"
+            android:paddingBottom="5dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="5dp"
+            android:layout_alignParentRight="true"
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_container"
+            android:text="期望价格：" />
 
         <ImageView
             android:id="@+id/iv_tweet_image"

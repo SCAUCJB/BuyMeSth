@@ -24,17 +24,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
 import com.google.gson.Gson;
 import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqlbrite.QueryObservable;
 import com.squareup.sqlbrite.SqlBrite;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 
 import adpater.BaseQuickAdapter;
 import base.util.SpaceItemDecoration;
@@ -42,11 +38,7 @@ import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.ChatAdapter;
 import edu.scau.buymesth.data.bean.Order;
-import edu.scau.buymesth.data.bean.Request;
-import edu.scau.buymesth.data.bean.User;
 import rx.Subscriber;
-import rx.Subscription;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -168,6 +160,7 @@ public class ChatFragment extends Fragment {
                     Order order = gson.fromJson(cursor.getString(cursor.getColumnIndex("orderJson")), Order.class);
                     list.add(order);
                 }
+                //这里的list用临时的列表来存储就不用取消订阅了
                 cursor.close();
                 adapter.setNewData(list);
                 this.unsubscribe();

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,7 +78,6 @@ public class UserSettingFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.d("zhx", "onCreateView");
         ((UserSettingActivity) getActivity()).resetToolbar();
         View view = inflater.inflate(R.layout.fragment_setting, container, false);
         mAvatar = view.findViewById(R.id.rl_avatar);
@@ -123,7 +121,6 @@ public class UserSettingFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("zhx", "onActivityResult ");
         if (resultCode == RESULT_OK && requestCode == PhotoPicker.REQUEST_CODE) {
             if (data != null) {
                 ArrayList<String> photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
@@ -205,19 +202,15 @@ public class UserSettingFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("zhx", "onDestroy");
     }
 
     @Override
     public void onDetach() {
-        super.onDetach();
-        Log.d("zhx", "onDetach");
-    }
+        super.onDetach();   }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d("zhx", "onDestroyView");
     }
 
     private void setListener() {

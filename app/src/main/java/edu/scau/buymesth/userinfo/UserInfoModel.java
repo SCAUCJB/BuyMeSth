@@ -1,13 +1,14 @@
-package edu.scau.buymesth.user;
+package edu.scau.buymesth.userinfo;
 
 import cn.bmob.v3.BmobQuery;
 import edu.scau.buymesth.data.bean.User;
 import rx.Observable;
 
 /**
- * Created by Jammy on 2016/8/31.
+ * Created by John on 2016/9/24.
  */
-public class UserModel {
+
+public class UserInfoModel {
     private User user;
 
     public Observable<User> getUser(String id) {

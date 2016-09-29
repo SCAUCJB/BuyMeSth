@@ -36,7 +36,8 @@ public class RequestDetailModel implements RequestDetailContract.Model {
         request.setObjectId(objId);
         query.addWhereEqualTo("request",new BmobPointer(request));
         query.order("-createdAt");
-        query.setLimit(3);
+        query.setLimit(4);
+
         query.include("author");
         return query.findObjectsObservable(Comment.class);
     }

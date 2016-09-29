@@ -14,12 +14,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.squareup.sqlbrite.BriteDatabase;
+import com.squareup.sqlbrite.SqlBrite;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +35,14 @@ import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.RequestCommentAdapter;
 import edu.scau.buymesth.createorder.CreateOrderActivity;
+import edu.scau.buymesth.data.DbOpenHelper;
 import edu.scau.buymesth.data.bean.Comment;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.publish.FlowLayout;
 import edu.scau.buymesth.request.comment.CommentActivity;
 import edu.scau.buymesth.util.DividerItemDecoration;
+import rx.Subscription;
+import rx.schedulers.Schedulers;
 
 import static edu.scau.Constant.EXTRA_NEEDQUERY;
 import static edu.scau.Constant.EXTRA_REQUEST;
@@ -55,10 +60,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     TextView title;
     @Bind(R.id.tv_time)
     TextView time;
-    @Bind(R.id.tv_mark)
-    TextView mark;
-    @Bind(R.id.tv_like)
-    TextView like;
+
     @Bind(R.id.iv_avatar_user)
     ImageView userAvatar;
     @Bind(R.id.tv_comment)
@@ -86,25 +88,50 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     private List<ImageView> imageViews;
     private PagerAdapter mAdapter;
     private boolean mIsSelf;
+    @Bind(R.id.btn_follow)
+    Button mFollowBtn;
+    @Bind(R.id.tv_tag_hint)
+    TextView mTagHintTv;
+    private Subscription subscription;
+    private BriteDatabase db;
 
     public static void navigate(Activity activity, Request request) {
         Intent intent = new Intent(activity, RequestDetailActivity.class);
         intent.putExtra(EXTRA_REQUEST, request);
         activity.startActivity(intent);
     }
-    public static void navigate(Activity activity, Request request,boolean needQueryRequest) {
+
+    public static void navigate(Activity activity, Request request, boolean needQueryRequest) {
         Intent intent = new Intent(activity, RequestDetailActivity.class);
         intent.putExtra(EXTRA_REQUEST, request);
         intent.putExtra(EXTRA_NEEDQUERY, needQueryRequest);
         activity.startActivity(intent);
     }
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_requestdetail;
     }
-
+//    @Override public void onResume() {
+//        super.onResume();
+//
+//        subscription = db.createQuery(ListsItem.TABLES, ListsItem.QUERY)
+//                .mapToList(ListsItem.MAPPER)
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(adapter);
+//    }
+//
+//    @Override public void onPause() {
+//        super.onPause();
+//        subscription.unsubscribe();
+//    }
     @Override
     public void initView() {
+        SqlBrite sqlBrite = SqlBrite.create();
+        DbOpenHelper dbHelper = new DbOpenHelper(getContext());
+        db = sqlBrite.wrapDatabaseHelper(dbHelper, Schedulers.io());
+
+
         rvComment.setLayoutManager(new LinearLayoutManager(mContext));
         rvComment.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_4)));
         rvComment.setHasFixedSize(true);
@@ -115,29 +142,25 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
                 DividerItemDecoration.VERTICAL_LIST));
         RequestDetailModel model = new RequestDetailModel();
         model.setRequest((Request) getIntent().getSerializableExtra(Constant.EXTRA_REQUEST));
-        mPresenter=presenter = new RequestDetailPresenter();
+        mPresenter = presenter = new RequestDetailPresenter();
         //需要联网查询
-        presenter.mNeedQueryRequest=getIntent().getBooleanExtra(EXTRA_NEEDQUERY,false);
+        presenter.mNeedQueryRequest = getIntent().getBooleanExtra(EXTRA_NEEDQUERY, false);
         presenter.setVM(this, model);
         mIsSelf = model.getRequest().getUser().getObjectId().equals(BmobUser.getCurrentUser().getObjectId());
         mCreateOrderBtn.setOnClickListener(v -> {
-                if (!mIsSelf) CreateOrderActivity.navigateTo(mContext, (Request) getIntent().getSerializableExtra(EXTRA_REQUEST));
-                else toast("不能接自己的单");
-            });
+            if (!mIsSelf)
+                CreateOrderActivity.navigateTo(mContext, (Request) getIntent().getSerializableExtra(EXTRA_REQUEST));
+            else toast("不能接自己的单");
+        });
+
     }
 
     @Override
     protected void setListener() {
-           comment.setOnClickListener(v-> CommentActivity.navigateTo(mContext,presenter.getRequest()));
+        comment.setOnClickListener(v -> CommentActivity.navigateTo(mContext, presenter.getRequest()));
+        userAvatar.setOnClickListener(v -> presenter.onAuthorOnClicked());
     }
 
-    @Override
-    protected void onDestroy() {
-
-        presenter.onDestroy();
-        presenter = null;
-        super.onDestroy();
-    }
 
     protected int getToolBarId() {
         return R.id.toolbar;
@@ -177,14 +200,14 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     @Override
     public void setAuthorOnClicked() {
         userInfoBar.setOnClickListener((v) -> {
-            Toast.makeText(mContext, "跳转用户页面", Toast.LENGTH_SHORT).show();
+            presenter.onAuthorOnClicked();
         });
     }
 
     @Override
-    public void setOnAcceptClicked() {
-        TextView accept = (TextView) findViewById(R.id.tv_accept);
-        accept.setOnClickListener((v) -> {
+    public void setOnFollowClicked() {
+
+        mFollowBtn.setOnClickListener((v) -> {
             if (!mIsSelf)
                 presenter.follow();
             else
@@ -228,11 +251,6 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
 
     }
 
-    @Override
-    public void setLikes(Integer likes) {
-        String likeString = likes + "次赞";
-        like.setText(likeString);
-    }
 
     @Override
     public void setTime(String createdAt) {
@@ -330,9 +348,9 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     public void setFollow(boolean b) {
         runOnUiThread(() -> {
             if (b) {
-                ((TextView) findViewById(R.id.tv_accept)).setText(getResources().getString(R.string.text_followed));
+                mFollowBtn.setText(getResources().getString(R.string.text_followed));
             } else {
-                ((TextView) findViewById(R.id.tv_accept)).setText(getResources().getString(R.string.text_follow));
+                mFollowBtn.setText(getResources().getString(R.string.text_follow));
             }
         });
     }
@@ -346,6 +364,11 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
                 ((TextView) findViewById(R.id.tv_collect)).setText(getResources().getString(R.string.text_collect));
             }
         });
+    }
+
+    @Override
+    public Activity getContext() {
+        return (Activity) mContext;
     }
 
     @Override
@@ -373,6 +396,11 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
 
     @Override
     public void setTagList(List<String> tags) {
+        if (tags.size() == 0) {
+            mTagHintTv.setVisibility(View.GONE);
+            flTags.setVisibility(View.GONE);
+            return;
+        }
         for (String tag : tags) {
             TextView tv = (TextView) LayoutInflater.from(mContext).inflate(R.layout.tv_tag, null);
             ViewGroup.MarginLayoutParams marginLayoutParams = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);

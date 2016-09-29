@@ -1,27 +1,15 @@
 package edu.scau.buymesth.discover.list;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.net.ConnectivityManager;
-import android.support.v7.app.AlertDialog;
-import android.view.View;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import base.BasePresenter;
-import cn.bmob.v3.AsyncCustomEndpoints;
 import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.BmobUser;
-import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.CloudCodeListener;
-import cn.bmob.v3.listener.UpdateListener;
-import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.data.bean.MomentsLike;
+import edu.scau.buymesth.util.NetworkHelper;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -43,17 +31,14 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
     public void onStart() {
     }
 
-    private boolean isOpenNetwork() {
-        ConnectivityManager connManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return connManager.getActiveNetworkInfo() != null && connManager.getActiveNetworkInfo().isAvailable();
-    }
+
 
     public void Refresh(){
         mModel.updateLikeList();
         mModel.resetPage();
         mModel.getDatas().clear();
         BmobQuery.CachePolicy cachePolicy;
-        if(isOpenNetwork())cachePolicy = BmobQuery.CachePolicy.CACHE_THEN_NETWORK;
+        if(NetworkHelper.isOpenNetwork(mContext))cachePolicy = BmobQuery.CachePolicy.CACHE_THEN_NETWORK;
         else cachePolicy = BmobQuery.CachePolicy.CACHE_ONLY;
         mModel.getRxMoments(cachePolicy).flatMap(new Func1<List<Moment>, Observable<Moment>>() {
             @Override
@@ -103,7 +88,7 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
 
     public void LoadMore(){
         BmobQuery.CachePolicy cachePolicy;
-        if(isOpenNetwork())cachePolicy = BmobQuery.CachePolicy.CACHE_THEN_NETWORK;
+        if(NetworkHelper.isOpenNetwork(mContext))cachePolicy = BmobQuery.CachePolicy.CACHE_THEN_NETWORK;
         else cachePolicy = BmobQuery.CachePolicy.CACHE_ONLY;
         List<Moment> tempList=new LinkedList<>();
         mModel.getRxMoments(cachePolicy).flatMap(new Func1<List<Moment>, Observable<Moment>>() {

@@ -47,12 +47,12 @@
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
             android:name=".main.TabActivity"
-            android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".publish.PublishActivity"
+            android:label="发送请求"
             android:theme="@style/AppTheme.SwipeBackLayout"
             android:windowSoftInputMode="stateHidden" />
         <activity
@@ -64,23 +64,44 @@
         <activity
             android:name=".request.requestdetail.RequestDetailActivity"
             android:label="请求详情"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
         <activity
             android:name=".discover.detail.MomentDetailActivity"
+            android:launchMode="singleTop"
+            android:label="动态详情"
             android:theme="@style/AppTheme.SwipeBackLayout" />
         <activity
             android:name=".createorder.CreateOrderActivity"
             android:label="创建订单"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
         <activity
             android:name=".discover.publish.MomentPublishActivity"
             android:theme="@style/AppTheme.SwipeBackLayout"
+            android:label="发布动态"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
             android:name=".request.comment.CommentActivity"
             android:label="评论"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
-
+        <activity
+            android:name=".userinfo.UserInfoActivity"
+            android:label="用户信息"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.SwipeBackLayout" />
+        <activity
+            android:name=".user.address.AddressActivity"
+            android:label="管理收货地址"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.SwipeBackLayout" />
+        <activity
+            android:name=".user.address.editaddress.EditAddressActivity"
+            android:label="编辑地址"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.SwipeBackLayout" />
         <receiver android:name="cn.bmob.newim.core.ConnectChangeReceiver">
             <intent-filter>
                 <action android:name="cn.bmob.action.RECONNECT" />
@@ -103,17 +124,19 @@
             android:name=".discover.publish.SelectActivity"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
-        <activity android:name="gallery.PhotoActivity"
-            android:theme="@style/AppTheme.SwipeBackLayout"/>
-        <activity android:name=".user.setting.UserSettingActivity"
-            android:theme="@style/AppTheme.SwipeBackLayout"/>
+        <activity
+            android:name="gallery.PhotoActivity"
+            android:theme="@style/AppTheme.SwipeBackLayout" />
+        <activity
+            android:name=".user.setting.UserSettingActivity"
+            android:theme="@style/AppTheme.SwipeBackLayout" />
 
         <!--/////process用来定义线程的名字-->
         <service android:name=".chat.RequestService"
 
             >
             <intent-filter>
-                <action android:name="android.intent.action.RESPOND_VIA_MESSAGE"/>
+                <action android:name="android.intent.action.RESPOND_VIA_MESSAGE" />
             </intent-filter>
 
         </service>

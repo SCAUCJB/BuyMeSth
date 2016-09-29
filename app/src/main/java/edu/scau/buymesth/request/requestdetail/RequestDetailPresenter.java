@@ -1,5 +1,7 @@
 package edu.scau.buymesth.request.requestdetail;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,6 +20,7 @@ import edu.scau.buymesth.data.bean.Comment;
 import edu.scau.buymesth.data.bean.Follow;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.data.bean.User;
+import edu.scau.buymesth.userinfo.UserInfoActivity;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -127,7 +130,7 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
             public void done(Object o, BmobException e) {
                 if (e != null) return;
                 if (o != null) {
-                    if (((String) o).equals("true")) {
+                    if ((  o.toString()).equals("true")) {
                         mView.setFollow(true);
                     } else {
                         mView.setFollow(false);
@@ -171,7 +174,7 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
         mView.setAuthorExp(request.getUser().getExp());
         mView.setAuthorName(request.getUser().getNickname());
         mView.setAuthorOnClicked();
-        mView.setOnAcceptClicked();
+        mView.setOnFollowClicked();
         //
         mView.setOnCollectClicked();
     }
@@ -185,7 +188,6 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
         Request request = mModel.getRequest();
         mView.setTitle(request.getTitle());
         mView.setContent(request.getContent());
-        mView.setLikes(request.getLikes());
         mView.setTime(request.getCreatedAt());
 
         if (request.getUrls() != null) {
@@ -229,4 +231,7 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
         initComment();
     }
 
+      void onAuthorOnClicked() {
+        UserInfoActivity.navigate(mView.getContext(),mModel.getRequest().getUser());
+    }
 }

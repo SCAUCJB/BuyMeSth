@@ -24,9 +24,10 @@
         android:id="@+id/bottom_bar"
         android:layout_alignParentBottom="true"
         android:background="@drawable/background_item_base"
+
         android:elevation="@dimen/elevation_high"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_40"
+        android:layout_height="40dp"
         android:orientation="horizontal">
 
         <TextView
@@ -54,13 +55,15 @@
         android:layout_height="match_parent"
         android:layout_weight="1" />
     </LinearLayout>
+
     <android.support.v4.widget.NestedScrollView
         android:overScrollMode="never"
         android:fadingEdge="none"
-        android:layout_below="@+id/app_bar_layout"
-        android:layout_above="@+id/bottom_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/app_bar_layout"
+        android:layout_above="@id/bottom_bar"
+       >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -83,13 +86,13 @@
 
                 <TextView
                     android:id="@+id/tv_name"
-                    style="@style/theName"
+                    style="@style/TextAppearance.AppCompat.Body1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="@dimen/dp_6"
                     android:layout_toEndOf="@+id/iv_avatar_author"
-                    android:text="Miracle" />
+                    android:text=" " />
 
                 <TextView
                     android:id="@+id/tv_level"
@@ -110,8 +113,8 @@
                     android:textColor="#f3f3f3"
                     android:textSize="8sp" />
 
-                <TextView
-                    android:id="@+id/tv_accept"
+                <Button
+                    android:id="@+id/btn_follow"
                     android:layout_width="@dimen/dp_72"
                     android:layout_height="30dp"
                     android:layout_alignParentEnd="true"
@@ -120,6 +123,7 @@
                     android:background="@drawable/rect_accent"
                     android:gravity="center"
                     android:text="+ 关注"
+                    style="@style/TextAppearance.AppCompat.Button"
                     android:textColor="#ffffff" />
             </RelativeLayout>
 
@@ -161,12 +165,21 @@
                 android:text="" />
             <TextView
                 android:id="@+id/tv_price"
-                style="@style/theName"
+                style="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/content_padding"
                 android:paddingRight="@dimen/content_padding"
-                android:text="期望价格" />
+                android:text="期望价格:" />
+            <TextView
+                android:id="@+id/tv_tag_hint"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="@dimen/content_padding"
+                android:paddingRight="@dimen/content_padding"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:text="特殊的要求:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
             <edu.scau.buymesth.publish.FlowLayout
                 android:layout_marginTop="@dimen/dp_10"
                 android:layout_marginBottom="@dimen/dp_10"
@@ -176,40 +189,16 @@
                 android:layout_margin="10dp">
 
             </edu.scau.buymesth.publish.FlowLayout>
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_60">
 
-                <TextView
-                    android:id="@+id/tv_time"
-                    style="@style/theDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/dp_14"
-                    android:text="2016-06-19 02:57:41发布" />
-
-                <TextView
-                    android:id="@+id/tv_like"
-                    style="@style/theDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="@dimen/dp_14"
-                    android:text="20次赞" />
-
-                <TextView
-                    android:id="@+id/tv_mark"
-                    style="@style/theDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="@dimen/dp_36"
-                    android:layout_toLeftOf="@+id/tv_like"
-                    android:text="100次收藏" />
-            </RelativeLayout>
+            <TextView
+                android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginBottom="@dimen/dp_10"
+                android:id="@+id/tv_time"
+                style="@style/theDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_14"
+                android:text="2016-06-19 02:57:41发布" />
 
             <LinearLayout
                 android:layout_width="match_parent"

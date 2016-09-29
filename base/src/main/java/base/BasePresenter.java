@@ -22,11 +22,11 @@ public abstract class BasePresenter<M, V> {
 
     public abstract void onStart();
 
-    protected   void subscribe() {
+    public   void subscribe() {
 
     }
 
-    protected void unsubscribe() {
+    public void unsubscribe() {
         mSubscriptions.unsubscribe();
     }
 

@@ -16,6 +16,8 @@ public class User extends BmobUser {
     private String avatar;
     private String signature;
     private String residence;
+    private Float score;
+    private Integer ratePopulation;
     public String getNickname() {
         return nickname;
     }
@@ -70,5 +72,22 @@ public class User extends BmobUser {
 
     public void setResidence(String residence) {
         this.residence = residence;
+    }
+
+
+    public void setScore(Float score) {
+        this.score = score;
+    }
+
+    public Float getScore() {
+        return score;
+    }
+
+    public Integer getRatePop() {
+        return ratePopulation;
+    }
+
+    public void setRatePopulation(Integer ratePopulation) {
+        this.ratePopulation = ratePopulation;
     }
 }

@@ -48,7 +48,7 @@ public class UserSettingActivity extends BaseActivity implements UserSettingFrag
 
     @Override
     public void initView() {
-
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     @Override

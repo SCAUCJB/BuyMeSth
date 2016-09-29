@@ -10,8 +10,8 @@ import android.util.Log;
  */
 public class SQLiteHelper extends SQLiteOpenHelper {
 
-    public static String DATABASE_TABLE = "msgtable";
-    public static String DB_NAME ="chatmsg.db";
+    public static final String DATABASE_TABLE = "msgtable";
+    public static final String DB_NAME ="chatmsg.db";
 
     private String DATABASE_CREATE = "create table if not exists " + DATABASE_TABLE + "("
             + "id integer primary key autoincrement,"

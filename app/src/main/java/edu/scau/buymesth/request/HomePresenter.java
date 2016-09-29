@@ -41,101 +41,21 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
 
     }
 
-    /**
-     * Created by John on 2016/8/9
-     * 调用比目云的接口，拿到分页数据，先把列表转换成单个数据再分别添加到数据集里面，这个数据集只需要存储新拿到的数据即可，所以要在之前做clear操作，
-     * 最后通过view来通知adapter部分更新recycler view，性能极佳。
-     * 但是现在还没处理已经没有数据了的情况
-     */
-    public void onLoadMore() {
-        List<Request> tempList = new LinkedList<>();
-        mModel.getRxRequests(HomeModel.FROM_NETWORK).flatMap(new Func1<List<Request>, Observable<Request>>() {
-            @Override
-            public Observable<Request> call(List<Request> requests) {
-                return Observable.from(requests);
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Request>() {
-                    @Override
-                    public void onCompleted() {
-                        if (isAlive()) {
-                            if (tempList.size() > 0)
-                                mView.onLoadMoreSuccess(tempList);
-                            else
-                                mView.onLoadMoreSuccess(null);
-                        }
-                    }
-
-            @Override
-            public void onError(Throwable throwable) {
-                if (isAlive()){
-                    mView.showError("仿佛网络有点差");
-                    mView.onRefreshFail();
-                }
-
-            }
-
-                    @Override
-                    public void onNext(Request request) {
-                        if (isAlive()) tempList.add(request);
-                    }
-                });
-    }
-
-    /**
-     * Created by John on 2016/8/9
-     * 这里的处理有点粗暴，直接把新数据拿下来覆盖旧数据而不是在头部追加，待优化
-     */
-    public void onRefresh() {
-        mModel.resetPage();
-        List<Request> tempList=new LinkedList<>();
-        mModel.getRxRequests(HomeModel.FROM_NETWORK).flatMap(new Func1<List<Request>, Observable<Request>>() {
-            @Override
-            public Observable<Request> call(List<Request> requests) {
-                return Observable.from(requests);
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Request>() {
-                    @Override
-                    public void onCompleted() {
-                        if(isAlive())
-                        {
-                            mModel.getDatas().clear();
-                            mModel.setDatas(tempList);
-                            mView.onRefreshComplete(mModel.getDatas());}
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        if (isAlive()){
-                            mView.showError("仿佛网络有点差");
-                            mView.onRefreshFail();
-                        }
-                    }
-
-                    @Override
-                    public void onNext(Request request) {
-                        if(isAlive()) tempList.add(request);
-                    }
-                });
-    }
-
-    public void onRefresh(String filter , Object key) {
+     void onRefresh(String filter , Object key) {
         if(!isAlive())return ;
         Observable<List<Request>> requestObservable;
         mModel.resetPage();
         List<Request> tempList=new LinkedList<>();
+         int  policy=mView.hasNetwork()?HomeModel.FROM_NETWORK:HomeModel.FROM_CACHE;
 
         if(filter==FILTER_AUTHOR_ID){
-            requestObservable = mModel.getSomeonesRxRequests(HomeModel.FROM_NETWORK,(String) key);
+            requestObservable = mModel.getSomeonesRxRequests(policy,(String) key);
         }else if(filter==FILTER_AUTHOR_IDS){
-            requestObservable = mModel.getSomeonesRxRequests(HomeModel.FROM_NETWORK,(List<String>)key);
+            requestObservable = mModel.getSomeonesRxRequests(policy ,(List<String>)key);
         }else if(filter==FILTER_FUZZY_SEARCH){
-            requestObservable = mModel.getFuzzySearchRxRequests(HomeModel.FROM_NETWORK,(String)key);
+            requestObservable = mModel.getFuzzySearchRxRequests(policy,(String)key);
         }else if(filter == FILTER_FOLLOW_ONLY){
-            Observable<BmobQueryResult<Request>> bqlRequestObservable = mModel.getFollowedRxRequests(HomeModel.FROM_NETWORK, (String) key);
+            Observable<BmobQueryResult<Request>> bqlRequestObservable = mModel.getFollowedRxRequests(policy, (String) key);
             bqlRequestObservable.flatMap(new Func1<BmobQueryResult<Request>, Observable<Request>>() {
                 @Override
                 public Observable<Request> call(BmobQueryResult<Request> requestBmobQueryResult) {
@@ -168,7 +88,7 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
                     });
             return;
         } else {
-            requestObservable = mModel.getRxRequests(HomeModel.FROM_NETWORK);
+            requestObservable = mModel.getRxRequests(policy);
         }
 
         mSubscription=requestObservable.flatMap(new Func1<List<Request>, Observable<Request>>() {
@@ -206,13 +126,13 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
     public void onLoadMore(String filter , Object key) {
         Observable<List<Request>> requestObservable;
         List<Request> tempList = new LinkedList<>();
-
+        int  policy=mView.hasNetwork()?HomeModel.FROM_NETWORK:HomeModel.FROM_CACHE;
         if(filter==FILTER_AUTHOR_ID){
-            requestObservable = mModel.getSomeonesRxRequests(HomeModel.FROM_NETWORK,(String) key);
+            requestObservable = mModel.getSomeonesRxRequests(policy,(String) key);
         }else if(filter==FILTER_AUTHOR_IDS){
-            requestObservable = mModel.getSomeonesRxRequests(HomeModel.FROM_NETWORK,(List<String>)key);
+            requestObservable = mModel.getSomeonesRxRequests(policy,(List<String>)key);
         }else if(filter==FILTER_FUZZY_SEARCH){
-            requestObservable = mModel.getFuzzySearchRxRequests(HomeModel.FROM_NETWORK,(String)key);
+            requestObservable = mModel.getFuzzySearchRxRequests(policy,(String)key);
         }else if(filter == FILTER_FOLLOW_ONLY){
             Observable<BmobQueryResult<Request>> bqlRequestObservable = mModel.getFollowedRxRequests(HomeModel.FROM_NETWORK, (String) key);
             bqlRequestObservable.flatMap(new Func1<BmobQueryResult<Request>, Observable<Request>>() {
@@ -249,7 +169,7 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
                     });
             return;
         }else {
-            requestObservable = mModel.getRxRequests(HomeModel.FROM_NETWORK);
+            requestObservable = mModel.getRxRequests(policy);
         }
 
         requestObservable.flatMap(new Func1<List<Request>, Observable<Request>>() {

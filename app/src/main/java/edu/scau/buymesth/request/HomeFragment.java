@@ -24,6 +24,7 @@ import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.RequestListAdapter;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.request.requestdetail.RequestDetailActivity;
+import edu.scau.buymesth.util.NetworkHelper;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
@@ -185,6 +186,11 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     @Override
     public void setAdapter(List<Request> list) {
         mRequestListAdapter.setNewData(list);
+    }
+
+    @Override
+    public boolean hasNetwork() {
+        return   (NetworkHelper.isOpenNetwork(getContext()));
     }
 
     public void setFilter(String filter, Object filterKey) {

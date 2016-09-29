@@ -17,6 +17,7 @@ public interface HomeContract {
         void onRefreshComplete(List<Request>list);
         void onRefreshFail();
         void setAdapter(List<Request>list);
+        boolean hasNetwork();
     }
 
     interface Model{

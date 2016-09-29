@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +24,9 @@ import edu.scau.buymesth.adapter.RequestListAdapter;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.request.requestdetail.RequestDetailActivity;
 import edu.scau.buymesth.util.DividerItemDecoration;
+import edu.scau.buymesth.util.NetworkHelper;
 import rx.Observable;
+import rx.Observer;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -42,11 +45,16 @@ public class RequestFragment extends Fragment {
     private RequestListAdapter mRequestListAdapter;
     private CompositeSubscription mSubscriptions = new CompositeSubscription();
     private TextView mHintTv;
+    private String mId;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if(savedInstanceState==null)
+            pageNum = 0;
         View view = inflater.inflate(R.layout.fragment_request, container, false);
-          mHintTv = (TextView) view.findViewById(R.id.tv_hint);
+        mId=BmobUser.getCurrentUser().getObjectId();
+        mHintTv = (TextView) view.findViewById(R.id.tv_hint);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv);
         //没滑到顶部之前不允许嵌套滑动
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -63,8 +71,7 @@ public class RequestFragment extends Fragment {
         });
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),LinearLayoutManager.VERTICAL));
-          initAdapter();
-        //   mPresenter = new UserPresenter();
+        initAdapter();
         return view;
     }
     NestedScrollView mParent;
@@ -82,7 +89,7 @@ public class RequestFragment extends Fragment {
         );
 
         mRecyclerView.setAdapter(mRequestListAdapter);
-        Subscription subscription = getSomeonesRxRequests(CACHE_ONLY, BmobUser.getCurrentUser().getObjectId()).subscribeOn(Schedulers.io())
+        Subscription subscription = getSomeonesRxRequests(CACHE_ONLY, mId).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<List<Request>>() {
                     @Override
                     public void onCompleted() {
@@ -103,11 +110,11 @@ public class RequestFragment extends Fragment {
                     }
                 });
         mSubscriptions.add(subscription);
-        //       mRequestListAdapter.setOnLoadMoreListener(() -> mPresenter.onLoadMore(filter, filterKey));
-        //      mRequestListAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
+        mRequestListAdapter.setOnLoadMoreListener(() ->  onLoadMore( mId));
+        mRequestListAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
     }
 
-    private int pageNum = 0;
+    private int pageNum=0;
 
     public Observable<List<Request>> getSomeonesRxRequests(BmobQuery.CachePolicy policy, String userId) {
         BmobQuery<Request> query = new BmobQuery<>();
@@ -124,7 +131,30 @@ public class RequestFragment extends Fragment {
 
         return query.findObjectsObservable(Request.class);
     }
+    void onLoadMore( String userId) {
+        BmobQuery.CachePolicy policy= NetworkHelper.isOpenNetwork(getContext())? BmobQuery.CachePolicy.NETWORK_ONLY: BmobQuery.CachePolicy.CACHE_ONLY;
+        mSubscriptions.add(getSomeonesRxRequests(policy,  userId).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<Request>>() {
+                    @Override
+                    public void onCompleted() {
 
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showMsg("获取请求列表出现了问题");
+                    }
+
+                    @Override
+                    public void onNext(List<Request> requests) {
+                        mRequestListAdapter.notifyDataChangedAfterLoadMore(requests, true);
+                    }
+                }));
+    }
+    public void showMsg(String msg){
+        Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();
+    }
     @Override
     public void onPause() {
         super.onPause();

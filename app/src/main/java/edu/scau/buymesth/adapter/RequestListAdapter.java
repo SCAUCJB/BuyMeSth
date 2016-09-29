@@ -10,6 +10,7 @@ import adpater.BaseViewHolder;
 import base.util.GlideCircleTransform;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Request;
+import edu.scau.buymesth.util.DateFormatHelper;
 
 /**
  * Created by John on 2016/8/4.
@@ -24,11 +25,18 @@ public class RequestListAdapter extends BaseQuickAdapter<Request> {
     protected void convert(BaseViewHolder helper, Request item) {
             helper.setText(R.id.tv_name,
                     item.getUser().getNickname())
-            .setText(R.id.tv_tweet_date,item.getCreatedAt())
+            .setText(R.id.tv_tweet_date, DateFormatHelper.dateFormat(item.getCreatedAt()))
             .setText(R.id.tv_tweet_title,item.getTitle())
             .setText(R.id.tv_tweet_text,item.getContent())
             .setText(R.id.tv_level,"LV "+ item.getUser().getExp()/10);
 
+        Integer high = item.getMaxPrice();
+        Integer low = item.getMinPrice();
+        if (low != null) {
+            helper.setText(R.id.tv_price,"期望价格：￥" + low + "~￥" + high);
+        } else {
+            helper.setText(R.id.tv_price,"期望价格：￥" + high);
+        }
            Glide.with(mContext).load(item.getUser().getAvatar()).crossFade().placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into((ImageView) helper.getView(R.id.iv_avatar_author));
         if(item!=null&&item.getUrls()!=null&&!item.getUrls().isEmpty())
         {

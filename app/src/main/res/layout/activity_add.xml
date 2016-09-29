@@ -78,7 +78,7 @@
                 <TextView
                     android:id="@+id/tv_add"
                     style="@style/textView_tag"
-                    android:text="添加标签" />
+                    android:text="添加特殊要求" />
             </edu.scau.buymesth.publish.FlowLayout>
 
             <ui.widget.SelectableSeekBar

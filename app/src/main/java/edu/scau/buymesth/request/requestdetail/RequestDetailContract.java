@@ -1,5 +1,7 @@
 package edu.scau.buymesth.request.requestdetail;
 
+import android.app.Activity;
+
 import java.util.List;
 
 import edu.scau.buymesth.data.bean.Comment;
@@ -21,7 +23,7 @@ public interface RequestDetailContract {
 
          void setAuthorOnClicked();
 
-         void setOnAcceptClicked();
+         void setOnFollowClicked();
 
          void setOnCollectClicked();
 
@@ -33,7 +35,6 @@ public interface RequestDetailContract {
 
          void setContent(String content);
 
-         void setLikes(Integer likes);
 
          void setTime(String createdAt);
 
@@ -52,6 +53,8 @@ public interface RequestDetailContract {
          void setCollect(boolean b);
 
          void toast(String msg);
+
+         Activity getContext();
      }
     interface Model{
         void setRequest(Request request);

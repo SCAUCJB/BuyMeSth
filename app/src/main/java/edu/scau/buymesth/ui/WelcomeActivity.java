@@ -65,14 +65,13 @@ public class WelcomeActivity extends BaseActivity {
         //放到了Application里面，防止不经过这个页面就进入Activity导致context空指针
 
         bmobUser = BmobUser.getCurrentUser(User.class);
+        jumpToNextActivity();
 //        if (bmobUser != null)
-//        jumpToNextActivity();
-        if (bmobUser != null)
-            queryUser();
-            //完成初始化
-        else {
-            jumpToNextActivity();
-        }
+//            queryUser();
+//            //完成初始化
+//        else {
+//            jumpToNextActivity();
+//        }
 
     }
 
