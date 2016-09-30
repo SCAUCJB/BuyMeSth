@@ -17,11 +17,11 @@ import java.util.concurrent.TimeUnit;
 
 import adpater.animation.ScaleInAnimation;
 import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.BmobUser;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.RequestListAdapter;
 import edu.scau.buymesth.data.bean.Request;
+import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.request.requestdetail.RequestDetailActivity;
 import edu.scau.buymesth.util.DividerItemDecoration;
 import edu.scau.buymesth.util.NetworkHelper;
@@ -53,7 +53,7 @@ public class RequestFragment extends Fragment {
         if(savedInstanceState==null)
             pageNum = 0;
         View view = inflater.inflate(R.layout.fragment_request, container, false);
-        mId=BmobUser.getCurrentUser().getObjectId();
+        mId= ((User) getActivity().getIntent().getSerializableExtra("user")).getObjectId();;
         mHintTv = (TextView) view.findViewById(R.id.tv_hint);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv);
         //没滑到顶部之前不允许嵌套滑动
