@@ -13,6 +13,8 @@ public interface Contract {
         void showEmpty();
         void navigate(Address address);
         void showAddresses(List<Address> addresses);
+
+        void showError();
     }
     interface Presenter{
         void subscribe();

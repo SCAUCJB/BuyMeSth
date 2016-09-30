@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.squareup.sqlbrite.BriteDatabase;
-import com.squareup.sqlbrite.SqlBrite;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,14 +34,12 @@ import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.RequestCommentAdapter;
 import edu.scau.buymesth.createorder.CreateOrderActivity;
-import edu.scau.buymesth.data.DbOpenHelper;
 import edu.scau.buymesth.data.bean.Comment;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.publish.FlowLayout;
 import edu.scau.buymesth.request.comment.CommentActivity;
 import edu.scau.buymesth.util.DividerItemDecoration;
 import rx.Subscription;
-import rx.schedulers.Schedulers;
 
 import static edu.scau.Constant.EXTRA_NEEDQUERY;
 import static edu.scau.Constant.EXTRA_REQUEST;
@@ -127,10 +124,11 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
 //    }
     @Override
     public void initView() {
-        SqlBrite sqlBrite = SqlBrite.create();
-        DbOpenHelper dbHelper = new DbOpenHelper(getContext());
-        db = sqlBrite.wrapDatabaseHelper(dbHelper, Schedulers.io());
-
+        //数据库
+//        SqlBrite sqlBrite = SqlBrite.create();
+//        DbOpenHelper dbHelper = new DbOpenHelper(getContext());
+//        db = sqlBrite.wrapDatabaseHelper(dbHelper, Schedulers.io());
+//
 
         rvComment.setLayoutManager(new LinearLayoutManager(mContext));
         rvComment.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_4)));

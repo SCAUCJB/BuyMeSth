@@ -35,27 +35,32 @@ public class AddressPresenter implements Contract.Presenter {
 
     @Override
     public void loadAddresses() {
-        mSubscription=mAddressRepository.getAddresses()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<List<Address>>() {
-                    @Override
-                    public void onCompleted() {
+        try {
+            mSubscription = mAddressRepository.getAddresses()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<List<Address>>() {
+                        @Override
+                        public void onCompleted() {
 
-                    }
+                        }
 
-                    @Override
-                    public void onError(Throwable throwable) {
+                        @Override
+                        public void onError(Throwable throwable) {
 
-                    }
+                        }
 
-                    @Override
-                    public void onNext(List<Address> addresses) {
-                        if(addresses==null||addresses.size()==0){
-                            mAddressView.showEmpty();
-                        }else
-                            mAddressView.showAddresses(addresses);
-                    }
-                });
+                        @Override
+                        public void onNext(List<Address> addresses) {
+                            if (addresses == null || addresses.size() == 0) {
+                                mAddressView.showEmpty();
+                            } else
+                                mAddressView.showAddresses(addresses);
+                        }
+                    });
+        }catch (RuntimeException e){
+            mSubscription.unsubscribe();
+            mAddressView.showError();
+        }
     }
 
     @Override

@@ -49,10 +49,10 @@
                 android:text="收货人：" />
 
             <EditText
-                android:maxLines="1"
                 android:id="@+id/et_recipient"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:maxLines="1" />
         </LinearLayout>
 
         <LinearLayout
@@ -70,11 +70,11 @@
                 android:text="手机号：" />
 
             <EditText
-                android:inputType="number"
-                android:maxLines="1"
                 android:id="@+id/phone"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLines="1" />
         </LinearLayout>
 
         <RelativeLayout
@@ -82,8 +82,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
 
-            android:paddingLeft="@dimen/dp_22"
-          >
+            android:paddingLeft="@dimen/dp_22">
 
             <TextView
                 android:id="@+id/textView2"
@@ -102,7 +101,6 @@
                 android:src="@drawable/ic_location_on_grey600_48dp" />
 
             <EditText
-
                 android:id="@+id/region"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -110,6 +108,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toEndOf="@+id/textView2"
                 android:layout_toStartOf="@id/iv_location"
+                android:hint="XX省XX市XX区"
                 android:maxLines="1" />
         </RelativeLayout>
 

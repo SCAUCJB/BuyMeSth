@@ -28,8 +28,11 @@
         android:id="@+id/address_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-<LinearLayout
+<android.support.v7.widget.RecyclerView
+    android:id="@+id/rv_content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"/>
+        <LinearLayout
     android:visibility="invisible"
     android:id="@+id/empty_view"
     android:layout_centerVertical="true"
@@ -57,5 +60,14 @@
         android:layout_width="140dp"
         android:layout_height="40dp" />
 </LinearLayout>
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/tv_retry"
+            android:clickable="true"
+           style="@style/TextAppearance.AppCompat.Title"
+            android:gravity="center"
+            android:text="网络异常，请点击我重试"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </RelativeLayout>
 </LinearLayout>

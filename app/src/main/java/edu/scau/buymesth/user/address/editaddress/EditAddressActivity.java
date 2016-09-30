@@ -1,6 +1,6 @@
 package edu.scau.buymesth.user.address.editaddress;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.widget.Button;
@@ -38,10 +38,10 @@ public class EditAddressActivity extends BaseActivity {
     private boolean mIsNew;
     private Subscription mSubscription;
 
-    public static void navigate(Activity activity, Address address) {
-        Intent intent = new Intent(activity, EditAddressActivity.class);
+    public static void navigate(Context context, Address address) {
+        Intent intent = new Intent(context, EditAddressActivity.class);
         intent.putExtra("address", address);
-        activity.startActivity(intent);
+        context.startActivity(intent);
     }
 
     @Override
@@ -53,6 +53,13 @@ public class EditAddressActivity extends BaseActivity {
     public void initView() {
         mAddress = (Address) getIntent().getSerializableExtra("address");
         if (mAddress.getRecipient() == null) mIsNew = true;
+        else{
+            mIsNew=false;
+            mRecipient.setText(mAddress.getRecipient());
+            mPhone.setText(mAddress.getPhone());
+            mRegion.setText(mAddress.getRegion());
+            mSpecific.setText(mAddress.getSpecific());
+        }
     }
 
     @Override
@@ -65,7 +72,11 @@ public class EditAddressActivity extends BaseActivity {
     protected void setListener() {
         mCompleteBtn.setOnClickListener(v -> {
             if (!checkValidate()) return;
-            submit();
+            try {
+                submit();
+            }catch (RuntimeException e){
+                toast("网络中断");
+            }
         });
 
         mLocation.setOnClickListener(v -> {
@@ -74,21 +85,22 @@ public class EditAddressActivity extends BaseActivity {
     }
 
     private void getLocation() {
+        //通过经纬度获取省市区
    //     BmobGeoPoint bmobGeoPoint=new BmobGeoPoint()
     }
 
-    private void submit() {
+    private void submit() throws RuntimeException{
         mAddress.setRecipient(mRecipient.getText().toString());
         mAddress.setPhone(mPhone.getText().toString());
         mAddress.setRegion(mRegion.getText().toString());
-        mAddress.setSpecific(mRegion.getText().toString());
+        mAddress.setSpecific(mSpecific.getText().toString());
         if (mIsNew) {
             showLoadingDialog();
             mSubscription = mAddress.saveObservable().subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<String>() {
                         @Override
                         public void onCompleted() {
-                            closeLoadingDialog();
+
                         }
 
                         @Override
@@ -99,31 +111,31 @@ public class EditAddressActivity extends BaseActivity {
 
                         @Override
                         public void onNext(String s) {
-
                             closeLoadingDialog();
+                            finish();
                         }
                     });
         } else {
             showLoadingDialog();
-            mSubscription = mAddress.saveObservable().subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<String>() {
-                        @Override
-                        public void onCompleted() {
-                            closeLoadingDialog();
-                        }
+            mAddress.updateObservable().subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Void>() {
+                @Override
+                public void onCompleted() {
 
-                        @Override
-                        public void onError(Throwable throwable) {
-                            toast("保存失败");
-                            closeLoadingDialog();
-                        }
+                }
 
-                        @Override
-                        public void onNext(String s) {
+                @Override
+                public void onError(Throwable throwable) {
+                    toast("保存失败");
+                    closeLoadingDialog();
+                }
 
-                            closeLoadingDialog();
-                        }
-                    });
+                @Override
+                public void onNext(Void aVoid) {
+                    closeLoadingDialog();
+                    finish();
+                }
+            });
 
         }
 
@@ -159,6 +171,7 @@ public class EditAddressActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        if(mSubscription!=null)
         mSubscription.unsubscribe();
     }
 
