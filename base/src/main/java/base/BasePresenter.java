@@ -41,5 +41,4 @@ public abstract class BasePresenter<M, V> {
         return mView != null;
     }
 
-
 }

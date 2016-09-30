@@ -8,10 +8,10 @@ import cn.bmob.v3.datatype.BmobQueryResult;
 import edu.scau.buymesth.data.bean.Request;
 import rx.Observable;
 import rx.Observer;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by John on 2016/8/5.
@@ -23,7 +23,7 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
     public static final String FILTER_AUTHOR_IDS = "USERIDS";
     public static final String FILTER_FUZZY_SEARCH = "FUZZY";
     public static final String FILTER_FOLLOW_ONLY = "FOLLOW";
-    private Subscription mSubscription=null;
+    private CompositeSubscription mSubscriptions=new CompositeSubscription();
 
     /**
      * 初始化工作写在这里
@@ -35,8 +35,7 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
 
     @Override
     public void onDestroy() {
-        if(mSubscription!=null&&!mSubscription.isUnsubscribed())
-        mSubscription.unsubscribe();
+
         super.onDestroy();
 
     }
@@ -91,7 +90,7 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
             requestObservable = mModel.getRxRequests(policy);
         }
 
-        mSubscription=requestObservable.flatMap(new Func1<List<Request>, Observable<Request>>() {
+         mSubscriptions.add(requestObservable.flatMap(new Func1<List<Request>, Observable<Request>>() {
             @Override
             public Observable<Request> call(List<Request> requests) {
                 return Observable.from(requests);
@@ -120,7 +119,7 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
                     public void onNext(Request request) {
                         if(isAlive()) tempList.add(request);
                     }
-                });
+                }));
     }
 
     public void onLoadMore(String filter , Object key) {
@@ -135,7 +134,7 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
             requestObservable = mModel.getFuzzySearchRxRequests(policy,(String)key);
         }else if(filter == FILTER_FOLLOW_ONLY){
             Observable<BmobQueryResult<Request>> bqlRequestObservable = mModel.getFollowedRxRequests(HomeModel.FROM_NETWORK, (String) key);
-            bqlRequestObservable.flatMap(new Func1<BmobQueryResult<Request>, Observable<Request>>() {
+            mSubscriptions.add(bqlRequestObservable.flatMap(new Func1<BmobQueryResult<Request>, Observable<Request>>() {
                 @Override
                 public Observable<Request> call(BmobQueryResult<Request> requestBmobQueryResult) {
                     return Observable.from(requestBmobQueryResult.getResults());
@@ -166,13 +165,13 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
                         public void onNext(Request request) {
                             if (isAlive()) tempList.add(request);
                         }
-                    });
+                    }));
             return;
         }else {
             requestObservable = mModel.getRxRequests(policy);
         }
 
-        requestObservable.flatMap(new Func1<List<Request>, Observable<Request>>() {
+        mSubscriptions.add(requestObservable.flatMap(new Func1<List<Request>, Observable<Request>>() {
             @Override
             public Observable<Request> call(List<Request> requests) {
                 return Observable.from(requests);
@@ -203,23 +202,17 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
                     public void onNext(Request request) {
                         if (isAlive()) tempList.add(request);
                     }
-                });
+                }));
     }
 
     public void initAdapter() {
         mModel.resetPage();
-        mModel.getDatas().clear();
-        mModel.getRxRequests(HomeModel.FROM_CACHE).flatMap(new Func1<List<Request>, Observable<Request>>() {
-            @Override
-            public Observable<Request> call(List<Request> requests) {
-                return Observable.from(requests);
-            }
-        }).subscribeOn(Schedulers.io())
+        mSubscriptions.add(mModel.getRxRequests(HomeModel.FROM_CACHE).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Request>() {
+                .subscribe(new Observer<List<Request>>() {
                     @Override
                     public void onCompleted() {
-                        if(isAlive()) mView.setAdapter(mModel.getDatas());
+
                     }
 
                     @Override
@@ -230,10 +223,25 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
                         }
                     }
 
+
                     @Override
-                    public void onNext(Request request) {
-                        if(isAlive()) mModel.getDatas().add(request);
+                    public void onNext(List<Request> requests) {
+                        if(isAlive()){
+                            mModel.setDatas(requests);
+                            mView.setAdapter(mModel.getDatas());
+                        }
+
                     }
-                });
+                }));
+    }
+
+
+    public void onResume() {
+        initAdapter();
+    }
+
+
+    public void onPause() {
+        mSubscriptions.unsubscribe();
     }
 }

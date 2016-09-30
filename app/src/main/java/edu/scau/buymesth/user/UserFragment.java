@@ -82,7 +82,7 @@ public class UserFragment extends Fragment implements UserContract.View {
             getActivity().startActivity(intent);
         });
         view.findViewById(R.id.address_manage).setOnClickListener(v->{AddressActivity.navigate(getActivity());});
-        UserModel model = new UserModel();
+        UserModel model = new UserModel(getContext());
         mPresenter = new UserPresenter(this, model);
         return view;
     }

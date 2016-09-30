@@ -13,10 +13,17 @@ import rx.Observable;
  */
 
 public class RequestDetailModel implements RequestDetailContract.Model {
-     Request request=null;
-     List<Comment> comments=null;
+    Request request = null;
+    List<Comment> comments = null;
+
+
     public void setRequest(Request request) {
         this.request = request;
+    }
+
+    public RequestDetailModel( ) {
+
+
     }
 
     @Override
@@ -29,12 +36,14 @@ public class RequestDetailModel implements RequestDetailContract.Model {
         return "要勾搭，先评论";
     }
 
+
+
     @Override
     public Observable<List<Comment>> getRxComment(String objId) {
         BmobQuery<Comment> query = new BmobQuery<>();
-        Request request=new Request();
+        Request request = new Request();
         request.setObjectId(objId);
-        query.addWhereEqualTo("request",new BmobPointer(request));
+        query.addWhereEqualTo("request", new BmobPointer(request));
         query.order("-createdAt");
         query.setLimit(4);
 
@@ -49,6 +58,6 @@ public class RequestDetailModel implements RequestDetailContract.Model {
 
     @Override
     public void setCommentList(List<Comment> comments) {
-        this.comments=comments;
+        this.comments = comments;
     }
 }

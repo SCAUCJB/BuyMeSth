@@ -1,7 +1,5 @@
 package edu.scau.buymesth.request.requestdetail;
 
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,9 +19,11 @@ import edu.scau.buymesth.data.bean.Follow;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.userinfo.UserInfoActivity;
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by John on 2016/8/23.
@@ -31,6 +31,11 @@ import rx.schedulers.Schedulers;
 
 public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.Model, RequestDetailContract.View> {
     public boolean mNeedQueryRequest = false;
+    private CompositeSubscription mSubscriptions = new CompositeSubscription();
+
+    void onPause() {
+        mSubscriptions.unsubscribe();
+    }
 
     @Override
     public void onStart() {
@@ -48,8 +53,7 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
                 initPrice();
                 initComment();
                 initTags();
-                initFollow();
-                initCollect();
+                initFollowAndCollect();
             } catch (RuntimeException e) {
                 mView.toast("请打开网络");
             }
@@ -73,8 +77,7 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
                 initPrice();
                 initComment();
                 initTags();
-                initFollow();
-                initCollect();
+                initFollowAndCollect();
             }
         });
     }
@@ -130,7 +133,7 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
             public void done(Object o, BmobException e) {
                 if (e != null) return;
                 if (o != null) {
-                    if ((  o.toString()).equals("true")) {
+                    if ((o.toString()).equals("true")) {
                         mView.setFollow(true);
                     } else {
                         mView.setFollow(false);
@@ -140,23 +143,48 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
         });
     }
 
-    private void initFollow() {
-        BmobQuery<Follow> bmobQuery = new BmobQuery<>();
-        bmobQuery.addWhereEqualTo("fromUser", BmobUser.getCurrentUser(User.class));
-        bmobQuery.addWhereEqualTo("toUser", mModel.getRequest().getUser());
-        bmobQuery.findObjects(new FindListener<Follow>() {
+    private void initFollowAndCollect() {
+        mView.showDialog();
+        BmobQuery<Follow> queryFollow = new BmobQuery<>();
+        queryFollow.addWhereEqualTo("fromUser", BmobUser.getCurrentUser(User.class));
+        queryFollow.addWhereEqualTo("toUser", mModel.getRequest().getUser());
+        Observable<List<Follow>> o1 = queryFollow.findObjectsObservable(Follow.class);
+
+        BmobQuery<Collect> queryCollect = new BmobQuery<>();
+        queryCollect.addWhereEqualTo("user", BmobUser.getCurrentUser());
+        queryCollect.addWhereEqualTo("request", mModel.getRequest());
+        Observable<List<Collect>> o2 = queryCollect.findObjectsObservable(Collect.class);
+        mSubscriptions.add(Observable.zip(o1, o2, (follows, collects) -> {
+            Integer result = 0;
+            if (follows != null && follows.size() > 0)
+                result += 1;
+            if (collects != null && collects.size() > 0)
+                result += 2;
+            return result;
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Integer>() {
             @Override
-            public void done(List<Follow> list, BmobException e) {
-                if (e != null) return;
-                if (list != null && list.size() > 0) {
-                    //followed
-                    mView.setFollow(true);
-                } else {
-                    mView.setFollow(false);
-                }
+            public void onCompleted() {
             }
-        });
+
+            @Override
+            public void onError(Throwable throwable) {
+                mView.toast("网络错误");
+                mView.closeDialog();
+            }
+
+            @Override
+            public void onNext(Integer result) {
+                if ((result & 1) == 1)
+                    mView.setFollow(true);
+                else mView.setFollow(false);
+                if ((result & 2) == 2)
+                    mView.setCollect(true);
+                else mView.setCollect(false);
+                mView.closeDialog();
+            }
+        }));
     }
+
 
     private void initPrice() {
         Integer high = mModel.getRequest().getMaxPrice();
@@ -198,7 +226,7 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
     }
 
     void initComment() {
-        mModel.getRxComment(mModel.getRequest().getObjectId())
+        mSubscriptions.add(mModel.getRxComment(mModel.getRequest().getObjectId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<List<Comment>>() {
             @Override
@@ -215,7 +243,7 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
             public void onNext(List<Comment> comments) {
                 mModel.setCommentList(comments);
             }
-        });
+        }));
     }
 
     public void initTags() {
@@ -227,11 +255,11 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
         return mModel.getRequest();
     }
 
-    void onResume() {
-        initComment();
-    }
+//    void onResume() {
+//        initComment();
+//    }
 
-      void onAuthorOnClicked() {
-        UserInfoActivity.navigate(mView.getContext(),mModel.getRequest().getUser());
+    void onAuthorOnClicked() {
+        UserInfoActivity.navigate(mView.getContext(), mModel.getRequest().getUser());
     }
 }

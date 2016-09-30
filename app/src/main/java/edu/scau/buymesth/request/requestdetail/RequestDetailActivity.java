@@ -109,7 +109,8 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     protected int getLayoutId() {
         return R.layout.activity_requestdetail;
     }
-//    @Override public void onResume() {
+
+    //    @Override public void onResume() {
 //        super.onResume();
 //
 //        subscription = db.createQuery(ListsItem.TABLES, ListsItem.QUERY)
@@ -365,6 +366,16 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     }
 
     @Override
+    public void showDialog() {
+        showLoadingDialog();
+    }
+
+    @Override
+    public void closeDialog() {
+        closeLoadingDialog();
+    }
+
+    @Override
     public Activity getContext() {
         return (Activity) mContext;
     }
@@ -386,11 +397,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
 //        });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        presenter.onResume();
-    }
+
 
     @Override
     public void setTagList(List<String> tags) {
@@ -413,5 +420,11 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     @Override
     public void setPrice(String price) {
         mPriceTv.setText(price);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        presenter.onPause();
     }
 }

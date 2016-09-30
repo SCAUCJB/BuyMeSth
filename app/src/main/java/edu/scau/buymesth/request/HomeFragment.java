@@ -85,8 +85,8 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         mPtrFrameLayout.setDurationToCloseHeader(1500);
         mPtrFrameLayout.setHeaderView(header);
         mPtrFrameLayout.addPtrUIHandler(header);
-        if(savedInstanceState==null)//屏幕旋转以后就不用再自动刷新了
-        mPtrFrameLayout.post(() -> mPtrFrameLayout.autoRefresh(false));
+     //   if(savedInstanceState==null)//屏幕旋转以后就不用再自动刷新了
+     //   mPtrFrameLayout.post(() -> mPtrFrameLayout.autoRefresh(false));
         ptrHandler = new PtrHandler() {
             @Override
             public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
@@ -102,6 +102,19 @@ public class HomeFragment extends Fragment implements HomeContract.View {
             }
         };
         mPtrFrameLayout.setPtrHandler(ptrHandler);
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPresenter.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.onResume();
     }
 
     private void initAdapter() {

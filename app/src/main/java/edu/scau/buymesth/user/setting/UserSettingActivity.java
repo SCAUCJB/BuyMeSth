@@ -1,5 +1,6 @@
 package edu.scau.buymesth.user.setting;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 
 import base.BaseActivity;
 import butterknife.Bind;
+import edu.scau.Constant;
 import edu.scau.buymesth.R;
 
 import static edu.scau.buymesth.user.setting.SettingInputFragment.TYPE_NICKNAME;
@@ -107,7 +109,8 @@ public class UserSettingActivity extends BaseActivity implements UserSettingFrag
         getSupportFragmentManager().popBackStack();
         getSupportFragmentManager().popBackStack();
         ft.replace(R.id.container, userSettingFragment).commit();
-
+        SharedPreferences sp = mContext.getSharedPreferences(Constant.SHARE_PREFERENCE_CACHE_FREASHNESS, MODE_PRIVATE);
+        sp.edit().putBoolean("UserInfoNew",true).apply();
     }
     public void resetToolbar(){
         mSubmitBtn.setVisibility(View.INVISIBLE);

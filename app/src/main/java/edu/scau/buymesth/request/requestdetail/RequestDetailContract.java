@@ -13,57 +13,66 @@ import rx.Observable;
  */
 
 public interface RequestDetailContract {
-     interface View{
+    interface View {
 
-         void setAuthorAvatar(String avatar);
+        void setAuthorAvatar(String avatar);
 
-         void setAuthorExp(Integer exp);
+        void setAuthorExp(Integer exp);
 
-         void setAuthorName(String nickname);
+        void setAuthorName(String nickname);
 
-         void setAuthorOnClicked();
+        void setAuthorOnClicked();
 
-         void setOnFollowClicked();
+        void setOnFollowClicked();
 
-         void setOnCollectClicked();
+        void setOnCollectClicked();
 
-         void setCommentBtn(String commentBtnStr);
+        void setCommentBtn(String commentBtnStr);
 
-         void setUserAvatar();
+        void setUserAvatar();
 
-         void setTitle(String title);
+        void setTitle(String title);
 
-         void setContent(String content);
-
-
-         void setTime(String createdAt);
+        void setContent(String content);
 
 
-         void hideViewPager();
+        void setTime(String createdAt);
 
-         void setComment(List<Comment> commentList);
-         void setTagList(List<String> tags);
 
-         void setPrice(String price);
+        void hideViewPager();
 
-         void setUpViewPager(List<String> picHeights, List<String> picWidths, List<String> urls);
+        void setComment(List<Comment> commentList);
 
-         void setFollow(boolean b);
+        void setTagList(List<String> tags);
 
-         void setCollect(boolean b);
+        void setPrice(String price);
 
-         void toast(String msg);
+        void setUpViewPager(List<String> picHeights, List<String> picWidths, List<String> urls);
 
-         Activity getContext();
-     }
-    interface Model{
+        void setFollow(boolean b);
+
+        void setCollect(boolean b);
+
+        void toast(String msg);
+
+        void showDialog();
+
+        void closeDialog();
+
+        Activity getContext();
+    }
+
+    interface Model {
         void setRequest(Request request);
+
         Request getRequest();
+
         String getCommentBtnStr();
 
         Observable<List<Comment>> getRxComment(String objId);
 
         List<Comment> getCommentList();
+
         void setCommentList(List<Comment> comments);
     }
 }
