@@ -131,9 +131,25 @@
             android:name=".user.setting.UserSettingActivity"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
+        <activity android:name=".chat.detail.BuyOrderDetailActivity"
+            android:theme="@style/AppTheme.SwipeBackLayout"/>
+
+        <activity android:name=".chat.detail.SellerOrderDetailActivity"
+            android:theme="@style/AppTheme.SwipeBackLayout"/>
+
+        <activity android:name=".chat.detail.BuyerRejectActivity"
+            android:theme="@style/AppTheme.SwipeBackLayout"/>
+
+        <activity android:name=".chat.detail.SellerRejectActivity"
+            android:theme="@style/AppTheme.SwipeBackLayout"/>
+
+        <activity android:name=".chat.detail.BuyerAcceptActivity"
+            android:theme="@style/AppTheme.SwipeBackLayout"/>
+
+        <activity android:name=".chat.detail.SellerAcceptActivity"
+            android:theme="@style/AppTheme.SwipeBackLayout"/>
         <!--/////process用来定义线程的名字-->
         <service android:name=".chat.RequestService"
-
             >
             <intent-filter>
                 <action android:name="android.intent.action.RESPOND_VIA_MESSAGE" />

@@ -254,6 +254,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
             if (!low.equals("") && !high.equals("") && Integer.valueOf(low) < Integer.valueOf(high))
                 rangePrice = "￥" + low + "~￥" + high;
             mPriceNumber.setText(rangePrice);
+            hideBroad();
         }).create();
         mPriceBar.setOnClickListener((v) -> {
             if (mSelectableSeekBar.getSelectedPosition() == 0)
@@ -320,25 +321,24 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     private void initTagInputDialog() {
         View view = getLayoutInflater().inflate(R.layout.dialog_input, null);
         EditText editText = (EditText) view.findViewById(R.id.et_input);
-        mTagInputDialog = new AlertDialog.Builder(mContext).setTitle("请输入标签").setView(view).setNegativeButton("取消",null).setPositiveButton("确定", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (editText.getText() == null) return;
-                TextView tv = (TextView) LayoutInflater.from(PublishActivity.this).inflate(R.layout.tv_tag, null);
-                ViewGroup.MarginLayoutParams marginLayoutParams = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                marginLayoutParams.setMargins(4, 4, 4, 4);
-                tv.setLayoutParams(marginLayoutParams);
-                tv.setText(editText.getText());
-                flowlayout.addView(tv);
-                tagList.add(tv);
-                tv.setOnClickListener(v1 -> {
-                    AlertDialog dialog1 = new AlertDialog.Builder(mContext).setTitle("是否删除").setPositiveButton("确定", (dialog2, which1) -> {
-                        flowlayout.removeView(tv);
-                        tagList.remove(tv);
-                    }).create();
-                    dialog1.show();
-                });
-            }
+        mTagInputDialog = new AlertDialog.Builder(mContext).setTitle("请输入标签").setView(view).setNegativeButton("取消",null).setPositiveButton("确定", (dialog, which) -> {
+            if (editText.getText() == null) return;
+            TextView tv = (TextView) LayoutInflater.from(PublishActivity.this).inflate(R.layout.tv_tag, null);
+            ViewGroup.MarginLayoutParams marginLayoutParams = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            marginLayoutParams.setMargins(4, 4, 4, 4);
+            tv.setLayoutParams(marginLayoutParams);
+            tv.setText(editText.getText());
+            flowlayout.addView(tv);
+            tagList.add(tv);
+            tv.setOnClickListener(v1 -> {
+                AlertDialog dialog1 = new AlertDialog.Builder(mContext).setTitle("是否删除").setPositiveButton("确定", (dialog2, which1) -> {
+                    flowlayout.removeView(tv);
+                    tagList.remove(tv);
+                }).create();
+                dialog1.show();
+            });
+            hideBroad();
+            editText.setText("");
         }).create();
     }
 
