@@ -53,7 +53,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_home_fragment);
 //        fbAdd = (FloatingActionButton) view.findViewById(R.id.fb_add);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_10)));
+//        mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_10)));
         //初始化代理人
         mPresenter = new HomePresenter();
         mPresenter.setVM(this, new HomeModel());
@@ -118,7 +118,6 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     }
 
     private void initAdapter() {
-
         mRequestListAdapter = new RequestListAdapter();
         mRequestListAdapter.openLoadAnimation(new ScaleInAnimation());
         if (getActivity().getIntent().getBooleanExtra("selectRequest", false)) {
@@ -252,6 +251,4 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         mPresenter.onDestroy();
         mPresenter = null;
     }
-
-
 }

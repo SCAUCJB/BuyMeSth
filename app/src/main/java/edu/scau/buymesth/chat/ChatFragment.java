@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.squareup.sqlbrite.BriteDatabase;
@@ -32,13 +33,16 @@ import com.squareup.sqlbrite.SqlBrite;
 import java.util.LinkedList;
 import java.util.List;
 
-import adpater.BaseQuickAdapter;
 import base.util.SpaceItemDecoration;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
-import edu.scau.buymesth.adapter.ChatAdapter;
+import edu.scau.buymesth.chat.detail.BuyOrderDetailActivity;
+import edu.scau.buymesth.chat.detail.BuyerAcceptActivity;
+import edu.scau.buymesth.chat.detail.SellerAcceptActivity;
+import edu.scau.buymesth.chat.detail.SellerOrderDetailActivity;
 import edu.scau.buymesth.data.bean.Order;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.schedulers.Schedulers;
 
 /**
@@ -55,12 +59,9 @@ public class ChatFragment extends Fragment {
     Messenger mMessenger = new Messenger(new Handler() {
         @Override
         public void handleMessage(Message msg) {
-//                initFromDataBase();
             list.add((Order) msg.getData().get("order"));
             adapter.notifyDataSetChanged();
-            Log.v("数据更新了","111");
-
-            //////TODO:根据传过来的信息更新List，避免重读DATABASE造成性能变差,根据传回来的状态来添加信息？
+            Log.v("数据更新了", "111");
             super.handleMessage(msg);
         }
     });
@@ -110,22 +111,56 @@ public class ChatFragment extends Fragment {
         rv = (RecyclerView) view.findViewById(R.id.chat_rv);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         rv.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
-        adapter.setOnRecyclerViewItemLongClickListener(new BaseQuickAdapter.OnRecyclerViewItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(View view, int position) {
-                Order order = (Order) adapter.getItem(position);
-                new AlertDialog.Builder(getContext()).setTitle("是否删除").setNegativeButton("取消", null).setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+        adapter.setOnRecyclerViewItemLongClickListener((view1, position) -> {
+            Order order = (Order) adapter.getItem(position);
+            new AlertDialog.Builder(getContext()).setTitle("是否删除").setNegativeButton("取消", null).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    ////TODO:删除要更改，改成根据primary来删除
+                    db.delete(SQLiteHelper.DATABASE_TABLE, "objectId=?", order.getObjectId());
+                    adapter.remove(position);
+                }
+            }).create().show();
 
-                        ////删除要更改，改成根据primary来删除
+            return true;
+        });
+        adapter.setOnRecyclerViewItemClickListener((view1, position) -> {
+            Order order = (Order) adapter.getItem(position);
+            Intent intent;
+            Bundle bundle;
+            switch(order.getItemType()){
+                case Constant.BUYER_STATUS_CREATE:
+                    Toast.makeText(getContext(),"买家创建",Toast.LENGTH_LONG).show();
+                    intent =new Intent(getActivity(),BuyOrderDetailActivity.class);
+                    bundle = new Bundle();
+                    bundle.putSerializable("order",order);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    break;
 
-                        db.delete(SQLiteHelper.DATABASE_TABLE, "objectId=?", order.getObjectId());
-                        adapter.remove(position);
-                    }
-                }).create().show();
+                case Constant.SELLER_STATUS_CREATE:
+                    Toast.makeText(getContext(),"卖家创建",Toast.LENGTH_LONG).show();
+                    intent =new Intent(getActivity(), SellerOrderDetailActivity.class);
+                    bundle = new Bundle();
+                    bundle.putSerializable("order",order);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    break;
+                case Constant.BUYER_STATUS_ACCEPT:
+                    intent =new Intent(getActivity(), BuyerAcceptActivity.class);
+                    bundle = new Bundle();
+                    bundle.putSerializable("order",order);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    break;
 
-                return true;
+                case Constant.SELLER_STATUS_ACCEPT:
+                    intent =new Intent(getActivity(), SellerAcceptActivity.class);
+                    bundle = new Bundle();
+                    bundle.putSerializable("order",order);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    break;
             }
         });
         rv.setAdapter(adapter);
@@ -139,10 +174,12 @@ public class ChatFragment extends Fragment {
         getActivity().unbindService(serviceConnection);
     }
 
+    Subscription subscription;
+
     public void initFromDataBase() {
         list = new LinkedList<>();
         QueryObservable query = db.createQuery(SQLiteHelper.DATABASE_TABLE, "select * from " + SQLiteHelper.DATABASE_TABLE);
-        query.subscribe(new Subscriber<SqlBrite.Query>() {
+        subscription = query.subscribe(new Subscriber<SqlBrite.Query>() {
             @Override
             public void onCompleted() {
 
@@ -155,6 +192,7 @@ public class ChatFragment extends Fragment {
 
             @Override
             public void onNext(SqlBrite.Query query) {
+                ////TODO:使用同一个DataBase创建的话可以在插入和删除时进行监听
                 Cursor cursor = query.run();
                 while (cursor.moveToNext()) {
                     Order order = gson.fromJson(cursor.getString(cursor.getColumnIndex("orderJson")), Order.class);
@@ -166,5 +204,6 @@ public class ChatFragment extends Fragment {
                 this.unsubscribe();
             }
         });
+
     }
 }

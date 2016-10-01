@@ -1,8 +1,5 @@
 package edu.scau.buymesth.data.bean;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.io.Serializable;
 import java.util.List;
 

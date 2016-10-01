@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme" />
+
+    <RelativeLayout
+        android:id="@+id/person_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/content_padding">
+
+        <ImageView
+            android:id="@+id/seller_icon"
+            android:layout_width="@dimen/dp_36"
+            android:layout_height="@dimen/dp_36"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="@dimen/dp_14"
+            android:src="@mipmap/def_head" />
+
+        <TextView
+            android:id="@+id/seller_name"
+            style="@style/commentName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/seller_icon"
+            android:text="Miracle" />
+
+        <TextView
+            android:id="@+id/seller_level"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/seller_name"
+            android:layout_toRightOf="@+id/seller_icon"
+            android:autoText="true"
+            android:background="#525252"
+            android:paddingBottom="2dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:paddingTop="2dp"
+            android:text="LV 2"
+            android:textColor="#ffffff"
+            android:textSize="8sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/selectable_background_dark"
+        android:clickable="true"
+        android:id="@+id/linearLayout"
+        android:contextClickable="false"
+        android:layout_below="@+id/tv_text"
+        android:layout_alignParentStart="true"
+        android:gravity="center_vertical"
+        android:layout_marginLeft="@dimen/content_padding"
+        android:layout_marginRight="@dimen/content_padding">
+
+        <ImageView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:id="@+id/request_icon"
+            android:layout_margin="2dp"
+            android:background="@mipmap/default_img_rect"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            style="@style/theText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Request Title"
+            android:id="@+id/request_title"
+            android:layout_marginLeft="10dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/content_padding">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="这里是标签和价格信息"
+            />
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="你的期望价格："
+        android:layout_marginLeft="@dimen/content_padding"
+        android:layout_marginRight="@dimen/content_padding"
+        android:id="@+id/tv_want" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="卖家出价："
+        android:layout_marginLeft="@dimen/content_padding"
+        android:layout_marginRight="@dimen/content_padding"
+        android:id="@+id/tv_seller_price" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="卖家索要的小费："
+        android:layout_marginLeft="@dimen/content_padding"
+        android:layout_marginRight="@dimen/content_padding"
+        android:id="@+id/tv_seller_tip" />
+<RelativeLayout
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/content_padding">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:background="@drawable/btn_chat_cancle"
+        android:text="残忍拒绝"
+        android:id="@+id/btn_cancle"
+        android:layout_toLeftOf="@+id/btn_ok"
+        android:layout_margin="5dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:background="@drawable/btn_chat_ok"
+        android:text="接受订单"
+        android:textColor="#ffffff"
+        android:layout_gravity="right"
+        android:layout_alignParentRight="true"
+        android:id="@+id/btn_ok"
+        android:layout_margin="5dp" />
+</RelativeLayout>
+
+</LinearLayout>
