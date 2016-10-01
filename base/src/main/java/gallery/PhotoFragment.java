@@ -10,10 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.module.GlideModule;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -171,6 +169,7 @@ public class PhotoFragment extends Fragment {
 
         public MyPagerAdapter(Object[] urls,int position) {
             viewList = new ArrayList<>();
+
             murls = urls;
             this.position = position;
         }

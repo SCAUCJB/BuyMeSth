@@ -23,8 +23,9 @@ public class PhotoActivity extends BaseActivity{
 
     public static void navigate(Activity activity, ViewGroup imagesParent, List<String> urls , int position) {
         List<View> ivs = new ArrayList<>();
+
         for(int i = imagesParent.getChildCount()-1;i>=0;i--){
-            ivs.add(0,imagesParent.getChildAt(i));
+           ivs.add(0,imagesParent.getChildAt(i));
         }
         Bundle data = new Bundle();
         SimpleViewTarget[] simpleViewTargets = new SimpleViewTarget[ivs.size()];

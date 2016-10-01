@@ -62,7 +62,7 @@ public class HomeModel implements HomeContract.Model {
         if(policy==FROM_CACHE&&query.hasCachedResult(Request.class))
             query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ONLY);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
         else
-            query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);//先从缓存再从网络
+            query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ONLY);//先从缓存再从网络
 
         return query.findObjectsObservable(Request.class);
     }
@@ -77,9 +77,9 @@ public class HomeModel implements HomeContract.Model {
         query.setLimit(Constant.NUMBER_PER_PAGE);
         query.setSkip(Constant.NUMBER_PER_PAGE * (pageNum++));
         if(policy==FROM_CACHE&&query.hasCachedResult(Request.class))
-            query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ELSE_NETWORK);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
+            query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ONLY);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
         else
-            query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);//先从缓存再从网络
+            query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ONLY);
 
         return query.findObjectsObservable(Request.class);
     }
@@ -97,9 +97,9 @@ public class HomeModel implements HomeContract.Model {
         query.setLimit(Constant.NUMBER_PER_PAGE);
         query.setSkip(Constant.NUMBER_PER_PAGE * (pageNum++));
         if(policy==FROM_CACHE&&query.hasCachedResult(Request.class))
-            query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ELSE_NETWORK);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
+            query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ONLY);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
         else
-            query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);//先从缓存再从网络
+            query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ONLY);//先从缓存再从网络
 
         return query.findObjectsObservable(Request.class);
     }
@@ -134,9 +134,9 @@ public class HomeModel implements HomeContract.Model {
         query.setLimit(Constant.NUMBER_PER_PAGE);
         query.setSkip(Constant.NUMBER_PER_PAGE * (pageNum++));
         if(policy==FROM_CACHE&&query.hasCachedResult(Request.class))
-            query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ELSE_NETWORK);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
+            query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ONLY);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
         else
-            query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);//先从缓存再从网络
+            query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ONLY);//先从缓存再从网络
 
         return query.findObjectsObservable(Request.class);
     }
@@ -153,9 +153,9 @@ public class HomeModel implements HomeContract.Model {
         query.setSkip(Constant.NUMBER_PER_PAGE * (pageNum++));
         query.setSQL(sql);
         if(policy==FROM_CACHE&&query.hasCachedResult(Request.class))
-            query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ELSE_NETWORK);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
+            query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ONLY);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
         else
-            query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);//先从缓存再从网络
+            query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ONLY);//先从缓存再从网络
         return query.doSQLQueryObservable(Request.class);
     }
 

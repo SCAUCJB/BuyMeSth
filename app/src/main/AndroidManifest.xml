@@ -66,6 +66,7 @@
             android:label="请求详情"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
+
         <activity
             android:name=".discover.detail.MomentDetailActivity"
             android:launchMode="singleTop"
@@ -126,27 +127,35 @@
 
         <activity
             android:name="gallery.PhotoActivity"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
         <activity
             android:name=".user.setting.UserSettingActivity"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
         <activity android:name=".chat.detail.BuyOrderDetailActivity"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout"/>
 
         <activity android:name=".chat.detail.SellerOrderDetailActivity"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout"/>
 
         <activity android:name=".chat.detail.BuyerRejectActivity"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout"/>
 
         <activity android:name=".chat.detail.SellerRejectActivity"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout"/>
 
         <activity android:name=".chat.detail.BuyerAcceptActivity"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout"/>
 
         <activity android:name=".chat.detail.SellerAcceptActivity"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout"/>
         <!--/////process用来定义线程的名字-->
         <service android:name=".chat.RequestService"

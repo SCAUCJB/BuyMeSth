@@ -57,7 +57,8 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     TextView title;
     @Bind(R.id.tv_time)
     TextView time;
-
+    @Bind(R.id.tv_remark)
+    TextView mRemarkTv;
     @Bind(R.id.iv_avatar_user)
     ImageView userAvatar;
     @Bind(R.id.tv_comment)
@@ -157,6 +158,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     @Override
     protected void setListener() {
         comment.setOnClickListener(v -> CommentActivity.navigateTo(mContext, presenter.getRequest()));
+        mRemarkTv.setOnClickListener(v -> CommentActivity.navigateTo(mContext, presenter.getRequest()));
         userAvatar.setOnClickListener(v -> presenter.onAuthorOnClicked());
     }
 
@@ -396,7 +398,6 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
 //            Toast.makeText(mContext, "i was click", Toast.LENGTH_SHORT).show();
 //        });
     }
-
 
 
     @Override

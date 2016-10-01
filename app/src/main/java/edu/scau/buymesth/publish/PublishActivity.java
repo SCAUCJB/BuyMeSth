@@ -1,11 +1,8 @@
 package edu.scau.buymesth.publish;
 
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
-import android.os.IBinder;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,11 +13,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,14 +34,16 @@ import base.util.SpaceItemDecoration;
 import butterknife.Bind;
 import cn.bmob.v3.BmobUser;
 import edu.scau.buymesth.R;
-import edu.scau.buymesth.adapter.PictureAdapter;
+import edu.scau.buymesth.adapter.MyPictureAdapter;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.util.CompressHelper;
 import edu.scau.buymesth.util.InputMethodHelper;
 import gallery.PhotoActivity;
 import me.iwf.photopicker.PhotoPicker;
+import rx.Observable;
 import ui.widget.SelectableSeekBar;
+import util.Byte2String;
 
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
@@ -65,7 +64,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     @Bind(R.id.range_bar)
     SelectableSeekBar mSelectableSeekBar;
     PublishPresenter presenter;
-    PictureAdapter adapter;
+    MyPictureAdapter adapter;
     @Bind(R.id.rl_price_bar)
     RelativeLayout mPriceBar;
     @Bind(R.id.tv_price_number)
@@ -79,6 +78,16 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     TextView tvAdd;
     @Bind(R.id.flowlayout)
     FlowLayout flowlayout;
+    @Bind(R.id.tv_size)
+    TextView tvSize;
+    @Bind(R.id.sw_compress)
+    Switch swCompress;
+    ArrayList<MyPictureAdapter.ImageItem> mUrlList = new ArrayList<>();
+
+    public volatile boolean mCompressing = false;
+    boolean mCompressed = false;
+    boolean mCompress = false;
+    long mImageSize = 0;
     private ProgressDialog mDialog = null;
     private AlertDialog priceInputDialog;
     private AlertDialog priceRangeDialog;
@@ -90,9 +99,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
 
     ItemTouchHelper helper;
     private AlertDialog mTagInputDialog = null;
-    private   ArrayList<String> mUrlList = new ArrayList<>(9);
-    private volatile  ArrayList<String> mCompressList = new ArrayList<>(9);
-    private volatile boolean mCompressing;
+
 
     @Override
     protected int getLayoutId() {
@@ -107,7 +114,6 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
-    //    mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setNestedScrollingEnabled(false);
         helper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
             @Override
@@ -149,21 +155,40 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
             }
         });
         helper.attachToRecyclerView(mRecyclerView);
-        adapter = new PictureAdapter(list);
+        adapter = new MyPictureAdapter(mUrlList);
         mRecyclerView.setAdapter(adapter);
-
         adapter.setOnRecyclerViewItemClickListener((view, position) -> {
             ////这里设置点击事件
+            ArrayList<String> selectImages = new ArrayList<>();
             if (adapter.getItemId(position) == 1) {
+                for (MyPictureAdapter.ImageItem ii : mUrlList) selectImages.add(ii.sourceImage);
                 PhotoPicker.builder()
                         .setPhotoCount(9)
                         .setShowCamera(true)
                         .setShowGif(false)
                         .setPreviewEnabled(true)
-                        .setSelected(mUrlList)
+                        .setSelected(selectImages)
                         .start(PublishActivity.this, PhotoPicker.REQUEST_CODE);
             } else {
-                PhotoActivity.navigate(PublishActivity.this, view, adapter.getItem(position), position);
+                for (MyPictureAdapter.ImageItem ii : mUrlList)
+                    selectImages.add(mCompress ? ii.compressedImage : ii.sourceImage);
+                PhotoActivity.navigate(PublishActivity.this, mRecyclerView, selectImages, position);
+            }
+        });
+
+        swCompress.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            mCompress = isChecked;
+            if (isChecked && !mCompressed && !mCompressing) {
+                compress();
+            } else if (mCompressed && !mCompressing) {
+                mImageSize = 0;
+                adapter.setList(mUrlList, mCompress ? 1 : 0);
+                Observable.from(mUrlList)
+                        .map(imageItem -> new File(mCompress ? imageItem.compressedImage : imageItem.sourceImage))
+                        .subscribe(file -> mImageSize += file.length(),
+                                o -> {
+                                },
+                                () -> tvSize.setText("图片大小：" + Byte2String.convert(mImageSize)));
             }
         });
         initToolBar();
@@ -177,52 +202,69 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
 
         if (resultCode == RESULT_OK && requestCode == PhotoPicker.REQUEST_CODE) {
             if (data != null) {
-                mCompressList=data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
-                Log.d("zhx","size="+mCompressList.size());
-                for(int i=0;i<mCompressList.size();++i)
-                    mUrlList.add(i,mCompressList.get(i));
-                adapter.setList(mCompressList);
-                toast("开始压缩图片");
-                new Thread(this::compress).start();
+                ArrayList<String> photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
+                mUrlList.clear();
+                for (String url : photos) {
+                    mUrlList.add(new MyPictureAdapter.ImageItem(url, null));
+                }
+                adapter.setList(mUrlList, mCompress ? 1 : 0);
+                mImageSize = 0;
+                mCompressed = false;
+                Observable.from(mUrlList)
+                        .map(imageItem -> new File(mCompress ? imageItem.compressedImage : imageItem.sourceImage))
+                        .subscribe(file -> mImageSize += file.length(),
+                                o -> {
+                                },
+                                () -> tvSize.setText("图片大小：" + Byte2String.convert(mImageSize)));
+                if (mCompress) compress();
             }
         }
     }
 
     private void compress() {
-        mCompressing = true;
-        CompressHelper compressHelper = new CompressHelper(mContext);
-        //判断最后一个元素是否包含空
-        int count=mCompressList.get(mCompressList.size()-1)!=null?mCompressList.size():mCompressList.size()-1;
-        CountDownLatch countDownLatch = new CountDownLatch(count);
-        for (int i = 0; i <count ; i++) {
-            final  int finalI = i;
-            threadPoolExecutor.execute(() -> {
-                compressHelper.setFilename("cc_" + finalI);
-                compressHelper.setWidthList(picWidths);
-                compressHelper.setHeightList(picHeights);
-                mCompressList.set(finalI, compressHelper.thirdCompress(new File(mCompressList.get(finalI))));
-                countDownLatch.countDown();
-            });
-        }
-        try {
-            countDownLatch.await();
-            runOnUiThread(() -> {
-                toast("压缩完成");
-                //因为会自动加上一个NULL，这里要把之前被加上的null去除。。。
-                if(mCompressList.size()!=9)
-                    mCompressList.remove(mCompressList.size() - 1);
-                adapter.setList(mCompressList);
-            });
-            mCompressing = false;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        swCompress.setEnabled(false);
+        tvSize.setText("压缩中");
+        new Thread(() -> {
+            mCompressing = true;
+            CompressHelper compressHelper = new CompressHelper(mContext);
+            compressHelper.setHeightList(picHeights);
+            compressHelper.setWidthList(picWidths);
+            CountDownLatch countDownLatch = new CountDownLatch(mUrlList.size());
+            for (int i = 0; i < mUrlList.size(); i++) {
+                final int finalI = i;
+                threadPoolExecutor.execute(() -> {
+                    compressHelper.setFilename("cc_" + finalI);
+                    mUrlList.get(finalI).compressedImage = compressHelper.thirdCompress(new File(mUrlList.get(finalI).sourceImage));
+                    countDownLatch.countDown();
+                });
+                //     new Thread().start();
+            }
+            try {
+                countDownLatch.await();
+                runOnUiThread(() -> {
+                    toast("压缩完成");
+                    mImageSize = 0;
+                    Observable.from(mUrlList)
+                            .map(imageItem -> new File(mCompress ? imageItem.compressedImage : imageItem.sourceImage))
+                            .subscribe(file -> mImageSize += file.length(),
+                                    o -> {
+                                    },
+                                    () -> tvSize.setText("图片大小：" + Byte2String.convert(mImageSize)));
+                    adapter.setList(mUrlList, mCompress ? 1 : 0);
+                    swCompress.setEnabled(true);
+                });
+                mCompressing = false;
+                mCompressed = true;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
 
     List<String> picWidths = new LinkedList<>();
     List<String> picHeights = new LinkedList<>();
-    ExecutorService threadPoolExecutor = newFixedThreadPool(4);
+    ExecutorService threadPoolExecutor = newFixedThreadPool(3);
 
 
     private void initPriceSelect() {
@@ -245,8 +287,8 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
             mPriceNumber.setText(thePrice);
             hideBroad();
         }).create();
-        View priceRangeView=getLayoutInflater().inflate(R.layout.dialog_price_range,null);
-        EditText priceLowEt = (EditText)priceRangeView.findViewById(R.id.et_low);
+        View priceRangeView = getLayoutInflater().inflate(R.layout.dialog_price_range, null);
+        EditText priceLowEt = (EditText) priceRangeView.findViewById(R.id.et_low);
         EditText priceHighEt = (EditText) priceRangeView.findViewById(R.id.et_high);
         priceRangeDialog = new AlertDialog.Builder(mContext).setTitle("请输入价格范围").setView(priceRangeView).setNegativeButton("取消", null).setPositiveButton("确定", (dialog, which) -> {
             low = priceLowEt.getText().toString();
@@ -307,7 +349,12 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                 request.setTags(tag);
                 presenter.setRequest(request);
                 showLoadingDialog();
-                presenter.submit(picHeights, picWidths, mCompressList);
+                ArrayList<String> selectImages = new ArrayList<>();
+                for (MyPictureAdapter.ImageItem ii : mUrlList)
+                    selectImages.add(mCompress ? ii.compressedImage : ii.sourceImage);
+                String[] sendList = new String[selectImages.size()];
+                selectImages.toArray(sendList);
+                presenter.submit(picHeights, picWidths, sendList);
                 break;
 
             case R.id.tv_add:
@@ -321,7 +368,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     private void initTagInputDialog() {
         View view = getLayoutInflater().inflate(R.layout.dialog_input, null);
         EditText editText = (EditText) view.findViewById(R.id.et_input);
-        mTagInputDialog = new AlertDialog.Builder(mContext).setTitle("请输入标签").setView(view).setNegativeButton("取消",null).setPositiveButton("确定", (dialog, which) -> {
+        mTagInputDialog = new AlertDialog.Builder(mContext).setTitle("请输入标签").setView(view).setNegativeButton("取消", null).setPositiveButton("确定", (dialog, which) -> {
             if (editText.getText() == null) return;
             TextView tv = (TextView) LayoutInflater.from(PublishActivity.this).inflate(R.layout.tv_tag, null);
             ViewGroup.MarginLayoutParams marginLayoutParams = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -395,14 +442,14 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         threadPoolExecutor.shutdownNow();
     }
 
-    public void hideBroad(){
+    public void hideBroad() {
         InputMethodHelper.toggle(this);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                InputMethodHelper.closeFromView(mContext,etTitle);
+                InputMethodHelper.closeFromView(mContext, etTitle);
             }
-        },100);
+        }, 100);
     }
 
 }

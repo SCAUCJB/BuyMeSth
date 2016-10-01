@@ -4,7 +4,7 @@
     android:id="@+id/store_house_ptr_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    cube_ptr:ptr_duration_to_close="300"
+    cube_ptr:ptr_duration_to_close="1500"
     cube_ptr:ptr_duration_to_close_header="2000"
     cube_ptr:ptr_keep_header_when_refresh="true"
     cube_ptr:ptr_pull_to_fresh="false"

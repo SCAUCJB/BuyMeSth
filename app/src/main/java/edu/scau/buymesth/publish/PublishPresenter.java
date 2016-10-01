@@ -15,7 +15,7 @@ public class PublishPresenter extends BasePresenter<PublishContract.Model, Publi
 
     }
 
-      void submit( List<String> picHeights,List<String> picWidths, List<String> list) {
+      void submit( List<String> picHeights,List<String> picWidths,String[] list) {
 
         Subscriber<Integer> subscriber = new Subscriber<Integer>() {
 

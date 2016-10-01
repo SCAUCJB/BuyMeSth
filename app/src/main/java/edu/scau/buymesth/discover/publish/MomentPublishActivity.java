@@ -5,7 +5,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Switch;
@@ -13,7 +12,6 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -28,6 +26,7 @@ import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadBatchListener;
 import edu.scau.buymesth.R;
+import edu.scau.buymesth.adapter.MyPictureAdapter;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.data.bean.User;
@@ -35,9 +34,6 @@ import edu.scau.buymesth.util.CompressHelper;
 import gallery.PhotoActivity;
 import me.iwf.photopicker.PhotoPicker;
 import rx.Observable;
-import rx.functions.Action0;
-import rx.functions.Action1;
-import rx.functions.Func1;
 import util.Byte2String;
 
 /**
@@ -59,7 +55,6 @@ public class MomentPublishActivity extends BaseActivity {
     Switch swCompress;
     ArrayList<MyPictureAdapter.ImageItem> mUrlList;
     List<String> mImagesUrlOnBmob;
-//    ArrayList<String> mTempUrlList;
     MyPictureAdapter adapter;
     Request mRequest;
     boolean mCompressing = false;

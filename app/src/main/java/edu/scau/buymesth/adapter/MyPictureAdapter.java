@@ -1,9 +1,6 @@
-package edu.scau.buymesth.discover.publish;
+package edu.scau.buymesth.adapter;
 
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -41,6 +38,8 @@ public class MyPictureAdapter extends BaseQuickAdapter<MyPictureAdapter.ImageIte
         mImageGroup = group;
         setNewData(dataAdd);
     }
+
+
 
     public MyPictureAdapter(List<ImageItem> data) {
         super(R.layout.item_picture, data);

@@ -20,20 +20,16 @@ import rx.schedulers.Schedulers;
 public class PublishModel implements  PublishContract.Model {
     Request request ;
     @Override
-    public void submit( List<String> picHeights,List<String> picWidths,Subscriber<Integer> subscriber, List<String> list) {
+    public void submit( List<String> picHeights,List<String> picWidths,Subscriber<Integer> subscriber, String[] list) {
          Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
                 //排除加号图片的URL
-                if (list .size()>1) {
-                    list.remove(list.size()-1);
-                    String[] fileList = new String[list.size()];
-                    list.toArray(fileList);
-
-                    BmobFile.uploadBatch(fileList, new UploadBatchListener() {
+                if (list .length>0) {
+                    BmobFile.uploadBatch(list, new UploadBatchListener() {
                         @Override
                         public void onSuccess(List<BmobFile> files, List<String> urls) {
-                            if (urls.size() == fileList.length) {//如果数量相等，则代表文件全部上传完成
+                            if (urls.size() == list.length) {//如果数量相等，则代表文件全部上传完成
                                 request.setUrls(urls);
                                 request.setPicHeights(picHeights);
                                 request.setPicWidths(picWidths);

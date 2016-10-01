@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +49,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-
+Log.d("zhx","onCreateView");
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_home_fragment);
 //        fbAdd = (FloatingActionButton) view.findViewById(R.id.fb_add);
@@ -75,16 +76,15 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         initStoreHouse(view, savedInstanceState);
         return view;
     }
-
+      StoreHouseHeader mHeader;
     private void initStoreHouse(View view, Bundle savedInstanceState) {
         mPtrFrameLayout = (PtrFrameLayout) view.findViewById(R.id.store_house_ptr_frame);
-        final StoreHouseHeader header = new StoreHouseHeader(getActivity());
-        header.setPadding(0, 80, 0, 50);
-        header.initWithString("Buy Me Sth");
-        header.setTextColor(Color.BLACK);
-        mPtrFrameLayout.setDurationToCloseHeader(1500);
-        mPtrFrameLayout.setHeaderView(header);
-        mPtrFrameLayout.addPtrUIHandler(header);
+        mHeader = new StoreHouseHeader(getActivity());
+        mHeader.setPadding(0, 80, 0, 50);
+        mHeader.initWithString("Buy Me Sth");
+        mHeader.setTextColor(Color.BLACK);
+        mPtrFrameLayout.setHeaderView(mHeader);
+        mPtrFrameLayout.addPtrUIHandler(mHeader);
      //   if(savedInstanceState==null)//屏幕旋转以后就不用再自动刷新了
      //   mPtrFrameLayout.post(() -> mPtrFrameLayout.autoRefresh(false));
         ptrHandler = new PtrHandler() {
@@ -96,8 +96,12 @@ public class HomeFragment extends Fragment implements HomeContract.View {
             @Override
             public void onRefreshBegin(final PtrFrameLayout frame) {
                 //屏幕旋转的话presenter被销毁，上面的自动刷新会调用到这里，会引起空指针
-                if (mPresenter == null) return;
+                if (mPresenter == null) {
+                    Log.d("zhx","mPresenter == null");
+                    return;
+                }
                 mPtrFrameLayout = frame;
+                Log.d("zhx","onRefreshBegin");
                 mPresenter.onRefresh(filter, filterKey);
             }
         };
@@ -108,12 +112,17 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     @Override
     public void onPause() {
         super.onPause();
+        Log.d("zhx","onPause");
         mPresenter.onPause();
+        mPtrFrameLayout.removePtrUIHandler(mHeader);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        Log.d("zhx","onResume");
+        mPtrFrameLayout.addPtrUIHandler(mHeader);
         mPresenter.onResume();
     }
 
@@ -250,5 +259,6 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         super.onDestroy();
         mPresenter.onDestroy();
         mPresenter = null;
+        Log.d("zhx","onDestroy");
     }
 }

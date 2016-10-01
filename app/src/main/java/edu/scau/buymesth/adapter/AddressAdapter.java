@@ -32,8 +32,8 @@ public class AddressAdapter extends BaseQuickAdapter<Address> {
         helper.setOnClickListener(R.id.delete, (view) -> {
             new AlertDialog.Builder(mContext)
                     .setTitle(mContext.getResources().getString(R.string.text_delete))
-                    .setMessage("delete ?")
-                    .setPositiveButton("yes", (dialog, which) -> {
+                    .setMessage("删除吗 ?")
+                    .setPositiveButton("确定", (dialog, which) -> {
                         item.deleteObservable(item.getObjectId()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Void>() {
                             @Override
                             public void onCompleted() {
@@ -51,7 +51,7 @@ public class AddressAdapter extends BaseQuickAdapter<Address> {
                             }
                         });
                     })
-                    .setNegativeButton("no", null)
+                    .setNegativeButton("取消", null)
                     .show();
 
         });
