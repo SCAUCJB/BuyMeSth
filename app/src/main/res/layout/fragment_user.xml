@@ -29,7 +29,7 @@
                 android:layout_marginRight="@dimen/dp_14"
                 android:isIndicator="true"
                 android:numStars="5"
-                android:rating="4.1"
+                android:rating="5"
                 android:stepSize="0.1" />
 
             <ImageView
@@ -124,7 +124,7 @@
                 android:layout_alignTop="@id/ratingBar"
                 android:layout_marginRight="@dimen/dp_10"
                 android:layout_toLeftOf="@id/ratingBar"
-                android:text="4.5分" />
+                android:text="5分" />
 
             <TextView
                 android:id="@+id/tv_population"
@@ -133,7 +133,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignEnd="@id/ratingBar"
                 android:layout_below="@id/ratingBar"
-                android:text="15人评价" />
+                android:text="0人评价" />
 
 
         </RelativeLayout>

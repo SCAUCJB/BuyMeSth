@@ -1,6 +1,8 @@
 package edu.scau.buymesth.user;
 
 
+import android.util.Log;
+
 import cn.bmob.v3.BmobUser;
 import edu.scau.buymesth.data.bean.User;
 import rx.Subscriber;
@@ -40,6 +42,8 @@ public   class UserPresenter  implements UserContract.Presenter{
 
             @Override
             public void onNext(User user) {
+                Log.d("zhx","onnext");
+                Log.d("zhx","user="+user.toString());
                 mView.setAvatar(user.getAvatar());
                 if (user.getSignature() != null)
                     mView.setSignature(user.getSignature());
