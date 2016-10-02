@@ -60,6 +60,8 @@ public interface RequestDetailContract {
         void closeDialog();
 
         Activity getContext();
+
+        void exit();
     }
 
     interface Model {

@@ -26,6 +26,8 @@ public class PublishModel implements  PublishContract.Model {
             public void call(Subscriber<? super Integer> subscriber) {
                 //排除加号图片的URL
                 if (list .length>0) {
+                    BmobFile bmobFile =new BmobFile();
+                    bmobFile.cancel();
                     BmobFile.uploadBatch(list, new UploadBatchListener() {
                         @Override
                         public void onSuccess(List<BmobFile> files, List<String> urls) {
@@ -54,12 +56,13 @@ public class PublishModel implements  PublishContract.Model {
                             //2、curPercent--表示当前上传文件的进度值（百分比）
                             //3、total--表示总的上传文件数
                             //4、totalPercent--表示总的上传进度（百分比）
-                            subscriber.onNext(curPercent);
+                            subscriber.onNext(totalPercent);
                         }
 
                         @Override
                         public void onError(int i, String s) {
-                            subscriber.onError(new Throwable());
+                            Log.e("zhx","onerror");
+              //              subscriber.onError(new RuntimeException(s));
                         }
                     });
                 } else {

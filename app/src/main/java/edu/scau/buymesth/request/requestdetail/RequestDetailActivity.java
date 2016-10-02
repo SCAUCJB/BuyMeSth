@@ -383,6 +383,11 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     }
 
     @Override
+    public void exit() {
+        finish();
+    }
+
+    @Override
     public void hideViewPager() {
         mViewPager.setVisibility(View.GONE);
     }

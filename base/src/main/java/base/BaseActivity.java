@@ -25,7 +25,7 @@ import ui.layout.SwipeBackLayout;
  */
 public abstract class BaseActivity extends AppCompatActivity {
     public Context mContext;
-    public BasePresenter mPresenter=null;
+    public BasePresenter mPresenter = null;
     private SwipeBackLayout swipeBackLayout;
     private ImageView ivShadow;
     private ImageView colorStatus;
@@ -48,6 +48,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             mDialog.dismiss();
         }
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +63,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         initPresenter();
         setListener();
     }
-    protected  void initPresenter(){
+
+    protected void initPresenter() {
 
     }
 
@@ -74,9 +76,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mPresenter!=null){
+        if (mPresenter != null) {
             mPresenter.onDestroy();
-            mPresenter=null;
+            mPresenter = null;
         }
     }
 
@@ -106,13 +108,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void setTranslucentStatus() {
-            //透明化状态栏
-            WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
-            localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS |
-                    localLayoutParams.flags);
-            //设置状态栏颜色
-            if (showColorStatusBar() && colorStatus != null)
-                colorStatus.setBackgroundColor(getResources().getColor(getStatusColorResources()));
+        //透明化状态栏
+        WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
+        localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS |
+                localLayoutParams.flags);
+        //设置状态栏颜色
+        if (showColorStatusBar() && colorStatus != null)
+            colorStatus.setBackgroundColor(getResources().getColor(getStatusColorResources()));
     }
 
     public int getStatusBarHeight() {
@@ -206,6 +208,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void toast(String text) {
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+        BaseActivity.this.runOnUiThread(() ->
+                Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+        );
     }
 }

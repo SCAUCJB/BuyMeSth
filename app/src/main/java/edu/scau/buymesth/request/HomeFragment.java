@@ -3,13 +3,11 @@ package edu.scau.buymesth.request;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,10 +47,9 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-Log.d("zhx","onCreateView");
+
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_home_fragment);
-//        fbAdd = (FloatingActionButton) view.findViewById(R.id.fb_add);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 //        mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_10)));
         //初始化代理人
@@ -97,11 +94,9 @@ Log.d("zhx","onCreateView");
             public void onRefreshBegin(final PtrFrameLayout frame) {
                 //屏幕旋转的话presenter被销毁，上面的自动刷新会调用到这里，会引起空指针
                 if (mPresenter == null) {
-                    Log.d("zhx","mPresenter == null");
                     return;
                 }
                 mPtrFrameLayout = frame;
-                Log.d("zhx","onRefreshBegin");
                 mPresenter.onRefresh(filter, filterKey);
             }
         };
@@ -112,18 +107,20 @@ Log.d("zhx","onCreateView");
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("zhx","onPause");
-        mPresenter.onPause();
-        mPtrFrameLayout.removePtrUIHandler(mHeader);
+         mPresenter.onPause();
+        if (mPtrFrameLayout != null)
+            mPtrFrameLayout.refreshComplete();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
-        Log.d("zhx","onResume");
-        mPtrFrameLayout.addPtrUIHandler(mHeader);
-        mPresenter.onResume();
+  //      mPresenter.onResume();
     }
 
     private void initAdapter() {
@@ -240,25 +237,6 @@ Log.d("zhx","onCreateView");
         this.relatedFab = relatedFab;
     }
 
-    private final class SpaceItemDecoration extends RecyclerView.ItemDecoration {
 
-        private int space;
 
-        SpaceItemDecoration(int space) {
-            this.space = space;
-        }
-
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            outRect.top = space;
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mPresenter.onDestroy();
-        mPresenter = null;
-        Log.d("zhx","onDestroy");
-    }
 }

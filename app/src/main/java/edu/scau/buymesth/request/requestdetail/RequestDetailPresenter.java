@@ -39,38 +39,40 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
 
     @Override
     public void onStart() {
-        if (mNeedQueryRequest) {
+        mView.showDialog();
+//        if (!mNeedQueryRequest) {
             try {
                 initRequestUgly();
             } catch (RuntimeException e) {
                 mView.toast("请打开网络");
             }
-        } else {
-            try {
-                initUserInfo();
-                initCommentBar();
-                initContent();
-                initPrice();
-                initComment();
-                initTags();
-                initFollowAndCollect();
-            } catch (RuntimeException e) {
-                mView.toast("请打开网络");
-            }
-        }
+//        } else {
+//            try {
+//                initUserInfo();
+//                initCommentBar();
+//                initContent();
+//                initPrice();
+//                initComment();
+//                initTags();
+//                initFollowAndCollect();
+//            } catch (RuntimeException e) {
+//                mView.toast("请打开网络");
+//            }
+//        }
     }
 
     private void initRequestUgly() {
         BmobQuery<Request> bmobQuery = new BmobQuery<>();
         bmobQuery.include("user");
-
-
         bmobQuery.getObject(mModel.getRequest().getObjectId(), new QueryListener<Request>() {
             @Override
             public void done(Request request, BmobException e) {
-                if (e != null) return;
+                if (e != null) {
+                    mView.toast("该订单已被删除");
+                    mView.exit();
+                    return;
+                }
                 mModel.setRequest(request);
-
                 initUserInfo();
                 initCommentBar();
                 initContent();
@@ -144,7 +146,7 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
     }
 
     private void initFollowAndCollect() {
-        mView.showDialog();
+
         BmobQuery<Follow> queryFollow = new BmobQuery<>();
         queryFollow.addWhereEqualTo("fromUser", BmobUser.getCurrentUser(User.class));
         queryFollow.addWhereEqualTo("toUser", mModel.getRequest().getUser());

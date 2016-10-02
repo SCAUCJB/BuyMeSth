@@ -2,13 +2,13 @@ package edu.scau.buymesth.publish;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +19,6 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -350,11 +349,24 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                 presenter.setRequest(request);
                 showLoadingDialog();
                 ArrayList<String> selectImages = new ArrayList<>();
-                for (MyPictureAdapter.ImageItem ii : mUrlList)
+                for (MyPictureAdapter.ImageItem ii : mUrlList) {
                     selectImages.add(mCompress ? ii.compressedImage : ii.sourceImage);
+                    //如果是没压缩的图片，需要计算图片的宽和高
+                    if(!mCompress){
+                        final BitmapFactory.Options options=new BitmapFactory.Options();
+                        options.inJustDecodeBounds=true;
+                        BitmapFactory.decodeFile(ii.sourceImage,options);
+                        picHeights.add(String.valueOf(options.outHeight));
+                        picWidths.add(String.valueOf(options.outWidth));
+                    }
+                }
                 String[] sendList = new String[selectImages.size()];
                 selectImages.toArray(sendList);
-                presenter.submit(picHeights, picWidths, sendList);
+                try{
+                presenter.submit(picHeights, picWidths, sendList);}
+                catch (RuntimeException e){
+                    closeLoadingDialog();
+                }
                 break;
 
             case R.id.tv_add:
@@ -364,6 +376,8 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                 break;
         }
     }
+
+
 
     private void initTagInputDialog() {
         View view = getLayoutInflater().inflate(R.layout.dialog_input, null);
@@ -397,7 +411,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     public void onSubmitFail() {
-        Toast.makeText(mContext, "上传失败，请重试", Toast.LENGTH_SHORT).show();
+        toast("上传失败，请重试");
         closeLoadingDialog();
     }
 
@@ -407,6 +421,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
             mDialog = new ProgressDialog(mContext);
             mDialog.setCancelable(false);
             mDialog.setMessage("请稍等");
+            mDialog.setProgressStyle(1);
             mDialog.setMax(100);
             mDialog.setProgress(0);
         }
@@ -424,7 +439,6 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     public void setProgress(Integer progress) {
         if (mDialog != null) {
             mDialog.setProgress(progress);
-            Log.d("zhx", "progress=" + progress);
         }
     }
 

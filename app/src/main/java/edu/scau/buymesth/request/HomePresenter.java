@@ -33,15 +33,9 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
 
     }
 
-    @Override
-    public void onDestroy() {
-
-        super.onDestroy();
-
-    }
 
      void onRefresh(String filter , Object key) {
-        if(!isAlive())return ;
+  //      if(!isAlive())return ;
         Observable<List<Request>> requestObservable;
         mModel.resetPage();
         List<Request> tempList=new LinkedList<>();
@@ -90,21 +84,12 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
             requestObservable = mModel.getRxRequests(policy);
         }
 
-         mSubscriptions.add(requestObservable.flatMap(new Func1<List<Request>, Observable<Request>>() {
-            @Override
-            public Observable<Request> call(List<Request> requests) {
-                return Observable.from(requests);
-            }
-        }).subscribeOn(Schedulers.io())
+         mSubscriptions.add(requestObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Request>() {
+                .subscribe(new Observer<List<Request>>() {
                     @Override
                     public void onCompleted() {
-                        if(isAlive())
-                        {
-                            mModel.getDatas().clear();
-                            mModel.setDatas(tempList);
-                            mView.onRefreshComplete(mModel.getDatas());}
+
                     }
 
                     @Override
@@ -116,8 +101,12 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
                     }
 
                     @Override
-                    public void onNext(Request request) {
-                        if(isAlive()) tempList.add(request);
+                    public void onNext(List<Request> list  ) {
+                        if(isAlive())
+                        {
+                            mModel.getDatas().clear();
+                            mModel.setDatas(list);
+                            mView.onRefreshComplete(mModel.getDatas());}
                     }
                 }));
     }
@@ -242,6 +231,6 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
 
 
     public void onPause() {
-        mSubscriptions.unsubscribe();
+        mSubscriptions.clear();
     }
 }
