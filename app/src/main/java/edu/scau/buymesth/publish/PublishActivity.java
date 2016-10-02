@@ -364,7 +364,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                 selectImages.toArray(sendList);
                 try{
                 presenter.submit(picHeights, picWidths, sendList);}
-                catch (RuntimeException e){
+                catch (Exception e){
                     closeLoadingDialog();
                 }
                 break;

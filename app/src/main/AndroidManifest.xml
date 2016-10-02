@@ -69,8 +69,8 @@
 
         <activity
             android:name=".discover.detail.MomentDetailActivity"
-            android:launchMode="singleTop"
             android:label="动态详情"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
         <activity
             android:name=".createorder.CreateOrderActivity"
@@ -79,9 +79,9 @@
             android:theme="@style/AppTheme.SwipeBackLayout" />
         <activity
             android:name=".discover.publish.MomentPublishActivity"
-            android:theme="@style/AppTheme.SwipeBackLayout"
             android:label="发布动态"
             android:launchMode="singleTop"
+            android:theme="@style/AppTheme.SwipeBackLayout"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
             android:name=".request.comment.CommentActivity"
@@ -103,6 +103,7 @@
             android:label="编辑地址"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
+
         <receiver android:name="cn.bmob.newim.core.ConnectChangeReceiver">
             <intent-filter>
                 <action android:name="cn.bmob.action.RECONNECT" />
@@ -134,32 +135,41 @@
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
-        <activity android:name=".chat.detail.BuyOrderDetailActivity"
+        <activity
+            android:name=".chat.detail.BuyOrderDetailActivity"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.SwipeBackLayout"/>
+            android:theme="@style/AppTheme.SwipeBackLayout" />
 
-        <activity android:name=".chat.detail.SellerOrderDetailActivity"
+        <activity
+            android:name=".chat.detail.SellerOrderDetailActivity"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.SwipeBackLayout"/>
+            android:theme="@style/AppTheme.SwipeBackLayout" />
 
-        <activity android:name=".chat.detail.BuyerRejectActivity"
+        <activity
+            android:name=".chat.detail.BuyerRejectActivity"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.SwipeBackLayout"/>
+            android:theme="@style/AppTheme.SwipeBackLayout" />
 
-        <activity android:name=".chat.detail.SellerRejectActivity"
+        <activity
+            android:name=".chat.detail.SellerRejectActivity"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.SwipeBackLayout"/>
+            android:theme="@style/AppTheme.SwipeBackLayout" />
 
-        <activity android:name=".chat.detail.BuyerAcceptActivity"
+        <activity
+            android:name=".chat.detail.BuyerAcceptActivity"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.SwipeBackLayout"/>
-
-        <activity android:name=".chat.detail.SellerAcceptActivity"
+            android:theme="@style/AppTheme.SwipeBackLayout" />
+        <activity
+            android:name=".user.mark.MarkActivity"
+            android:label="收藏的请求"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.SwipeBackLayout"/>
+            android:theme="@style/AppTheme.SwipeBackLayout" />
+        <activity
+            android:name=".chat.detail.SellerAcceptActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.SwipeBackLayout" />
         <!--/////process用来定义线程的名字-->
-        <service android:name=".chat.RequestService"
-            >
+        <service android:name=".chat.RequestService">
             <intent-filter>
                 <action android:name="android.intent.action.RESPOND_VIA_MESSAGE" />
             </intent-filter>

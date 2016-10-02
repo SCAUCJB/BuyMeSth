@@ -32,6 +32,7 @@ import base.util.GlideCircleTransform;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.ViewPagerAdapter;
 import edu.scau.buymesth.user.address.AddressActivity;
+import edu.scau.buymesth.user.mark.MarkActivity;
 import edu.scau.buymesth.user.request.RequestFragment;
 import edu.scau.buymesth.user.setting.UserSettingActivity;
 import edu.scau.buymesth.util.ColorChangeHelper;
@@ -82,6 +83,8 @@ public class UserFragment extends Fragment implements UserContract.View {
             getActivity().startActivity(intent);
         });
         view.findViewById(R.id.address_manage).setOnClickListener(v->{AddressActivity.navigate(getActivity());});
+        view.findViewById(R.id.mark_list).setOnClickListener(v->{
+            MarkActivity.navigate(getContext());});
         UserModel model = new UserModel(getContext());
         mPresenter = new UserPresenter(this, model);
         return view;

@@ -85,7 +85,6 @@ public class RequestFragment extends Fragment {
         mRequestListAdapter = new RequestListAdapter();
         mRequestListAdapter.openLoadAnimation(new ScaleInAnimation());
 
-        //         mPresenter.initAdapter();
         mRequestListAdapter.setOnRecyclerViewItemClickListener(
                 (view, position) -> RequestDetailActivity.navigate(getActivity(), mRequestListAdapter.getData().get(position))
         );
@@ -154,13 +153,13 @@ public class RequestFragment extends Fragment {
                     }
                 }));
     }
+
     public void showMsg(String msg){
         Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();
     }
     @Override
     public void onPause() {
         super.onPause();
-        if (mSubscriptions.isUnsubscribed())
-            mSubscriptions.unsubscribe();
+            mSubscriptions.clear();
     }
 }
