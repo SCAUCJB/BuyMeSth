@@ -87,6 +87,7 @@ public class UserFragment extends Fragment implements UserContract.View {
             MarkActivity.navigate(getContext());});
         UserModel model = new UserModel(getContext());
         mPresenter = new UserPresenter(this, model);
+        initTab();
         return view;
     }
 

@@ -36,6 +36,7 @@ import rx.subscriptions.CompositeSubscription;
 
 import static cn.bmob.v3.BmobQuery.CachePolicy.CACHE_ONLY;
 import static cn.bmob.v3.BmobQuery.CachePolicy.NETWORK_ELSE_CACHE;
+import static cn.bmob.v3.BmobQuery.CachePolicy.NETWORK_ONLY;
 
 /**
  * Created by John on 2016/9/21.
@@ -51,35 +52,36 @@ public class RequestFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if(savedInstanceState==null)
+        if (savedInstanceState == null)
             pageNum = 0;
         View view = inflater.inflate(R.layout.fragment_request, container, false);
-        User user=(User) getActivity().getIntent().getSerializableExtra("user");
-        mId= user!=null?user.getObjectId(): BmobUser.getCurrentUser().getObjectId();
+        User user = (User) getActivity().getIntent().getSerializableExtra("user");
+        mId = user != null ? user.getObjectId() : BmobUser.getCurrentUser().getObjectId();
         mHintTv = (TextView) view.findViewById(R.id.tv_hint);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv);
         //没滑到顶部之前不允许嵌套滑动
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if(mParent==null) return;
-                if(mRecyclerView.canScrollVertically(-1))
-                {
+                if (mParent == null) return;
+                if (mRecyclerView.canScrollVertically(-1)) {
                     mParent.setNestedScrollingEnabled(false);
-                }
-                else
+                } else
                     mParent.setNestedScrollingEnabled(true);
             }
         });
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),LinearLayoutManager.VERTICAL));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         initAdapter();
         return view;
     }
+
     NestedScrollView mParent;
-    public void disallowIntercept(NestedScrollView parent){
-        mParent=parent;
+
+    public void disallowIntercept(NestedScrollView parent) {
+        mParent = parent;
     }
+
     private void initAdapter() {
 
         mRequestListAdapter = new RequestListAdapter();
@@ -104,18 +106,50 @@ public class RequestFragment extends Fragment {
 
                     @Override
                     public void onNext(List<Request> requests) {
-                        if(requests==null||requests.size()==0){
+                        if (requests == null || requests.size() == 0) {
                             mHintTv.setVisibility(View.VISIBLE);
-                        }
+                        }else if(requests.size()>0&&mHintTv.getVisibility()==View.VISIBLE)
+                            mHintTv.setVisibility(View.GONE);
                         mRequestListAdapter.setNewData(requests);
                     }
                 });
         mSubscriptions.add(subscription);
-        mRequestListAdapter.setOnLoadMoreListener(() ->  onLoadMore( mId));
+        mRequestListAdapter.setOnLoadMoreListener(() -> onLoadMore(mId));
         mRequestListAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
     }
 
-    private int pageNum=0;
+    private int pageNum = 0;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refresh();
+    }
+
+    public void refresh() {
+        Subscription subscription = getSomeonesRxRequests(NETWORK_ONLY, mId).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<List<Request>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<Request> requests) {
+                        if (requests == null || requests.size() == 0) {
+                            mHintTv.setVisibility(View.VISIBLE);
+                        }else if(requests.size()>0&&mHintTv.getVisibility()==View.VISIBLE)
+                            mHintTv.setVisibility(View.GONE);
+                        mRequestListAdapter.setNewData(requests);
+                    }
+                });
+        mSubscriptions.add(subscription);
+    }
 
     public Observable<List<Request>> getSomeonesRxRequests(BmobQuery.CachePolicy policy, String userId) {
         BmobQuery<Request> query = new BmobQuery<>();
@@ -132,9 +166,10 @@ public class RequestFragment extends Fragment {
 
         return query.findObjectsObservable(Request.class);
     }
-    void onLoadMore( String userId) {
-        BmobQuery.CachePolicy policy= NetworkHelper.isOpenNetwork(getContext())? BmobQuery.CachePolicy.NETWORK_ONLY: BmobQuery.CachePolicy.CACHE_ONLY;
-        mSubscriptions.add(getSomeonesRxRequests(policy,  userId).subscribeOn(Schedulers.io())
+
+    void onLoadMore(String userId) {
+        BmobQuery.CachePolicy policy = NetworkHelper.isOpenNetwork(getContext()) ? BmobQuery.CachePolicy.NETWORK_ONLY : BmobQuery.CachePolicy.CACHE_ONLY;
+        mSubscriptions.add(getSomeonesRxRequests(policy, userId).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<Request>>() {
                     @Override
@@ -154,12 +189,13 @@ public class RequestFragment extends Fragment {
                 }));
     }
 
-    public void showMsg(String msg){
-        Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();
+    public void showMsg(String msg) {
+        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
     }
+
     @Override
     public void onPause() {
         super.onPause();
-            mSubscriptions.clear();
+        mSubscriptions.clear();
     }
 }

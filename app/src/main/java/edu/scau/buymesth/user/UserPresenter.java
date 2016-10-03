@@ -1,8 +1,6 @@
 package edu.scau.buymesth.user;
 
 
-import android.util.Log;
-
 import cn.bmob.v3.BmobUser;
 import edu.scau.buymesth.data.bean.User;
 import rx.Subscriber;
@@ -22,7 +20,7 @@ public   class UserPresenter  implements UserContract.Presenter{
     }
     public void subscribe() {
         showUserInfo();
-        showTab();
+
     }
 
 
