@@ -36,11 +36,19 @@ public class AddressActivity extends BaseActivity implements Contract.View {
     RecyclerView mRecyclerView;
     AddressPresenter mPresenter;
     private AddressAdapter mAddressAdapter;
+    private boolean mIsForResult;
 
     public static void navigate(Activity activity){
     Intent intent=new Intent(activity,AddressActivity.class);
     activity.startActivity(intent);
 }
+    public static final String RESULT_ADDRESS="address";
+    public static final int REQUEST_PICK_ADDRESS =126;
+    public static void navigateForResult(Activity activity){
+        Intent intent=new Intent(activity,AddressActivity.class);
+        intent.putExtra("isForResult",true);
+        activity.startActivityForResult(intent, REQUEST_PICK_ADDRESS);
+    }
     @Override
     protected int getLayoutId() {
         return R.layout.activity_address;
@@ -53,6 +61,7 @@ public class AddressActivity extends BaseActivity implements Contract.View {
 
     @Override
     public void initView() {
+        mIsForResult=getIntent().getBooleanExtra("isForResult",false);
         initRecyclerView();
     }
 
@@ -117,6 +126,13 @@ private void initRecyclerView(){
     mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_4)));
     mAddressAdapter=new AddressAdapter(R.layout.item_adress,null);
     mRecyclerView.setAdapter(mAddressAdapter);
+    if(mIsForResult)
+    mAddressAdapter.setOnRecyclerViewItemClickListener((view, position) -> {
+        Intent data=new Intent();
+        data.putExtra(RESULT_ADDRESS,mAddressAdapter.getData().get(position));
+        setResult(REQUEST_PICK_ADDRESS,data);
+        finish();
+    });
 }
 
 }
