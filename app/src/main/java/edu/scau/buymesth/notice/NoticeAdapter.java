@@ -1,4 +1,4 @@
-package edu.scau.buymesth.chat;
+package edu.scau.buymesth.notice;
 
 import android.util.Log;
 import android.widget.ImageView;
@@ -19,9 +19,9 @@ import edu.scau.buymesth.data.bean.Order;
 /**
  * Created by Jammy on 2016/9/6.
  */
-public class ChatAdapter extends BaseMultiItemQuickAdapter<Order> {
+public class NoticeAdapter extends BaseMultiItemQuickAdapter<Order> {
 
-    public ChatAdapter(List<Order> data) {
+    public NoticeAdapter(List<Order> data) {
         super(data);
         addItemType(Constant.BUYER_STATUS_CREATE,R.layout.buyer_create);
         addItemType(Constant.SELLER_STATUS_CREATE,R.layout.seller_create);

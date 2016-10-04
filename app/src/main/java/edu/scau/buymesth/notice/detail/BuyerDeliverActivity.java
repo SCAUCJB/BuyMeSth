@@ -1,4 +1,4 @@
-package edu.scau.buymesth.chat.detail;
+package edu.scau.buymesth.notice.detail;
 
 import android.util.Log;
 import android.widget.Button;

@@ -1,4 +1,4 @@
-package edu.scau.buymesth.chat.detail;
+package edu.scau.buymesth.notice.detail;
 
 import android.widget.ImageView;
 
@@ -6,11 +6,8 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-import adpater.BaseMultiItemQuickAdapter;
 import adpater.BaseQuickAdapter;
 import adpater.BaseViewHolder;
-import adpater.MultiItemEntity;
-import base.util.GlideCircleTransform;
 import edu.scau.buymesth.R;
 
 /**

@@ -1,6 +1,5 @@
-package edu.scau.buymesth.chat.detail;
+package edu.scau.buymesth.notice.detail;
 
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;

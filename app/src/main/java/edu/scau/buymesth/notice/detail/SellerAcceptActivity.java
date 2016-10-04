@@ -1,11 +1,9 @@
-package edu.scau.buymesth.chat.detail;
+package edu.scau.buymesth.notice.detail;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -17,7 +15,6 @@ import java.util.List;
 import base.BaseActivity;
 import base.util.SpaceItemDecoration;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;

@@ -1,4 +1,4 @@
-package edu.scau.buymesth.chat;
+package edu.scau.buymesth.notice;
 
 import android.annotation.TargetApi;
 import android.content.ComponentName;
@@ -23,7 +23,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.squareup.sqlbrite.BriteDatabase;
@@ -36,16 +35,16 @@ import java.util.List;
 import base.util.SpaceItemDecoration;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
-import edu.scau.buymesth.chat.detail.BuyOrderDetailActivity;
-import edu.scau.buymesth.chat.detail.BuyerAcceptActivity;
-import edu.scau.buymesth.chat.detail.BuyerDeliverActivity;
-import edu.scau.buymesth.chat.detail.BuyerFinishActivity;
-import edu.scau.buymesth.chat.detail.BuyerRejectActivity;
-import edu.scau.buymesth.chat.detail.SellerAcceptActivity;
-import edu.scau.buymesth.chat.detail.SellerDeliverActivity;
-import edu.scau.buymesth.chat.detail.SellerFinishActivity;
-import edu.scau.buymesth.chat.detail.SellerOrderDetailActivity;
-import edu.scau.buymesth.chat.detail.SellerRejectActivity;
+import edu.scau.buymesth.notice.detail.BuyOrderDetailActivity;
+import edu.scau.buymesth.notice.detail.BuyerAcceptActivity;
+import edu.scau.buymesth.notice.detail.BuyerDeliverActivity;
+import edu.scau.buymesth.notice.detail.BuyerFinishActivity;
+import edu.scau.buymesth.notice.detail.BuyerRejectActivity;
+import edu.scau.buymesth.notice.detail.SellerAcceptActivity;
+import edu.scau.buymesth.notice.detail.SellerDeliverActivity;
+import edu.scau.buymesth.notice.detail.SellerFinishActivity;
+import edu.scau.buymesth.notice.detail.SellerOrderDetailActivity;
+import edu.scau.buymesth.notice.detail.SellerRejectActivity;
 import edu.scau.buymesth.data.bean.Order;
 import rx.Subscriber;
 import rx.Subscription;
@@ -54,11 +53,11 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Jammy on 2016/9/1.
  */
-public class ChatFragment extends Fragment {
+public class NoticeFragment extends Fragment {
     private BriteDatabase db;
     Gson gson;
 
-    ChatAdapter adapter;
+    NoticeAdapter adapter;
     RecyclerView rv;
     List<Order> list = new LinkedList<>();
     Messenger mService;
@@ -76,7 +75,7 @@ public class ChatFragment extends Fragment {
     ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.v("ChatFragment", "连接成功");
+            Log.v("NoticeFragment", "连接成功");
             mService = new Messenger(service);
             ///连接成功后发送信息让他进行服务器连接判断是否有新的信息,service用于判断类型
             Message msg = Message.obtain(null, Constant.START_SERVICE);
@@ -90,7 +89,7 @@ public class ChatFragment extends Fragment {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            Log.v("ChatFragment", "断开连接");
+            Log.v("NoticeFragment", "断开连接");
         }
     };
 
@@ -108,7 +107,7 @@ public class ChatFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        adapter = new ChatAdapter(list);
+        adapter = new NoticeAdapter(list);
         gson = new Gson();
         SqlBrite sqlBrite = SqlBrite.create();
         SQLiteHelper dbHelper = new SQLiteHelper(getContext());

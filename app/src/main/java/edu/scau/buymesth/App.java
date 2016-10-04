@@ -11,7 +11,7 @@ import java.io.FileReader;
 
 import cn.bmob.newim.BmobIM;
 import crush.CustomActivityOnCrash;
-import edu.scau.buymesth.chat.DemoMessageHandler;
+import edu.scau.buymesth.notice.DemoMessageHandler;
 
 /**
  * Created by John on 2016/8/4.

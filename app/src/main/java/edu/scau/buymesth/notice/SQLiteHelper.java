@@ -1,4 +1,4 @@
-package edu.scau.buymesth.chat;
+package edu.scau.buymesth.notice;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

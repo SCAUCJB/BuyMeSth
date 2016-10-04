@@ -23,7 +23,7 @@ import base.BaseActivity;
 import butterknife.Bind;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.TabAdapter;
-import edu.scau.buymesth.chat.ChatFragment;
+import edu.scau.buymesth.notice.NoticeFragment;
 import edu.scau.buymesth.discover.list.DiscoverFragment;
 import edu.scau.buymesth.discover.publish.MomentPublishActivity;
 import edu.scau.buymesth.publish.PublishActivity;
@@ -58,7 +58,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
 
     private DiscoverFragment discoverFragment;
     private HomeFragment homeFragment;
-    private ChatFragment chatFragment;
+    private NoticeFragment noticeFragment;
     private AlertDialog searchDialog;
     private EditText et;
 
@@ -73,7 +73,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         UserFragment userFragment = new UserFragment();
         discoverFragment = new DiscoverFragment();
         homeFragment = new HomeFragment();
-        chatFragment = new ChatFragment();
+        noticeFragment = new NoticeFragment();
 
         homeFragment.setRelatedFab(fab);
         fab.setClosedOnTouchOutside(true);
@@ -116,7 +116,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
 
         fragmentList.add(homeFragment);
         fragmentList.add(discoverFragment);
-        fragmentList.add(chatFragment);
+        fragmentList.add(noticeFragment);
         fragmentList.add(userFragment);
 
 

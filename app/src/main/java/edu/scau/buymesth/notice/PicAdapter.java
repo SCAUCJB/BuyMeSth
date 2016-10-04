@@ -1,4 +1,4 @@
-package edu.scau.buymesth.chat;
+package edu.scau.buymesth.notice;
 
 import android.view.View;
 import android.widget.ImageView;
@@ -11,7 +11,7 @@ import java.util.List;
 import adpater.BaseQuickAdapter;
 import adpater.BaseViewHolder;
 import edu.scau.buymesth.R;
-import edu.scau.buymesth.chat.detail.PicPublishActivity;
+import edu.scau.buymesth.notice.detail.PicPublishActivity;
 
 /**
  * Created by Jammy on 2016/10/1.

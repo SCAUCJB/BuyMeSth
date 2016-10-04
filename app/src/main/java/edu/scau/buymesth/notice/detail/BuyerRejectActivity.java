@@ -1,4 +1,4 @@
-package edu.scau.buymesth.chat.detail;
+package edu.scau.buymesth.notice.detail;
 
 import base.BaseActivity;
 import edu.scau.buymesth.R;

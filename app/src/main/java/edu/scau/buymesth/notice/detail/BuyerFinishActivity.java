@@ -1,21 +1,15 @@
-package edu.scau.buymesth.chat.detail;
-
-import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+package edu.scau.buymesth.notice.detail;
 
 import base.BaseActivity;
-import butterknife.Bind;
-import butterknife.ButterKnife;
 import edu.scau.buymesth.R;
 
 /**
  * Created by Jammy on 2016/10/3.
  */
-public class SellerDeliverActivity extends BaseActivity {
-
+public class BuyerFinishActivity extends BaseActivity{
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_seller_deliver;
+        return R.layout.activity_buyer_finish;
     }
 
     @Override
@@ -32,5 +26,4 @@ public class SellerDeliverActivity extends BaseActivity {
     protected int getToolBarId() {
         return R.id.toolbar;
     }
-
 }

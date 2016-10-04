@@ -1,4 +1,4 @@
-package edu.scau.buymesth.chat.detail;
+package edu.scau.buymesth.notice.detail;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -24,15 +24,12 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadBatchListener;
 import edu.scau.buymesth.R;
-import edu.scau.buymesth.chat.PicAdapter;
+import edu.scau.buymesth.notice.PicAdapter;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.OrderMoment;
 import edu.scau.buymesth.util.CompressHelper;
 import gallery.PhotoActivity;
 import me.iwf.photopicker.PhotoPicker;
-import rx.Observable;
-import rx.Subscriber;
-import rx.Subscription;
 
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
