@@ -84,5 +84,13 @@
         android:layout_marginLeft="@dimen/content_padding"
         android:layout_marginRight="@dimen/content_padding"
         android:id="@+id/tv_seller_tip" />
-
+<Button
+    android:id="@id/btn_cancle"
+    android:layout_width="wrap_content"
+    android:layout_height="40dp"
+    android:background="@drawable/btn_chat_ok"
+    android:text="取消订单"
+    android:textColor="#ffffff"
+    android:layout_gravity="right"
+    android:layout_marginRight="5dp" />
 </LinearLayout>

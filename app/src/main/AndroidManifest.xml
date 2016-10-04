@@ -136,12 +136,12 @@
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
         <activity
-            android:name=".notice.detail.BuyOrderDetailActivity"
+            android:name=".notice.detail.BuyerCreateActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
         <activity
-            android:name=".notice.detail.SellerOrderDetailActivity"
+            android:name=".notice.detail.SellerCreateActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 

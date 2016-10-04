@@ -1,5 +1,6 @@
 package edu.scau.buymesth.notice.detail;
 
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
@@ -15,6 +16,7 @@ import java.util.List;
 import base.BaseActivity;
 import base.util.SpaceItemDecoration;
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
@@ -37,6 +39,8 @@ public class BuyerAcceptActivity extends BaseActivity {
     RecyclerView rv;
     @Bind(R.id.ll_request)
     LinearLayout llRequest;
+    @Bind(R.id.tv_address)
+    TextView tvAddress;
 
     @Override
     protected int getLayoutId() {
@@ -55,7 +59,7 @@ public class BuyerAcceptActivity extends BaseActivity {
         });
 
         orderMomentAdapter = new OrderMomentAdapter(new ArrayList<>());
-
+        tvAddress.setText("买家地址是：收货人：" + order.getAddress().getRecipient() + "\n手机号码：" + order.getAddress().getPhone() + "\n地址：" + order.getAddress().getRegion() + order.getAddress().getSpecific());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rv.setLayoutManager(linearLayoutManager);
         rv.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));

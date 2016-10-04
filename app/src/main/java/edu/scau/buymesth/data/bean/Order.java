@@ -34,6 +34,16 @@ public class Order extends BmobObject implements Serializable, MultiItemEntity{
     private String tipType;
      private String priceType;
     private List<String> tags ;
+    private Address address;
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
     public Float getPrice() {
         return price;
     }
@@ -185,6 +195,11 @@ public class Order extends BmobObject implements Serializable, MultiItemEntity{
         }else if(seller.getObjectId().equals(user.getObjectId())&&status==STATUS_FINISH){
             ////买家已收货，交易完成
             return Constant.SELLER_STATUS_FINISH;
+        }else if(buyer.getObjectId().equals(user.getObjectId())&&status==STATUS_SELLER_REJECT){
+
+            return Constant.BUYER_STATUS_SELLER_REJECT;
+        }else if(seller.getObjectId().equals(user.getObjectId())&&status==STATUS_SELLER_REJECT){
+            return Constant.SELLER_STATUS_SELLER_REJECT;
         }
         return 0;
     }

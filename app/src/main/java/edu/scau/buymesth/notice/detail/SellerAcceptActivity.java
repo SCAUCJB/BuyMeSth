@@ -1,10 +1,12 @@
 package edu.scau.buymesth.notice.detail;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -15,6 +17,7 @@ import java.util.List;
 import base.BaseActivity;
 import base.util.SpaceItemDecoration;
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
@@ -35,6 +38,8 @@ public class SellerAcceptActivity extends BaseActivity {
     RecyclerView imageList;
     @Bind(R.id.btn_go)
     Button btnGo;
+    @Bind(R.id.tv_address)
+    TextView tvAddress;
 
     @Override
     protected int getLayoutId() {
@@ -51,6 +56,8 @@ public class SellerAcceptActivity extends BaseActivity {
         imageList.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
         imageList.setNestedScrollingEnabled(false);
         imageList.setAdapter(orderMomentAdapter);
+
+        tvAddress.setText("买家地址是：收货人："+order.getAddress().getRecipient()+"\n手机号码："+order.getAddress().getPhone()+"\n地址："+order.getAddress().getRegion()+order.getAddress().getSpecific());
 
         btnCamera.setOnClickListener(v -> {
             Intent intent = new Intent(this, PicPublishActivity.class);
@@ -77,10 +84,10 @@ public class SellerAcceptActivity extends BaseActivity {
             order.update(new UpdateListener() {
                 @Override
                 public void done(BmobException e) {
-                    if(e==null){
-                        Log.i("bmob","更新成功");
-                    }else{
-                        Log.i("bmob","更新失败："+e.getMessage()+","+e.getErrorCode());
+                    if (e == null) {
+                        Log.i("bmob", "更新成功");
+                    } else {
+                        Log.i("bmob", "更新失败：" + e.getMessage() + "," + e.getErrorCode());
                     }
                 }
             });

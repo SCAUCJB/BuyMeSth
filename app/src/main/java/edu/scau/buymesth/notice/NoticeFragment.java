@@ -35,7 +35,7 @@ import java.util.List;
 import base.util.SpaceItemDecoration;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
-import edu.scau.buymesth.notice.detail.BuyOrderDetailActivity;
+import edu.scau.buymesth.notice.detail.BuyerCreateActivity;
 import edu.scau.buymesth.notice.detail.BuyerAcceptActivity;
 import edu.scau.buymesth.notice.detail.BuyerDeliverActivity;
 import edu.scau.buymesth.notice.detail.BuyerFinishActivity;
@@ -43,7 +43,7 @@ import edu.scau.buymesth.notice.detail.BuyerRejectActivity;
 import edu.scau.buymesth.notice.detail.SellerAcceptActivity;
 import edu.scau.buymesth.notice.detail.SellerDeliverActivity;
 import edu.scau.buymesth.notice.detail.SellerFinishActivity;
-import edu.scau.buymesth.notice.detail.SellerOrderDetailActivity;
+import edu.scau.buymesth.notice.detail.SellerCreateActivity;
 import edu.scau.buymesth.notice.detail.SellerRejectActivity;
 import edu.scau.buymesth.data.bean.Order;
 import rx.Subscriber;
@@ -136,13 +136,13 @@ public class NoticeFragment extends Fragment {
             bundle.putSerializable("order",order);
             switch(order.getItemType()){
                 case Constant.BUYER_STATUS_CREATE:
-                    intent =new Intent(getActivity(),BuyOrderDetailActivity.class);
+                    intent =new Intent(getActivity(),BuyerCreateActivity.class);
                     intent.putExtras(bundle);
                     startActivity(intent);
                     break;
 
                 case Constant.SELLER_STATUS_CREATE:
-                    intent =new Intent(getActivity(), SellerOrderDetailActivity.class);
+                    intent =new Intent(getActivity(), SellerCreateActivity.class);
                     intent.putExtras(bundle);
                     startActivity(intent);
                     break;

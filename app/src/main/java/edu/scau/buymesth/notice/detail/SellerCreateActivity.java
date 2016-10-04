@@ -1,19 +1,23 @@
 package edu.scau.buymesth.notice.detail;
 
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
 import base.BaseActivity;
 import butterknife.Bind;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.UpdateListener;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Order;
 
 /**
  * Created by Jammy on 2016/9/30.
  */
-public class SellerOrderDetailActivity extends BaseActivity {
+public class SellerCreateActivity extends BaseActivity {
     Order order;
     @Bind(R.id.request_icon)
     ImageView requestIcon;
@@ -25,6 +29,8 @@ public class SellerOrderDetailActivity extends BaseActivity {
     TextView tvSellerPrice;
     @Bind(R.id.tv_seller_tip)
     TextView tvSellerTip;
+    @Bind(R.id.btn_cancle)
+    Button btnCancle;
 
 
     @Override
@@ -45,6 +51,21 @@ public class SellerOrderDetailActivity extends BaseActivity {
             tvWant.setText("买家期望价格：" + order.getRequest().getMinPrice() + "~" + order.getRequest().getMaxPrice());
         tvSellerPrice.setText("你的出价:" + order.getPrice() + order.getPriceType());
         tvSellerTip.setText("你索要的小费" + order.getTip() + order.getTipType());
+        btnCancle.setOnClickListener(v -> {
+            order.setStatus(Order.STATUS_SELLER_REJECT);
+            order.update(new UpdateListener() {
+                @Override
+                public void done(BmobException e) {
+                    if(e==null){
+                        btnCancle.setText("订单已取消");
+                        btnCancle.setClickable(false);
+                    }
+                    else{
+                        Toast.makeText(SellerCreateActivity.this, "出错啦！请重试", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        });
     }
 
     @Override
@@ -56,4 +77,5 @@ public class SellerOrderDetailActivity extends BaseActivity {
     protected int getToolBarId() {
         return R.id.toolbar;
     }
+
 }

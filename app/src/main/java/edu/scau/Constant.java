@@ -41,5 +41,7 @@ public class Constant {
     public static final int SELLER_STATUS_DELIVERING = 7;
     public static final int BUYER_STATUS_FINISH = 8;
     public static final int SELLER_STATUS_FINISH = 9;
+    public static final int BUYER_STATUS_SELLER_REJECT = 10;
+    public static final int SELLER_STATUS_SELLER_REJECT = 11;
 
 }

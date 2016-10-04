@@ -22,7 +22,7 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
-import edu.scau.buymesth.notice.detail.BuyOrderDetailActivity;
+import edu.scau.buymesth.notice.detail.BuyerCreateActivity;
 import edu.scau.buymesth.notice.detail.BuyerAcceptActivity;
 import edu.scau.buymesth.notice.detail.BuyerDeliverActivity;
 import edu.scau.buymesth.notice.detail.BuyerFinishActivity;
@@ -30,7 +30,7 @@ import edu.scau.buymesth.notice.detail.BuyerRejectActivity;
 import edu.scau.buymesth.notice.detail.SellerAcceptActivity;
 import edu.scau.buymesth.notice.detail.SellerDeliverActivity;
 import edu.scau.buymesth.notice.detail.SellerFinishActivity;
-import edu.scau.buymesth.notice.detail.SellerOrderDetailActivity;
+import edu.scau.buymesth.notice.detail.SellerCreateActivity;
 import edu.scau.buymesth.notice.detail.SellerRejectActivity;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.User;
@@ -110,11 +110,11 @@ public class OrderFragment extends Fragment{
 
             switch (order.getItemType()){
                 case Constant.BUYER_STATUS_CREATE:
-                    intent =new Intent(getActivity(),BuyOrderDetailActivity.class);
+                    intent =new Intent(getActivity(),BuyerCreateActivity.class);
                     break;
 
                 case Constant.SELLER_STATUS_CREATE:
-                    intent =new Intent(getActivity(),SellerOrderDetailActivity.class);
+                    intent =new Intent(getActivity(),SellerCreateActivity.class);
                     break;
 
                 case Constant.BUYER_STATUS_REJECT:

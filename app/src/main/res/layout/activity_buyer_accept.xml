@@ -53,6 +53,14 @@
             android:layout_marginLeft="10dp" />
     </LinearLayout>
     <TextView
+        android:id="@+id/tv_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="收货地址"
+        android:layout_marginLeft="@dimen/content_padding"
+        android:layout_marginRight="@dimen/content_padding"
+        android:layout_marginTop="@dimen/content_padding" />
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="订单动态"

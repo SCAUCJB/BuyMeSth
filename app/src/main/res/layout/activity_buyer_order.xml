@@ -114,6 +114,25 @@
         android:layout_marginLeft="@dimen/content_padding"
         android:layout_marginRight="@dimen/content_padding"
         android:id="@+id/tv_seller_tip" />
+    <LinearLayout
+        android:id="@+id/ll_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/content_padding"
+        android:layout_marginRight="@dimen/content_padding">
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:src="@drawable/ic_location_on_grey600_48dp" />
+        <TextView
+            android:id="@+id/tv_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="点击选择收货地址"
+            />
+
+    </LinearLayout>
+
 <RelativeLayout
     android:orientation="horizontal"
     android:layout_width="wrap_content"
