@@ -1,8 +1,12 @@
 package edu.scau.buymesth.chat;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,7 +41,9 @@ import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.ValueEventListener;
 import edu.scau.Constant;
+import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Order;
+import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.data.bean.User;
 import rx.schedulers.Schedulers;
 
@@ -127,6 +133,17 @@ public class RequestService extends Service {
                                                 message.setData(bundle);
                                                 try {
                                                     client.send(message);
+                                                    Notification.Builder builder = new Notification.Builder(RequestService.this);
+                                                    Intent intent = new Intent(Intent.ACTION_VIEW,null);
+                                                    PendingIntent pendingIntent = PendingIntent.getActivity(RequestService.this,0,intent,0);
+                                                    builder.setSmallIcon(R.mipmap.ic_launcher);
+                                                    builder.setContentIntent(pendingIntent);
+                                                    builder.setAutoCancel(true);
+                                                    builder.setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher));
+                                                    builder.setContentTitle("你的订单有变化了");
+//                                                    builder.setContentText()
+                                                    NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                                                    notificationManager.notify(1,builder.build());
                                                 } catch (RemoteException e1) {
                                                     Log.v("出错啦！！！", "出错啦！！！！！");
                                                 }

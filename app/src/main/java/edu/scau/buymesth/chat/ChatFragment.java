@@ -38,8 +38,14 @@ import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.chat.detail.BuyOrderDetailActivity;
 import edu.scau.buymesth.chat.detail.BuyerAcceptActivity;
+import edu.scau.buymesth.chat.detail.BuyerDeliverActivity;
+import edu.scau.buymesth.chat.detail.BuyerFinishActivity;
+import edu.scau.buymesth.chat.detail.BuyerRejectActivity;
 import edu.scau.buymesth.chat.detail.SellerAcceptActivity;
+import edu.scau.buymesth.chat.detail.SellerDeliverActivity;
+import edu.scau.buymesth.chat.detail.SellerFinishActivity;
 import edu.scau.buymesth.chat.detail.SellerOrderDetailActivity;
+import edu.scau.buymesth.chat.detail.SellerRejectActivity;
 import edu.scau.buymesth.data.bean.Order;
 import rx.Subscriber;
 import rx.Subscription;
@@ -127,37 +133,64 @@ public class ChatFragment extends Fragment {
         adapter.setOnRecyclerViewItemClickListener((view1, position) -> {
             Order order = (Order) adapter.getItem(position);
             Intent intent;
-            Bundle bundle;
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("order",order);
             switch(order.getItemType()){
                 case Constant.BUYER_STATUS_CREATE:
-                    Toast.makeText(getContext(),"买家创建",Toast.LENGTH_LONG).show();
                     intent =new Intent(getActivity(),BuyOrderDetailActivity.class);
-                    bundle = new Bundle();
-                    bundle.putSerializable("order",order);
                     intent.putExtras(bundle);
                     startActivity(intent);
                     break;
 
                 case Constant.SELLER_STATUS_CREATE:
-                    Toast.makeText(getContext(),"卖家创建",Toast.LENGTH_LONG).show();
                     intent =new Intent(getActivity(), SellerOrderDetailActivity.class);
-                    bundle = new Bundle();
-                    bundle.putSerializable("order",order);
                     intent.putExtras(bundle);
                     startActivity(intent);
                     break;
                 case Constant.BUYER_STATUS_ACCEPT:
                     intent =new Intent(getActivity(), BuyerAcceptActivity.class);
-                    bundle = new Bundle();
-                    bundle.putSerializable("order",order);
                     intent.putExtras(bundle);
                     startActivity(intent);
                     break;
 
                 case Constant.SELLER_STATUS_ACCEPT:
                     intent =new Intent(getActivity(), SellerAcceptActivity.class);
-                    bundle = new Bundle();
-                    bundle.putSerializable("order",order);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    break;
+
+                case Constant.BUYER_STATUS_REJECT:
+                    intent = new Intent(getActivity(), BuyerRejectActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    break;
+
+                case Constant.SELLER_STATUS_REJECT:
+                    intent = new Intent(getActivity(), SellerRejectActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    break;
+
+                case Constant.BUYER_STATUS_DELIVERING:
+                    intent = new Intent(getActivity(), BuyerDeliverActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    break;
+
+                case Constant.SELLER_STATUS_DELIVERING:
+                    intent = new Intent(getActivity(), SellerDeliverActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    break;
+
+                case Constant.BUYER_STATUS_FINISH:
+                    intent = new Intent(getActivity(), BuyerFinishActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    break;
+
+                case Constant.SELLER_STATUS_FINISH:
+                    intent = new Intent(getActivity(), SellerFinishActivity.class);
                     intent.putExtras(bundle);
                     startActivity(intent);
                     break;

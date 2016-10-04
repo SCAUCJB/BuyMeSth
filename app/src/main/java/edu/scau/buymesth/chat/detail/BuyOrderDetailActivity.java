@@ -1,5 +1,6 @@
 package edu.scau.buymesth.chat.detail;
 
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -9,6 +10,8 @@ import com.bumptech.glide.Glide;
 
 import base.BaseActivity;
 import butterknife.Bind;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.UpdateListener;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.userinfo.UserInfoActivity;
@@ -66,6 +69,25 @@ public class BuyOrderDetailActivity extends BaseActivity {
         tvWant.setText("你的期望价格："+order.getRequest().getMaxPrice()+"￥");
         else
             tvWant.setText("你的期望价格："+order.getRequest().getMinPrice()+"~"+order.getRequest().getMaxPrice());
+        btnOk.setOnClickListener(v -> {
+            order.setStatus(Order.STATUS_ACCEPTED);
+            order.update(new UpdateListener() {
+                @Override
+                public void done(BmobException e) {
+
+                }
+            });
+        });
+
+        btnCancle.setOnClickListener(v -> {
+            order.setStatus(Order.STATUS_ACCEPTED);
+            order.update(new UpdateListener() {
+                @Override
+                public void done(BmobException e) {
+
+                }
+            });
+        });
     }
 
     @Override

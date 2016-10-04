@@ -236,7 +236,6 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                     mUrlList.get(finalI).compressedImage = compressHelper.thirdCompress(new File(mUrlList.get(finalI).sourceImage));
                     countDownLatch.countDown();
                 });
-                //     new Thread().start();
             }
             try {
                 countDownLatch.await();

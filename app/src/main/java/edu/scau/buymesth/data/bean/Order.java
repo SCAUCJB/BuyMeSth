@@ -19,6 +19,7 @@ public class Order extends BmobObject implements Serializable, MultiItemEntity{
     public static final short STATUS_REJECTED=2;
     public static final short STATUS_DELIVERING=3;
     public static final short STATUS_FINISH=4;
+    public static final short STATUS_SELLER_REJECT=5;
     private Float price;
     private Short status;
     private BmobDate accomplishAt;

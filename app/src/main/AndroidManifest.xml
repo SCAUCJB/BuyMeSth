@@ -163,6 +163,27 @@
             android:name=".user.mark.MarkActivity"
             android:label="收藏的请求"
             android:launchMode="singleTop"
+            android:theme="@style/AppTheme.SwipeBackLayout"/>
+
+        <activity android:name=".chat.detail.PicPublishActivity"
+            android:theme="@style/AppTheme.SwipeBackLayout"/>
+
+
+        <activity android:name=".chat.detail.BuyerFinishActivity"
+            android:theme="@style/AppTheme.SwipeBackLayout"/>
+
+
+        <activity android:name=".chat.detail.SellerFinishActivity"
+            android:theme="@style/AppTheme.SwipeBackLayout"/>
+
+
+        <activity android:name=".chat.detail.BuyerDeliverActivity"
+            android:theme="@style/AppTheme.SwipeBackLayout"/>
+
+
+        <activity android:name=".chat.detail.SellerDeliverActivity"
+            android:theme="@style/AppTheme.SwipeBackLayout"/>
+
             android:theme="@style/AppTheme.SwipeBackLayout" />
         <activity
             android:name=".chat.detail.SellerAcceptActivity"

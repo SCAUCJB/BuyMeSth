@@ -33,6 +33,7 @@ import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.ViewPagerAdapter;
 import edu.scau.buymesth.user.address.AddressActivity;
 import edu.scau.buymesth.user.mark.MarkActivity;
+import edu.scau.buymesth.user.order.OrderFragment;
 import edu.scau.buymesth.user.request.RequestFragment;
 import edu.scau.buymesth.user.setting.UserSettingActivity;
 import edu.scau.buymesth.util.ColorChangeHelper;
@@ -156,12 +157,15 @@ public class UserFragment extends Fragment implements UserContract.View {
     public void initTab() {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
         RequestFragment requestFragment = new RequestFragment();
+        OrderFragment orderFragment = new OrderFragment();
         adapter.addTab(requestFragment, "我的请求");
+        adapter.addTab(orderFragment,"我的订单");
         mViewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(mViewPager);
         NestedScrollView bottomSheet = (NestedScrollView) mCoordinatorLayout.findViewById(R.id.bottom_sheet);
         behavior = BottomSheetBehavior.from(bottomSheet);
         requestFragment.disallowIntercept(bottomSheet);
+        orderFragment.disallowIntercept(bottomSheet);
         userInfoLl.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
 

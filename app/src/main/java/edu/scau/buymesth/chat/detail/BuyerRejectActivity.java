@@ -9,7 +9,7 @@ import edu.scau.buymesth.R;
 public class BuyerRejectActivity extends BaseActivity {
     @Override
     protected int getLayoutId() {
-        return 0;
+        return R.layout.activity_buyer_reject;
     }
 
     @Override
@@ -19,7 +19,7 @@ public class BuyerRejectActivity extends BaseActivity {
 
     @Override
     public boolean canSwipeBack() {
-        return false;
+        return true;
     }
 
     @Override

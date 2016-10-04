@@ -99,17 +99,17 @@ public class MomentPublishActivity extends BaseActivity {
         swCompress.setOnCheckedChangeListener((buttonView, isChecked) -> {
             mCompress = isChecked;
             if(isChecked&&!mCompressed&&!mCompressing){
-                compress();
-            }else if(mCompressed&&!mCompressing){
-                mImageSize = 0;
-                adapter.setList(mUrlList,mCompress?1:0);
-                Observable.from(mUrlList)
-                        .map(imageItem -> new File(mCompress?imageItem.compressedImage:imageItem.sourceImage))
-                        .subscribe(file -> mImageSize += file.length(),
-                                o->{},
-                                () -> tvSize.setText("图片大小："+Byte2String.convert(mImageSize)));
-            }
-        });
+            compress();
+        }else if(mCompressed&&!mCompressing){
+            mImageSize = 0;
+            adapter.setList(mUrlList,mCompress?1:0);
+            Observable.from(mUrlList)
+                    .map(imageItem -> new File(mCompress?imageItem.compressedImage:imageItem.sourceImage))
+                    .subscribe(file -> mImageSize += file.length(),
+                            o->{},
+                            () -> tvSize.setText("图片大小："+Byte2String.convert(mImageSize)));
+        }
+    });
 
         tvRequest.setOnClickListener(v -> {
             Intent intent = new Intent(MomentPublishActivity.this,SelectActivity.class);

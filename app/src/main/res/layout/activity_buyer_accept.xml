@@ -57,11 +57,8 @@
         android:layout_height="wrap_content"
         android:text="订单动态"
         android:layout_margin="@dimen/content_padding" />
-    <LinearLayout
-        android:id="@+id/image_list"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginLeft="@dimen/content_padding"
-        android:layout_marginRight="@dimen/content_padding"></LinearLayout>
+        android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
 </LinearLayout>

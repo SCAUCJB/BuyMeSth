@@ -100,7 +100,7 @@ public class ChatAdapter extends BaseMultiItemQuickAdapter<Order> {
                 break;
 
             case Constant.BUYER_STATUS_ACCEPT:
-//                helper.setText(R.id.tv_accept,"你已于"+item.getUpdatedAt()+"接收了订单");
+                helper.setText(R.id.tv_accept,"你已于"+item.getUpdatedAt()+"接收了订单");
                 break;
 
             case Constant.SELLER_STATUS_ACCEPT:

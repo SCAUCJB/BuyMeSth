@@ -1,21 +1,15 @@
 package edu.scau.buymesth.chat.detail;
 
-import android.widget.TextView;
-
 import base.BaseActivity;
-import butterknife.Bind;
 import edu.scau.buymesth.R;
 
 /**
- * Created by Jammy on 2016/9/30.
+ * Created by Jammy on 2016/10/3.
  */
-public class SellerRejectActivity extends BaseActivity {
-    @Bind(R.id.tv)
-    TextView tv;
-
+public class SellerFinishActivity extends BaseActivity{
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_seller_reject;
+        return R.layout.activity_seller_finish;
     }
 
     @Override
@@ -32,5 +26,4 @@ public class SellerRejectActivity extends BaseActivity {
     protected int getToolBarId() {
         return R.id.toolbar;
     }
-
 }
