@@ -16,7 +16,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             + "id integer primary key autoincrement,"
             + "objectId varchar,"
             + "orderJson varchar,"
-            + "status varchar);";
+            + "status varchar,"
+            + "updateTime varchar);";
 
 
     public SQLiteHelper(Context context) {

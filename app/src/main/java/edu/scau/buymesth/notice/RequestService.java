@@ -143,40 +143,44 @@ public class RequestService extends Service {
                     }
                 }
 
-                /////这里要判断自己是买家还是卖家，存不同的数据库,还是更新....
-                if (buyerId.equals(user.getObjectId()) || sellerId.equals(user.getObjectId())) {
-                    BmobQuery<Order> bmobQuery = new BmobQuery<>();
-                    bmobQuery.include("buyer,request,seller");
-                    bmobQuery.addWhereEqualTo("objectId", objectId);
-                    bmobQuery.findObjects(new FindListener<Order>() {
-                        @Override
-                        public void done(List<Order> list, BmobException e) {
-                            Order order = list.get(0);
-                            if (order != null) {
-                                ContentValues values = new ContentValues();
-                                String orderJson = gson.toJson(order);
-                                values.put("orderJson", orderJson);
-                                values.put("objectId", order.getObjectId());
-                                values.put("status", order.getStatus());
-                                db.insert(SQLiteHelper.DATABASE_TABLE, values);
+                            /////这里要判断自己是买家还是卖家，存不同的数据库,还是更新....
+                                if (buyerId.equals(user.getObjectId()) || sellerId.equals(user.getObjectId())) {
+                                    BmobQuery<Order> bmobQuery = new BmobQuery<>();
+                                    bmobQuery.include("buyer,request,seller");
+                                    bmobQuery.addWhereEqualTo("objectId", objectId);
+                                    bmobQuery.findObjects(new FindListener<Order>() {
+                                        @Override
+                                        public void done(List<Order> list, BmobException e) {
+                                            Order order = list.get(0);
+                                            if (order != null) {
+                                                ContentValues values = new ContentValues();
+                                                String orderJson = gson.toJson(order);
+                                                values.put("orderJson", orderJson);
+                                                values.put("objectId", order.getObjectId());
+                                                values.put("status", order.getStatus());
+                                                values.put("updateTime",order.getUpdatedAt());
+                                                db.insert(SQLiteHelper.DATABASE_TABLE, values);
 
-                                Message message = new Message();
-                                Bundle bundle = new Bundle();
-                                bundle.putSerializable("order",order);
-                                mOrder = order;
-                                message.setData(bundle);
-                                unreadCount++;
-                                try {
-                                    if(client!=null)
-                                    client.send(message);
-                                    Notification.Builder builder = new Notification.Builder(RequestService.this);
-                                    Intent intent = new Intent(Intent.ACTION_VIEW,null);
-                                    PendingIntent pendingIntent = PendingIntent.getActivity(RequestService.this,0,intent,0);
-                                    builder.setSmallIcon(R.mipmap.ic_launcher);
-                                    builder.setContentIntent(pendingIntent);
-                                    builder.setAutoCancel(true);
-                                    builder.setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher));
-                                    builder.setContentTitle("你的订单有变化了");
+                                                Message message = new Message();
+                                                Bundle bundle = new Bundle();
+                                                bundle.putSerializable("order",order);
+                                                mOrder = order;
+                                                message.setData(bundle);
+                                                unreadCount++;
+                                                try {
+                                                    if(client!=null)
+                                                    client.send(message);
+                                                    Notification.Builder builder = new Notification.Builder(RequestService.this);
+                                                    Intent intent = new Intent(RequestService.this,OrderDetailActivity.class);
+//                                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                    intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                    intent.putExtra("order",order);
+                                                    PendingIntent pendingIntent = PendingIntent.getActivity(RequestService.this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+                                                    builder.setSmallIcon(R.mipmap.ic_launcher);
+                                                    builder.setContentIntent(pendingIntent);
+                                                    builder.setAutoCancel(true);
+                                                    builder.setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher));
+                                                    builder.setContentTitle("你的订单有变化了");
 //                                                    builder.setContentText()
                                     NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                                     notificationManager.notify(1,builder.build());
