@@ -5,7 +5,6 @@ import java.util.List;
 import cn.bmob.v3.BmobQuery;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.data.bean.MomentsLike;
-import edu.scau.buymesth.data.bean.Request;
 import rx.Observable;
 
 /**
@@ -20,6 +19,8 @@ public class DiscoverContract {
         void onAddOneItem(Moment moment);
         void onItemChanged();
         void onRefreshInterrupt();
+
+        void onLoadMoreError();
     }
 
     interface Model{

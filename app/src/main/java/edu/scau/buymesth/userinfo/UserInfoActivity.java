@@ -28,6 +28,7 @@ import butterknife.Bind;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.ViewPagerAdapter;
 import edu.scau.buymesth.data.bean.User;
+import edu.scau.buymesth.user.order.OrderFragment;
 import edu.scau.buymesth.user.request.RequestFragment;
 import edu.scau.buymesth.util.ColorChangeHelper;
 import edu.scau.buymesth.util.NetworkHelper;
@@ -191,11 +192,14 @@ public class UserInfoActivity extends BaseActivity implements Contract.View{
         ViewPagerAdapter adapter=new ViewPagerAdapter(getSupportFragmentManager());
         RequestFragment requestFragment=new RequestFragment();
         adapter.addTab(requestFragment,"TA的请求");
+        OrderFragment orderFragment = new OrderFragment();
+        adapter.addTab(orderFragment, "TA的订单");
         mViewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(mViewPager);
         CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.cl);
         NestedScrollView bottomSheet = (NestedScrollView) coordinatorLayout.findViewById(R.id.bottom_sheet);
          behavior=BottomSheetBehavior.from(bottomSheet);
         requestFragment.disallowIntercept(bottomSheet);
+        orderFragment.disallowIntercept(bottomSheet);
     }
 }

@@ -10,8 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
@@ -21,12 +19,9 @@ import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.DiscoverAdapter;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.discover.detail.MomentDetailActivity;
-import edu.scau.buymesth.request.requestdetail.RequestDetailActivity;
-import gallery.PhotoActivity;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
-import ui.layout.NineGridLayout;
 
 
 public class DiscoverFragment extends Fragment implements DiscoverContract.View{
@@ -90,7 +85,7 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
 
     @Override
     public void onLoadMoreSuccess(List<Moment> list) {
-        if(list.size()>0)
+        if(list!=null&&list.size()>0)
             mDiscoverAdapter.notifyDataChangedAfterLoadMore(true);
         else{
             mDiscoverAdapter.notifyDataChangedAfterLoadMore(false);
@@ -140,6 +135,11 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
         if(mPtrFrameLayout!=null)
             mPtrFrameLayout.refreshComplete();
         mDiscoverAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoadMoreError() {
+        mDiscoverAdapter.notifyDataChangedAfterLoadMore(false);
     }
 
     private final class SpaceItemDecoration extends RecyclerView.ItemDecoration{

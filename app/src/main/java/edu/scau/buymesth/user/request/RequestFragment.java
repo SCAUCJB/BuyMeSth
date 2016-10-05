@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +49,7 @@ public class RequestFragment extends Fragment {
     private CompositeSubscription mSubscriptions = new CompositeSubscription();
     private TextView mHintTv;
     private String mId;
+    private View notLoadingView;
 
     @Nullable
     @Override
@@ -108,7 +108,7 @@ public class RequestFragment extends Fragment {
 
                     @Override
                     public void onNext(List<Request> requests) {
-                        Log.d("zhx","cache on next");
+
                         if (requests == null || requests.size() == 0) {
                             mHintTv.setVisibility(View.VISIBLE);
                         }else if(requests.size()>0&&mHintTv.getVisibility()==View.VISIBLE)
@@ -145,7 +145,7 @@ public class RequestFragment extends Fragment {
 
                     @Override
                     public void onNext(List<Request> requests) {
-                        Log.d("zhx","network on next");
+
                         if (requests == null || requests.size() == 0) {
                             mHintTv.setVisibility(View.VISIBLE);
                         }else if(requests.size()>0&&mHintTv.getVisibility()==View.VISIBLE)
@@ -185,11 +185,20 @@ public class RequestFragment extends Fragment {
                     @Override
                     public void onError(Throwable throwable) {
                         showMsg("获取请求列表出现了问题");
+                        mRequestListAdapter.notifyDataChangedAfterLoadMore(false);
                     }
 
                     @Override
                     public void onNext(List<Request> requests) {
+                        if(requests!=null)
                         mRequestListAdapter.notifyDataChangedAfterLoadMore(requests, true);
+                        else {
+                            mRequestListAdapter.notifyDataChangedAfterLoadMore(false);
+                            if (notLoadingView == null) {
+                                notLoadingView = getActivity().getWindow().getLayoutInflater().inflate(R.layout.not_loading, (ViewGroup) mRecyclerView.getParent(), false);
+                            }
+                            mRequestListAdapter.addFooterView(notLoadingView);
+                        }
                     }
                 }));
     }
