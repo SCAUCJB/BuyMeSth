@@ -184,20 +184,6 @@ public class RequestService extends Service {
 //                                                    builder.setContentText()
                                     NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                                     notificationManager.notify(1,builder.build());
-
-//                                    BmobIMMessage bmobIMMessage = new BmobIMMessage((long) -1);
-//                                    bmobIMMessage.setContent("你的订单有变化了");
-//                                    BmobIMUserInfo bmobIMUserInfo = new BmobIMUserInfo((long) -1);
-//                                    BmobIMConversation bmobIMConversation = new BmobIMConversation((long) -1);
-//
-//                                    MessageEvent me = new MessageEvent(bmobIMMessage,bmobIMConversation,bmobIMUserInfo);
-//
-//                                    List<MessageEvent> messageEventList = new ArrayList<MessageEvent>();
-//                                    messageEventList.add(me);
-//                                    if(BmobIM.getInstance().messageListeners!=null)
-//                                    for(MessageListHandler msgH : BmobIM.getInstance().messageListeners){
-//                                        msgH.onMessageReceive(messageEventList);
-//                                    }
                                 } catch (RemoteException e1) {
                                     Log.v("出错啦！！！", "出错啦！！！！！");
                                 }
