@@ -194,6 +194,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     public void onRefreshFail() {
         if (mPtrFrameLayout != null)
             mPtrFrameLayout.refreshComplete();
+        mRequestListAdapter.notifyDataChangedAfterLoadMore(false);
     }
 
     /**

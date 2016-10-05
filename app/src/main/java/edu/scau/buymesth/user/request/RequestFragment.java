@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,7 @@ import android.widget.Toast;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import adpater.animation.ScaleInAnimation;
+import adpater.animation.SlideInBottomAnimation;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import edu.scau.Constant;
@@ -34,6 +35,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
+import static cn.bmob.v3.BmobQuery.CachePolicy.CACHE_ELSE_NETWORK;
 import static cn.bmob.v3.BmobQuery.CachePolicy.CACHE_ONLY;
 import static cn.bmob.v3.BmobQuery.CachePolicy.NETWORK_ELSE_CACHE;
 import static cn.bmob.v3.BmobQuery.CachePolicy.NETWORK_ONLY;
@@ -85,14 +87,14 @@ public class RequestFragment extends Fragment {
     private void initAdapter() {
 
         mRequestListAdapter = new RequestListAdapter();
-        mRequestListAdapter.openLoadAnimation(new ScaleInAnimation());
+        mRequestListAdapter.openLoadAnimation(new SlideInBottomAnimation());
 
         mRequestListAdapter.setOnRecyclerViewItemClickListener(
                 (view, position) -> RequestDetailActivity.navigate(getActivity(), mRequestListAdapter.getData().get(position))
         );
 
         mRecyclerView.setAdapter(mRequestListAdapter);
-        Subscription subscription = getSomeonesRxRequests(CACHE_ONLY, mId).subscribeOn(Schedulers.io())
+        Subscription subscription = getSomeonesRxRequests(CACHE_ELSE_NETWORK, mId).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<List<Request>>() {
                     @Override
                     public void onCompleted() {
@@ -106,6 +108,7 @@ public class RequestFragment extends Fragment {
 
                     @Override
                     public void onNext(List<Request> requests) {
+                        Log.d("zhx","cache on next");
                         if (requests == null || requests.size() == 0) {
                             mHintTv.setVisibility(View.VISIBLE);
                         }else if(requests.size()>0&&mHintTv.getVisibility()==View.VISIBLE)
@@ -123,10 +126,11 @@ public class RequestFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        refresh();
+         refresh();
     }
 
     public void refresh() {
+        pageNum=0;
         Subscription subscription = getSomeonesRxRequests(NETWORK_ONLY, mId).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<List<Request>>() {
                     @Override
@@ -141,6 +145,7 @@ public class RequestFragment extends Fragment {
 
                     @Override
                     public void onNext(List<Request> requests) {
+                        Log.d("zhx","network on next");
                         if (requests == null || requests.size() == 0) {
                             mHintTv.setVisibility(View.VISIBLE);
                         }else if(requests.size()>0&&mHintTv.getVisibility()==View.VISIBLE)
@@ -162,7 +167,7 @@ public class RequestFragment extends Fragment {
         if (policy == CACHE_ONLY && query.hasCachedResult(Request.class))
             query.setCachePolicy(CACHE_ONLY);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
         else
-            query.setCachePolicy(NETWORK_ELSE_CACHE);//先从缓存再从网络
+            query.setCachePolicy(NETWORK_ELSE_CACHE);// 从网络
 
         return query.findObjectsObservable(Request.class);
     }

@@ -3,7 +3,6 @@ package edu.scau.buymesth.notice;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 /**
  * Created by Jammy on 2016/9/21.
@@ -28,7 +27,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DATABASE_CREATE);
-        Log.v("111","111");
     }
 
     @Override
