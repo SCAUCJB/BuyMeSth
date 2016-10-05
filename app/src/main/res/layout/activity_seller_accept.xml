@@ -20,6 +20,13 @@
             android:layout_gravity="right"
             android:text="确认发货" />
 
+        <Button
+            android:id="@+id/btn_cancle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="取消订单" />
+
     </android.support.v7.widget.Toolbar>
 
     <RelativeLayout
@@ -39,8 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/textView3"
             android:layout_marginLeft="@dimen/content_padding"
-            android:layout_marginRight="@dimen/content_padding"
-            />
+            android:layout_marginRight="@dimen/content_padding" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/image_list"

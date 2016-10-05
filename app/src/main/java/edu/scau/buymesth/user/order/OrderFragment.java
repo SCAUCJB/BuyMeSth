@@ -22,6 +22,7 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
+import edu.scau.buymesth.notice.OrderDetailActivity;
 import edu.scau.buymesth.notice.detail.BuyerCreateActivity;
 import edu.scau.buymesth.notice.detail.BuyerAcceptActivity;
 import edu.scau.buymesth.notice.detail.BuyerDeliverActivity;
@@ -104,51 +105,9 @@ public class OrderFragment extends Fragment{
         mRecyclerView.setAdapter(adapter);
         adapter.setOnRecyclerViewItemClickListener((view, position) -> {
             Order order = adapter.getItem(position);
-            Intent intent = null;
+            Intent intent = new Intent(getContext(), OrderDetailActivity.class);
             Bundle bundle = new Bundle();
             bundle.putSerializable("order",order);
-
-            switch (order.getItemType()){
-                case Constant.BUYER_STATUS_CREATE:
-                    intent =new Intent(getActivity(),BuyerCreateActivity.class);
-                    break;
-
-                case Constant.SELLER_STATUS_CREATE:
-                    intent =new Intent(getActivity(),SellerCreateActivity.class);
-                    break;
-
-                case Constant.BUYER_STATUS_REJECT:
-                    intent =new Intent(getActivity(),BuyerRejectActivity.class);
-                    break;
-
-                case Constant.SELLER_STATUS_REJECT:
-                    intent =new Intent(getActivity(),SellerRejectActivity.class);
-                    break;
-
-                case Constant.BUYER_STATUS_ACCEPT:
-                    intent =new Intent(getActivity(),BuyerAcceptActivity.class);
-                    break;
-
-                case Constant.SELLER_STATUS_ACCEPT:
-                    intent =new Intent(getActivity(),SellerAcceptActivity.class);
-                    break;
-
-                case Constant.BUYER_STATUS_DELIVERING:
-                    intent =new Intent(getActivity(),BuyerDeliverActivity.class);
-                    break;
-
-                case Constant.SELLER_STATUS_DELIVERING:
-                    intent =new Intent(getActivity(),SellerDeliverActivity.class);
-                    break;
-
-                case Constant.BUYER_STATUS_FINISH:
-                    intent =new Intent(getActivity(),BuyerFinishActivity.class);
-                    break;
-
-                case Constant.SELLER_STATUS_FINISH:
-                    intent =new Intent(getActivity(),SellerFinishActivity.class);
-                    break;
-            }
             intent.putExtra("order",order);
             startActivity(intent);
         });

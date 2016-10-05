@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +41,8 @@ public class SellerAcceptActivity extends BaseActivity {
     Button btnGo;
     @Bind(R.id.tv_address)
     TextView tvAddress;
+    @Bind(R.id.btn_cancle)
+    Button btnCancle;
 
     @Override
     protected int getLayoutId() {
@@ -57,7 +60,7 @@ public class SellerAcceptActivity extends BaseActivity {
         imageList.setNestedScrollingEnabled(false);
         imageList.setAdapter(orderMomentAdapter);
 
-        tvAddress.setText("买家地址是：收货人："+order.getAddress().getRecipient()+"\n手机号码："+order.getAddress().getPhone()+"\n地址："+order.getAddress().getRegion()+order.getAddress().getSpecific());
+        tvAddress.setText("买家地址是：收货人：" + order.getAddress().getRecipient() + "\n手机号码：" + order.getAddress().getPhone() + "\n地址：" + order.getAddress().getRegion() + order.getAddress().getSpecific());
 
         btnCamera.setOnClickListener(v -> {
             Intent intent = new Intent(this, PicPublishActivity.class);
@@ -81,6 +84,20 @@ public class SellerAcceptActivity extends BaseActivity {
         });
         btnGo.setOnClickListener(v -> {
             order.setStatus(Order.STATUS_DELIVERING);
+            order.update(new UpdateListener() {
+                @Override
+                public void done(BmobException e) {
+                    if (e == null) {
+                        Log.i("bmob", "更新成功");
+                    } else {
+                        Log.i("bmob", "更新失败：" + e.getMessage() + "," + e.getErrorCode());
+                    }
+                }
+            });
+        });
+        btnCancle.setOnClickListener(v -> {
+            order.setStatus(Order.STATUS_SELLER_REJECT);
+            order.getSeller().setExp(order.getSeller().getExp()-100);
             order.update(new UpdateListener() {
                 @Override
                 public void done(BmobException e) {
