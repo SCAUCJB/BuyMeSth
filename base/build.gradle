@@ -27,6 +27,11 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     //bmob-sdk：Bmob的android sdk包，包含了Bmob的数据存储、文件等服务，以下是最新的bmob-sdk:
     compile 'cn.bmob.android:bmob-sdk:3.5.0'
+
+    //bmob-im：Bmob的即时通讯包，注意每个版本的im依赖特定版本的bmob-sdk
+    compile 'cn.bmob.android:bmob-im:2.0.5@aar'
+    compile 'cn.bmob.android:bmob-sdk:3.4.7-aar'
+
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:recyclerview-v7:23.3.0'
 //    provided 'com.squareup.okhttp3:logging-interceptor:3.1.2'

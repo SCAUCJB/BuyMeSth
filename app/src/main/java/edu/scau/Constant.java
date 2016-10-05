@@ -27,6 +27,8 @@ public class Constant {
     public static final int APP_VERSION = 1;
 
     public static final int START_SERVICE = 1;
+    public static final int GET_UNREAD = 2;
+    public static final int MARK_READ = 3;
 
     public static final String EXTRA_REQUEST = "intent.request";
     public static final String EXTRA_NEEDQUERY = "intent.needquery";
@@ -44,4 +46,5 @@ public class Constant {
     public static final int BUYER_STATUS_SELLER_REJECT = 10;
     public static final int SELLER_STATUS_SELLER_REJECT = 11;
 
+    public static final int FILE_SELECT_CODE = 535;
 }

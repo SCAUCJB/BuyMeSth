@@ -29,6 +29,9 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:orientation="horizontal">
+
+
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -96,16 +99,18 @@
                     android:id="@+id/tv_level"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+
                     android:layout_centerVertical="true"
                     android:layout_gravity="center"
                     android:layout_marginStart="@dimen/dp_6"
                     android:layout_toEndOf="@+id/tv_name"
+                    android:autoText="true"
                     android:background="@drawable/rect_black"
                     android:paddingBottom="2dp"
                     android:paddingLeft="4dp"
                     android:paddingRight="4dp"
                     android:paddingTop="2dp"
-                    android:text="LV0"
+                    android:text=""
                     android:textColor="#f3f3f3"
                     android:textSize="8sp" />
 

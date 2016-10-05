@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center">
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingRight="8dp"
+        android:paddingTop="8dp"
+        android:paddingLeft="8dp"
+        android:paddingBottom="8dp">
+
+        <ImageView
+            android:id="@+id/iv_avatar"
+            android:src="@mipmap/def_head"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="8dp"
+            android:layout_width="35dp"
+            android:layout_below="@+id/tv_date"
+            android:layout_height="35dp" />
+
+        <ImageView
+            android:layout_width="10dp"
+            app:srcCompat="@drawable/coner_white"
+            android:layout_marginTop="4dp"
+            android:id="@+id/iv_c"
+            android:scaleX="-1"
+            android:layout_height="20dp"
+            android:layout_below="@+id/tv_date"
+            android:layout_toStartOf="@+id/iv_avatar" />
+
+        <LinearLayout
+            android:id="@+id/ly_msg_rect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@+id/tv_date"
+            android:gravity="right"
+            android:layout_toStartOf="@+id/iv_c">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp">
+
+                <ProgressBar
+                    style="?android:attr/progressBarStyleSmall"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:id="@+id/progress_send"
+                    android:foregroundGravity="right"
+                    android:minHeight="15dp"
+                    android:minWidth="15dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/ly_message" />
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    app:srcCompat="?android:attr/alertDialogIcon"
+                    android:id="@+id/iv_warn" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rect_white"
+                android:minHeight="35dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:layout_toStartOf="@+id/iv_c"
+                android:id="@+id/ly_message">
+                <TextView
+                    style="@style/theTextLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/tertiary_text_dark"
+                    android:text="aaaaaaaaaaaaaa"
+                    android:padding="5dp"
+                    android:id="@+id/tv_msg_content"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:text="27/16/21"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:id="@+id/tv_date"
+            style="@style/theDate"
+            android:textSize="10sp"
+            android:visibility="gone"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp" />
+
+    </RelativeLayout>
+</FrameLayout>

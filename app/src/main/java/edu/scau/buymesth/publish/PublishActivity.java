@@ -42,7 +42,7 @@ import gallery.PhotoActivity;
 import me.iwf.photopicker.PhotoPicker;
 import rx.Observable;
 import ui.widget.SelectableSeekBar;
-import util.Byte2String;
+import util.FileUtils;
 
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
@@ -187,7 +187,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                         .subscribe(file -> mImageSize += file.length(),
                                 o -> {
                                 },
-                                () -> tvSize.setText("图片大小：" + Byte2String.convert(mImageSize)));
+                                () -> tvSize.setText("图片大小：" + FileUtils.convert(mImageSize)));
             }
         });
         initToolBar();
@@ -214,7 +214,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                         .subscribe(file -> mImageSize += file.length(),
                                 o -> {
                                 },
-                                () -> tvSize.setText("图片大小：" + Byte2String.convert(mImageSize)));
+                                () -> tvSize.setText("图片大小：" + FileUtils.convert(mImageSize)));
                 if (mCompress) compress();
             }
         }
@@ -247,7 +247,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                             .subscribe(file -> mImageSize += file.length(),
                                     o -> {
                                     },
-                                    () -> tvSize.setText("图片大小：" + Byte2String.convert(mImageSize)));
+                                    () -> tvSize.setText("图片大小：" + FileUtils.convert(mImageSize)));
                     adapter.setList(mUrlList, mCompress ? 1 : 0);
                     swCompress.setEnabled(true);
                 });

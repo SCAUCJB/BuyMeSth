@@ -1,7 +1,6 @@
 package edu.scau.buymesth.discover.list;
 
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,6 +13,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import base.util.SpaceItemDecoration;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.DiscoverAdapter;
@@ -135,24 +135,5 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
         if(mPtrFrameLayout!=null)
             mPtrFrameLayout.refreshComplete();
         mDiscoverAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onLoadMoreError() {
-        mDiscoverAdapter.notifyDataChangedAfterLoadMore(false);
-    }
-
-    private final class SpaceItemDecoration extends RecyclerView.ItemDecoration{
-
-        private int space;
-
-        SpaceItemDecoration(int space) {
-            this.space = space;
-        }
-
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            outRect.top = space;
-        }
     }
 }

@@ -29,8 +29,12 @@ import com.bumptech.glide.Glide;
 
 import base.BaseActivity;
 import base.util.GlideCircleTransform;
+import base.util.ToastUtil;
+import cn.bmob.v3.BmobUser;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.ViewPagerAdapter;
+import edu.scau.buymesth.ui.LoginActivity;
+import edu.scau.buymesth.ui.RegisterActivity;
 import edu.scau.buymesth.user.address.AddressActivity;
 import edu.scau.buymesth.user.mark.MarkActivity;
 import edu.scau.buymesth.user.order.OrderFragment;
@@ -112,6 +116,16 @@ public class UserFragment extends Fragment implements UserContract.View {
     @Override
     public void setAvatar(String url) {
         Glide.with(getContext()).load(url).crossFade().placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(getContext())).into(mAvatarIv);
+        mAvatarIv.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                BmobUser.logOut();
+                ToastUtil.show("log out");
+                Intent i = new Intent(getActivity(), LoginActivity.class);
+                startActivity(i);
+                return false;
+            }
+        });
     }
 
     @Override

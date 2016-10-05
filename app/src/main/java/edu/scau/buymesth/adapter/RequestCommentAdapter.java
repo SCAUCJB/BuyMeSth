@@ -45,7 +45,7 @@ public class RequestCommentAdapter extends BaseQuickAdapter<Comment> {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            ace.callEndpoint("like", params, new CloudCodeListener() {
+            ace.callEndpoint("like_request_comment", params, new CloudCodeListener() {
                 @Override
                 public void done(Object o, BmobException e) {
                     if (e == null) {

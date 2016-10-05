@@ -34,7 +34,7 @@ import edu.scau.buymesth.util.CompressHelper;
 import gallery.PhotoActivity;
 import me.iwf.photopicker.PhotoPicker;
 import rx.Observable;
-import util.Byte2String;
+import util.FileUtils;
 
 /**
  * Created by ！ on 2016/8/29.
@@ -107,7 +107,7 @@ public class MomentPublishActivity extends BaseActivity {
                     .map(imageItem -> new File(mCompress?imageItem.compressedImage:imageItem.sourceImage))
                     .subscribe(file -> mImageSize += file.length(),
                             o->{},
-                            () -> tvSize.setText("图片大小："+Byte2String.convert(mImageSize)));
+                            () -> tvSize.setText("图片大小："+ FileUtils.convert(mImageSize)));
         }
     });
 
@@ -215,7 +215,7 @@ public class MomentPublishActivity extends BaseActivity {
                         .map(imageItem -> new File(mCompress?imageItem.compressedImage:imageItem.sourceImage))
                         .subscribe(file -> mImageSize += file.length(),
                                 o -> {},
-                                () -> tvSize.setText("图片大小："+ Byte2String.convert(mImageSize)));
+                                () -> tvSize.setText("图片大小："+ FileUtils.convert(mImageSize)));
                 if(mCompress) compress();
             }
         } if(resultCode == RESULT_OK && requestCode == 0){
@@ -257,7 +257,7 @@ public class MomentPublishActivity extends BaseActivity {
                             .map(imageItem -> new File(mCompress?imageItem.compressedImage:imageItem.sourceImage))
                             .subscribe(file -> mImageSize += file.length(),
                                     o -> {},
-                                    () -> tvSize.setText("图片大小："+Byte2String.convert(mImageSize)));
+                                    () -> tvSize.setText("图片大小："+ FileUtils.convert(mImageSize)));
                     adapter.setList(mUrlList,mCompress?1:0);
                     swCompress.setEnabled(true);
                 });

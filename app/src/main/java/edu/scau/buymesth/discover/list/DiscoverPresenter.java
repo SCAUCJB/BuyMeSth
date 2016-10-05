@@ -106,7 +106,7 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
 
                     @Override
                     public void onError(Throwable throwable) {
-                        mView.onLoadMoreError();
+                        mView.onError(throwable, "获取数据出了些问题");
                     }
 
                     @Override

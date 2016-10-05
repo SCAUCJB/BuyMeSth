@@ -18,7 +18,7 @@ public class App extends Application {
         super.onCreate();
         mApp = this;
         LogUtil.isEnable=true;
-        CustomActivityOnCrash.install(this);
+//        CustomActivityOnCrash.install(this);
     }
 
     public static Context getAppContext() {

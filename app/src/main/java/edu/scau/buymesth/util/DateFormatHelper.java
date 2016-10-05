@@ -23,4 +23,10 @@ public class DateFormatHelper {
             return date;
         }
     }
+
+    public static String dateFormat(long date){
+        CharSequence time;
+        time = DateUtils.getRelativeTimeSpanString(date);
+        return time.toString();
+    }
 }

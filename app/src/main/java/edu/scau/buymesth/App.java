@@ -11,13 +11,13 @@ import java.io.FileReader;
 
 import cn.bmob.newim.BmobIM;
 import crush.CustomActivityOnCrash;
-import edu.scau.buymesth.notice.DemoMessageHandler;
+import edu.scau.buymesth.conversation.DemoMessageHandler;
 
 /**
  * Created by John on 2016/8/4.
  */
 
-public class App extends Application {
+public class App extends base.App {
     @Override
     public void onCreate() {
         super.onCreate();
@@ -38,10 +38,6 @@ public class App extends Application {
              BmobIM.registerDefaultMessageHandler(new DemoMessageHandler(this));
         }
     }
-
-
-
-
     /**
      * 获取当前运行的进程名
      * @return

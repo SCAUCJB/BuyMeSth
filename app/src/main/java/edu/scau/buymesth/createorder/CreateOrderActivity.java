@@ -122,12 +122,8 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
                     flTags.addView(tvTag);
                 }
         ).
-                create();
-//        HighLightGuideView.builder(this)
-//                .addHighLightGuidView(tvAdd, R.drawable.tip_text)
-//                .setHighLisghtPadding(20)
-//                .setHighLightStyle(HighLightGuideView.VIEWSTYLE_RECT)
-//                .show();
+      create();
+
     }
 
     protected int getToolBarId() {

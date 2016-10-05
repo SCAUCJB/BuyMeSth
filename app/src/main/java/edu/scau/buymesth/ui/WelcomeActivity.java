@@ -75,22 +75,6 @@ public class WelcomeActivity extends BaseActivity {
 
     }
 
-    private void queryUser() {
-        User user = BmobUser.getCurrentUser(User.class);
-        BmobQuery<User> query = new BmobQuery<>();
-        mSubscription = query.getObjectObservable(User.class, user.getObjectId()).timeout(2, TimeUnit.SECONDS).subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).toSingle().subscribe(new SingleSubscriber<User>() {
-            @Override
-            public void onSuccess(User user) {
-                storeToSharePreference(user);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                jumpToNextActivity();
-            }
-        });
-    }
-
     @Override
     protected void onStop() {
         super.onStop();

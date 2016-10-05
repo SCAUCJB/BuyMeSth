@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:background="@color/white"
+    android:clickable="true">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingRight="8dp"
+        android:paddingTop="8dp"
+        android:paddingLeft="8dp"
+        android:paddingBottom="8dp">
+
+    <ImageView
+        android:id="@+id/iv_avatar"
+        android:src="@mipmap/def_head"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginRight="8dp" />
+
+    <TextView
+        style="@style/theDate"
+        android:id="@+id/tv_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="04/06/13"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        style="@style/theText"
+        android:id="@+id/tv_new_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/tertiary_text_dark"
+        android:text="Hello world!"
+        android:layout_below="@+id/ly_user_info"
+        android:layout_alignStart="@+id/ly_user_info"
+        android:layout_marginTop="@dimen/title_to_content"
+        android:maxLines="1" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:gravity="center_vertical"
+            android:id="@+id/ly_user_info"
+            android:layout_toEndOf="@+id/iv_avatar">
+
+            <TextView
+                style="@style/theName"
+                android:id="@+id/tv_name"
+                android:text="Miracle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/unread_mark"
+            android:visibility="invisible"
+            android:text="0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rect_red"
+            android:layout_alignParentTop="true"
+            android:layout_alignEnd="@+id/iv_avatar"
+            android:textColor="@color/white"
+            android:textSize="7sp"
+            android:minWidth="12dp"
+            android:gravity="center_horizontal"
+            android:paddingTop="2.5dp"
+            android:paddingBottom="1.5dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp" />
+
+    </RelativeLayout>
+</FrameLayout>

@@ -125,6 +125,9 @@
         <activity
             android:name=".discover.publish.SelectActivity"
             android:theme="@style/AppTheme.SwipeBackLayout" />
+        <activity
+        android:name=".fragment.EmptyActivity"
+        android:theme="@style/AppTheme.SwipeBackLayout" />
 
         <activity
             android:name="gallery.PhotoActivity"
@@ -136,12 +139,12 @@
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
         <activity
-            android:name=".notice.detail.BuyerCreateActivity"
+            android:name=".notice.detail.BuyOrderDetailActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
         <activity
-            android:name=".notice.detail.SellerCreateActivity"
+            android:name=".notice.detail.SellerOrderDetailActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
@@ -187,9 +190,6 @@
             android:theme="@style/AppTheme.SwipeBackLayout" />
         <activity
             android:name=".notice.detail.SellerAcceptActivity"
-            android:launchMode="singleTop"
-            android:theme="@style/AppTheme.SwipeBackLayout" />
-        <activity android:name=".notice.OrderDetailActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
         <!--/////process用来定义线程的名字-->

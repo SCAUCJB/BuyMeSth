@@ -2,6 +2,7 @@ package edu.scau.buymesth.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -21,11 +22,25 @@ import java.util.List;
 
 import base.BaseActivity;
 import butterknife.Bind;
+import cn.bmob.newim.BmobIM;
+import cn.bmob.newim.bean.BmobIMConversation;
+import cn.bmob.newim.bean.BmobIMUserInfo;
+import cn.bmob.newim.listener.ConversationListener;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.QueryListener;
+import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.TabAdapter;
-import edu.scau.buymesth.notice.NoticeFragment;
+import edu.scau.buymesth.conversation.list.ConversationFragment;
+import edu.scau.buymesth.conversation.userlist.UserListFragment;
+import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.discover.list.DiscoverFragment;
 import edu.scau.buymesth.discover.publish.MomentPublishActivity;
+import edu.scau.buymesth.fragment.EmptyActivity;
+import edu.scau.buymesth.notice.NoticeFragment;
+import edu.scau.buymesth.notice.RequestService;
 import edu.scau.buymesth.publish.PublishActivity;
 import edu.scau.buymesth.request.HomeFragment;
 import edu.scau.buymesth.request.HomePresenter;
@@ -55,12 +70,16 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
     FloatingActionButton fab3;
     @Bind(R.id.fab4)
     FloatingActionButton fab4;
+    @Bind(R.id.fab5)
+    FloatingActionButton fab5;
 
     private DiscoverFragment discoverFragment;
     private HomeFragment homeFragment;
     private NoticeFragment noticeFragment;
     private AlertDialog searchDialog;
     private EditText et;
+
+    private ConversationFragment conversationFragment;
 
     @Override
     protected int getLayoutId() {
@@ -73,7 +92,8 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         UserFragment userFragment = new UserFragment();
         discoverFragment = new DiscoverFragment();
         homeFragment = new HomeFragment();
-        noticeFragment = new NoticeFragment();
+        conversationFragment = new ConversationFragment();
+//        noticeFragment = new NoticeFragment();
 
         homeFragment.setRelatedFab(fab);
         fab.setClosedOnTouchOutside(true);
@@ -104,19 +124,20 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
                 searchDialog.show();
             fab.close(true);
         });
-        fab4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(homeFragment.getFilter()!=HomePresenter.FILTER_FOLLOW_ONLY)
-                    homeFragment.setFilter(HomePresenter.FILTER_FOLLOW_ONLY,null);
-                else homeFragment.setFilter(null,null);
-                fab.close(true);
-            }
+        fab4.setOnClickListener(v -> {
+            if(homeFragment.getFilter()!=HomePresenter.FILTER_FOLLOW_ONLY)
+                homeFragment.setFilter(HomePresenter.FILTER_FOLLOW_ONLY,null);
+            else homeFragment.setFilter(null,null);
+            fab.close(true);
+        });
+        fab5.setOnClickListener(v -> {
+            EmptyActivity.navigate(TabActivity.this, UserListFragment.class.getName(),null,101);
         });
 
         fragmentList.add(homeFragment);
         fragmentList.add(discoverFragment);
-        fragmentList.add(noticeFragment);
+        fragmentList.add(conversationFragment);
+//        fragmentList.add(noticeFragment);
         fragmentList.add(userFragment);
 
 
@@ -174,6 +195,8 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         });
 
         viewPager.setOnPageChangeListener(this);
+        queryUser();
+        startService(new Intent(this, RequestService.class));
     }
     private boolean mIsExit;
     private Handler handler=new Handler();
@@ -199,6 +222,26 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
             fab.close(true);
         }
         super.onPause();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode==101&&resultCode==101){
+            User user = (User) data.getSerializableExtra("user");
+            toast(user.getNickname());
+            BmobIMUserInfo info = new BmobIMUserInfo(user.getObjectId(),user.getNickname(),user.getAvatar());
+            BmobIM.getInstance().startPrivateConversation(info, new ConversationListener() {
+                @Override
+                public void done(BmobIMConversation c, BmobException e) {
+                    if(e==null){
+                        //在此跳转到聊天页面
+//                        viewPager.setCurrentItem(2);
+                    }else{
+                        toast(e.getMessage()+"("+e.getErrorCode()+")");
+                    }
+                }
+            });
+        }
     }
 
     @Override
@@ -257,6 +300,29 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
     protected void onDestroy() {
         fixInputMethodManagerLeak(mContext);
         super.onDestroy();
+    }
+
+    private void queryUser() {
+        User user = BmobUser.getCurrentUser(User.class);
+        BmobQuery<User> query = new BmobQuery<>();
+        query.getObject(user.getObjectId(), new QueryListener<User>() {
+            @Override
+            public void done(User user, BmobException e) {
+                if(e!=null)return;
+                SharedPreferences settings = getSharedPreferences(Constant.SHARE_PREFERENCE_USER_INFO, MODE_PRIVATE);
+                //让setting处于编辑状态
+                SharedPreferences.Editor editor = settings.edit();
+                //存放数据
+                editor.putString(Constant.KEY_RESIDENCE, user.getResidence());
+                editor.putString(Constant.KEY_GENDA, user.getGender());
+                editor.putString(Constant.KEY_AVATAR, user.getAvatar());
+                editor.putString(Constant.KEY_NICKNAME, user.getNickname());
+                editor.putInt(Constant.KEY_EXP, user.getExp());
+                editor.putString(Constant.KEY_SIGNATURE, user.getSignature());
+                //完成提交
+                editor.apply();
+            }
+        });
     }
 
     public static void fixInputMethodManagerLeak(Context destContext) {

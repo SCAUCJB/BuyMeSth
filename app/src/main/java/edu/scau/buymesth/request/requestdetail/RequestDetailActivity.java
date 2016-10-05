@@ -85,7 +85,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     private int[] heights;
     private List<ImageView> imageViews;
     private PagerAdapter mAdapter;
-    private boolean mIsSelf;
+    private boolean mIsSelf = false;
     @Bind(R.id.btn_follow)
     Button mFollowBtn;
     @Bind(R.id.tv_tag_hint)
@@ -146,7 +146,8 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         //需要联网查询
         presenter.mNeedQueryRequest = getIntent().getBooleanExtra(EXTRA_NEEDQUERY, false);
         presenter.setVM(this, model);
-        mIsSelf = model.getRequest().getUser().getObjectId().equals(BmobUser.getCurrentUser().getObjectId());
+        if(!presenter.mNeedQueryRequest)
+            mIsSelf = model.getRequest().getUser().getObjectId().equals(BmobUser.getCurrentUser().getObjectId());
         mCreateOrderBtn.setOnClickListener(v -> {
             if (!mIsSelf)
                 CreateOrderActivity.navigateTo(mContext, (Request) getIntent().getSerializableExtra(EXTRA_REQUEST));
@@ -207,7 +208,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
 
     @Override
     public void setOnFollowClicked() {
-
+        mIsSelf = presenter.mModel.getRequest().getUser().getObjectId().equals(BmobUser.getCurrentUser().getObjectId());
         mFollowBtn.setOnClickListener((v) -> {
             if (!mIsSelf)
                 presenter.follow();

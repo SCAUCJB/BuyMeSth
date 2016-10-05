@@ -19,8 +19,6 @@ public class DiscoverContract {
         void onAddOneItem(Moment moment);
         void onItemChanged();
         void onRefreshInterrupt();
-
-        void onLoadMoreError();
     }
 
     interface Model{

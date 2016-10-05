@@ -40,7 +40,7 @@ public class NoticeAdapter extends BaseMultiItemQuickAdapter<Order> {
         switch (helper.getItemViewType()){
             case Constant.BUYER_STATUS_CREATE:
                 helper.setText(R.id.tv_chat_name,item.getSeller().getNickname());
-                helper.setText(R.id.tv_level,"LV"+item.getSeller().getExp()/10);
+                helper.setText(R.id.tv_level,"LV"+(item.getSeller().getExp()==null?0:item.getSeller().getExp())/10);
                 Glide.with(mContext).load(item.getSeller().getAvatar()).placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into((ImageView) helper.getView(R.id.chat_icon));
                 helper.setText(R.id.tv_chat_time,"用户于"+item.getCreatedAt()+"接收了你的订单");
                 helper.setText(R.id.thing_price,"物品价格:"+item.getPrice()+item.getPriceType());
