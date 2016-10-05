@@ -18,14 +18,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:text="确认发货" />
+            android:text="确认发货"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/btnGoback"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:text="取消订单" />
+            android:text="取消订单"
+            android:visibility="gone" />
     </android.support.v7.widget.Toolbar>
 
     <TextView
@@ -34,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/content_padding"
         android:text="已有卖家给出报价"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
 
     <LinearLayout
@@ -50,7 +52,7 @@
         android:contextClickable="false"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/request_icon"
@@ -124,12 +126,15 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginLeft="@dimen/content_padding"
-        android:layout_marginRight="@dimen/content_padding">
+        android:layout_marginRight="@dimen/content_padding"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="点击添加快递信息" />
+            android:text="点击添加快递信息"
+            android:id="@+id/t_tip"
+            android:visibility="gone" />
 
         <TextView
             android:layout_width="match_parent"
@@ -149,7 +154,7 @@
         android:id="@+id/rl_moment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/tv_address_msg"
@@ -202,6 +207,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/content_padding"
         android:layout_marginRight="@dimen/content_padding"
+        android:id="@+id/rl_get"
         android:visibility="gone">
 
         <Button
@@ -213,13 +219,6 @@
             android:text="确认收货"
             android:textColor="#ffffff" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:layout_toLeftOf="@+id/btn_get"
-            android:background="@drawable/btn_chat_cancle"
-            android:text="退货申请" />
     </RelativeLayout>
 
     <Button
@@ -230,7 +229,8 @@
         android:background="@drawable/btn_chat_ok"
         android:text="评价"
         android:textColor="#ffffff"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:id="@+id/btn_comment" />
 
     <Button
         android:id="@id/btn_cancle"

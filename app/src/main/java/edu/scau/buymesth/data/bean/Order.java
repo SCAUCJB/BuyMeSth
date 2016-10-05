@@ -36,6 +36,7 @@ public class Order extends BmobObject implements Serializable, MultiItemEntity{
     private List<String> tags ;
     private Address address;
 
+
     public Address getAddress() {
         return address;
     }

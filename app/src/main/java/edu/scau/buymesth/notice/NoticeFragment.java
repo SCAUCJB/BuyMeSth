@@ -118,82 +118,18 @@ public class NoticeFragment extends Fragment {
         rv.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
         adapter.setOnRecyclerViewItemLongClickListener((view1, position) -> {
             Order order = (Order) adapter.getItem(position);
-            new AlertDialog.Builder(getContext()).setTitle("是否删除").setNegativeButton("取消", null).setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    ////TODO:删除要更改，改成根据primary来删除
-                    db.delete(SQLiteHelper.DATABASE_TABLE, "objectId=?", order.getObjectId());
-                    adapter.remove(position);
-                }
+            new AlertDialog.Builder(getContext()).setTitle("是否删除").setNegativeButton("取消", null).setPositiveButton("确定", (dialog, which) -> {
+                db.delete(SQLiteHelper.DATABASE_TABLE, "updateTime=? and status=? and objectId=?", order.getUpdatedAt()  , String.valueOf(order.getStatus()), order.getObjectId());
+                adapter.remove(position);
             }).create().show();
 
             return true;
         });
         adapter.setOnRecyclerViewItemClickListener((view1, position) -> {
             Order order = (Order) adapter.getItem(position);
-            Intent intent;
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("order",order);
-            switch(order.getItemType()){
-                case Constant.BUYER_STATUS_CREATE:
-                    intent =new Intent(getActivity(),BuyerCreateActivity.class);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                    break;
-
-                case Constant.SELLER_STATUS_CREATE:
-                    intent =new Intent(getActivity(), SellerCreateActivity.class);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                    break;
-                case Constant.BUYER_STATUS_ACCEPT:
-                    intent =new Intent(getActivity(), BuyerAcceptActivity.class);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                    break;
-
-                case Constant.SELLER_STATUS_ACCEPT:
-                    intent =new Intent(getActivity(), SellerAcceptActivity.class);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                    break;
-
-                case Constant.BUYER_STATUS_REJECT:
-                    intent = new Intent(getActivity(), BuyerRejectActivity.class);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                    break;
-
-                case Constant.SELLER_STATUS_REJECT:
-                    intent = new Intent(getActivity(), SellerRejectActivity.class);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                    break;
-
-                case Constant.BUYER_STATUS_DELIVERING:
-                    intent = new Intent(getActivity(), BuyerDeliverActivity.class);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                    break;
-
-                case Constant.SELLER_STATUS_DELIVERING:
-                    intent = new Intent(getActivity(), SellerDeliverActivity.class);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                    break;
-
-                case Constant.BUYER_STATUS_FINISH:
-                    intent = new Intent(getActivity(), BuyerFinishActivity.class);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                    break;
-
-                case Constant.SELLER_STATUS_FINISH:
-                    intent = new Intent(getActivity(), SellerFinishActivity.class);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                    break;
-            }
+            Intent intent = new Intent(getContext(), OrderDetailActivity.class);
+            intent.putExtra("order", order);
+            startActivity(intent);
         });
         rv.setAdapter(adapter);
         initFromDataBase();
@@ -224,7 +160,6 @@ public class NoticeFragment extends Fragment {
 
             @Override
             public void onNext(SqlBrite.Query query) {
-                ////TODO:使用同一个DataBase创建的话可以在插入和删除时进行监听
                 Cursor cursor = query.run();
                 while (cursor.moveToNext()) {
                     Order order = gson.fromJson(cursor.getString(cursor.getColumnIndex("orderJson")), Order.class);

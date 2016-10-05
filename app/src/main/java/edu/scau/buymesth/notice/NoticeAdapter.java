@@ -33,6 +33,8 @@ public class NoticeAdapter extends BaseMultiItemQuickAdapter<Order> {
         addItemType(Constant.SELLER_STATUS_DELIVERING,R.layout.seller_delivering);
         addItemType(Constant.BUYER_STATUS_FINISH,R.layout.buyer_finish);
         addItemType(Constant.SELLER_STATUS_FINISH,R.layout.seller_finish);
+        addItemType(Constant.BUYER_STATUS_SELLER_REJECT,R.layout.reject_by_seller1);
+        addItemType(Constant.SELLER_STATUS_SELLER_REJECT,R.layout.reject_by_seller2);
     }
 
     @Override

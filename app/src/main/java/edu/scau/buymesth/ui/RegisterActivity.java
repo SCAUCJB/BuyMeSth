@@ -61,6 +61,7 @@ public class RegisterActivity extends BaseActivity{
                     User user = new User();
                     user.setUsername(username);
                     user.setPassword(password);
+                    user.setExp(0);
                     user.setNickname(inputNickname.getText().toString());
                     user.signUp(new SaveListener<User>(){
 

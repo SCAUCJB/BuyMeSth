@@ -116,6 +116,7 @@ public class RequestService extends Service {
                                                 values.put("orderJson", orderJson);
                                                 values.put("objectId", order.getObjectId());
                                                 values.put("status", order.getStatus());
+                                                values.put("updateTime",order.getUpdatedAt());
                                                 db.insert(SQLiteHelper.DATABASE_TABLE, values);
 
                                                 Message message = new Message();
@@ -125,8 +126,11 @@ public class RequestService extends Service {
                                                 try {
                                                     client.send(message);
                                                     Notification.Builder builder = new Notification.Builder(RequestService.this);
-                                                    Intent intent = new Intent(Intent.ACTION_VIEW,null);
-                                                    PendingIntent pendingIntent = PendingIntent.getActivity(RequestService.this,0,intent,0);
+                                                    Intent intent = new Intent(RequestService.this,OrderDetailActivity.class);
+//                                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                    intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                    intent.putExtra("order",order);
+                                                    PendingIntent pendingIntent = PendingIntent.getActivity(RequestService.this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
                                                     builder.setSmallIcon(R.mipmap.ic_launcher);
                                                     builder.setContentIntent(pendingIntent);
                                                     builder.setAutoCancel(true);
