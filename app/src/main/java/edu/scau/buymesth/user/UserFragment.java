@@ -13,6 +13,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +35,6 @@ import cn.bmob.v3.BmobUser;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.ViewPagerAdapter;
 import edu.scau.buymesth.ui.LoginActivity;
-import edu.scau.buymesth.ui.RegisterActivity;
 import edu.scau.buymesth.user.address.AddressActivity;
 import edu.scau.buymesth.user.mark.MarkActivity;
 import edu.scau.buymesth.user.order.OrderFragment;
@@ -85,7 +85,7 @@ public class UserFragment extends Fragment implements UserContract.View {
         userInfoLl = (LinearLayout) view.findViewById(R.id.ll_user_info);
         mSettingBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), UserSettingActivity.class);
-            getActivity().startActivity(intent);
+            getActivity().startActivityForResult(intent,303);
         });
         view.findViewById(R.id.address_manage).setOnClickListener(v->{AddressActivity.navigate(getActivity());});
         view.findViewById(R.id.mark_list).setOnClickListener(v->{
@@ -100,6 +100,7 @@ public class UserFragment extends Fragment implements UserContract.View {
     public void onResume() {
         super.onResume();
         mPresenter.subscribe();
+        Log.d("zhx","on user fragment resume");
     }
 
     @Override
@@ -120,7 +121,7 @@ public class UserFragment extends Fragment implements UserContract.View {
             @Override
             public boolean onLongClick(View v) {
                 BmobUser.logOut();
-                ToastUtil.show("log out");
+                ToastUtil.show("退出登陆");
                 Intent i = new Intent(getActivity(), LoginActivity.class);
                 startActivity(i);
                 return false;
