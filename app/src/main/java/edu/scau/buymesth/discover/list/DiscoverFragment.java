@@ -58,7 +58,7 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
         mPtrFrameLayout.setDurationToCloseHeader(1500);
         mPtrFrameLayout.setHeaderView(header);
         mPtrFrameLayout.addPtrUIHandler(header);
-        mPtrFrameLayout.post(() -> mPresenter.Refresh());
+        mPtrFrameLayout.post(() -> mPresenter.Refresh(true));
         mPtrFrameLayout.setPtrHandler(new PtrHandler() {
             @Override
             public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
@@ -67,7 +67,7 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
 
             @Override
             public void onRefreshBegin(final PtrFrameLayout frame) {
-                mPresenter.Refresh();
+                mPresenter.Refresh(false);
             }
         });
     }

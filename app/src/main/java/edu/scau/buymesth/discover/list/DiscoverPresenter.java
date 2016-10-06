@@ -2,6 +2,7 @@ package edu.scau.buymesth.discover.list;
 
 import android.content.Context;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,14 +32,11 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
     public void onStart() {
     }
 
-
-
-    public void Refresh(){
+    public void Refresh(boolean firstTime){
         mModel.updateLikeList();
         mModel.resetPage();
-        mModel.getDatas().clear();
         BmobQuery.CachePolicy cachePolicy;
-        if(NetworkHelper.isOpenNetwork(mContext))cachePolicy = BmobQuery.CachePolicy.CACHE_THEN_NETWORK;
+        if(!firstTime&&NetworkHelper.isOpenNetwork(mContext))cachePolicy = BmobQuery.CachePolicy.CACHE_THEN_NETWORK;
         else cachePolicy = BmobQuery.CachePolicy.CACHE_ONLY;
         mModel.getRxMoments(cachePolicy).flatMap(new Func1<List<Moment>, Observable<Moment>>() {
             @Override
@@ -50,10 +48,14 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Moment>() {
                     int size = mModel.getDatas().size();
+                    ArrayList<Moment> tempData = new ArrayList<Moment>();
                     @Override
                     public void onCompleted() {
                         if(isAlive()){
+                            mModel.getDatas().clear();
+                            mModel.getDatas().addAll(tempData);
                             mView.onRefreshComplete(mModel.getDatas());
+                            if(firstTime) Refresh(false);
                         }
                     }
 
@@ -80,7 +82,7 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
                                     break;
                                 }
                             }
-                            mModel.getDatas().add(moment);
+                            tempData.add(moment);
                         }
                     }
                 });

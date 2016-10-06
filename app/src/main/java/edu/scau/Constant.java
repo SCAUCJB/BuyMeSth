@@ -29,6 +29,7 @@ public class Constant {
     public static final int START_SERVICE = 1;
     public static final int GET_UNREAD = 2;
     public static final int MARK_READ = 3;
+    public static final int END_BIND = 4;
 
     public static final String EXTRA_REQUEST = "intent.request";
     public static final String EXTRA_NEEDQUERY = "intent.needquery";

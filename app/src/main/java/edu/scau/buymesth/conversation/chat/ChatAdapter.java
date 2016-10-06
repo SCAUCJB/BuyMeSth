@@ -21,6 +21,7 @@ import adpater.BaseQuickAdapter;
 import adpater.BaseViewHolder;
 import base.util.GlideCircleTransform;
 import base.util.ToastUtil;
+import cn.bmob.newim.bean.BmobIMConversation;
 import cn.bmob.newim.bean.BmobIMMessage;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
@@ -30,6 +31,7 @@ import cn.bmob.v3.listener.DownloadFileListener;
 import cn.bmob.v3.listener.QueryListener;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
+import edu.scau.buymesth.data.bean.Conversation;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.request.requestdetail.RequestDetailActivity;
 import edu.scau.buymesth.util.DateFormatHelper;
@@ -79,10 +81,12 @@ public class ChatAdapter extends BaseQuickAdapter<BmobIMMessage> {
     }
 
     Activity mActivity;
+    BmobIMConversation mConversation;
 
-    public ChatAdapter(Activity activity , List<BmobIMMessage> conversations) {
-        super(R.layout.item_conversation,conversations);
+    public ChatAdapter(Activity activity , List<BmobIMMessage> msgList , BmobIMConversation conversation) {
+        super(msgList);
         this.mActivity = activity;
+        this.mConversation = conversation;
         addItemType(0, R.layout.item_chat_send);
         addItemType(1, R.layout.item_chat_recv);
         addItemType(2, R.layout.item_chat_send_image);
@@ -161,7 +165,7 @@ public class ChatAdapter extends BaseQuickAdapter<BmobIMMessage> {
             helper.getView(R.id.iv_warn).setVisibility(View.INVISIBLE);
             helper.getView(R.id.progress_send).setVisibility(View.INVISIBLE);
         }
-        Glide.with(mActivity).load(helper.getItemViewType()%2==1?item.getBmobIMConversation().getConversationIcon():myAvatar).crossFade()
+        Glide.with(mActivity).load(helper.getItemViewType()%2==1?mConversation.getConversationIcon():myAvatar).crossFade()
                 .placeholder(R.mipmap.def_head)
                 .transform(new GlideCircleTransform(mContext))
                 .into((ImageView) helper.getView(R.id.iv_avatar));

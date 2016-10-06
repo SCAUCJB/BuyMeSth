@@ -72,6 +72,8 @@ public class RequestService extends Service {
                 case Constant.MARK_READ:
                     unreadCount = 0;
                     break;
+                case Constant.END_BIND:
+                    break;
             }
             super.handleMessage(msg);
         }
@@ -172,6 +174,8 @@ public class RequestService extends Service {
                                     intent.putExtra("order", order);
                                     ////TODO:这里加一个随机数的生成
                                     int time = new Random().nextInt(65535);
+
+
                                     PendingIntent pendingIntent = PendingIntent.getActivity(RequestService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                                     builder.setSmallIcon(R.mipmap.ic_launcher);
                                     builder.setContentIntent(pendingIntent);

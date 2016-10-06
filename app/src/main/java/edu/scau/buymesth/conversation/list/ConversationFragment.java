@@ -38,8 +38,10 @@ import cn.bmob.newim.listener.MessageListHandler;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.conversation.chat.ChatFragment;
+import edu.scau.buymesth.conversation.userlist.UserListFragment;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.fragment.EmptyActivity;
+import edu.scau.buymesth.main.TabActivity;
 import edu.scau.buymesth.notice.NoticeFragment;
 import edu.scau.buymesth.util.DateFormatHelper;
 import in.srain.cube.views.ptr.PtrFrameLayout;
@@ -58,6 +60,7 @@ public class ConversationFragment extends Fragment implements ConversationContra
 
     private View mLoadingView;
     private View mHeaderView;
+    private View mEmptyView;
     //requestService
     private ServiceConnection serviceConnection;
     private Messenger mMessenger;
@@ -74,6 +77,8 @@ public class ConversationFragment extends Fragment implements ConversationContra
         mPresenter=new ConversationPresenter(getActivity().getBaseContext());
         mPresenter.setVM(this,new ConversationModel());
         mHeaderView = LayoutInflater.from(getContext()).inflate(R.layout.item_conversation,(ViewGroup) mRecyclerView.getParent(), false);
+        mEmptyView = LayoutInflater.from(getContext()).inflate(R.layout.empty_view_add_conversation,(ViewGroup) mRecyclerView.getParent(), false);
+        mEmptyView.setOnClickListener(v -> EmptyActivity.navigate(getActivity(), UserListFragment.class.getName(), null, 101));
         mHeaderView.setOnClickListener(v -> {
             mPresenter.lightRefresh();
             ///连接成功后发送信息让他进行服务器连接判断是否有新的信息,service用于判断类型
@@ -156,13 +161,15 @@ public class ConversationFragment extends Fragment implements ConversationContra
             arg.putSerializable(BmobIMConversation.class.getName(),mConversationAdapter.getItem(position));
             EmptyActivity.navigate(getActivity(), ChatFragment.class.getName(),arg);
         });
+        mConversationAdapter.setEmptyView(true,mEmptyView);
         mConversationAdapter.setOnRecyclerViewItemLongClickListener((view, position) -> {
             SpannableStringBuilder redStr=new SpannableStringBuilder("删除");
             redStr.setSpan(new ForegroundColorSpan(Color.RED), 0, redStr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE );
             new AlertDialog.Builder(getActivity()).setTitle("删除会话？")
                     .setPositiveButton(redStr, (dialog, which) -> {
-                        mConversationAdapter.getItem(position).delete();
-                        mConversationAdapter.notifyItemRemoved(position);
+                        BmobIMConversation tempItem = mConversationAdapter.getItem(position);
+                        mConversationAdapter.remove(position);
+                        tempItem.delete();
                     })
                     .setNegativeButton("取消",null)
                     .show();
@@ -248,6 +255,7 @@ public class ConversationFragment extends Fragment implements ConversationContra
                     mLoadingView.setVisibility(View.VISIBLE);
                     ((TextView)mLoadingView.findViewById(R.id.tv_tips)).setText("连接服务器失败");
                     mLoadingView.setBackgroundColor(getResources().getColor(R.color.red));
+                    mPtrFrameLayout.refreshComplete();
                     break;
             }
         });
@@ -301,6 +309,13 @@ public class ConversationFragment extends Fragment implements ConversationContra
     public void onDestroy() {
         super.onDestroy();
         BmobIM.getInstance().removeMessageListHandler(this);
+        Message msg = Message.obtain(null, Constant.END_BIND);
+        msg.replyTo = null;/////设置回调
+        try {
+            if(mService!=null) mService.send(msg);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

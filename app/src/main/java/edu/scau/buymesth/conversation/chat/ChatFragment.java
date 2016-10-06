@@ -129,7 +129,7 @@ public class ChatFragment extends Fragment implements ChatContract.View,MessageL
     }
 
     private void initAdapter(){
-        mChatAdapter = new ChatAdapter(getActivity(),mPresenter.mModel.getDatas());
+        mChatAdapter = new ChatAdapter(getActivity(),mPresenter.mModel.getDatas() ,mPresenter.mModel.getConversation());
         mRecyclerView.setAdapter(mChatAdapter);
         ((SimpleItemAnimator)mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
         mChatAdapter.setOnRecyclerViewItemClickListener((view, position) -> {
