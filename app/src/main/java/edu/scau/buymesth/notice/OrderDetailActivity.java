@@ -1,14 +1,12 @@
 package edu.scau.buymesth.notice;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -26,15 +24,16 @@ import java.util.List;
 import base.BaseActivity;
 import base.util.SpaceItemDecoration;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
+import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Address;
+import edu.scau.buymesth.data.bean.Notificate;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.OrderMoment;
 import edu.scau.buymesth.notice.detail.OrderMomentAdapter;
@@ -171,6 +170,18 @@ public class OrderDetailActivity extends BaseActivity {
                                             llAddress.setVisibility(View.GONE);
                                             rlMoment.setVisibility(View.VISIBLE);
                                             tvAddressMsg.setText("买家地址是：收货人：" + order.getAddress().getRecipient() + "\n手机号码：" + order.getAddress().getPhone() + "\n地址：" + order.getAddress().getRegion() + order.getAddress().getSpecific());
+                                            Notificate notificate = new Notificate();
+                                            notificate.setUser(order.getSeller());
+                                            notificate.setOrder(order);
+                                            notificate.setStatus(order.getStatus());
+                                            notificate.save(new SaveListener<String>() {
+                                                @Override
+                                                public void done(String s, BmobException e) {
+
+                                                }
+                                            });
+
+
                                         } else {
                                             Toast.makeText(OrderDetailActivity.this, "请重试", Toast.LENGTH_LONG).show();
                                         }
@@ -184,6 +195,18 @@ public class OrderDetailActivity extends BaseActivity {
                                     @Override
                                     public void done(BmobException e) {
                                         if (e == null) {
+
+                                            Notificate notificate = new Notificate();
+                                            notificate.setUser(order.getSeller());
+                                            notificate.setOrder(order);
+                                            notificate.setStatus(order.getStatus());
+                                            notificate.save(new SaveListener<String>() {
+                                                @Override
+                                                public void done(String s, BmobException e) {
+
+                                                }
+                                            });
+
                                             rlCreateBtn.setVisibility(View.GONE);
                                             llAddress.setVisibility(View.GONE);
                                             tvWant.setVisibility(View.VISIBLE);
@@ -225,6 +248,17 @@ public class OrderDetailActivity extends BaseActivity {
                                     public void done(BmobException e) {
                                         if (e == null) {
                                             tvMsg.setText("你已取消订单，扣除了相应的经验值");
+
+                                            Notificate notificate = new Notificate();
+                                            notificate.setUser(order.getBuyer());
+                                            notificate.setOrder(order);
+                                            notificate.setStatus(order.getStatus());
+                                            notificate.save(new SaveListener<String>() {
+                                                @Override
+                                                public void done(String s, BmobException e) {
+
+                                                }
+                                            });
 
                                             btnCancle.setVisibility(View.GONE);
                                         } else {
@@ -312,6 +346,18 @@ public class OrderDetailActivity extends BaseActivity {
                                     @Override
                                     public void done(BmobException e) {
                                         if (e == null) {
+
+                                            Notificate notificate = new Notificate();
+                                            notificate.setUser(order.getBuyer());
+                                            notificate.setOrder(order);
+                                            notificate.setStatus(order.getStatus());
+                                            notificate.save(new SaveListener<String>() {
+                                                @Override
+                                                public void done(String s, BmobException e) {
+
+                                                }
+                                            });
+
                                             Log.i("bmob", "更新成功");
                                         } else {
                                             Log.i("bmob", "更新失败：" + e.getMessage() + "," + e.getErrorCode());
@@ -326,6 +372,18 @@ public class OrderDetailActivity extends BaseActivity {
                                     @Override
                                     public void done(BmobException e) {
                                         if (e == null) {
+
+                                            Notificate notificate = new Notificate();
+                                            notificate.setUser(order.getBuyer());
+                                            notificate.setOrder(order);
+                                            notificate.setStatus(order.getStatus());
+                                            notificate.save(new SaveListener<String>() {
+                                                @Override
+                                                public void done(String s, BmobException e) {
+
+                                                }
+                                            });
+
                                             tvMsg.setText("你已取消了订单，并扣去了相应的经验值");
                                             llExpress.setVisibility(View.GONE);
                                             rlMoment.setVisibility(View.GONE);
@@ -419,6 +477,20 @@ public class OrderDetailActivity extends BaseActivity {
                                     @Override
                                     public void done(BmobException e) {
                                         if (e == null) {
+                                            tvMsg.setText("交易已完成，请对卖家做出评价");
+                                            Notificate notificate = new Notificate();
+                                            notificate.setUser(order.getSeller());
+                                            notificate.setOrder(order);
+                                            notificate.setStatus(order.getStatus());
+                                            notificate.save(new SaveListener<String>() {
+                                                @Override
+                                                public void done(String s, BmobException e) {
+
+                                                }
+                                            });
+                                            rlGet.setVisibility(View.GONE);
+                                            btnComment.setVisibility(View.VISIBLE);
+
                                             Toast.makeText(OrderDetailActivity.this, "已收货", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(OrderDetailActivity.this, "请重试", Toast.LENGTH_SHORT).show();

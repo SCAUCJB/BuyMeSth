@@ -2,6 +2,7 @@ package edu.scau.buymesth.main;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +12,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -18,6 +20,9 @@ import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.gson.Gson;
+import com.squareup.sqlbrite.BriteDatabase;
+import com.squareup.sqlbrite.SqlBrite;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -35,6 +40,7 @@ import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
+import cn.bmob.v3.listener.UpdateListener;
 import co.mobiwise.materialintro.prefs.PreferencesManager;
 import co.mobiwise.materialintro.shape.Focus;
 import co.mobiwise.materialintro.shape.FocusGravity;
@@ -44,7 +50,7 @@ import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.TabAdapter;
 import edu.scau.buymesth.conversation.list.ConversationFragment;
 import edu.scau.buymesth.conversation.userlist.UserListFragment;
-import edu.scau.buymesth.data.bean.Notification;
+import edu.scau.buymesth.data.bean.Notificate;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.discover.list.DiscoverFragment;
@@ -53,10 +59,12 @@ import edu.scau.buymesth.fragment.EmptyActivity;
 import edu.scau.buymesth.notice.NoticeFragment;
 import edu.scau.buymesth.notice.OrderDetailActivity;
 import edu.scau.buymesth.notice.RequestService;
+import edu.scau.buymesth.notice.SQLiteHelper;
 import edu.scau.buymesth.publish.PublishActivity;
 import edu.scau.buymesth.request.HomeFragment;
 import edu.scau.buymesth.request.HomePresenter;
 import edu.scau.buymesth.user.UserFragment;
+import rx.schedulers.Schedulers;
 import ui.widget.ChangeColorIconWithTextView;
 
 /**
@@ -110,7 +118,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         homeFragment.setRelatedFab(fab);
         fab.setClosedOnTouchOutside(true);
         fab1.setOnClickListener(v -> {
-            Intent i = new Intent(TabActivity.this,PublishActivity.class);
+            Intent i = new Intent(TabActivity.this, PublishActivity.class);
             startActivity(i);
         });
         fab2.setOnClickListener(v -> {
@@ -118,18 +126,18 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
             startActivity(i);
         });
         fab3.setOnClickListener(v -> {
-            if(et==null)et = new EditText(TabActivity.this);
-            if(searchDialog==null)
+            if (et == null) et = new EditText(TabActivity.this);
+            if (searchDialog == null)
                 searchDialog = new AlertDialog.Builder(TabActivity.this).setTitle("搜索")
                         .setView(et)
                         .setPositiveButton("确定",
-                        (dialog, which) -> {
-                            homeFragment.setFilter(HomePresenter.FILTER_FUZZY_SEARCH,et.getText().toString());
-                        })
+                                (dialog, which) -> {
+                                    homeFragment.setFilter(HomePresenter.FILTER_FUZZY_SEARCH, et.getText().toString());
+                                })
                         .setNegativeButton("取消", null)
                         .setNeutralButton("清除", (dialog, which) -> {
                             et.setText("");
-                            homeFragment.setFilter(null,null);
+                            homeFragment.setFilter(null, null);
                         })
                         .show();
             else
@@ -137,12 +145,12 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
             fab.close(true);
         });
         fab4.setOnClickListener(v -> {
-                    if (homeFragment.getFilter() != HomePresenter.FILTER_FOLLOW_ONLY)
-                        homeFragment.setFilter(HomePresenter.FILTER_FOLLOW_ONLY, null);
-                    else homeFragment.setFilter(null, null);
-                    fab.close(true);
-                });
-        fab5.setOnClickListener(v -> EmptyActivity.navigate(TabActivity.this, UserListFragment.class.getName(),null,101));
+            if (homeFragment.getFilter() != HomePresenter.FILTER_FOLLOW_ONLY)
+                homeFragment.setFilter(HomePresenter.FILTER_FOLLOW_ONLY, null);
+            else homeFragment.setFilter(null, null);
+            fab.close(true);
+        });
+        fab5.setOnClickListener(v -> EmptyActivity.navigate(TabActivity.this, UserListFragment.class.getName(), null, 101));
 
         fragmentList.add(homeFragment);
         fragmentList.add(discoverFragment);
@@ -208,10 +216,11 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         queryUser();
         startService(new Intent(this, RequestService.class));
         new PreferencesManager(mContext).resetAll();
-
-        showIntro(fab.getMenuIconView(),"fab","在这里发送和搜索购物请求");
+        getNotification();
+        showIntro(fab.getMenuIconView(), "fab", "在这里发送和搜索购物请求");
     }
-    private void showIntro(View view, String usageId, String text){
+
+    private void showIntro(View view, String usageId, String text) {
         new MaterialIntroView.Builder(this)
                 .enableDotAnimation(true)
                 //.enableIcon(false)
@@ -225,13 +234,15 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
                 .setUsageId(usageId) //THIS SHOULD BE UNIQUE ID
                 .show();
     }
+
     private boolean mIsExit;
-    private Handler handler=new Handler();
+    private Handler handler = new Handler();
+
     @Override
     public void onBackPressed() {
-        if(fab.isOpened()){
+        if (fab.isOpened()) {
             fab.close(true);
-        }else {
+        } else {
             if (mIsExit) {
                 this.finish();
             } else {
@@ -245,7 +256,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
 
     @Override
     protected void onPause() {
-        if(fab.isOpened()){
+        if (fab.isOpened()) {
             fab.close(true);
         }
         super.onPause();
@@ -253,18 +264,18 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode==101&&resultCode==101){
+        if (requestCode == 101 && resultCode == 101) {
             User user = (User) data.getSerializableExtra("user");
             toast(user.getNickname());
-            BmobIMUserInfo info = new BmobIMUserInfo(user.getObjectId(),user.getNickname(),user.getAvatar());
+            BmobIMUserInfo info = new BmobIMUserInfo(user.getObjectId(), user.getNickname(), user.getAvatar());
             BmobIM.getInstance().startPrivateConversation(info, new ConversationListener() {
                 @Override
                 public void done(BmobIMConversation c, BmobException e) {
-                    if(e==null){
+                    if (e == null) {
                         //在此跳转到聊天页面
 //                        viewPager.setCurrentItem(2);
-                    }else{
-                        toast(e.getMessage()+"("+e.getErrorCode()+")");
+                    } else {
+                        toast(e.getMessage() + "(" + e.getErrorCode() + ")");
                     }
                 }
             });
@@ -310,9 +321,9 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
                 }
             }
         }
-        if(position==0||position==1){
+        if (position == 0 || position == 1) {
             fab.showMenu(true);
-        }else {
+        } else {
             fab.hideMenu(true);
         }
     }
@@ -335,7 +346,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         query.getObject(user.getObjectId(), new QueryListener<User>() {
             @Override
             public void done(User user, BmobException e) {
-                if(e!=null)return;
+                if (e != null) return;
                 SharedPreferences settings = getSharedPreferences(Constant.SHARE_PREFERENCE_USER_INFO, MODE_PRIVATE);
                 //让setting处于编辑状态
                 SharedPreferences.Editor editor = settings.edit();
@@ -362,12 +373,12 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
             return;
         }
 
-        String [] arr = new String[]{"mCurRootView", "mServedView", "mNextServedView"};
+        String[] arr = new String[]{"mCurRootView", "mServedView", "mNextServedView"};
         Field f = null;
         Object obj_get = null;
-        for (int i = 0;i < arr.length;i ++) {
+        for (int i = 0; i < arr.length; i++) {
             String param = arr[i];
-            try{
+            try {
                 f = imm.getClass().getDeclaredField(param);
                 if (f.isAccessible() == false) {
                     f.setAccessible(true);
@@ -382,27 +393,42 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
                         break;
                     }
                 }
-            }catch(Throwable t){
+            } catch (Throwable t) {
                 t.printStackTrace();
             }
         }
     }
 
-    public void getNotification(){
-        BmobQuery<Notification> query = new BmobQuery<>();
-        query.addWhereEqualTo("user",BmobUser.getCurrentUser().getObjectId());
+    public void getNotification() {
+
+        SqlBrite sqlBrite = SqlBrite.create();
+        SQLiteHelper dbHelper = new SQLiteHelper(this);
+        BriteDatabase db = sqlBrite.wrapDatabaseHelper(dbHelper, Schedulers.io());
+
+        BmobQuery<Notificate> query = new BmobQuery<>();
+        query.addWhereEqualTo("user", BmobUser.getCurrentUser().getObjectId());
         query.include("order");
-        query.findObjects(new FindListener<Notification>() {
+        query.findObjects(new FindListener<Notificate>() {
             @Override
-            public void done(List<Notification> list, BmobException e) {
-                for(int i=0;i<list.size();i++){
+            public void done(List<Notificate> list, BmobException e) {
+                Gson gson = gson = new Gson();
+                for (int i = 0; i < list.size(); i++) {
                     Order order = list.get(i).getOrder();
+
+                    ContentValues values = new ContentValues();
+                    String orderJson = gson.toJson(order);
+                    values.put("orderJson", orderJson);
+                    values.put("objectId", order.getObjectId());
+                    values.put("status", order.getStatus());
+                    values.put("updateTime", order.getUpdatedAt());
+                    db.insert(SQLiteHelper.DATABASE_TABLE, values);
+
+
                     android.app.Notification.Builder builder = new android.app.Notification.Builder(TabActivity.this);
                     Intent intent = new Intent(TabActivity.this, OrderDetailActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra("order", order);
-                    ////TODO:这里加一个随机数的生成
-                    int time =new Random().nextInt(65535);
+                    int time = new Random().nextInt(65535);
                     PendingIntent pendingIntent = PendingIntent.getActivity(TabActivity.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                     builder.setSmallIcon(R.mipmap.ic_launcher);
                     builder.setContentIntent(pendingIntent);
@@ -411,7 +437,19 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
                     builder.setContentTitle("你的订单有变化了");
                     NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                     notificationManager.notify(time, builder.build());
-                    order.delete();
+
+                    Notificate notificate =new Notificate();
+                    notificate.setObjectId(list.get(i).getObjectId());
+                    notificate.delete(new UpdateListener() {
+                        @Override
+                        public void done(BmobException e) {
+                            if(e==null){
+                                Log.i("bmob","成功");
+                            }else{
+                                Log.i("bmob","失败："+e.getMessage()+","+e.getErrorCode());
+                            }
+                        }
+                    });
                 }
             }
         });

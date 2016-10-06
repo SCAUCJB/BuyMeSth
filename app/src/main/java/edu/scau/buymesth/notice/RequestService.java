@@ -27,21 +27,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import cn.bmob.newim.BmobIM;
-import cn.bmob.newim.bean.BmobIMConversation;
-import cn.bmob.newim.bean.BmobIMMessage;
-import cn.bmob.newim.bean.BmobIMUserInfo;
-import cn.bmob.newim.event.MessageEvent;
-import cn.bmob.newim.listener.MessageListHandler;
 import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobRealTimeData;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.UpdateListener;
 import cn.bmob.v3.listener.ValueEventListener;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
+import edu.scau.buymesth.data.bean.Notificate;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.User;
 import rx.schedulers.Schedulers;
@@ -176,8 +172,6 @@ public class RequestService extends Service {
                                     intent.putExtra("order", order);
                                     ////TODO:这里加一个随机数的生成
                                     int time = new Random().nextInt(65535);
-
-
                                     PendingIntent pendingIntent = PendingIntent.getActivity(RequestService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                                     builder.setSmallIcon(R.mipmap.ic_launcher);
                                     builder.setContentIntent(pendingIntent);
@@ -186,6 +180,45 @@ public class RequestService extends Service {
                                     builder.setContentTitle("你的订单有变化了");
                                     NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                                     notificationManager.notify(time, builder.build());
+
+                                    if(( order.getBuyer().getObjectId().equals(user.getObjectId())&&order.getStatus()==Order.STATUS_ACCEPTED)
+                                            ||(order.getBuyer().getObjectId().equals(user.getObjectId())&&order.getStatus()==Order.STATUS_REJECTED)
+                                            ||(order.getSeller().getObjectId().equals(user.getObjectId())&&order.getStatus()==Order.STATUS_SELLER_REJECT)
+                                            ||(order.getSeller().getObjectId().equals(user.getObjectId())&&order.getStatus()==Order.STATUS_DELIVERING)
+                                            ||(order.getBuyer().getObjectId().equals(user.getObjectId())&&order.getStatus()==Order.STATUS_FINISH)
+                                            ){
+
+                                    }else{
+                                        BmobQuery<Notificate> query1 = new BmobQuery<>();
+                                        query1.addWhereEqualTo("user",user.getObjectId());
+                                        BmobQuery<Notificate> query2 = new BmobQuery<>();
+                                        query2.addWhereEqualTo("order",order.getObjectId());
+                                        List<BmobQuery<Notificate>> queries = new ArrayList<>();
+                                        queries.add(query1);
+                                        queries.add(query2);
+                                        BmobQuery<Notificate> query = new BmobQuery<>();
+                                        query.or(queries);
+                                        query.order("-updatedAt");
+                                        query.findObjects(new FindListener<Notificate>() {
+                                            @Override
+                                            public void done(List<Notificate> list, BmobException e) {
+                                                if(list.size()>0){
+                                                    Notificate notificate =new Notificate();
+                                                    notificate.setObjectId(list.get(0).getObjectId());
+                                                    notificate.delete(new UpdateListener() {
+                                                        @Override
+                                                        public void done(BmobException e) {
+                                                            if(e==null){
+                                                                Log.i("bmob","成功");
+                                                            }else{
+                                                                Log.i("bmob","失败："+e.getMessage()+","+e.getErrorCode());
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        });
+                                    }
                                 } catch (RemoteException e1) {
                                     Log.v("出错啦！！！", "出错啦！！！！！");
                                 }
