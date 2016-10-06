@@ -20,7 +20,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.squareup.sqlbrite.BriteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +38,7 @@ import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.publish.FlowLayout;
 import edu.scau.buymesth.request.comment.CommentActivity;
 import edu.scau.buymesth.util.DividerItemDecoration;
-import rx.Subscription;
+import edu.scau.buymesth.util.NetworkHelper;
 
 import static edu.scau.Constant.EXTRA_NEEDQUERY;
 import static edu.scau.Constant.EXTRA_REQUEST;
@@ -90,8 +89,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     Button mFollowBtn;
     @Bind(R.id.tv_tag_hint)
     TextView mTagHintTv;
-    private Subscription subscription;
-    private BriteDatabase db;
+
 
     public static void navigate(Activity activity, Request request) {
         Intent intent = new Intent(activity, RequestDetailActivity.class);
@@ -111,33 +109,14 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         return R.layout.activity_requestdetail;
     }
 
-    //    @Override public void onResume() {
-//        super.onResume();
-//
-//        subscription = db.createQuery(ListsItem.TABLES, ListsItem.QUERY)
-//                .mapToList(ListsItem.MAPPER)
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(adapter);
-//    }
-//
-//    @Override public void onPause() {
-//        super.onPause();
-//        subscription.unsubscribe();
-//    }
+
     @Override
     public void initView() {
-        //数据库
-//        SqlBrite sqlBrite = SqlBrite.create();
-//        DbOpenHelper dbHelper = new DbOpenHelper(getContext());
-//        db = sqlBrite.wrapDatabaseHelper(dbHelper, Schedulers.io());
-//
 
         rvComment.setLayoutManager(new LinearLayoutManager(mContext));
         rvComment.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_4)));
         rvComment.setHasFixedSize(true);
         rvComment.setNestedScrollingEnabled(false);
-//        rvComment.addItemDecoration(new RecycleViewDivider(
-//                mContext, LinearLayoutManager.VERTICAL, 1, getResources().getColor(R.color.grey)));
         rvComment.addItemDecoration(new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL_LIST));
         RequestDetailModel model = new RequestDetailModel();
@@ -146,7 +125,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         //需要联网查询
         presenter.mNeedQueryRequest = getIntent().getBooleanExtra(EXTRA_NEEDQUERY, false);
         presenter.setVM(this, model);
-        if(!presenter.mNeedQueryRequest)
+        if (!presenter.mNeedQueryRequest)
             mIsSelf = model.getRequest().getUser().getObjectId().equals(BmobUser.getCurrentUser().getObjectId());
         mCreateOrderBtn.setOnClickListener(v -> {
             if (!mIsSelf)
@@ -400,9 +379,6 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
         }
         RequestCommentAdapter requestCommentAdapter = new RequestCommentAdapter(commentList);
         rvComment.setAdapter(requestCommentAdapter);
-//        requestCommentAdapter.setOnRecyclerViewItemClickListener((v, p) -> {
-//            Toast.makeText(mContext, "i was click", Toast.LENGTH_SHORT).show();
-//        });
     }
 
 
@@ -433,5 +409,12 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     protected void onPause() {
         super.onPause();
         presenter.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (NetworkHelper.isOpenNetwork(mContext))
+            presenter.refreshComment();
     }
 }

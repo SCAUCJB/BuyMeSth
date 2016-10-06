@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import java.util.concurrent.TimeUnit;
 
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
 import edu.scau.Constant;
 import edu.scau.buymesth.data.bean.User;
 import rx.Observable;
@@ -26,18 +27,21 @@ public class UserModel {
     public Observable<User> getUser(String id) {
         BmobQuery<User> query = new BmobQuery<>();
         SharedPreferences sp = mContext.getSharedPreferences(Constant.SHARE_PREFERENCE_CACHE_FREASHNESS, MODE_PRIVATE);
-        query.addWhereEqualTo("objectId",id);
-        if (sp.getBoolean("UserInfoNew", true)||!query.hasCachedResult(User.class)) {
-            query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ONLY);
-            sp.edit().putBoolean("UserInfoNew", false).apply();
-        } else {
-                query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ONLY);
-        }
         query.setMaxCacheAge(TimeUnit.DAYS.toMillis(7));
-        return query.findObjectsObservable(User.class).map(users -> {
-            if(users==null||users.size()<=0)return null;
-            return users.get(0);
-        });
+        if (sp.getBoolean("UserInfoNew", true)) {
+            sp.edit().putBoolean("UserInfoNew", false).apply();
+            return Observable.just(BmobUser.getCurrentUser(User.class));
+        } else {
+            query.addWhereEqualTo("objectId", id);
+            if (query.hasCachedResult(User.class))
+                query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ONLY);
+            else query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ONLY);
+            return query.findObjectsObservable(User.class).map(users -> {
+                if (users == null || users.size() <= 0) return null;
+                return users.get(0);
+            });
+        }
+
 
     }
 

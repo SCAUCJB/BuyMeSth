@@ -34,7 +34,7 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
     private CompositeSubscription mSubscriptions = new CompositeSubscription();
 
     void onPause() {
-        mSubscriptions.unsubscribe();
+        mSubscriptions.clear();
     }
 
     @Override
@@ -226,9 +226,28 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
             mView.hideViewPager();
         }
     }
+    void refreshComment(){
+        mSubscriptions.add(mModel.getRxComment(mModel.getRequest().getObjectId(), BmobQuery.CachePolicy.NETWORK_ONLY)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<List<Comment>>() {
+                    @Override
+                    public void onCompleted() {
+                        mView.setComment(mModel.getCommentList());
+                    }
 
+                    @Override
+                    public void onError(Throwable throwable) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<Comment> comments) {
+                        mModel.setCommentList(comments);
+                    }
+                }));
+    }
     void initComment() {
-        mSubscriptions.add(mModel.getRxComment(mModel.getRequest().getObjectId())
+        mSubscriptions.add(mModel.getRxComment(mModel.getRequest().getObjectId(), BmobQuery.CachePolicy.CACHE_ONLY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<List<Comment>>() {
             @Override
