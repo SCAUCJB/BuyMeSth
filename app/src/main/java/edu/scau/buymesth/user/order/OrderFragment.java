@@ -39,6 +39,7 @@ import static cn.bmob.v3.BmobQuery.CachePolicy.CACHE_ELSE_NETWORK;
 import static cn.bmob.v3.BmobQuery.CachePolicy.CACHE_ONLY;
 import static cn.bmob.v3.BmobQuery.CachePolicy.NETWORK_ELSE_CACHE;
 import static cn.bmob.v3.BmobQuery.CachePolicy.NETWORK_ONLY;
+import static edu.scau.Constant.NUMBER_PER_PAGE;
 
 /**
  * Created by John on 2016/9/25.
@@ -172,6 +173,12 @@ public class OrderFragment extends Fragment{
                             mHintTv.setVisibility(View.VISIBLE);
                         }else if(orders.size()>0&&mHintTv.getVisibility()==View.VISIBLE)
                             mHintTv.setVisibility(View.GONE);
+                        if(orders.size()>0&&orders.size()<NUMBER_PER_PAGE){
+                            if (notLoadingView == null) {
+                                notLoadingView = getActivity().getWindow().getLayoutInflater().inflate(R.layout.not_loading, (ViewGroup) mRecyclerView.getParent(), false);
+                            }
+                            adapter.addFooterView(notLoadingView);
+                        }
                         adapter.setNewData(orders);
                     }
                 });

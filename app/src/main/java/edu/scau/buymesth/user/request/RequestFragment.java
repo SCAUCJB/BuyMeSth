@@ -18,7 +18,6 @@ import java.util.concurrent.TimeUnit;
 import adpater.animation.SlideInBottomAnimation;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
-import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.RequestListAdapter;
 import edu.scau.buymesth.data.bean.Request;
@@ -38,6 +37,7 @@ import static cn.bmob.v3.BmobQuery.CachePolicy.CACHE_ELSE_NETWORK;
 import static cn.bmob.v3.BmobQuery.CachePolicy.CACHE_ONLY;
 import static cn.bmob.v3.BmobQuery.CachePolicy.NETWORK_ELSE_CACHE;
 import static cn.bmob.v3.BmobQuery.CachePolicy.NETWORK_ONLY;
+import static edu.scau.Constant.NUMBER_PER_PAGE;
 
 /**
  * Created by John on 2016/9/21.
@@ -118,7 +118,7 @@ public class RequestFragment extends Fragment {
                 });
         mSubscriptions.add(subscription);
         mRequestListAdapter.setOnLoadMoreListener(() -> onLoadMore(mId));
-        mRequestListAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
+        mRequestListAdapter.openLoadMore(NUMBER_PER_PAGE, true);
     }
 
     private int pageNum = 0;
@@ -151,6 +151,12 @@ public class RequestFragment extends Fragment {
                         }else if(requests.size()>0&&mHintTv.getVisibility()==View.VISIBLE)
                             mHintTv.setVisibility(View.GONE);
                         mRequestListAdapter.setNewData(requests);
+                        if(requests.size()>0&&requests.size()<NUMBER_PER_PAGE){
+                            if (notLoadingView == null) {
+                                notLoadingView = getActivity().getWindow().getLayoutInflater().inflate(R.layout.not_loading, (ViewGroup) mRecyclerView.getParent(), false);
+                            }
+                            mRequestListAdapter.addFooterView(notLoadingView);
+                        }
                     }
                 });
         mSubscriptions.add(subscription);
@@ -162,8 +168,8 @@ public class RequestFragment extends Fragment {
         query.order("-createdAt");
         query.include("user");
         query.addWhereEqualTo("user", userId);
-        query.setLimit(Constant.NUMBER_PER_PAGE);
-        query.setSkip(Constant.NUMBER_PER_PAGE * (pageNum++));
+        query.setLimit(NUMBER_PER_PAGE);
+        query.setSkip(NUMBER_PER_PAGE * (pageNum++));
         if (policy == CACHE_ONLY && query.hasCachedResult(Request.class))
             query.setCachePolicy(CACHE_ONLY);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
         else

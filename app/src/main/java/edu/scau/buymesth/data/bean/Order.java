@@ -36,6 +36,15 @@ public class Order extends BmobObject implements Serializable, MultiItemEntity{
     private List<String> tags ;
     private Address address;
     private Evaluate evaluate;
+    private String rejectReason;
+
+    public String getRejectReason() {
+        return rejectReason;
+    }
+
+    public void setRejectReason(String rejectReason) {
+        this.rejectReason = rejectReason;
+    }
 
     public Evaluate getEvaluate() {
         return evaluate;

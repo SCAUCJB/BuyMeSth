@@ -164,6 +164,9 @@
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
+        <activity android:name=".notice.RejectActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.SwipeBackLayout" />
         
         <!--/////process用来定义线程的名字-->
         <service android:name=".notice.RequestService">
