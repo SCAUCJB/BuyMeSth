@@ -254,30 +254,7 @@ public class OrderDetailActivity extends BaseActivity {
                             tvSellerPrice.setText("你的出价:" + order.getPrice() + order.getPriceType());
                             tvSellerTip.setText("你索要的小费" + order.getTip() + order.getTipType());
                             btnCancle.setOnClickListener(v -> {
-                                order.setStatus(Order.STATUS_SELLER_REJECT);
-                                order.update(new UpdateListener() {
-                                    @Override
-                                    public void done(BmobException e) {
-                                        if (e == null) {
-                                            tvMsg.setText("你已取消订单，扣除了相应的经验值");
-
-                                            Notificate notificate = new Notificate();
-                                            notificate.setUser(order.getBuyer());
-                                            notificate.setOrder(order);
-                                            notificate.setStatus(order.getStatus());
-                                            notificate.save(new SaveListener<String>() {
-                                                @Override
-                                                public void done(String s, BmobException e) {
-
-                                                }
-                                            });
-
-                                            btnCancle.setVisibility(View.GONE);
-                                        } else {
-                                            Toast.makeText(OrderDetailActivity.this, "出错啦！请重试", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
+                              RejectActivity.navigateForResult(OrderDetailActivity.this,order);
                             });
 
                             break;
@@ -384,38 +361,7 @@ public class OrderDetailActivity extends BaseActivity {
                             });
 
                             btnGoback.setOnClickListener(v -> {
-                                order.setStatus(Order.STATUS_SELLER_REJECT);
-                                order.update(new UpdateListener() {
-                                    @Override
-                                    public void done(BmobException e) {
-                                        if (e == null) {
-
-                                            btnGoback.setVisibility(View.GONE);
-                                            btnGo.setVisibility(View.GONE);
-                                            btnCamera.setVisibility(View.GONE);
-                                            llAddress.setClickable(false);
-
-                                            Notificate notificate = new Notificate();
-                                            notificate.setUser(order.getBuyer());
-                                            notificate.setOrder(order);
-                                            notificate.setStatus(order.getStatus());
-                                            notificate.save(new SaveListener<String>() {
-                                                @Override
-                                                public void done(String s, BmobException e) {
-
-                                                }
-                                            });
-
-                                            tvMsg.setText("你已取消了订单，并扣去了相应的经验值");
-                                            llExpress.setVisibility(View.GONE);
-                                            rlMoment.setVisibility(View.GONE);
-                                            btnGoback.setVisibility(View.GONE);
-                                            btnGo.setVisibility(View.GONE);
-                                        } else {
-                                            Toast.makeText(mContext, "请重试", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
+                                RejectActivity.navigateForResult(OrderDetailActivity.this,order);
                             });
 
                             BmobQuery<OrderMoment> query_seller_accept = new BmobQuery<>();
@@ -659,7 +605,7 @@ public class OrderDetailActivity extends BaseActivity {
 
                             break;
                         case Constant.BUYER_STATUS_SELLER_REJECT:
-                            tvMsg.setText("卖家已取消订单");
+                            tvMsg.setText("卖家已取消订单,拒绝理由是："+order.getRejectReason());
                             tvWant.setVisibility(View.VISIBLE);
                             tvSellerPrice.setVisibility(View.VISIBLE);
                             tvSellerTip.setVisibility(View.VISIBLE);
@@ -674,7 +620,7 @@ public class OrderDetailActivity extends BaseActivity {
                             break;
 
                         case Constant.SELLER_STATUS_SELLER_REJECT:
-                            tvMsg.setText("你已取消了订单，并扣去相应的经验值");
+                            tvMsg.setText("你已取消了订单，并扣去相应的经验值,拒绝理由是："+order.getRejectReason());
                             tvWant.setVisibility(View.VISIBLE);
                             tvSellerPrice.setVisibility(View.VISIBLE);
                             tvSellerTip.setVisibility(View.VISIBLE);
@@ -744,6 +690,18 @@ public class OrderDetailActivity extends BaseActivity {
             btnComment.setVisibility(View.GONE);
             sellerEvaluate.setVisibility(View.VISIBLE);
             sellerEvaluate.setText("卖家追评：" + evaluate.getReply());
+        }
+        if(resultCode == RejectActivity.REJECT_SUCCESS){
+            Order order = (Order) data.getSerializableExtra("order");
+            tvMsg.setText("你已拒绝了订单，拒绝理由是："+order.getRejectReason());
+
+            btnGoback.setVisibility(View.GONE);
+            btnGo.setVisibility(View.GONE);
+            btnCamera.setVisibility(View.GONE);
+            llAddress.setClickable(false);
+            llExpress.setVisibility(View.GONE);
+            rlMoment.setVisibility(View.GONE);
+            btnCancle.setVisibility(View.GONE);
         }
     }
 

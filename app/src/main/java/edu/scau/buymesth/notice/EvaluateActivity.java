@@ -153,9 +153,12 @@ public class EvaluateActivity extends BaseActivity {
                     public void onSuccess(List<BmobFile> files, List<String> urls) {
                         if (urls.size() >= mUrlList.size()) {
                             Evaluate evaluate = new Evaluate();
+                            evaluate.setUrlList(urls);
                             evaluate.setContent(etComment.getText().toString());
                             evaluate.setScore(ratingBar.getRating());
                             evaluate.setOrderId(order.getObjectId());
+                            evaluate.setSeller(order.getSeller());
+                            evaluate.setBuyer(order.getBuyer());
                             evaluate.save(new SaveListener<String>() {
                                 @Override
                                 public void done(String s, BmobException e) {
@@ -201,6 +204,8 @@ public class EvaluateActivity extends BaseActivity {
                 evaluate.setContent(etComment.getText().toString());
                 evaluate.setScore(ratingBar.getRating());
                 evaluate.setOrderId(order.getObjectId());
+                evaluate.setSeller(order.getSeller());
+                evaluate.setBuyer(order.getBuyer());
                 evaluate.save(new SaveListener<String>() {
                     @Override
                     public void done(String s, BmobException e) {
