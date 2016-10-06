@@ -35,7 +35,15 @@ public class Order extends BmobObject implements Serializable, MultiItemEntity{
      private String priceType;
     private List<String> tags ;
     private Address address;
+    private Evaluate evaluate;
 
+    public Evaluate getEvaluate() {
+        return evaluate;
+    }
+
+    public void setEvaluate(Evaluate evaluate) {
+        this.evaluate = evaluate;
+    }
 
     public Address getAddress() {
         return address;

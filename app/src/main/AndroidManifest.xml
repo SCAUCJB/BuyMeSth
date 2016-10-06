@@ -156,21 +156,22 @@
 
         <activity
             android:name=".notice.detail.PicPublishActivity"
-            android:theme="@style/AppTheme.SwipeBackLayout" /><![CDATA[
-
-
-
-
-
-
-
-        android:theme="@style/AppTheme.SwipeBackLayout" />
-
-        ]]>
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.SwipeBackLayout" />
         <activity
             android:name=".notice.OrderDetailActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
+
+        <activity android:name=".notice.EvaluateActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.SwipeBackLayout" />
+
+        <activity android:name=".notice.ReplyActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.SwipeBackLayout" />
+
+        
         <!--/////process用来定义线程的名字-->
         <service android:name=".notice.RequestService">
             <intent-filter>

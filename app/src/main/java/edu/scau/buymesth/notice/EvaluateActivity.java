@@ -1,6 +1,6 @@
-package edu.scau.buymesth.notice.detail;
+package edu.scau.buymesth.notice;
 
-
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -9,10 +9,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -20,53 +24,68 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import base.BaseActivity;
+import base.util.GlideCircleTransform;
 import base.util.SpaceItemDecoration;
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
 import cn.bmob.v3.listener.UploadBatchListener;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.MyPictureAdapter;
+import edu.scau.buymesth.data.bean.Evaluate;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.OrderMoment;
-import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.util.CompressHelper;
 import gallery.PhotoActivity;
 import me.iwf.photopicker.PhotoPicker;
 import rx.Observable;
 import util.FileUtils;
 
-public class PicPublishActivity extends BaseActivity {
+/**
+ * Created by Jammy on 2016/10/6.
+ */
+public class EvaluateActivity extends BaseActivity {
 
-
+    public static final int EVALUATE_SUCCESS = 100;
     ArrayList<MyPictureAdapter.ImageItem> mUrlList;
     MyPictureAdapter adapter;
     boolean mCompressing = false;
     boolean mCompressed = false;
     boolean mCompress = false;
     long mImageSize = 0;
-    @Bind(R.id.btn_commit)
-    Button btnCommit;
-    @Bind(R.id.et)
-    EditText et;
+
+
+    @Bind(R.id.iv_icon)
+    ImageView ivIcon;
+    @Bind(R.id.tv_name)
+    TextView tvName;
+    @Bind(R.id.ratingBar)
+    RatingBar ratingBar;
+    @Bind(R.id.et_comment)
+    EditText etComment;
     @Bind(R.id.rv)
     RecyclerView recyclerView;
-    @Bind(R.id.sw_compress)
-    Switch swCompress;
+    @Bind(R.id.btn_submit)
+    Button btnSubmit;
+
+    Order order;
     @Bind(R.id.tv_size)
     TextView tvSize;
+    @Bind(R.id.sw_compress)
+    Switch swCompress;
+
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_pic_publish;
+        return R.layout.activity_evaluate;
     }
 
     @Override
     public void initView() {
+
         mUrlList = new ArrayList<>();
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         recyclerView.setLayoutManager(gridLayoutManager);
@@ -86,11 +105,11 @@ public class PicPublishActivity extends BaseActivity {
                         .setShowGif(false)
                         .setPreviewEnabled(true)
                         .setSelected(selectImages)
-                        .start(PicPublishActivity.this, PhotoPicker.REQUEST_CODE);
+                        .start(EvaluateActivity.this, PhotoPicker.REQUEST_CODE);
             } else {
                 for (MyPictureAdapter.ImageItem ii : mUrlList)
                     selectImages.add(mCompress ? ii.compressedImage : ii.sourceImage);
-                PhotoActivity.navigate(PicPublishActivity.this, recyclerView, selectImages, position);
+                PhotoActivity.navigate(EvaluateActivity.this, recyclerView, selectImages, position);
             }
         });
 
@@ -106,19 +125,23 @@ public class PicPublishActivity extends BaseActivity {
                         .subscribe(file -> mImageSize += file.length(),
                                 o -> {
                                 },
-                                () -> tvSize.setText("图片大小："+ FileUtils.convert(mImageSize)));
+                                () -> tvSize.setText("图片大小：" + FileUtils.convert(mImageSize)));
             }
         });
 
 
-        btnCommit.setOnClickListener(v -> {
-            //upload images
+        order = (Order) getIntent().getSerializableExtra("order");
+        if (order.getSeller().getAvatar() != null) {
+            Glide.with(mContext).load(order.getSeller().getAvatar()).placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into(ivIcon);
+        }
+        tvName.setText(order.getSeller().getNickname());
+        btnSubmit.setOnClickListener(v -> {
             if (mUrlList.size() > 0) {
                 if (mCompressing) {
                     toast("压缩中");
                     return;
                 }
-                btnCommit.setEnabled(false);
+                btnSubmit.setEnabled(false);
                 ArrayList<String> selectImages = new ArrayList<>();
                 for (MyPictureAdapter.ImageItem ii : mUrlList)
                     selectImages.add(mCompress ? ii.compressedImage : ii.sourceImage);
@@ -129,21 +152,25 @@ public class PicPublishActivity extends BaseActivity {
                     @Override
                     public void onSuccess(List<BmobFile> files, List<String> urls) {
                         if (urls.size() >= mUrlList.size()) {
-                            OrderMoment orderMonent = new OrderMoment();
-                            orderMonent.setText(et.getText().toString());
-                            orderMonent.setPicList(urls);
-                            orderMonent.setOrder((Order) getIntent().getSerializableExtra("order"));
-                            orderMonent.save(new SaveListener<String>() {
+                            Evaluate evaluate = new Evaluate();
+                            evaluate.setContent(etComment.getText().toString());
+                            evaluate.setScore(ratingBar.getRating());
+                            evaluate.setOrderId(order.getObjectId());
+                            evaluate.save(new SaveListener<String>() {
                                 @Override
                                 public void done(String s, BmobException e) {
-                                    if (e == null) {
-                                        closeLoadingDialog();
-                                        Toast.makeText(PicPublishActivity.this, "上传成功", Toast.LENGTH_LONG).show();
-                                        finish();
-                                    } else {
-                                        Log.e("bmob", "失败：" + e.getMessage() + "," + e.getErrorCode());
-                                        closeLoadingDialog();
-                                    }
+                                    //TODO:出错处理等
+                                    order.setEvaluate(evaluate);
+                                    order.update(new UpdateListener() {
+                                        @Override
+                                        public void done(BmobException e) {
+                                            Intent data = new Intent();
+                                            data.putExtra("evaluate", evaluate);
+                                            setResult(EVALUATE_SUCCESS, data);
+                                            finish();
+                                        }
+                                    });
+
                                 }
                             });
                         }
@@ -170,19 +197,27 @@ public class PicPublishActivity extends BaseActivity {
                     }
                 });
             } else {
-                OrderMoment orderMonent = new OrderMoment();
-                orderMonent.setText(et.getText().toString());
-                orderMonent.setOrder((Order) getIntent().getSerializableExtra("order"));
-                orderMonent.save(new SaveListener<String>() {
+                Evaluate evaluate = new Evaluate();
+                evaluate.setContent(etComment.getText().toString());
+                evaluate.setScore(ratingBar.getRating());
+                evaluate.setOrderId(order.getObjectId());
+                evaluate.save(new SaveListener<String>() {
                     @Override
                     public void done(String s, BmobException e) {
                         if (e == null) {
-                            closeLoadingDialog();
-                            Toast.makeText(PicPublishActivity.this, "上传成功", Toast.LENGTH_LONG).show();
-                            finish();
+                            ///TODO:
+                            order.setEvaluate(evaluate);
+                            order.update(new UpdateListener() {
+                                @Override
+                                public void done(BmobException e) {
+                                    Intent data = new Intent();
+                                    data.putExtra("evaluate", evaluate);
+                                    setResult(EVALUATE_SUCCESS, data);
+                                    finish();
+                                }
+                            });
                         } else {
-                            Log.e("bmob", "失败：" + e.getMessage() + "," + e.getErrorCode());
-                            closeLoadingDialog();
+
                         }
                     }
                 });
@@ -191,29 +226,22 @@ public class PicPublishActivity extends BaseActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == RESULT_OK && requestCode == PhotoPicker.REQUEST_CODE) {
-            if (data != null) {
-                ArrayList<String> photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
-                mUrlList.clear();
-                for (String url : photos) {
-                    mUrlList.add(new MyPictureAdapter.ImageItem(url, null));
-                }
-                adapter.setList(mUrlList, mCompress ? 1 : 0);
-                mImageSize = 0;
-                mCompressed = false;
-                Observable.from(mUrlList)
-                        .map(imageItem -> new File(mCompress ? imageItem.compressedImage : imageItem.sourceImage))
-                        .subscribe(file -> mImageSize += file.length(),
-                                o -> {
-                                },
-                                () -> tvSize.setText("图片大小："+ FileUtils.convert(mImageSize)));
-                if (mCompress) compress();
-            }
-        }
+    public boolean canSwipeBack() {
+        return true;
     }
+
+    @Override
+    protected int getToolBarId() {
+        return R.id.toolbar;
+    }
+
+
+    public static void navigateForResult(Activity activity, Order order) {
+        Intent intent = new Intent(activity, EvaluateActivity.class);
+        intent.putExtra("order", order);
+        activity.startActivityForResult(intent, EVALUATE_SUCCESS);
+    }
+
 
     private void compress() {
         swCompress.setEnabled(false);
@@ -241,7 +269,7 @@ public class PicPublishActivity extends BaseActivity {
                             .subscribe(file -> mImageSize += file.length(),
                                     o -> {
                                     },
-                                    () -> tvSize.setText("图片大小："+ FileUtils.convert(mImageSize)));
+                                    () -> tvSize.setText("图片大小：" + FileUtils.convert(mImageSize)));
                     adapter.setList(mUrlList, mCompress ? 1 : 0);
                     swCompress.setEnabled(true);
                 });
@@ -254,23 +282,28 @@ public class PicPublishActivity extends BaseActivity {
     }
 
     @Override
-    public boolean canSwipeBack() {
-        return true;
-    }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-    @Override
-    public boolean showColorStatusBar() {
-        return true;
-    }
-
-    @Override
-    public int getStatusColorResources() {
-        return R.color.colorPrimaryDark;
-    }
-
-    @Override
-    protected int getToolBarId() {
-        return R.id.toolbar;
+        if (resultCode == RESULT_OK && requestCode == PhotoPicker.REQUEST_CODE) {
+            if (data != null) {
+                ArrayList<String> photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
+                mUrlList.clear();
+                for (String url : photos) {
+                    mUrlList.add(new MyPictureAdapter.ImageItem(url, null));
+                }
+                adapter.setList(mUrlList, mCompress ? 1 : 0);
+                mImageSize = 0;
+                mCompressed = false;
+                Observable.from(mUrlList)
+                        .map(imageItem -> new File(mCompress ? imageItem.compressedImage : imageItem.sourceImage))
+                        .subscribe(file -> mImageSize += file.length(),
+                                o -> {
+                                },
+                                () -> tvSize.setText("图片大小：" + FileUtils.convert(mImageSize)));
+                if (mCompress) compress();
+            }
+        }
     }
 
 }
