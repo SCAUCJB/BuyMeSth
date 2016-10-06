@@ -1,8 +1,11 @@
 package edu.scau.buymesth.main;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -19,6 +22,7 @@ import com.github.clans.fab.FloatingActionMenu;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import base.BaseActivity;
 import butterknife.Bind;
@@ -29,17 +33,21 @@ import cn.bmob.newim.listener.ConversationListener;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.TabAdapter;
 import edu.scau.buymesth.conversation.list.ConversationFragment;
 import edu.scau.buymesth.conversation.userlist.UserListFragment;
+import edu.scau.buymesth.data.bean.Notification;
+import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.discover.list.DiscoverFragment;
 import edu.scau.buymesth.discover.publish.MomentPublishActivity;
 import edu.scau.buymesth.fragment.EmptyActivity;
 import edu.scau.buymesth.notice.NoticeFragment;
+import edu.scau.buymesth.notice.OrderDetailActivity;
 import edu.scau.buymesth.notice.RequestService;
 import edu.scau.buymesth.publish.PublishActivity;
 import edu.scau.buymesth.request.HomeFragment;
@@ -359,6 +367,35 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
                 t.printStackTrace();
             }
         }
+    }
+
+    public void getNotification(){
+        BmobQuery<Notification> query = new BmobQuery<>();
+        query.addWhereEqualTo("user",BmobUser.getCurrentUser().getObjectId());
+        query.include("order");
+        query.findObjects(new FindListener<Notification>() {
+            @Override
+            public void done(List<Notification> list, BmobException e) {
+                for(int i=0;i<list.size();i++){
+                    Order order = list.get(i).getOrder();
+                    android.app.Notification.Builder builder = new android.app.Notification.Builder(TabActivity.this);
+                    Intent intent = new Intent(TabActivity.this, OrderDetailActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.putExtra("order", order);
+                    ////TODO:这里加一个随机数的生成
+                    int time =new Random().nextInt(65535);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(TabActivity.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    builder.setSmallIcon(R.mipmap.ic_launcher);
+                    builder.setContentIntent(pendingIntent);
+                    builder.setAutoCancel(true);
+                    builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
+                    builder.setContentTitle("你的订单有变化了");
+                    NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    notificationManager.notify(time, builder.build());
+                    order.delete();
+                }
+            }
+        });
     }
 
 }

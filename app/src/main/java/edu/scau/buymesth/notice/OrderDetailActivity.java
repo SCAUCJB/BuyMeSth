@@ -325,14 +325,14 @@ public class OrderDetailActivity extends BaseActivity {
                                 order.update(new UpdateListener() {
                                     @Override
                                     public void done(BmobException e) {
-                                        if(e==null){
+                                        if (e == null) {
                                             tvMsg.setText("你已取消了订单，并扣去了相应的经验值");
                                             llExpress.setVisibility(View.GONE);
                                             rlMoment.setVisibility(View.GONE);
                                             btnGoback.setVisibility(View.GONE);
                                             btnGo.setVisibility(View.GONE);
-                                        }else{
-                                            Toast.makeText(mContext,"请重试",Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(mContext, "请重试", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 });
@@ -541,7 +541,7 @@ public class OrderDetailActivity extends BaseActivity {
                             });
 
                             btnComment.setOnClickListener(v -> {
-////TODO:评价
+                                ////TODO:评价
                             });
 
                             break;
@@ -621,6 +621,7 @@ public class OrderDetailActivity extends BaseActivity {
             tvAddress.setText("收货人：" + address.getRecipient() + "\n手机号码：" + address.getPhone() + "\n地址：" + address.getRegion() + address.getSpecific());
         }
     }
+
     @Override
     protected void onNewIntent(Intent intent) {
         // TODO Auto-generated method stub
