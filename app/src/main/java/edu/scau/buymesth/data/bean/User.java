@@ -1,7 +1,5 @@
 package edu.scau.buymesth.data.bean;
 
-import android.content.Intent;
-
 import cn.bmob.v3.BmobUser;
 
 /**
@@ -43,6 +41,9 @@ public class User extends BmobUser {
     }
 
     public Integer getExp() {
+        if(exp==null){
+            return 0;
+        }
         return exp;
     }
 

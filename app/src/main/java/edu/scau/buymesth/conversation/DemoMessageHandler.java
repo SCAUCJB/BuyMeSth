@@ -53,7 +53,7 @@ public class DemoMessageHandler extends BmobIMMessageHandler {
 //                    event.getConversation().getConversationTitle(),
 //                    content,content,pendingIntent);
             event.getMessage().setContent(content);
-            BmobNotificationManager.getInstance(context).showNotification(event,pendingIntent);
+            BmobNotificationManager.getInstance(context.getApplicationContext()).showNotification(event,pendingIntent);
 //        }
     }
 

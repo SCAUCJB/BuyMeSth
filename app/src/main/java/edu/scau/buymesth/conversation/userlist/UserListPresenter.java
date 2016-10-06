@@ -3,6 +3,7 @@ package edu.scau.buymesth.conversation.userlist;
 import android.content.Context;
 import android.net.ConnectivityManager;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import base.BasePresenter;
@@ -38,11 +39,11 @@ public class UserListPresenter extends BasePresenter<UserListContract.Model,User
     }
 
     public void refresh(){
-        mModel.resetPage();
-        mModel.getDatas().clear();
+
         BmobQuery.CachePolicy cachePolicy;
         if(isOpenNetwork())cachePolicy = BmobQuery.CachePolicy.NETWORK_ONLY;
         else cachePolicy = BmobQuery.CachePolicy.CACHE_ONLY;
+        List<User>tempList=new LinkedList<>();
         mModel.getFollowedRx(cachePolicy).flatMap(new Func1<List<Follow>, Observable<Follow>>() {
             @Override
             public Observable<Follow> call(List<Follow> follows) {
@@ -56,7 +57,9 @@ public class UserListPresenter extends BasePresenter<UserListContract.Model,User
                     @Override
                     public void onCompleted() {
                         if(isAlive()){
-                            //
+                            mModel.resetPage();
+                            mModel.getDatas().clear();
+                            mModel.setDatas(tempList);
                             mModel.getDatas().add(BmobUser.getCurrentUser(User.class));
                             //
                             mView.onRefreshComplete(mModel.getDatas());
@@ -73,7 +76,7 @@ public class UserListPresenter extends BasePresenter<UserListContract.Model,User
 
                     @Override
                     public void onNext(User user) {
-                        mModel.getDatas().add(user);
+                        tempList.add(user);
                     }
                 });
     }
