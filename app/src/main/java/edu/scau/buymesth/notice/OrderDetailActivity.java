@@ -358,7 +358,12 @@ public class OrderDetailActivity extends BaseActivity {
                                     @Override
                                     public void done(BmobException e) {
                                         if (e == null) {
-////TODO:隐藏按钮布局等
+                                            btnCamera.setVisibility(View.GONE);
+                                            btnGo.setVisibility(View.GONE);
+                                            btnGoback.setVisibility(View.GONE);
+                                            llAddress.setClickable(false);
+
+                                            tvMsg.setText("你已发货，等待买家收货");
                                             Notificate notificate = new Notificate();
                                             notificate.setUser(order.getBuyer());
                                             notificate.setOrder(order);
@@ -384,7 +389,12 @@ public class OrderDetailActivity extends BaseActivity {
                                     @Override
                                     public void done(BmobException e) {
                                         if (e == null) {
-////TODO:隐藏按钮布局等
+
+                                            btnGoback.setVisibility(View.GONE);
+                                            btnGo.setVisibility(View.GONE);
+                                            btnCamera.setVisibility(View.GONE);
+                                            llAddress.setClickable(false);
+
                                             Notificate notificate = new Notificate();
                                             notificate.setUser(order.getBuyer());
                                             notificate.setOrder(order);

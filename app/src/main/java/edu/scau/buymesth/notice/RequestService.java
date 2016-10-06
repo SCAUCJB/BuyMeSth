@@ -166,7 +166,7 @@ public class RequestService extends Service {
                                 try {
                                     if (client != null)
                                         client.send(message);
-                                    Notification.Builder builder = new Notification.Builder(RequestService.this);
+                                    Notification.Builder builder = new Notification.Builder(RequestService.this).setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE);
                                     Intent intent = new Intent(RequestService.this, OrderDetailActivity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     intent.putExtra("order", order);

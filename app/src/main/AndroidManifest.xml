@@ -16,6 +16,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:name=".App"
@@ -138,15 +139,7 @@
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
-        <activity
-            android:name=".notice.detail.BuyOrderDetailActivity"
-            android:launchMode="singleTop"
-            android:theme="@style/AppTheme.SwipeBackLayout" />
 
-        <activity
-            android:name=".notice.detail.SellerOrderDetailActivity"
-            android:launchMode="singleTop"
-            android:theme="@style/AppTheme.SwipeBackLayout" />
 
         <activity
             android:name=".user.mark.MarkActivity"
