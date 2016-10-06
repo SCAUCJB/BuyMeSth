@@ -100,7 +100,6 @@ public class ChatFragment extends Fragment implements ChatContract.View,MessageL
         mInputMessage = (EditText)view.findViewById(R.id.input_message);
 
         mButtonSend.setOnClickListener(this);
-        mInputMessage.setOnFocusChangeListener((v, hasFocus) -> onFaceButtonClick(hasFocus));
         mInputMessage.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
