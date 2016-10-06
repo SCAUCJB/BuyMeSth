@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import java.util.List;
 
+import cn.bmob.v3.BmobQuery;
 import edu.scau.buymesth.data.bean.Comment;
 import edu.scau.buymesth.data.bean.Request;
 import rx.Observable;
@@ -71,7 +72,7 @@ public interface RequestDetailContract {
 
         String getCommentBtnStr();
 
-        Observable<List<Comment>> getRxComment(String objId);
+        Observable<List<Comment>> getRxComment(String objId, BmobQuery.CachePolicy policy);
 
         List<Comment> getCommentList();
 

@@ -39,15 +39,19 @@ public class RequestDetailModel implements RequestDetailContract.Model {
 
 
     @Override
-    public Observable<List<Comment>> getRxComment(String objId) {
+    public Observable<List<Comment>> getRxComment(String objId,BmobQuery.CachePolicy policy) {
         BmobQuery<Comment> query = new BmobQuery<>();
         Request request = new Request();
         request.setObjectId(objId);
         query.addWhereEqualTo("request", new BmobPointer(request));
         query.order("-createdAt");
         query.setLimit(4);
-
         query.include("author");
+        if(query.hasCachedResult(Comment.class)&&policy== BmobQuery.CachePolicy.CACHE_ONLY)
+            query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ONLY);
+        else{
+            query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ONLY);
+        }
         return query.findObjectsObservable(Comment.class);
     }
 
