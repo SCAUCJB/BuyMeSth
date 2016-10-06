@@ -35,6 +35,10 @@ import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
+import co.mobiwise.materialintro.prefs.PreferencesManager;
+import co.mobiwise.materialintro.shape.Focus;
+import co.mobiwise.materialintro.shape.FocusGravity;
+import co.mobiwise.materialintro.view.MaterialIntroView;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.TabAdapter;
@@ -133,14 +137,12 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
             fab.close(true);
         });
         fab4.setOnClickListener(v -> {
-            if(homeFragment.getFilter()!=HomePresenter.FILTER_FOLLOW_ONLY)
-                homeFragment.setFilter(HomePresenter.FILTER_FOLLOW_ONLY,null);
-            else homeFragment.setFilter(null,null);
-            fab.close(true);
-        });
-        fab5.setOnClickListener(v -> {
-            EmptyActivity.navigate(TabActivity.this, UserListFragment.class.getName(),null,101);
-        });
+                    if (homeFragment.getFilter() != HomePresenter.FILTER_FOLLOW_ONLY)
+                        homeFragment.setFilter(HomePresenter.FILTER_FOLLOW_ONLY, null);
+                    else homeFragment.setFilter(null, null);
+                    fab.close(true);
+                });
+        fab5.setOnClickListener(v -> EmptyActivity.navigate(TabActivity.this, UserListFragment.class.getName(),null,101));
 
         fragmentList.add(homeFragment);
         fragmentList.add(discoverFragment);
@@ -205,6 +207,23 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         viewPager.setOnPageChangeListener(this);
         queryUser();
         startService(new Intent(this, RequestService.class));
+        new PreferencesManager(mContext).resetAll();
+
+        showIntro(fab.getMenuIconView(),"fab","在这里发送和搜索购物请求");
+    }
+    private void showIntro(View view, String usageId, String text){
+        new MaterialIntroView.Builder(this)
+                .enableDotAnimation(true)
+                //.enableIcon(false)
+                .setFocusGravity(FocusGravity.CENTER)
+                .setFocusType(Focus.ALL)
+                .setDelayMillis(200)
+                .enableFadeAnimation(true)
+                .performClick(false)
+                .setInfoText(text)
+                .setTarget(view)
+                .setUsageId(usageId) //THIS SHOULD BE UNIQUE ID
+                .show();
     }
     private boolean mIsExit;
     private Handler handler=new Handler();

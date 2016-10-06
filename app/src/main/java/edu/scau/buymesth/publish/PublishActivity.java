@@ -32,6 +32,10 @@ import base.BaseActivity;
 import base.util.SpaceItemDecoration;
 import butterknife.Bind;
 import cn.bmob.v3.BmobUser;
+import co.mobiwise.materialintro.animation.MaterialIntroListener;
+import co.mobiwise.materialintro.shape.Focus;
+import co.mobiwise.materialintro.shape.FocusGravity;
+import co.mobiwise.materialintro.view.MaterialIntroView;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.MyPictureAdapter;
 import edu.scau.buymesth.data.bean.Request;
@@ -192,7 +196,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         });
         initToolBar();
         initPriceSelect();
-
+        showIntro(tvAdd,"tvAdd","点击这里添加你的特殊要求吧");
     }
 
     @Override
@@ -464,5 +468,26 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
             }
         }, 100);
     }
-
+    private void showIntro(View view, String usageId, String text){
+        new MaterialIntroView.Builder(this)
+                .enableDotAnimation(false)
+                //.enableIcon(false)
+                .setFocusGravity(FocusGravity.CENTER)
+                .setFocusType(Focus.ALL)
+                .setDelayMillis(200)
+                .enableFadeAnimation(true)
+                .setListener(materialIntroListener)
+                .performClick(false)
+                .setInfoText(text)
+                .setTarget(view)
+                .setUsageId(usageId) //THIS SHOULD BE UNIQUE ID
+                .show();
+    }
+    MaterialIntroListener materialIntroListener= materialIntroViewId -> {
+        if(materialIntroViewId=="tvAdd"){
+            showIntro(mPriceBar,"mPriceBar","填写你理想中的商品价格");
+        }else if(materialIntroViewId=="mPriceBar"){
+            showIntro(swCompress,"swCompress","点击可以无损压缩图片节约流量哦");//这里用了夸张的广告手法
+        }
+    };
 }

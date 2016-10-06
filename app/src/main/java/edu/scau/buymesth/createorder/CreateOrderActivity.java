@@ -22,6 +22,10 @@ import java.util.List;
 import base.BaseActivity;
 import butterknife.Bind;
 import cn.bmob.v3.BmobUser;
+import co.mobiwise.materialintro.animation.MaterialIntroListener;
+import co.mobiwise.materialintro.shape.Focus;
+import co.mobiwise.materialintro.shape.FocusGravity;
+import co.mobiwise.materialintro.view.MaterialIntroView;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Request;
@@ -124,7 +128,34 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
         ).
       create();
 
+
+
+
     }
+    private void showIntro(View view, String usageId, String text){
+        new MaterialIntroView.Builder(this)
+                .enableDotAnimation(false)
+                //.enableIcon(false)
+                .setFocusGravity(FocusGravity.CENTER)
+                .setFocusType(Focus.ALL)
+                .setDelayMillis(200)
+                .enableFadeAnimation(true)
+                .setListener(materialIntroListener)
+                .performClick(false)
+                .setInfoText(text)
+                .setTarget(view)
+                .setUsageId(usageId) //THIS SHOULD BE UNIQUE ID
+                .show();
+    }
+    MaterialIntroListener materialIntroListener= materialIntroViewId -> {
+        if(materialIntroViewId=="tvAdd"){
+            showIntro(tvDeliverTime,"tvDeliverTime","选择准确的发货时间");
+        }else if(materialIntroViewId=="tvDeliverTime"){
+            showIntro(pvTip,"pvTip","滑动可以选择货币类型");
+        }else if(materialIntroViewId=="tvTag"){
+            showIntro(tvAdd, "tvAdd", "在这里添加服务的优势");
+        }
+    };
 
     protected int getToolBarId() {
         return R.id.toolbar;
@@ -185,8 +216,16 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
 
     @Override
     public void setTagList(List<String> tags) {
+        boolean isFirst=true;
+        if(tags==null||tags.size()==0){
+            showIntro(tvAdd, "tvAdd", "在这里添加服务的优势");
+        }
         for (String tag : tags) {
             TextView tv = (TextView) LayoutInflater.from(mContext).inflate(R.layout.tv_tag, null);
+            if(isFirst){
+                showIntro(tv,"tvTag","点击选择你能满足的买家要求");
+            }
+            isFirst=false;
             ViewGroup.MarginLayoutParams marginLayoutParams = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             marginLayoutParams.setMargins(20, 4, 20, 4);
             tv.setLayoutParams(marginLayoutParams);
