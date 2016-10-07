@@ -24,6 +24,9 @@ import edu.scau.buymesth.data.bean.User;
  * Created by Jammy on 2016/10/7.
  */
 public class DepositActivity extends BaseActivity {
+
+    ///TODO:充值成功后还要加入CashBook表中
+
     User user;
     @Bind(R.id.et_money)
     EditText etMoney;

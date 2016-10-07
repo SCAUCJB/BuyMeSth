@@ -24,6 +24,10 @@ import edu.scau.buymesth.publish.FlowLayout;
  * Created by Jammy on 2016/10/7.
  */
 public class WithdrawActivity extends BaseActivity {
+
+    ///TODO:提现成功后还要加入CashBook表中
+
+
     User user;
     @Bind(R.id.et_money)
     EditText etMoney;

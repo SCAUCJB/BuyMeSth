@@ -7,9 +7,9 @@ import cn.bmob.v3.BmobObject;
  */
 public class CashBook extends BmobObject {
 
-    public static int BUYER_PAY = 0;
-    public static int SELLER_GET = 1;
-    public static int SELLER_CANCLE = 2;
+    public static final int BUYER_PAY = 0;
+    public static final int SELLER_GET = 1;
+    public static final int SELLER_CANCLE = 2;
 
     User user;
     int type;

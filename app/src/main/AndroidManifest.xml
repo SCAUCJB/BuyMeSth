@@ -16,7 +16,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".App"
@@ -140,7 +140,6 @@
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
 
-
         <activity
             android:name=".user.mark.MarkActivity"
             android:label="收藏的请求"
@@ -156,18 +155,45 @@
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
-        <activity android:name=".notice.EvaluateActivity"
+        <activity
+            android:name=".notice.EvaluateActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
-        <activity android:name=".notice.ReplyActivity"
+        <activity
+            android:name=".notice.ReplyActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
-        <activity android:name=".notice.RejectActivity"
+        <activity
+            android:name=".notice.RejectActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
-        
+
+        <activity
+            android:name=".cash.CashBookActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.SwipeBackLayout" />
+        <activity
+            android:name=".cash.CashMainActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.SwipeBackLayout" />
+
+        <activity
+            android:name=".cash.PayActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.SwipeBackLayout" />
+
+        <activity
+            android:name=".cash.WithdrawActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.SwipeBackLayout" />
+
+        <activity
+            android:name=".cash.DepositActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.SwipeBackLayout" />
+
         <!--/////process用来定义线程的名字-->
         <service android:name=".notice.RequestService">
             <intent-filter>
