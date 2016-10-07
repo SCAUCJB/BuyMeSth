@@ -4,7 +4,8 @@ package edu.scau.buymesth.user;
 import cn.bmob.v3.BmobUser;
 import edu.scau.buymesth.data.bean.User;
 import rx.Subscriber;
-import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -25,12 +26,13 @@ public   class UserPresenter  implements UserContract.Presenter{
 
 
     public void unsubscribe() {
-        mSubscriptions.unsubscribe();
+        mSubscriptions.clear();
     }
 
     @Override
     public void showUserInfo() {
-        Subscription subscription=mModel.getUser(BmobUser.getCurrentUser().getObjectId()).subscribe(new Subscriber<User>() {
+        mSubscriptions.add(mModel.getUser(BmobUser.getCurrentUser().getObjectId())
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<User>() {
             @Override
             public void onCompleted() {
             }
@@ -61,8 +63,24 @@ public   class UserPresenter  implements UserContract.Presenter{
                     mView.setPopulation("0人评价");
                 }
             }
-        });
-        mSubscriptions.add(subscription);
+        }));
+       mSubscriptions.add(mModel.getEvaluateCount(BmobUser.getCurrentUser().getObjectId()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+       .subscribe(new Subscriber<Integer>() {
+           @Override
+           public void onCompleted() {
+
+           }
+
+           @Override
+           public void onError(Throwable throwable) {
+
+           }
+
+           @Override
+           public void onNext(Integer integer) {
+                mView.setEvaluateCount(integer);
+           }
+       }));
     }
 
     @Override

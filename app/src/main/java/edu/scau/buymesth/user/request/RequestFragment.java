@@ -151,7 +151,7 @@ public class RequestFragment extends Fragment {
                         }else if(requests.size()>0&&mHintTv.getVisibility()==View.VISIBLE)
                             mHintTv.setVisibility(View.GONE);
                         mRequestListAdapter.setNewData(requests);
-                        if(requests.size()>0&&requests.size()<NUMBER_PER_PAGE){
+                        if(requests!=null&&requests.size()>0&&requests.size()<NUMBER_PER_PAGE){
                             if (notLoadingView == null) {
                                 notLoadingView = getActivity().getWindow().getLayoutInflater().inflate(R.layout.not_loading, (ViewGroup) mRecyclerView.getParent(), false);
                             }

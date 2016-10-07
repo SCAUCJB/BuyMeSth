@@ -104,7 +104,7 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
         if (item.getRequest() != null)
             helper.getView(R.id.request_view).setOnClickListener(defaultOnClickListener);
         ((NineGridLayout) helper.getView(R.id.nine_grid_layout)).setOnItemClickListener((view, position, urls, itemType) ->
-                PhotoActivity.navigate(mActivity, (NineGridLayout) helper.getView(R.id.nine_grid_layout), item.getImages(), position));
+                PhotoActivity.navigate((Activity) mContext, (NineGridLayout) helper.getView(R.id.nine_grid_layout), item.getImages(), position));
     }
 
     private void setLike(BaseViewHolder helper, boolean like, Moment item) {

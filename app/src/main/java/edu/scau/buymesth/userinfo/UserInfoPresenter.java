@@ -1,6 +1,10 @@
 package edu.scau.buymesth.userinfo;
 
 import edu.scau.buymesth.data.bean.User;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by John on 2016/9/24.
@@ -10,6 +14,7 @@ public class UserInfoPresenter implements Contract.Presenter {
 
     private final Contract.View mView;
     private final UserInfoModel mModel;
+    private Subscription mSubscription;
 
     UserInfoPresenter(Contract.View view, UserInfoModel model) {
         mView = view;
@@ -23,7 +28,7 @@ public class UserInfoPresenter implements Contract.Presenter {
 
 
     public void unsubscribe() {
-
+        mSubscription.unsubscribe();
     }
 
     @Override
@@ -49,6 +54,23 @@ public class UserInfoPresenter implements Contract.Presenter {
             mView.setRatingBar(5.0f);
             mView.setPopulation("0人评价");
         }
+        mSubscription = mModel.getEvaluateCount(user.getObjectId()).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Integer>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+                        mView.setEvaluateCount(integer);
+                    }
+                });
     }
 
     @Override

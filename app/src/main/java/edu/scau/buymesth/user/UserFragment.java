@@ -13,7 +13,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +39,7 @@ import edu.scau.buymesth.user.mark.MarkActivity;
 import edu.scau.buymesth.user.order.OrderFragment;
 import edu.scau.buymesth.user.request.RequestFragment;
 import edu.scau.buymesth.user.setting.UserSettingActivity;
+import edu.scau.buymesth.userinfo.evaluate.EvaluateListActivity;
 import edu.scau.buymesth.util.ColorChangeHelper;
 import util.DensityUtil;
 
@@ -83,6 +83,7 @@ public class UserFragment extends Fragment implements UserContract.View {
         mTabLayout = (TabLayout) view.findViewById(R.id.tab_layout);
         mCoordinatorLayout = (CoordinatorLayout) view.findViewById(R.id.cl);
         userInfoLl = (LinearLayout) view.findViewById(R.id.ll_user_info);
+
         mSettingBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), UserSettingActivity.class);
             getActivity().startActivityForResult(intent,303);
@@ -90,6 +91,10 @@ public class UserFragment extends Fragment implements UserContract.View {
         view.findViewById(R.id.address_manage).setOnClickListener(v->{AddressActivity.navigate(getActivity());});
         view.findViewById(R.id.mark_list).setOnClickListener(v->{
             MarkActivity.navigate(getContext());});
+        //查看我的评价
+        view.findViewById(R.id.my_evaluate).setOnClickListener(v-> EvaluateListActivity.navigate(getContext(),BmobUser.getCurrentUser().getObjectId(),true));
+        mPopulationTv.setOnClickListener(v->EvaluateListActivity.navigate(getContext(),BmobUser.getCurrentUser().getObjectId(),false));
+
         UserModel model = new UserModel(getContext());
         mPresenter = new UserPresenter(this, model);
         initTab();
@@ -100,7 +105,6 @@ public class UserFragment extends Fragment implements UserContract.View {
     public void onResume() {
         super.onResume();
         mPresenter.subscribe();
-        Log.d("zhx","on user fragment resume");
     }
 
     @Override
@@ -197,6 +201,11 @@ public class UserFragment extends Fragment implements UserContract.View {
                         behavior.setPeekHeight(wm.getDefaultDisplay().getHeight() - userInfoLl.getHeight() - DensityUtil.dip2px(getContext(), 56f) - ((BaseActivity) getActivity()).getStatusBarHeight());
                     }
                 });
+    }
+
+    @Override
+    public void setEvaluateCount(Integer integer) {
+        mPopulationTv.setText(integer+"人评价");
     }
 
 

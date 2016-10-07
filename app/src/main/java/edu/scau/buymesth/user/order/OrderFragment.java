@@ -173,7 +173,7 @@ public class OrderFragment extends Fragment{
                             mHintTv.setVisibility(View.VISIBLE);
                         }else if(orders.size()>0&&mHintTv.getVisibility()==View.VISIBLE)
                             mHintTv.setVisibility(View.GONE);
-                        if(orders.size()>0&&orders.size()<NUMBER_PER_PAGE){
+                        if(orders !=null&&orders.size()>0&&orders.size()<NUMBER_PER_PAGE){
                             if (notLoadingView == null) {
                                 notLoadingView = getActivity().getWindow().getLayoutInflater().inflate(R.layout.not_loading, (ViewGroup) mRecyclerView.getParent(), false);
                             }

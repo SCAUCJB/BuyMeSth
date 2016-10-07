@@ -15,6 +15,8 @@ public interface UserContract {
         void setPopulation(String population);
         void setRatingBar(Float score);
         void initTab();
+
+        void setEvaluateCount(Integer integer);
     }
 
     interface Presenter {

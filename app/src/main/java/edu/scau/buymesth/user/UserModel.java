@@ -8,7 +8,9 @@ import java.util.concurrent.TimeUnit;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import edu.scau.Constant;
+import edu.scau.buymesth.data.bean.Evaluate;
 import edu.scau.buymesth.data.bean.User;
+import edu.scau.buymesth.util.NetworkHelper;
 import rx.Observable;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -33,18 +35,28 @@ public class UserModel {
             return Observable.just(BmobUser.getCurrentUser(User.class));
         } else {
             query.addWhereEqualTo("objectId", id);
-            if (query.hasCachedResult(User.class))
+            if(query.hasCachedResult(User.class)|| !NetworkHelper.isOpenNetwork(mContext)){
                 query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ONLY);
-            else query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ONLY);
+            }else {
+                query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ONLY);
+            }
             return query.findObjectsObservable(User.class).map(users -> {
                 if (users == null || users.size() <= 0) return null;
                 return users.get(0);
             });
         }
 
-
     }
-
+public Observable<Integer> getEvaluateCount(String id){
+    BmobQuery<Evaluate> query=new BmobQuery<>();
+    query.addWhereEqualTo("seller",id);
+    if(query.hasCachedResult(Evaluate.class)|| !NetworkHelper.isOpenNetwork(mContext)){
+        query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ONLY);
+    }else {
+        query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ONLY);
+    }
+    return query.countObservable(Evaluate.class);
+}
     public User getUser() {
         return user;
     }

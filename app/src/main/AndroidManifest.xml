@@ -138,6 +138,10 @@
             android:name=".user.setting.UserSettingActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
+        <activity
+            android:name=".userinfo.evaluate.EvaluateListActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.SwipeBackLayout" />
 
 
         <activity
@@ -193,7 +197,7 @@
             android:name=".cash.DepositActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
-
+        
         <!--/////process用来定义线程的名字-->
         <service android:name=".notice.RequestService">
             <intent-filter>

@@ -30,8 +30,11 @@ import edu.scau.buymesth.adapter.ViewPagerAdapter;
 import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.user.order.OrderFragment;
 import edu.scau.buymesth.user.request.RequestFragment;
+import edu.scau.buymesth.userinfo.evaluate.EvaluateListActivity;
 import edu.scau.buymesth.util.ColorChangeHelper;
 import edu.scau.buymesth.util.NetworkHelper;
+
+import static cn.bmob.newim.core.BmobIMClient.getContext;
 
 /**
  * Created by John on 2016/9/24.
@@ -97,13 +100,15 @@ public class UserInfoActivity extends BaseActivity implements Contract.View{
                         behavior.setPeekHeight(wm.getDefaultDisplay().getHeight()-mUserInfoRl.getHeight()-getSupportActionBar().getHeight()-getStatusBarHeight());
                     }
                 });
+
     }
 
     @Override
     protected void initPresenter() {
-        UserInfoModel model=new UserInfoModel();
+        UserInfoModel model=new UserInfoModel(this);
         model.setUser((User) getIntent().getSerializableExtra("user"));
         mPresenter=new UserInfoPresenter(this,model);
+        mPopulationTv.setOnClickListener(v-> EvaluateListActivity.navigate(getContext(), model.getUser().getObjectId(),false));
     }
 
     @Override
@@ -201,5 +206,9 @@ public class UserInfoActivity extends BaseActivity implements Contract.View{
          behavior=BottomSheetBehavior.from(bottomSheet);
         requestFragment.disallowIntercept(bottomSheet);
         orderFragment.disallowIntercept(bottomSheet);
+    }
+    @Override
+    public void setEvaluateCount(Integer integer) {
+        mPopulationTv.setText(integer+"人评价");
     }
 }

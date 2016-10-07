@@ -19,6 +19,8 @@ public interface Contract  {
         void setRatingBar(Float score);
 
         void initTab();
+
+        void setEvaluateCount(Integer integer);
     }
     interface Presenter{
         void subscribe();
