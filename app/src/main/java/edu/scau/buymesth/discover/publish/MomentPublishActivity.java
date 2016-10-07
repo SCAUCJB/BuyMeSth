@@ -236,38 +236,45 @@ public class MomentPublishActivity extends BaseActivity {
             });
         }
     }
-
     private void compress() {
         if(threadPoolExecutor==null)
         {
-            threadPoolExecutor = newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+            Runtime.getRuntime().gc();
+            short mem= (short) (Runtime.getRuntime().freeMemory()>>20);
+            threadPoolExecutor = newFixedThreadPool(mem>6?mem/5:1);
+
         }
         swCompress.setEnabled(false);
         tvSize.setText("压缩中");
+        showLoadingDialog(1);
+        mDialog.setMax(mUrlList.size());
         new Thread(() -> {
             mCompressing = true;
             CompressHelper compressHelper = new CompressHelper(mContext);
             CountDownLatch countDownLatch = new CountDownLatch(mUrlList.size());
             for (int i = 0; i < mUrlList.size(); i++) {
                 final int finalI = i;
-                threadPoolExecutor.execute(()->{
-                    compressHelper.setFilename("cc_"+finalI);
-//                    mUrlList.set(finalI,compressHelper.thirdCompress(new File(mUrlList.get(finalI))));
+                threadPoolExecutor.execute(() -> {
+                    compressHelper.setFilename("cc_" + finalI);
                     mUrlList.get(finalI).compressedImage = compressHelper.thirdCompress(new File(mUrlList.get(finalI).sourceImage));
                     countDownLatch.countDown();
+                    runOnUiThread(() -> mDialog.setProgress((int)(mUrlList.size()-countDownLatch.getCount())));
                 });
             }
+
             try {
                 countDownLatch.await();
                 runOnUiThread(() -> {
+                    closeLoadingDialog();
                     toast("压缩完成");
                     mImageSize = 0;
                     Observable.from(mUrlList)
-                            .map(imageItem -> new File(mCompress?imageItem.compressedImage:imageItem.sourceImage))
+                            .map(imageItem -> new File(mCompress ? imageItem.compressedImage : imageItem.sourceImage))
                             .subscribe(file -> mImageSize += file.length(),
-                                    o -> {},
-                                    () -> tvSize.setText("图片大小："+ FileUtils.convert(mImageSize)));
-                    adapter.setList(mUrlList,mCompress?1:0);
+                                    o -> {
+                                    },
+                                    () -> tvSize.setText("图片大小：" + FileUtils.convert(mImageSize)));
+                    adapter.setList(mUrlList, mCompress ? 1 : 0);
                     swCompress.setEnabled(true);
                 });
                 mCompressing = false;
@@ -296,6 +303,7 @@ public class MomentPublishActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(threadPoolExecutor!=null)
         threadPoolExecutor.shutdownNow();
     }
 }
