@@ -227,10 +227,15 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     private void compress() {
         if(threadPoolExecutor==null)
         {
-            threadPoolExecutor = newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+            Runtime.getRuntime().gc();
+            short mem= (short) (Runtime.getRuntime().freeMemory()>>20);
+            threadPoolExecutor = newFixedThreadPool(mem>6?mem/5:1);
+
         }
         swCompress.setEnabled(false);
         tvSize.setText("压缩中");
+        showLoadingDialog();
+        mDialog.setMax(mUrlList.size());
         new Thread(() -> {
             mCompressing = true;
             CompressHelper compressHelper = new CompressHelper(mContext);
@@ -243,11 +248,14 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                     compressHelper.setFilename("cc_" + finalI);
                     mUrlList.get(finalI).compressedImage = compressHelper.thirdCompress(new File(mUrlList.get(finalI).sourceImage));
                     countDownLatch.countDown();
+                    runOnUiThread(() -> mDialog.setProgress((int)(mUrlList.size()-countDownLatch.getCount())));
                 });
             }
+
             try {
                 countDownLatch.await();
                 runOnUiThread(() -> {
+                    closeLoadingDialog();
                     toast("压缩完成");
                     mImageSize = 0;
                     Observable.from(mUrlList)
@@ -429,9 +437,9 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
             mDialog.setCancelable(false);
             mDialog.setMessage("请稍等");
             mDialog.setProgressStyle(1);
-            mDialog.setMax(100);
             mDialog.setProgress(0);
         }
+        mDialog.setMax(100);
         mDialog.show();
     }
 
@@ -460,6 +468,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
         super.onDestroy();
         presenter.onDestroy();
         presenter = null;
+        if(threadPoolExecutor!=null)
         threadPoolExecutor.shutdownNow();
     }
 

@@ -30,18 +30,21 @@ public abstract class BaseActivity extends AppCompatActivity {
     private ImageView ivShadow;
     private ImageView colorStatus;
     private static final int DEFAULT_TOOLBAR_ID = -1;
-    private ProgressDialog mDialog = null;
+    public ProgressDialog mDialog = null;
 
     public void showLoadingDialog() {
-        if (mDialog == null) {
-            mDialog = new ProgressDialog(mContext);
-            mDialog.setCancelable(false);
-            mDialog.setMessage("请稍等");
-
-        }
-        mDialog.show();
+        showLoadingDialog(0);
     }
-
+public void showLoadingDialog(int style){
+    if (mDialog == null) {
+        mDialog = new ProgressDialog(mContext);
+        mDialog.setCancelable(false);
+        mDialog.setMessage("请稍等");
+    }
+    mDialog.setProgressStyle(style);
+    mDialog.setMax(100);
+    mDialog.show();
+}
 
     public void closeLoadingDialog() {
         if (mDialog != null) {
