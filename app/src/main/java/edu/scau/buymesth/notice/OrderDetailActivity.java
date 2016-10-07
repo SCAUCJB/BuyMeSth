@@ -3,6 +3,7 @@ package edu.scau.buymesth.notice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -26,7 +27,6 @@ import java.util.List;
 import base.BaseActivity;
 import base.util.SpaceItemDecoration;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
@@ -35,11 +35,16 @@ import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
+import edu.scau.buymesth.adapter.MyPictureAdapter;
+import edu.scau.buymesth.adapter.PicAdapter;
+import edu.scau.buymesth.cash.PayActivity;
 import edu.scau.buymesth.data.bean.Address;
+import edu.scau.buymesth.data.bean.CashBook;
 import edu.scau.buymesth.data.bean.Evaluate;
 import edu.scau.buymesth.data.bean.Notificate;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.OrderMoment;
+import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.notice.detail.OrderMomentAdapter;
 import edu.scau.buymesth.notice.detail.PicPublishActivity;
 import edu.scau.buymesth.request.requestdetail.RequestDetailActivity;
@@ -116,6 +121,10 @@ public class OrderDetailActivity extends BaseActivity {
     LinearLayout llEvaluate;
     @Bind(R.id.seller_evaluate)
     TextView sellerEvaluate;
+    @Bind(R.id.rv_evaluate)
+    RecyclerView rvEvaluate;
+
+    PicAdapter picAdapter;
 
     @Override
     protected int getLayoutId() {
@@ -131,6 +140,15 @@ public class OrderDetailActivity extends BaseActivity {
         imageList.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
         imageList.setNestedScrollingEnabled(false);
         imageList.setAdapter(orderMomentAdapter);
+
+
+        picAdapter = new PicAdapter(new ArrayList<>());
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(OrderDetailActivity.this,3);
+        rvEvaluate.setLayoutManager(gridLayoutManager);
+        rvEvaluate.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
+        rvEvaluate.setNestedScrollingEnabled(false);
+        rvEvaluate.setAdapter(picAdapter);
+
 
         mOrder = (Order) getIntent().getSerializableExtra("order");
         BmobQuery<Order> query = new BmobQuery<>();
@@ -172,70 +190,11 @@ public class OrderDetailActivity extends BaseActivity {
                                     Toast.makeText(OrderDetailActivity.this, "请选择收货地址", Toast.LENGTH_LONG).show();
                                     return;
                                 }
-                                order.setStatus(Order.STATUS_ACCEPTED);
-                                order.update(new UpdateListener() {
-                                    @Override
-                                    public void done(BmobException e) {
-                                        if (e == null) {
-                                            tvMsg.setText("你已接收订单，等待卖家发货");
-                                            rlCreateBtn.setVisibility(View.GONE);
-                                            llAddress.setVisibility(View.GONE);
-                                            rlMoment.setVisibility(View.VISIBLE);
-                                            tvAddressMsg.setText("买家地址是：收货人：" + order.getAddress().getRecipient() + "\n手机号码：" + order.getAddress().getPhone() + "\n地址：" + order.getAddress().getRegion() + order.getAddress().getSpecific());
-                                            Notificate notificate = new Notificate();
-                                            notificate.setUser(order.getSeller());
-                                            notificate.setOrder(order);
-                                            notificate.setStatus(order.getStatus());
-                                            notificate.save(new SaveListener<String>() {
-                                                @Override
-                                                public void done(String s, BmobException e) {
-
-                                                }
-                                            });
-
-
-                                        } else {
-                                            Toast.makeText(OrderDetailActivity.this, "请重试", Toast.LENGTH_LONG).show();
-                                        }
-                                    }
-                                });
+                                PayActivity.navigateForResult(OrderDetailActivity.this, order);
                             });
 
                             btnReject.setOnClickListener(v -> {
-                                order.setStatus(Order.STATUS_REJECTED);
-                                order.update(new UpdateListener() {
-                                    @Override
-                                    public void done(BmobException e) {
-                                        if (e == null) {
-
-                                            Notificate notificate = new Notificate();
-                                            notificate.setUser(order.getSeller());
-                                            notificate.setOrder(order);
-                                            notificate.setStatus(order.getStatus());
-                                            notificate.save(new SaveListener<String>() {
-                                                @Override
-                                                public void done(String s, BmobException e) {
-
-                                                }
-                                            });
-
-                                            rlCreateBtn.setVisibility(View.GONE);
-                                            llAddress.setVisibility(View.GONE);
-                                            tvWant.setVisibility(View.VISIBLE);
-                                            tvSellerPrice.setVisibility(View.VISIBLE);
-                                            tvSellerTip.setVisibility(View.VISIBLE);
-                                            tvMsg.setText("你已拒绝别人的订单");
-                                            if (order.getRequest().getMinPrice() == null)
-                                                tvWant.setText("你期望价格：" + order.getRequest().getMaxPrice() + "￥");
-                                            else
-                                                tvWant.setText("你期望价格：" + order.getRequest().getMinPrice() + "~" + order.getRequest().getMaxPrice());
-                                            tvSellerPrice.setText("卖家的出价:" + order.getPrice() + order.getPriceType());
-                                            tvSellerTip.setText("卖家索要的小费" + order.getTip() + order.getTipType());
-                                        } else {
-                                            Toast.makeText(OrderDetailActivity.this, "请重试", Toast.LENGTH_LONG).show();
-                                        }
-                                    }
-                                });
+                                RejectActivity.navigateForResult(OrderDetailActivity.this, order);
                             });
 
                             break;
@@ -254,7 +213,7 @@ public class OrderDetailActivity extends BaseActivity {
                             tvSellerPrice.setText("你的出价:" + order.getPrice() + order.getPriceType());
                             tvSellerTip.setText("你索要的小费" + order.getTip() + order.getTipType());
                             btnCancle.setOnClickListener(v -> {
-                              RejectActivity.navigateForResult(OrderDetailActivity.this,order);
+                                RejectActivity.navigateForResult(OrderDetailActivity.this, order);
                             });
 
                             break;
@@ -361,7 +320,7 @@ public class OrderDetailActivity extends BaseActivity {
                             });
 
                             btnGoback.setOnClickListener(v -> {
-                                RejectActivity.navigateForResult(OrderDetailActivity.this,order);
+                                RejectActivity.navigateForResult(OrderDetailActivity.this, order);
                             });
 
                             BmobQuery<OrderMoment> query_seller_accept = new BmobQuery<>();
@@ -445,15 +404,31 @@ public class OrderDetailActivity extends BaseActivity {
                                     @Override
                                     public void done(BmobException e) {
                                         if (e == null) {
-                                            tvMsg.setText("交易已完成，请对卖家做出评价");
-                                            Notificate notificate = new Notificate();
-                                            notificate.setUser(order.getSeller());
-                                            notificate.setOrder(order);
-                                            notificate.setStatus(order.getStatus());
-                                            notificate.save(new SaveListener<String>() {
+                                            BmobQuery<CashBook> query1 = new BmobQuery<CashBook>();
+                                            query1.include("user");
+                                            query1.getObject(order.getObjectId(), new QueryListener<CashBook>() {
                                                 @Override
-                                                public void done(String s, BmobException e) {
+                                                public void done(CashBook cashBook, BmobException e) {
+                                                    User user = cashBook.getToUser();
+                                                    user.setBalance(user.getBalance() + cashBook.getCash());
+                                                    user.update(new UpdateListener() {
+                                                        @Override
+                                                        public void done(BmobException e) {
+                                                            if (e == null) {
+                                                                tvMsg.setText("交易已完成，请对卖家做出评价");
+                                                                Notificate notificate = new Notificate();
+                                                                notificate.setUser(order.getSeller());
+                                                                notificate.setOrder(order);
+                                                                notificate.setStatus(order.getStatus());
+                                                                notificate.save(new SaveListener<String>() {
+                                                                    @Override
+                                                                    public void done(String s, BmobException e) {
 
+                                                                    }
+                                                                });
+                                                            }
+                                                        }
+                                                    });
                                                 }
                                             });
                                             rlGet.setVisibility(View.GONE);
@@ -547,6 +522,7 @@ public class OrderDetailActivity extends BaseActivity {
                                 llEvaluate.setVisibility(View.VISIBLE);
                                 ratingBar.setRating(order.getEvaluate().getScore());
                                 buyerEvaluate.setText(order.getEvaluate().getContent());
+                                picAdapter.setNewData(order.getEvaluate().getUrlList());
                             }
                             if (order.getEvaluate().getReply() != null) {
                                 sellerEvaluate.setText(order.getEvaluate().getReply());
@@ -565,6 +541,7 @@ public class OrderDetailActivity extends BaseActivity {
                                 llEvaluate.setVisibility(View.VISIBLE);
                                 ratingBar.setRating(order.getEvaluate().getScore());
                                 buyerEvaluate.setText(order.getEvaluate().getContent());
+                                picAdapter.setNewData(order.getEvaluate().getUrlList());
                             }
                             if (order.getEvaluate().getReply() != null) {
                                 sellerEvaluate.setVisibility(View.VISIBLE);
@@ -605,7 +582,7 @@ public class OrderDetailActivity extends BaseActivity {
 
                             break;
                         case Constant.BUYER_STATUS_SELLER_REJECT:
-                            tvMsg.setText("卖家已取消订单,拒绝理由是："+order.getRejectReason());
+                            tvMsg.setText("卖家已取消订单,拒绝理由是：" + order.getRejectReason());
                             tvWant.setVisibility(View.VISIBLE);
                             tvSellerPrice.setVisibility(View.VISIBLE);
                             tvSellerTip.setVisibility(View.VISIBLE);
@@ -620,7 +597,7 @@ public class OrderDetailActivity extends BaseActivity {
                             break;
 
                         case Constant.SELLER_STATUS_SELLER_REJECT:
-                            tvMsg.setText("你已取消了订单，并扣去相应的经验值,拒绝理由是："+order.getRejectReason());
+                            tvMsg.setText("你已取消了订单，并扣去相应的经验值,拒绝理由是：" + order.getRejectReason());
                             tvWant.setVisibility(View.VISIBLE);
                             tvSellerPrice.setVisibility(View.VISIBLE);
                             tvSellerTip.setVisibility(View.VISIBLE);
@@ -680,6 +657,7 @@ public class OrderDetailActivity extends BaseActivity {
         }
         if (resultCode == EvaluateActivity.EVALUATE_SUCCESS) {
             Evaluate evaluate = (Evaluate) data.getSerializableExtra("evaluate");
+            picAdapter.setNewData(evaluate.getUrlList());
             btnComment.setVisibility(View.GONE);
             llEvaluate.setVisibility(View.VISIBLE);
             ratingBar.setRating(evaluate.getScore());
@@ -691,9 +669,9 @@ public class OrderDetailActivity extends BaseActivity {
             sellerEvaluate.setVisibility(View.VISIBLE);
             sellerEvaluate.setText("卖家追评：" + evaluate.getReply());
         }
-        if(resultCode == RejectActivity.REJECT_SUCCESS){
+        if (resultCode == RejectActivity.REJECT_SUCCESS) {
             Order order = (Order) data.getSerializableExtra("order");
-            tvMsg.setText("你已拒绝了订单，拒绝理由是："+order.getRejectReason());
+            tvMsg.setText("你已拒绝了订单，拒绝理由是：" + order.getRejectReason());
 
             btnGoback.setVisibility(View.GONE);
             btnGo.setVisibility(View.GONE);
@@ -702,6 +680,25 @@ public class OrderDetailActivity extends BaseActivity {
             llExpress.setVisibility(View.GONE);
             rlMoment.setVisibility(View.GONE);
             btnCancle.setVisibility(View.GONE);
+        }
+
+        if (resultCode == PayActivity.PAY_SUCCESS) {
+            Order order = (Order) data.getSerializableExtra("order");
+            tvMsg.setText("你已接收订单，等待卖家发货");
+            rlCreateBtn.setVisibility(View.GONE);
+            llAddress.setVisibility(View.GONE);
+            rlMoment.setVisibility(View.VISIBLE);
+            tvAddressMsg.setText("买家地址是：收货人：" + order.getAddress().getRecipient() + "\n手机号码：" + order.getAddress().getPhone() + "\n地址：" + order.getAddress().getRegion() + order.getAddress().getSpecific());
+            Notificate notificate = new Notificate();
+            notificate.setUser(order.getSeller());
+            notificate.setOrder(order);
+            notificate.setStatus(order.getStatus());
+            notificate.save(new SaveListener<String>() {
+                @Override
+                public void done(String s, BmobException e) {
+
+                }
+            });
         }
     }
 

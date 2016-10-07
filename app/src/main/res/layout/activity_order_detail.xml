@@ -290,6 +290,10 @@
             android:id="@+id/buyer_evaluate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_evaluate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
     <TextView
         android:id="@+id/seller_evaluate"

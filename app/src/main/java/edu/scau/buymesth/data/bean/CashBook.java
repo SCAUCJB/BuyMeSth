@@ -1,12 +1,16 @@
 package edu.scau.buymesth.data.bean;
 
 import cn.bmob.v3.BmobObject;
-import edu.scau.buymesth.publish.FlowLayout;
 
 /**
  * Created by Jammy on 2016/10/7.
  */
-public class CashBook extends BmobObject{
+public class CashBook extends BmobObject {
+
+    public static int BUYER_PAY = 0;
+    public static int SELLER_GET = 1;
+    public static int SELLER_CANCLE = 2;
+
     User user;
     int type;
     User toUser;
