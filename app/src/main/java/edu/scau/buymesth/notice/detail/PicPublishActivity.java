@@ -2,7 +2,6 @@ package edu.scau.buymesth.notice.detail;
 
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,27 +17,26 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 
 import base.BaseActivity;
 import base.util.SpaceItemDecoration;
 import butterknife.Bind;
-import butterknife.ButterKnife;
-import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadBatchListener;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.MyPictureAdapter;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.OrderMoment;
-import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.util.CompressHelper;
 import gallery.PhotoActivity;
 import me.iwf.photopicker.PhotoPicker;
 import rx.Observable;
 import util.FileUtils;
+
+import static java.util.concurrent.Executors.newFixedThreadPool;
 
 public class PicPublishActivity extends BaseActivity {
 
@@ -59,6 +57,7 @@ public class PicPublishActivity extends BaseActivity {
     Switch swCompress;
     @Bind(R.id.tv_size)
     TextView tvSize;
+    private ExecutorService threadPoolExecutor;
 
     @Override
     protected int getLayoutId() {
@@ -216,6 +215,10 @@ public class PicPublishActivity extends BaseActivity {
     }
 
     private void compress() {
+        if(threadPoolExecutor==null)
+        {
+            threadPoolExecutor = newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        }
         swCompress.setEnabled(false);
         tvSize.setText("压缩中");
         new Thread(() -> {
@@ -224,12 +227,12 @@ public class PicPublishActivity extends BaseActivity {
             CountDownLatch countDownLatch = new CountDownLatch(mUrlList.size());
             for (int i = 0; i < mUrlList.size(); i++) {
                 final int finalI = i;
-                new Thread(() -> {
+                threadPoolExecutor.execute(() -> {
                     compressHelper.setFilename("cc_" + finalI);
 //                    mUrlList.set(finalI,compressHelper.thirdCompress(new File(mUrlList.get(finalI))));
                     mUrlList.get(finalI).compressedImage = compressHelper.thirdCompress(new File(mUrlList.get(finalI).sourceImage));
                     countDownLatch.countDown();
-                }).start();
+                });
             }
             try {
                 countDownLatch.await();
@@ -273,4 +276,9 @@ public class PicPublishActivity extends BaseActivity {
         return R.id.toolbar;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        threadPoolExecutor.shutdownNow();
+    }
 }

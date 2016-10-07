@@ -14,6 +14,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 
 import base.BaseActivity;
 import base.util.SpaceItemDecoration;
@@ -35,6 +36,8 @@ import gallery.PhotoActivity;
 import me.iwf.photopicker.PhotoPicker;
 import rx.Observable;
 import util.FileUtils;
+
+import static java.util.concurrent.Executors.newFixedThreadPool;
 
 /**
  * Created by ！ on 2016/8/29.
@@ -61,6 +64,8 @@ public class MomentPublishActivity extends BaseActivity {
     boolean mCompressed = false;
     boolean mCompress = false;
     long mImageSize = 0;
+    private ExecutorService threadPoolExecutor=null;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_moment_publish;
@@ -233,6 +238,10 @@ public class MomentPublishActivity extends BaseActivity {
     }
 
     private void compress() {
+        if(threadPoolExecutor==null)
+        {
+            threadPoolExecutor = newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        }
         swCompress.setEnabled(false);
         tvSize.setText("压缩中");
         new Thread(() -> {
@@ -241,12 +250,12 @@ public class MomentPublishActivity extends BaseActivity {
             CountDownLatch countDownLatch = new CountDownLatch(mUrlList.size());
             for (int i = 0; i < mUrlList.size(); i++) {
                 final int finalI = i;
-                new Thread(()->{
+                threadPoolExecutor.execute(()->{
                     compressHelper.setFilename("cc_"+finalI);
 //                    mUrlList.set(finalI,compressHelper.thirdCompress(new File(mUrlList.get(finalI))));
                     mUrlList.get(finalI).compressedImage = compressHelper.thirdCompress(new File(mUrlList.get(finalI).sourceImage));
                     countDownLatch.countDown();
-                }).start();
+                });
             }
             try {
                 countDownLatch.await();
@@ -282,5 +291,11 @@ public class MomentPublishActivity extends BaseActivity {
     @Override
     public int getStatusColorResources() {
         return R.color.colorPrimaryDark;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        threadPoolExecutor.shutdownNow();
     }
 }

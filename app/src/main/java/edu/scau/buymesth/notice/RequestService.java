@@ -206,7 +206,7 @@ public class RequestService extends Service {
                                         query.findObjects(new FindListener<Notificate>() {
                                             @Override
                                             public void done(List<Notificate> list, BmobException e) {
-                                                if(list.size()>0){
+                                                if(list!=null&&list.size()>0){
                                                     Notificate notificate =new Notificate();
                                                     notificate.setObjectId(list.get(0).getObjectId());
                                                     notificate.delete(new UpdateListener() {

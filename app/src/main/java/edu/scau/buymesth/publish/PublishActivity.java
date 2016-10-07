@@ -225,6 +225,10 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void compress() {
+        if(threadPoolExecutor==null)
+        {
+            threadPoolExecutor = newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        }
         swCompress.setEnabled(false);
         tvSize.setText("压缩中");
         new Thread(() -> {
@@ -266,7 +270,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
 
     List<String> picWidths = new LinkedList<>();
     List<String> picHeights = new LinkedList<>();
-    ExecutorService threadPoolExecutor = newFixedThreadPool(3);
+    ExecutorService threadPoolExecutor =null;
 
 
     private void initPriceSelect() {
