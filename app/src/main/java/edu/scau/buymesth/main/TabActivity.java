@@ -215,7 +215,6 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         viewPager.setOnPageChangeListener(this);
         queryUser();
         startService(new Intent(this, RequestService.class));
-        new PreferencesManager(mContext).resetAll();
         getNotification();
         showIntro(fab.getMenuIconView(), "fab", "在这里发送和搜索购物请求");
     }

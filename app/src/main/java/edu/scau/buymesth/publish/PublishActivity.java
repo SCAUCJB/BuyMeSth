@@ -9,6 +9,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -227,7 +228,11 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     private void compress() {
         if(threadPoolExecutor==null)
         {
-            threadPoolExecutor = newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+            short mem= (short) (Runtime.getRuntime().freeMemory()>>20);
+            if(mem<6)
+                threadPoolExecutor = newFixedThreadPool(1);
+            else
+            threadPoolExecutor = newFixedThreadPool(mem/4);
         }
         swCompress.setEnabled(false);
         tvSize.setText("压缩中");
@@ -237,13 +242,15 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
             compressHelper.setHeightList(picHeights);
             compressHelper.setWidthList(picWidths);
             CountDownLatch countDownLatch = new CountDownLatch(mUrlList.size());
-            for (int i = 0; i < mUrlList.size(); i++) {
+            for (int i = 0; i < mUrlList.size();  i++ ) {
                 final int finalI = i;
+
                 threadPoolExecutor.execute(() -> {
                     compressHelper.setFilename("cc_" + finalI);
                     mUrlList.get(finalI).compressedImage = compressHelper.thirdCompress(new File(mUrlList.get(finalI).sourceImage));
                     countDownLatch.countDown();
                 });
+
             }
             try {
                 countDownLatch.await();

@@ -1,6 +1,7 @@
 package edu.scau.buymesth.data.bean;
 
 import cn.bmob.v3.BmobUser;
+import edu.scau.buymesth.publish.FlowLayout;
 
 /**
  * Created by IamRabbit on 2016/8/3.
@@ -16,6 +17,18 @@ public class User extends BmobUser {
     private String residence;
     private Float score;
     private Integer ratePopulation;
+    private Float balance;
+
+    public Float getBalance() {
+        if(balance==null)
+            return 0.0f;
+        return balance;
+    }
+
+    public void setBalance(Float balance) {
+        this.balance = balance;
+    }
+
     public String getNickname() {
         return nickname;
     }
