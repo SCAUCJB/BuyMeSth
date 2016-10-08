@@ -195,9 +195,8 @@
                     android:layout_marginLeft="@dimen/content_padding"
                     android:layout_marginRight="@dimen/content_padding"
                     android:orientation="vertical"
-                    android:visibility="visible">
-
-                </android.support.v7.widget.RecyclerView>
+                    android:overScrollMode="never"
+                    android:visibility="visible" />
 
                 <com.github.clans.fab.FloatingActionButton
                     android:id="@+id/btn_camera"
