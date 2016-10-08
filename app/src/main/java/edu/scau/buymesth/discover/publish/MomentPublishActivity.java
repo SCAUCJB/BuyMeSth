@@ -196,9 +196,11 @@ public class MomentPublishActivity extends BaseActivity {
                 moment.setContent(momentContent.getText().toString());
                 if(mRequest!=null)moment.setRequest(mRequest);
                 if(mLocation!=null)moment.setLocation(mLocation);
+                showLoadingDialog();
                 moment.save(new SaveListener<String>() {
                     @Override
                     public void done(String s, BmobException e) {
+                        closeLoadingDialog();
                         if(e==null){
                             //succeed
                             finish();

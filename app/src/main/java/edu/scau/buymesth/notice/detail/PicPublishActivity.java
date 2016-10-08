@@ -165,9 +165,11 @@ public class PicPublishActivity extends BaseActivity {
                 OrderMoment orderMonent = new OrderMoment();
                 orderMonent.setText(et.getText().toString());
                 orderMonent.setOrder((Order) getIntent().getSerializableExtra("order"));
+                showLoadingDialog();
                 orderMonent.save(new SaveListener<String>() {
                     @Override
                     public void done(String s, BmobException e) {
+                        closeLoadingDialog();
                         if (e == null) {
                             closeLoadingDialog();
                             Toast.makeText(PicPublishActivity.this, "上传成功", Toast.LENGTH_LONG).show();
