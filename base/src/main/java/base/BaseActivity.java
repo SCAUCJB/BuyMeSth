@@ -35,16 +35,18 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void showLoadingDialog() {
         showLoadingDialog(0);
     }
-public void showLoadingDialog(int style){
-    if (mDialog == null) {
-        mDialog = new ProgressDialog(mContext);
-        mDialog.setCancelable(false);
-        mDialog.setMessage("请稍等");
+
+    public void showLoadingDialog(int style) {
+        if (mDialog == null) {
+            mDialog = new ProgressDialog(mContext);
+            mDialog.setCancelable(false);
+            mDialog.setMessage("请稍等");
+        }
+        mDialog.setProgressStyle(style);
+        mDialog.setMax(100);
+        mDialog.setProgress(0);
+        mDialog.show();
     }
-    mDialog.setProgressStyle(style);
-    mDialog.setMax(100);
-    mDialog.show();
-}
 
     public void closeLoadingDialog() {
         if (mDialog != null) {

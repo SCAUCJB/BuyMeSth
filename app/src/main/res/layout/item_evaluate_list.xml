@@ -60,6 +60,7 @@
 
 
     <TextView
+        android:layout_marginLeft="44dp"
         android:layout_below="@+id/rl"
         android:paddingBottom="@dimen/dp_6"
         android:padding="@dimen/content_padding"
@@ -67,8 +68,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="这是评价的内容" />
+
+    <ui.layout.NineGridLayout
+        android:visibility="gone"
+        android:layout_alignStart="@id/tv_content"
+        android:layout_below="@id/tv_content"
+        android:id="@+id/nine_grid_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/content_padding"
+       />
     <TextView
-        android:layout_below="@+id/tv_content"
+        android:layout_alignStart="@id/tv_content"
+        android:layout_below="@+id/nine_grid_layout"
         android:padding="@dimen/content_padding"
         android:paddingBottom="@dimen/dp_6"
         android:text="[买手回复]:"
@@ -77,15 +89,9 @@
         android:id="@+id/tv_reply"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-    <ui.layout.NineGridLayout
-        android:layout_below="@id/tv_reply"
-        android:id="@+id/nine_grid_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/content_padding"
-       />
     <TextView
-        android:layout_below="@id/nine_grid_layout"
+        android:layout_alignStart="@id/tv_content"
+        android:layout_below="@id/tv_reply"
         android:id="@+id/tv_date"
         android:paddingStart="@dimen/content_padding"
         android:paddingEnd="@dimen/content_padding"

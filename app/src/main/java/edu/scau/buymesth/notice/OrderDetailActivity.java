@@ -53,16 +53,18 @@ import edu.scau.buymesth.user.address.AddressActivity;
  * Created by Jammy on 2016/10/4.
  */
 public class OrderDetailActivity extends BaseActivity {
-    public static void navigate(Activity activity, Order order){
-        Intent intent = new Intent(activity,OrderDetailActivity.class);
-        intent.putExtra("order",order);
+    public static void navigate(Activity activity, Order order) {
+        Intent intent = new Intent(activity, OrderDetailActivity.class);
+        intent.putExtra("order", order);
         activity.startActivity(intent);
     }
-    public static void navigate(Activity activity,String id){
-        Intent intent = new Intent(activity,OrderDetailActivity.class);
-        intent.putExtra("id",id);
+
+    public static void navigate(Activity activity, String id) {
+        Intent intent = new Intent(activity, OrderDetailActivity.class);
+        intent.putExtra("id", id);
         activity.startActivity(intent);
     }
+
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     @Bind(R.id.tv_msg)
@@ -152,7 +154,7 @@ public class OrderDetailActivity extends BaseActivity {
 
 
         picAdapter = new PicAdapter(new ArrayList<>());
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(OrderDetailActivity.this,3);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(OrderDetailActivity.this, 3);
         rvEvaluate.setLayoutManager(gridLayoutManager);
         rvEvaluate.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
         rvEvaluate.setNestedScrollingEnabled(false);
@@ -161,10 +163,10 @@ public class OrderDetailActivity extends BaseActivity {
 
         mOrder = (Order) getIntent().getSerializableExtra("order");
         String id;
-        if(mOrder==null){
-            id=getIntent().getStringExtra("id");
-        }else {
-           id=mOrder.getObjectId();
+        if (mOrder == null) {
+            id = getIntent().getStringExtra("id");
+        } else {
+            id = mOrder.getObjectId();
         }
         BmobQuery<Order> query = new BmobQuery<>();
         query.include("buyer,request,seller,address,evaluate");
@@ -205,9 +207,9 @@ public class OrderDetailActivity extends BaseActivity {
                                     Toast.makeText(OrderDetailActivity.this, "请选择收货地址", Toast.LENGTH_LONG).show();
                                     return;
                                 }
-                                if(order.getRequest().getAccecpted()){
+                                if (order.getRequest().getAccecpted()) {
                                     Toast.makeText(OrderDetailActivity.this, "此订单已被接收", Toast.LENGTH_SHORT).show();
-                                    return ;
+                                    return;
                                 }
                                 PayActivity.navigateForResult(OrderDetailActivity.this, order);
                             });
@@ -425,11 +427,11 @@ public class OrderDetailActivity extends BaseActivity {
                                         if (e == null) {
                                             BmobQuery<CashBook> query1 = new BmobQuery<CashBook>();
                                             query1.include("user");
-                                            query1.addWhereEqualTo("toOrder",order.getObjectId());
+                                            query1.addWhereEqualTo("toOrder", order.getObjectId());
                                             query1.findObjects(new FindListener<CashBook>() {
                                                 @Override
                                                 public void done(List<CashBook> list, BmobException e) {
-                                                    if(e==null){
+                                                    if (e == null) {
                                                         {
                                                             CashBook cashBook = list.get(0);
                                                             User user = cashBook.getToUser();
@@ -547,10 +549,10 @@ public class OrderDetailActivity extends BaseActivity {
                                 btnComment.setVisibility(View.GONE);
                                 llEvaluate.setVisibility(View.VISIBLE);
                                 ratingBar.setRating(order.getEvaluate().getScore());
-                                if(order.getEvaluate().getContent()!=null)
-                                buyerEvaluate.setText(order.getEvaluate().getContent());
-                                if(order.getEvaluate().getUrlList()!=null)
-                                picAdapter.setNewData(order.getEvaluate().getUrlList());
+                                if (order.getEvaluate().getContent() != null)
+                                    buyerEvaluate.setText(order.getEvaluate().getContent());
+                                if (order.getEvaluate().getUrlList() != null)
+                                    picAdapter.setNewData(order.getEvaluate().getUrlList());
                             }
                             if (order.getEvaluate().getReply() != null) {
                                 sellerEvaluate.setText(order.getEvaluate().getReply());
@@ -568,10 +570,10 @@ public class OrderDetailActivity extends BaseActivity {
                             if (order.getEvaluate() != null) {
                                 llEvaluate.setVisibility(View.VISIBLE);
                                 ratingBar.setRating(order.getEvaluate().getScore());
-                                if(order.getEvaluate().getContent()!=null)
-                                buyerEvaluate.setText(order.getEvaluate().getContent());
-                                if(order.getEvaluate().getUrlList()!=null)
-                                picAdapter.setNewData(order.getEvaluate().getUrlList());
+                                if (order.getEvaluate().getContent() != null)
+                                    buyerEvaluate.setText(order.getEvaluate().getContent());
+                                if (order.getEvaluate().getUrlList() != null)
+                                    picAdapter.setNewData(order.getEvaluate().getUrlList());
                             }
                             if (order.getEvaluate().getReply() != null) {
                                 sellerEvaluate.setVisibility(View.VISIBLE);
@@ -657,6 +659,7 @@ public class OrderDetailActivity extends BaseActivity {
             @Override
             public void done(List<OrderMoment> list, BmobException e) {
                 if (e == null) {
+                    if(list!=null&&list.size()>0)
                     orderMomentAdapter.setNewData(list);
                     closeLoadingDialog();
                 } else {
@@ -738,7 +741,6 @@ public class OrderDetailActivity extends BaseActivity {
         super.onNewIntent(intent);
         setIntent(intent);
     }
-
 
 
 }

@@ -2,6 +2,7 @@ package edu.scau.buymesth.adapter;
 
 import android.app.Activity;
 import android.text.TextUtils;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -34,23 +35,25 @@ public class EvaluateListAdapter extends BaseQuickAdapter<Evaluate> {
     @Override
     protected void convert(BaseViewHolder helper, Evaluate item) {
         Glide.with(mContext).load(item.getBuyer().getAvatar()).crossFade().placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into((ImageView) helper.getView(R.id.iv_avatar));
-        helper.setText(R.id.tv_name,item.getBuyer().getNickname())
-                .setText(R.id.tv_content,item.getContent())
-                .setText(R.id.tv_score,item.getScore()+"分")
-                .setText(R.id.tv_date,item.getUpdatedAt());
-        RatingBar ratingBar=helper.getView(R.id.ratingBar);
+        helper.setText(R.id.tv_name, item.getBuyer().getNickname())
+                .setText(R.id.tv_content, item.getContent())
+                .setText(R.id.tv_score, item.getScore() + "分")
+                .setText(R.id.tv_date, item.getUpdatedAt());
+        RatingBar ratingBar = helper.getView(R.id.ratingBar);
         ratingBar.setRating(item.getScore());
-        if(TextUtils.isEmpty(item.getReply())){
-            helper.setVisible(R.id.tv_reply,false);
-        }else{
-            helper.setVisible(R.id.tv_reply,true);
-            helper.setText(R.id.tv_reply,"[买手回复]:"+item.getReply());
+        if (TextUtils.isEmpty(item.getReply())) {
+            helper.setVisible(R.id.tv_reply, false);
+        } else {
+            helper.setVisible(R.id.tv_reply, true);
+            helper.setText(R.id.tv_reply, "[买手回复]:" + item.getReply());
         }
-
-        NineGridLayout nineGridLayout = helper.getView(R.id.nine_grid_layout);
-        nineGridLayout.setUrlList(item.getUrlList());
-        nineGridLayout.setmMaxColumn(9);
-        ((NineGridLayout) helper.getView(R.id.nine_grid_layout)).setOnItemClickListener((view, position, urls, itemType) ->
-                PhotoActivity.navigate((Activity) mContext, (NineGridLayout) helper.getView(R.id.nine_grid_layout), item.getUrlList(), position));
+        if (item.getUrlList() != null || item.getUrlList().size() > 0) {
+            NineGridLayout nineGridLayout = helper.getView(R.id.nine_grid_layout);
+            nineGridLayout.setVisibility(View.VISIBLE);
+            nineGridLayout.setUrlList(item.getUrlList());
+            nineGridLayout.setmMaxColumn(9);
+            ((NineGridLayout) helper.getView(R.id.nine_grid_layout)).setOnItemClickListener((view, position, urls, itemType) ->
+                    PhotoActivity.navigate((Activity) mContext, (NineGridLayout) helper.getView(R.id.nine_grid_layout), item.getUrlList(), position));
+        }
     }
 }

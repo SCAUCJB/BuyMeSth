@@ -30,5 +30,6 @@ public class OrderMomentAdapter extends BaseQuickAdapter<OrderMoment>{
         rv.addItemDecoration(new SpaceItemDecoration(mContext.getResources().getDimensionPixelSize(R.dimen.dp_6)));
         rv.setNestedScrollingEnabled(false);
         rv.setAdapter(adapter);
+
     }
 }
