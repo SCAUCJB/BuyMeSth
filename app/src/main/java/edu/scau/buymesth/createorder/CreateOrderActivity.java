@@ -134,7 +134,7 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
     }
     private void showIntro(View view, String usageId, String text){
         new MaterialIntroView.Builder(this)
-                .enableDotAnimation(false)
+                .enableDotAnimation(true).dismissOnTouch(true)
                 //.enableIcon(false)
                 .setFocusGravity(FocusGravity.CENTER)
                 .setFocusType(Focus.ALL)

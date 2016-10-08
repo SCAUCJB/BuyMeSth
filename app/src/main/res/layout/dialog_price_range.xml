@@ -10,7 +10,7 @@
     android:layout_height="wrap_content">
 <TextView
     style="@style/TextAppearance.AppCompat.Title"
-    android:text="最低价格"
+    android:text="最低价格:"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" />
     <EditText
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content">
         <TextView
             style="@style/TextAppearance.AppCompat.Title"
-            android:text="最低价格"
+            android:text="最高价格:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <EditText

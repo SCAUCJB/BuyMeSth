@@ -36,7 +36,7 @@ public class EvaluateListAdapter extends BaseQuickAdapter<Evaluate> {
         Glide.with(mContext).load(item.getBuyer().getAvatar()).crossFade().placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into((ImageView) helper.getView(R.id.iv_avatar));
         helper.setText(R.id.tv_name,item.getBuyer().getNickname())
                 .setText(R.id.tv_content,item.getContent())
-                .setText(R.id.tv_score,String.valueOf(item.getScore()))
+                .setText(R.id.tv_score,item.getScore()+"分")
                 .setText(R.id.tv_date,item.getUpdatedAt());
         RatingBar ratingBar=helper.getView(R.id.ratingBar);
         ratingBar.setRating(item.getScore());
@@ -44,7 +44,7 @@ public class EvaluateListAdapter extends BaseQuickAdapter<Evaluate> {
             helper.setVisible(R.id.tv_reply,false);
         }else{
             helper.setVisible(R.id.tv_reply,true);
-            helper.setText(R.id.tv_reply,item.getReply());
+            helper.setText(R.id.tv_reply,"[买手回复]:"+item.getReply());
         }
 
         NineGridLayout nineGridLayout = helper.getView(R.id.nine_grid_layout);

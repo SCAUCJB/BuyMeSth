@@ -92,7 +92,7 @@
                 android:layout_centerVertical="true"
                 android:text="省市区：" />
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/iv_location"
                 android:clickable="true"
                 android:layout_width="22dp"

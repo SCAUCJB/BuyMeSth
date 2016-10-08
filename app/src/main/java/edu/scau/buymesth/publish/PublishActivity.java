@@ -342,6 +342,10 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
                     try {
                         request.setMaxPrice(Integer.valueOf(high));
                         request.setMinPrice(Integer.valueOf(low));
+                        if(Integer.valueOf(high)<Integer.valueOf(low)){
+                            toast("最高价要高于最低价哦");
+                            return;
+                        }
                     } catch (NumberFormatException e) {
                         toast("请填整数价格");
                         return;
@@ -483,7 +487,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     }
     private void showIntro(View view, String usageId, String text){
         new MaterialIntroView.Builder(this)
-                .enableDotAnimation(false)
+                .enableDotAnimation(true).dismissOnTouch(true)
                 //.enableIcon(false)
                 .setFocusGravity(FocusGravity.CENTER)
                 .setFocusType(Focus.ALL)

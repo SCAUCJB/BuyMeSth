@@ -20,13 +20,14 @@ import rx.Observable;
  */
 
 public class HomeModel implements HomeContract.Model {
-    public static final int FROM_CACHE=0;
-    public static final int FROM_NETWORK=1;
+    public static final int FROM_CACHE = 0;
+    public static final int FROM_NETWORK = 1;
     private int pageNum;
     private List<Request> requestList;
-    public HomeModel(){
-        requestList=new LinkedList<>();
-        pageNum=0;
+
+    public HomeModel() {
+        requestList = new LinkedList<>();
+        pageNum = 0;
     }
 
     @Override
@@ -35,8 +36,8 @@ public class HomeModel implements HomeContract.Model {
     }
 
     @Override
-    public void setDatas(List<Request>list) {
-        requestList=list;
+    public void setDatas(List<Request> list) {
+        requestList = list;
     }
 
     /**
@@ -44,22 +45,24 @@ public class HomeModel implements HomeContract.Model {
      */
     @Override
     public void resetPage() {
-        pageNum=0;
+        pageNum = 0;
     }
 
     /**
      * 通常在load more的时候用
+     *
      * @return Observable
      */
     @Override
     public Observable<List<Request>> getRxRequests(int policy) {
-        BmobQuery<Request> query=new BmobQuery<>();
+        BmobQuery<Request> query = new BmobQuery<>();
         query.setMaxCacheAge(TimeUnit.DAYS.toMillis(1));//此表示缓存一天，可以用来优化下拉刷新而清空了的加载更多
         query.order("-createdAt");
         query.include("user");
+        query.addWhereEqualTo("isAccepted", false);
         query.setLimit(Constant.NUMBER_PER_PAGE);
         query.setSkip(Constant.NUMBER_PER_PAGE * (pageNum++));
-        if(policy==FROM_CACHE&&query.hasCachedResult(Request.class))
+        if (policy == FROM_CACHE && query.hasCachedResult(Request.class))
             query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ONLY);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
         else
             query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ONLY);//先从缓存再从网络
@@ -68,15 +71,22 @@ public class HomeModel implements HomeContract.Model {
     }
 
     @Override
-    public Observable<List<Request>> getSomeonesRxRequests(int policy,String userId) {
-        BmobQuery<Request> query=new BmobQuery<>();
+    public Observable<List<Request>> getSomeonesRxRequests(int policy, String userId) {
+        BmobQuery<Request> eq1 = new BmobQuery<>();
+        eq1.addWhereEqualTo("user", userId);
+        BmobQuery<Request> eq2 = new BmobQuery<>();
+        eq2.addWhereEqualTo("isAccepted", false);
+        List<BmobQuery<Request>> queries = new ArrayList<>();
+        queries.add(eq1);
+        queries.add(eq2);
+        BmobQuery<Request> query = new BmobQuery<>();
+        query.and(queries);
         query.setMaxCacheAge(TimeUnit.DAYS.toMillis(1));//此表示缓存一天，可以用来优化下拉刷新而清空了的加载更多
         query.order("-createdAt");
         query.include("user");
-        query.addWhereEqualTo("user",userId);
         query.setLimit(Constant.NUMBER_PER_PAGE);
         query.setSkip(Constant.NUMBER_PER_PAGE * (pageNum++));
-        if(policy==FROM_CACHE&&query.hasCachedResult(Request.class))
+        if (policy == FROM_CACHE && query.hasCachedResult(Request.class))
             query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ONLY);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
         else
             query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ONLY);
@@ -85,18 +95,23 @@ public class HomeModel implements HomeContract.Model {
     }
 
     @Override
-    public Observable<List<Request>> getSomeonesRxRequests(int policy,List<String> userIds) {
-        BmobQuery<Request> query=new BmobQuery<>();
+    public Observable<List<Request>> getSomeonesRxRequests(int policy, List<String> userIds) {
+        BmobQuery<Request> eq1 = new BmobQuery<>();
+        eq1.addWhereContainedIn("user", userIds);
+        BmobQuery<Request> eq2 = new BmobQuery<>();
+        eq2.addWhereEqualTo("isAccepted", false);
+        List<BmobQuery<Request>> queries = new ArrayList<>();
+        queries.add(eq1);
+        queries.add(eq2);
+        BmobQuery<Request> query = new BmobQuery<>();
+        query.and(queries);
         query.setMaxCacheAge(TimeUnit.DAYS.toMillis(1));//此表示缓存一天，可以用来优化下拉刷新而清空了的加载更多
         query.order("-createdAt");
         query.include("user");
-//        BmobQuery<User> innerQuery = new BmobQuery<User>();
-//        innerQuery.addWhereContains("nickname","j");
-//        query.addWhereMatchesQuery("user","_User",innerQuery);
-        query.addWhereContainedIn("user",userIds);
+
         query.setLimit(Constant.NUMBER_PER_PAGE);
         query.setSkip(Constant.NUMBER_PER_PAGE * (pageNum++));
-        if(policy==FROM_CACHE&&query.hasCachedResult(Request.class))
+        if (policy == FROM_CACHE && query.hasCachedResult(Request.class))
             query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ONLY);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
         else
             query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ONLY);//先从缓存再从网络
@@ -105,8 +120,8 @@ public class HomeModel implements HomeContract.Model {
     }
 
     @Override
-    public Observable<List<Request>> getFuzzySearchRxRequests(int policy,String key) {
-        BmobQuery<Request> query=new BmobQuery<>();
+    public Observable<List<Request>> getFuzzySearchRxRequests(int policy, String key) {
+        BmobQuery<Request> query = new BmobQuery<>();
         query.setMaxCacheAge(TimeUnit.DAYS.toMillis(1));//此表示缓存一天，可以用来优化下拉刷新而清空了的加载更多
         query.order("-createdAt");
         query.include("user");
@@ -115,25 +130,27 @@ public class HomeModel implements HomeContract.Model {
         BmobQuery<Request> q2 = new BmobQuery<Request>();
         BmobQuery<Request> q3 = new BmobQuery<Request>();
         BmobQuery<Request> q4 = new BmobQuery<Request>();
-
+        BmobQuery<Request> q5 = new BmobQuery<Request>();
         BmobQuery<User> innerQuery = new BmobQuery<User>();
-        innerQuery.addWhereContains("nickname",key);
-        q1.addWhereMatchesQuery("user","_User",innerQuery);
-        q2.addWhereContains("tags",key);
-        q3.addWhereContains("title",key);
-        q4.addWhereContains("content",key);
-
+        innerQuery.addWhereContains("nickname", key);
+        q1.addWhereMatchesQuery("user", "_User", innerQuery);
+        q2.addWhereContains("tags", key);
+        q3.addWhereContains("title", key);
+        q4.addWhereContains("content", key);
+        q5.addWhereEqualTo("isAccepted", false);
         List<BmobQuery<Request>> mq = new ArrayList<>();
+        List<BmobQuery<Request>> mq2 = new ArrayList<>();
         mq.add(q1);
         mq.add(q2);
         mq.add(q3);
         mq.add(q4);
-
+        mq2.add(q5);
+        query.and(mq2);
         query.or(mq);
 
         query.setLimit(Constant.NUMBER_PER_PAGE);
         query.setSkip(Constant.NUMBER_PER_PAGE * (pageNum++));
-        if(policy==FROM_CACHE&&query.hasCachedResult(Request.class))
+        if (policy == FROM_CACHE && query.hasCachedResult(Request.class))
             query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ONLY);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
         else
             query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ONLY);//先从缓存再从网络
@@ -143,16 +160,17 @@ public class HomeModel implements HomeContract.Model {
 
     @Override
     public Observable<BmobQueryResult<Request>> getFollowedRxRequests(int policy, String key) {
-        String userId = key!=null?key:BmobUser.getCurrentUser().getObjectId();
-        String sql = "select include user,* from Request where user in (select toUser from Follow where fromUser = '"+userId+"')";
-        BmobQuery<Request> query=new BmobQuery<>();
+        String userId = key != null ? key : BmobUser.getCurrentUser().getObjectId();
+        String sql = "select include user,* from Request where user in (select toUser from Follow where fromUser = '" + userId + "')";
+        BmobQuery<Request> query = new BmobQuery<>();
         query.setMaxCacheAge(TimeUnit.DAYS.toMillis(1));//此表示缓存一天，可以用来优化下拉刷新而清空了的加载更多
         query.order("-createdAt");
         query.include("user");
+        query.addWhereEqualTo("isAccepted",false);
         query.setLimit(Constant.NUMBER_PER_PAGE);
         query.setSkip(Constant.NUMBER_PER_PAGE * (pageNum++));
         query.setSQL(sql);
-        if(policy==FROM_CACHE&&query.hasCachedResult(Request.class))
+        if (policy == FROM_CACHE && query.hasCachedResult(Request.class))
             query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ONLY);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
         else
             query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ONLY);//先从缓存再从网络

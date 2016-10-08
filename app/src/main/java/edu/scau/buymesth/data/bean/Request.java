@@ -19,7 +19,7 @@ public class Request extends BmobObject {
     private Boolean isAnonymous;
     private Integer likes;
     private Integer comments;
-    private Boolean isAccecpted;//是否被接单
+    private Boolean isAccepted;//是否被接单
     private Integer minPrice;
     private Integer maxPrice;
     private List<String> tags;
@@ -102,11 +102,11 @@ public class Request extends BmobObject {
     }
 
     public Boolean getAccecpted() {
-        return isAccecpted;
+        return isAccepted;
     }
 
     public void setAccecpted(Boolean accecpted) {
-        isAccecpted = accecpted;
+        isAccepted = accecpted;
     }
 
     public Integer getMinPrice() {

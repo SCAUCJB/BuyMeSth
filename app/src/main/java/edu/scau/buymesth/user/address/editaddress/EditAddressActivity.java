@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import base.BaseActivity;
 import butterknife.Bind;
@@ -34,7 +34,7 @@ public class EditAddressActivity extends BaseActivity {
     @Bind(R.id.specific)
     EditText mSpecific;
     @Bind(R.id.iv_location)
-    ImageButton mLocation;
+    ImageView mLocation;
 
     private Address mAddress = null;
     private boolean mIsNew;
@@ -62,7 +62,7 @@ public class EditAddressActivity extends BaseActivity {
             mRegion.setText(mAddress.getRegion());
             mSpecific.setText(mAddress.getSpecific());
         }
-         mLocation.setOnClickListener(v -> EmptyActivity.navigate(EditAddressActivity.this, LocationFragment.class.getName(),null,"定位"));
+
     }
 
     @Override
@@ -82,14 +82,13 @@ public class EditAddressActivity extends BaseActivity {
             }
         });
 
-        mLocation.setOnClickListener(v -> {
-              getLocation();
-        });
+        mLocation.setOnClickListener(v -> EmptyActivity.navigate(EditAddressActivity.this, LocationFragment.class.getName(),null,"定位"));
     }
 
     private void getLocation() {
         //通过经纬度获取省市区
    //     BmobGeoPoint bmobGeoPoint=new BmobGeoPoint()
+
     }
 
     private void submit() throws RuntimeException{

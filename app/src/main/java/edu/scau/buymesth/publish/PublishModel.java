@@ -36,6 +36,7 @@ public class PublishModel implements  PublishContract.Model {
                                     request.setUrls(urls);
                                     request.setPicHeights(picHeights);
                                     request.setPicWidths(picWidths);
+                                    request.setAccecpted(false);
                                     request.save(new SaveListener<String>() {
                                         @Override
                                         public void done(String s, BmobException e) {

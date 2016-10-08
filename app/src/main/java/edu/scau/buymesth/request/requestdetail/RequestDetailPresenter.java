@@ -68,10 +68,15 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
             @Override
             public void done(Request request, BmobException e) {
                 if (e != null) {
-                    mView.toast("该订单已被删除");
+                    mView.toast("该请求已被删除");
+                    mView.exit();
+                    return;
+                }else if(request.getAccecpted()){
+                    mView.toast("该请求已交易完成，请刷新");
                     mView.exit();
                     return;
                 }
+
                 mModel.setRequest(request);
                 initUserInfo();
                 initCommentBar();

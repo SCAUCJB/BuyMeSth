@@ -71,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 fab:fab_size="mini"
-                fab:fab_label="Add Conversation" />
+                fab:fab_label="我的钱包" />
         </com.github.clans.fab.FloatingActionMenu>
 
     </FrameLayout>

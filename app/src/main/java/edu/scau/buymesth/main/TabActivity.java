@@ -31,10 +31,6 @@ import java.util.Random;
 
 import base.BaseActivity;
 import butterknife.Bind;
-import cn.bmob.newim.BmobIM;
-import cn.bmob.newim.bean.BmobIMConversation;
-import cn.bmob.newim.bean.BmobIMUserInfo;
-import cn.bmob.newim.listener.ConversationListener;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
@@ -47,15 +43,13 @@ import co.mobiwise.materialintro.view.MaterialIntroView;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.TabAdapter;
+import edu.scau.buymesth.cash.CashBookActivity;
 import edu.scau.buymesth.conversation.list.ConversationFragment;
-import edu.scau.buymesth.conversation.userlist.UserListFragment;
 import edu.scau.buymesth.data.bean.Notificate;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.discover.list.DiscoverFragment;
 import edu.scau.buymesth.discover.publish.MomentPublishActivity;
-import edu.scau.buymesth.fragment.EmptyActivity;
-import edu.scau.buymesth.notice.NoticeFragment;
 import edu.scau.buymesth.notice.OrderDetailActivity;
 import edu.scau.buymesth.notice.RequestService;
 import edu.scau.buymesth.notice.SQLiteHelper;
@@ -92,13 +86,9 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
     @Bind(R.id.fab5)
     FloatingActionButton fab5;
 
-    private DiscoverFragment discoverFragment;
     private HomeFragment homeFragment;
-//    private NoticeFragment noticeFragment;
     private AlertDialog searchDialog;
     private EditText et;
-
-    private ConversationFragment conversationFragment;
 
     @Override
     protected int getLayoutId() {
@@ -109,10 +99,9 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
     public void initView() {
         tabLayout.setSelectedTabIndicatorHeight(0);
         UserFragment userFragment = new UserFragment();
-        discoverFragment = new DiscoverFragment();
+        DiscoverFragment discoverFragment = new DiscoverFragment();
         homeFragment = new HomeFragment();
-        conversationFragment = new ConversationFragment();
-//        noticeFragment = new NoticeFragment();
+        ConversationFragment conversationFragment = new ConversationFragment();
 
         homeFragment.setRelatedFab(fab);
         fab.setClosedOnTouchOutside(true);
@@ -149,12 +138,11 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
             else homeFragment.setFilter(null, null);
             fab.close(true);
         });
-        fab5.setOnClickListener(v -> EmptyActivity.navigate(TabActivity.this, UserListFragment.class.getName(), null, 101));
+        fab5.setOnClickListener(v -> CashBookActivity.navigate(this,BmobUser.getCurrentUser(User.class)));
 
         fragmentList.add(homeFragment);
         fragmentList.add(discoverFragment);
         fragmentList.add(conversationFragment);
-//        fragmentList.add(noticeFragment);
         fragmentList.add(userFragment);
 
 
@@ -173,7 +161,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
                     cv.setIconColor(getResources().getColor(R.color.colorAccent));
                     break;
                 case 2:
-                    cv.setIcon(R.drawable.ic_whatshot);
+                    cv.setIcon(R.drawable.ic_notifications_grey600_48dp);
                     cv.setIconColor(getResources().getColor(R.color.colorAccent));
                     break;
                 case 3:
@@ -220,7 +208,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
 
     private void showIntro(View view, String usageId, String text) {
         new MaterialIntroView.Builder(this)
-                .enableDotAnimation(true)
+                .enableDotAnimation(true).dismissOnTouch(true)
                 //.enableIcon(false)
                 .setFocusGravity(FocusGravity.CENTER)
                 .setFocusType(Focus.ALL)
@@ -393,7 +381,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         query.findObjects(new FindListener<Notificate>() {
             @Override
             public void done(List<Notificate> list, BmobException e) {
-                Gson gson = gson = new Gson();
+                Gson gson  = new Gson();
                 for (int i = 0; i < list.size(); i++) {
                     Order order = list.get(i).getOrder();
 
