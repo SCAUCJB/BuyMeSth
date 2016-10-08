@@ -34,8 +34,6 @@ import edu.scau.buymesth.userinfo.evaluate.EvaluateListActivity;
 import edu.scau.buymesth.util.ColorChangeHelper;
 import edu.scau.buymesth.util.NetworkHelper;
 
-import static cn.bmob.newim.core.BmobIMClient.getContext;
-
 /**
  * Created by John on 2016/9/24.
  */
@@ -108,7 +106,7 @@ public class UserInfoActivity extends BaseActivity implements Contract.View{
         UserInfoModel model=new UserInfoModel(this);
         model.setUser((User) getIntent().getSerializableExtra("user"));
         mPresenter=new UserInfoPresenter(this,model);
-        mPopulationTv.setOnClickListener(v-> EvaluateListActivity.navigate(getContext(), model.getUser().getObjectId(),false));
+        mPopulationTv.setOnClickListener(v-> EvaluateListActivity.navigate(mContext, model.getUser().getObjectId(),false));
     }
 
     @Override
