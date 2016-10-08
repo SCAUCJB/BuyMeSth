@@ -2,21 +2,16 @@ package edu.scau.buymesth.notice;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import base.BaseActivity;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Evaluate;
-import edu.scau.buymesth.data.bean.Order;
 
 /**
  * Created by Jammy on 2016/10/6.
@@ -44,12 +39,14 @@ public class ReplyActivity extends BaseActivity {
                 return;
             }
             evaluate.setReply(et.getText().toString());
+            showLoadingDialog();
             evaluate.update(new UpdateListener() {
                 @Override
                 public void done(BmobException e) {
                     Intent data = new Intent();
                     data.putExtra("evaluate", evaluate);
                     setResult(REPLY_SUCCESS, data);
+                    closeLoadingDialog();
                     finish();
                 }
             });

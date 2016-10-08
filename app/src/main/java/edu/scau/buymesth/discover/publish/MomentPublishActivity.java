@@ -4,10 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -146,7 +144,7 @@ public class MomentPublishActivity extends BaseActivity {
                 for(MyPictureAdapter.ImageItem ii : mUrlList) selectImages.add(mCompress?ii.compressedImage:ii.sourceImage);
                 String[] sendList = new String[selectImages.size()];
                 selectImages.toArray(sendList);
-
+                showLoadingDialog(1);
                 BmobFile.uploadBatch(sendList, new UploadBatchListener() {
                     @Override
                     public void onSuccess(List<BmobFile> files, List<String> urls) {
@@ -163,6 +161,7 @@ public class MomentPublishActivity extends BaseActivity {
                             moment.save(new SaveListener<String>() {
                                 @Override
                                 public void done(String s, BmobException e) {
+                                    closeLoadingDialog();
                                     if(e==null){
                                         //succeed
                                         finish();
@@ -180,18 +179,14 @@ public class MomentPublishActivity extends BaseActivity {
                         //2、curPercent--表示当前上传文件的进度值（百分比）
                         //3、total--表示总的上传文件数
                         //4、totalPercent--表示总的上传进度（百分比）
-                        View view = recyclerView.getChildAt(curIndex-1);
-                        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress_upload);
-                        if(progressBar!=null){
-                            progressBar.setVisibility(View.VISIBLE);
-                            progressBar.setMax(100);
-                            progressBar.setProgress(curPercent);
-                        }
+                        mDialog.setProgress(totalPercent);
+                        mDialog.setSecondaryProgress(curPercent);
                     }
 
                     @Override
                     public void onError(int i, String s) {
                         toast(s);
+                        closeLoadingDialog();
                     }
                 });
             }

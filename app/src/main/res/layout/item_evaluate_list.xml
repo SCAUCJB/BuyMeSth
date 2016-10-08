@@ -2,12 +2,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
  >
 
     <RelativeLayout
         android:id="@+id/rl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/dp_6"
         android:padding="@dimen/content_padding">
 
         <ImageView
@@ -57,6 +61,7 @@
 
     <TextView
         android:layout_below="@+id/rl"
+        android:paddingBottom="@dimen/dp_6"
         android:padding="@dimen/content_padding"
         android:id="@+id/tv_content"
         android:layout_width="match_parent"
@@ -65,6 +70,7 @@
     <TextView
         android:layout_below="@+id/tv_content"
         android:padding="@dimen/content_padding"
+        android:paddingBottom="@dimen/dp_6"
         android:text="[买手回复]:"
         android:textColor="@color/colorDarkGrey"
         android:textSize="12sp"

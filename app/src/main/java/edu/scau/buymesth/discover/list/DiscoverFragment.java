@@ -98,12 +98,7 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
 
     @Override
     public void onError(Throwable throwable, String msg) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getActivity(),throwable==null?msg:throwable.toString(),Toast.LENGTH_SHORT).show();
-            }
-        });
+        getActivity().runOnUiThread(() -> Toast.makeText(getActivity(),throwable==null?msg:throwable.toString(),Toast.LENGTH_SHORT).show());
     }
 
     @Override

@@ -26,7 +26,6 @@ import java.util.List;
 
 import base.BaseActivity;
 import base.util.GlideCircleTransform;
-import base.util.SpaceItemDecoration;
 import butterknife.Bind;
 import cn.bmob.v3.BmobUser;
 import edu.scau.Constant;
@@ -114,7 +113,7 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     public void initView() {
 
         rvComment.setLayoutManager(new LinearLayoutManager(mContext));
-        rvComment.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_4)));
+
         rvComment.setHasFixedSize(true);
         rvComment.setNestedScrollingEnabled(false);
         rvComment.addItemDecoration(new DividerItemDecoration(this,
