@@ -18,6 +18,7 @@ import cn.bmob.v3.listener.UpdateListener;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.CashBook;
 import edu.scau.buymesth.data.bean.Order;
+import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.data.bean.User;
 
 /**
@@ -116,6 +117,15 @@ public class PayActivity extends BaseActivity {
                                             if (e == null) {
                                                 Toast.makeText(PayActivity.this, "付款成功", Toast.LENGTH_SHORT).show();
                                                 order.setStatus(Order.STATUS_ACCEPTED);
+                                                Request request = order.getRequest();
+                                                request.setAccecpted(true);
+                                                request.update(new UpdateListener() {
+                                                    @Override
+                                                    public void done(BmobException e) {
+
+                                                    }
+                                                });
+
                                                 order.update(new UpdateListener() {
                                                     @Override
                                                     public void done(BmobException e) {
