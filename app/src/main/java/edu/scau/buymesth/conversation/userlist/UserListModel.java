@@ -18,7 +18,6 @@ import rx.Observable;
 public class UserListModel implements UserListContract.Model{
     List<String> mUserIds;
     List<User> mUsers;
-    List<BmobIMConversation> mConversations;
     private int loadedPageNum;
 
     public UserListModel() {

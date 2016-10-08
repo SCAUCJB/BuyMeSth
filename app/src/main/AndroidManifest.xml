@@ -18,6 +18,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -122,6 +125,12 @@
             android:process=":bmobcore" />
         <service android:name="cn.bmob.newim.core.service.ReConnectService" />
         <service android:name="cn.bmob.newim.core.service.HeartBeatService" />
+
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="083733e13fe97adc2b3559f3a96e601b" >//开发者申请的key
+        </meta-data>
+        <service android:name="com.amap.api.location.APSService" />
 
         <activity
             android:name=".discover.publish.SelectActivity"

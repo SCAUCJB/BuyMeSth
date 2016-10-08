@@ -24,9 +24,14 @@ import rx.schedulers.Schedulers;
 public class UserListPresenter extends BasePresenter<UserListContract.Model,UserListContract.View> {
 
     Context mContext;
+    String mSearchKey = "";
 
     public UserListPresenter(Context context){
         this.mContext = context;
+    }
+
+    public void setSearchKey(String searchKey){
+        mSearchKey = searchKey;
     }
 
     @Override
@@ -76,7 +81,8 @@ public class UserListPresenter extends BasePresenter<UserListContract.Model,User
 
                     @Override
                     public void onNext(User user) {
-                        tempList.add(user);
+                        if(user.getNickname().contains(mSearchKey)||user.getUsername().contains(mSearchKey))
+                            tempList.add(user);
                     }
                 });
     }
@@ -98,7 +104,7 @@ public class UserListPresenter extends BasePresenter<UserListContract.Model,User
                     @Override
                     public void onCompleted() {
                         if(isAlive()){
-                            mView.onRefreshComplete(mModel.getDatas());
+                            mView.onLoadMoreSuccess(mModel.getDatas());
                         }
                     }
 

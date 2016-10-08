@@ -33,6 +33,8 @@ import base.util.ToastUtil;
 import cn.bmob.v3.BmobUser;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.ViewPagerAdapter;
+import edu.scau.buymesth.conversation.userlist.UserListFragment;
+import edu.scau.buymesth.fragment.EmptyActivity;
 import edu.scau.buymesth.ui.LoginActivity;
 import edu.scau.buymesth.user.address.AddressActivity;
 import edu.scau.buymesth.user.mark.MarkActivity;
@@ -88,6 +90,7 @@ public class UserFragment extends Fragment implements UserContract.View {
             Intent intent = new Intent(getActivity(), UserSettingActivity.class);
             getActivity().startActivityForResult(intent,303);
         });
+        view.findViewById(R.id.followed_user_list).setOnClickListener(v -> EmptyActivity.navigate(getActivity(), UserListFragment.class.getName(),null));
         view.findViewById(R.id.address_manage).setOnClickListener(v->{AddressActivity.navigate(getActivity());});
         view.findViewById(R.id.mark_list).setOnClickListener(v->{
             MarkActivity.navigate(getContext());});

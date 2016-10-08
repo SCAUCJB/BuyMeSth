@@ -3,6 +3,7 @@ package edu.scau.buymesth.user.address.editaddress;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -11,6 +12,8 @@ import base.BaseActivity;
 import butterknife.Bind;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Address;
+import edu.scau.buymesth.fragment.EmptyActivity;
+import edu.scau.buymesth.location.LocationFragment;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -60,6 +63,7 @@ public class EditAddressActivity extends BaseActivity {
             mRegion.setText(mAddress.getRegion());
             mSpecific.setText(mAddress.getSpecific());
         }
+//        mLocation.setOnClickListener(v -> EmptyActivity.navigate(EditAddressActivity.this, LocationFragment.class.getName(),null,"定位"));
     }
 
     @Override

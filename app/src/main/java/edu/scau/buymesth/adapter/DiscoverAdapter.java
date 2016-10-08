@@ -60,7 +60,8 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
                 .setText(R.id.tv_tweet_date, DateFormatHelper.dateFormat(item.getCreatedAt()))
                 .setText(R.id.tv_tweet_text, item.getContent())
                 .setText(R.id.tv_level, "LV " + item.getUser().getExp() / 10)
-                .setText(R.id.tv_comments, "" + item.getComments());
+                .setText(R.id.tv_comments, "" + item.getComments())
+                .setText(R.id.tv_location,"位置:"+(item.getLocation()==null?"":item.getLocation()));
 
         if (item.getRequest() != null) {
             helper.setText(R.id.tv_request_title, item.getRequest().getTitle());

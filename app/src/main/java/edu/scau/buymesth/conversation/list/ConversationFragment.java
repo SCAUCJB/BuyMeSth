@@ -159,7 +159,7 @@ public class ConversationFragment extends Fragment implements ConversationContra
             if(mPtrFrameLayout.isRefreshing())return;
             Bundle arg = new Bundle();
             arg.putSerializable(BmobIMConversation.class.getName(),mConversationAdapter.getItem(position));
-            EmptyActivity.navigate(getActivity(), ChatFragment.class.getName(),arg);
+            EmptyActivity.navigate(getActivity(), ChatFragment.class.getName(),arg,"关注列表");
         });
         mConversationAdapter.setEmptyView(true,mEmptyView);
         mConversationAdapter.setOnRecyclerViewItemLongClickListener((view, position) -> {

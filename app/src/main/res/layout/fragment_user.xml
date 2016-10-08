@@ -144,6 +144,7 @@
             android:weightSum="4">
 
             <LinearLayout
+                android:id="@+id/followed_user_list"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -160,7 +161,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:gravity="center"
-                    android:text="好友" />
+                    android:text="关注" />
             </LinearLayout>
 
             <LinearLayout

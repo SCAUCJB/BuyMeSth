@@ -17,6 +17,8 @@ import butterknife.Bind;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.AddressAdapter;
 import edu.scau.buymesth.data.bean.Address;
+import edu.scau.buymesth.fragment.EmptyActivity;
+import edu.scau.buymesth.location.LocationFragment;
 import edu.scau.buymesth.user.address.editaddress.EditAddressActivity;
 
 /**
@@ -73,7 +75,8 @@ public class AddressActivity extends BaseActivity implements Contract.View {
         });
         mAddBtn.setOnClickListener(v -> {
             //jump to edit
-            mPresenter.editAddress(null);
+//            mPresenter.editAddress(null);
+            EmptyActivity.navigate(AddressActivity.this, LocationFragment.class.getName(),null,"定位");
         });
     }
 

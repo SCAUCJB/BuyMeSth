@@ -1,6 +1,7 @@
 package edu.scau.buymesth.discover.publish;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -26,11 +27,14 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadBatchListener;
+import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.MyPictureAdapter;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.data.bean.User;
+import edu.scau.buymesth.fragment.EmptyActivity;
+import edu.scau.buymesth.location.LocationFragment;
 import edu.scau.buymesth.util.CompressHelper;
 import gallery.PhotoActivity;
 import me.iwf.photopicker.PhotoPicker;
@@ -56,10 +60,13 @@ public class MomentPublishActivity extends BaseActivity {
     TextView tvSize;
     @Bind(R.id.sw_compress)
     Switch swCompress;
+    @Bind(R.id.tv_location)
+    TextView tvLocation;
     ArrayList<MyPictureAdapter.ImageItem> mUrlList;
     List<String> mImagesUrlOnBmob;
     MyPictureAdapter adapter;
     Request mRequest;
+    String mLocation;
     boolean mCompressing = false;
     boolean mCompressed = false;
     boolean mCompress = false;
@@ -121,6 +128,11 @@ public class MomentPublishActivity extends BaseActivity {
             intent.putExtra("selectRequest",true);
             startActivityForResult(intent,0);
         });
+        tvLocation.setOnClickListener(v ->
+                EmptyActivity.navigateForResult(MomentPublishActivity.this
+                        , LocationFragment.class.getName()
+                        ,null
+                        ,Constant.LOCATION_SELECT_REQUEST_CODE,"定位"));
 
         momentSendButton.setOnClickListener(v -> {
             //upload images
@@ -147,6 +159,7 @@ public class MomentPublishActivity extends BaseActivity {
                             mImagesUrlOnBmob.addAll(urls);
                             moment.setImages(mImagesUrlOnBmob);
                             if(mRequest!=null)moment.setRequest(mRequest);
+                            if(mLocation!=null)moment.setLocation(mLocation);
                             moment.save(new SaveListener<String>() {
                                 @Override
                                 public void done(String s, BmobException e) {
@@ -187,6 +200,7 @@ public class MomentPublishActivity extends BaseActivity {
                 moment.setUser(BmobUser.getCurrentUser(User.class));
                 moment.setContent(momentContent.getText().toString());
                 if(mRequest!=null)moment.setRequest(mRequest);
+                if(mLocation!=null)moment.setLocation(mLocation);
                 moment.save(new SaveListener<String>() {
                     @Override
                     public void done(String s, BmobException e) {
@@ -234,6 +248,13 @@ public class MomentPublishActivity extends BaseActivity {
                     runOnUiThread(() -> tvRequest.setText(request.getTitle()));
                 }
             });
+        } if(requestCode == Constant.LOCATION_SELECT_REQUEST_CODE && resultCode == Constant.LOCATION_SELECT_RESULT_CODE){
+            Bundle locationInfo = data.getBundleExtra("data");
+            mLocation = locationInfo.getString("Country");
+            mLocation += locationInfo.getString("Province");
+            mLocation += locationInfo.getString("City");
+            mLocation += locationInfo.getString("Address");
+            tvLocation.post(() -> tvLocation.setText(mLocation));
         }
     }
     private void compress() {

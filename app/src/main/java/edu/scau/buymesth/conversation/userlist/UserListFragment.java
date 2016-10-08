@@ -11,10 +11,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import java.util.List;
 
+import adpater.BaseQuickAdapter;
 import base.util.SpaceItemDecoration;
+import base.util.ToastUtil;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.User;
@@ -31,11 +34,12 @@ public class UserListFragment extends Fragment implements UserListContract.View{
     private UserListPresenter mPresenter;
     private PtrFrameLayout mPtrFrameLayout;
     private View notLoadingView;
+    private View mHeaderSearchView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_conversation,container,false);
+        View view = inflater.inflate(R.layout.fragment_user_list,container,false);
         mRecyclerView= (RecyclerView) view.findViewById(R.id.rv_discover_fragment);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(2));
@@ -50,12 +54,15 @@ public class UserListFragment extends Fragment implements UserListContract.View{
 
     private void initAdapter(){
         mUserListAdapter = new UserListAdapter(getActivity(),mPresenter.mModel.getDatas());
-        mUserListAdapter.setOnRecyclerViewItemClickListener((view, position) -> {
-            if(mPtrFrameLayout.isRefreshing())return;
-            onClickItem(mUserListAdapter.getItem(position));
-        });
         mUserListAdapter.openLoadAnimation();
+        mUserListAdapter.setOnRecyclerViewItemClickListener((view, position) -> ToastUtil.show("打开 "+mUserListAdapter.getItem(position)+" 的个人资料"));
         mRecyclerView.setAdapter(mUserListAdapter);
+        mHeaderSearchView = LayoutInflater.from(getContext()).inflate(R.layout.item_search_bar,(ViewGroup) mRecyclerView.getParent(), false);
+        mHeaderSearchView.findViewById(R.id.bt_search).setOnClickListener(v -> {
+            mPresenter.setSearchKey(((EditText)mHeaderSearchView.findViewById(R.id.et_user_info)).getText().toString());
+            mPtrFrameLayout.post(() -> mPtrFrameLayout.autoRefresh());
+        });
+        mUserListAdapter.addHeaderView(mHeaderSearchView);
         mUserListAdapter.setOnLoadMoreListener(() -> mPresenter.loadMore());
         mUserListAdapter.openLoadMore(Constant.NUMBER_PER_PAGE, true);
     }
@@ -85,12 +92,20 @@ public class UserListFragment extends Fragment implements UserListContract.View{
 
     @Override
     public void onLoadMoreSuccess(List<User> list) {
-
+        if(list!=null&&list.size()>0)
+            mUserListAdapter.notifyDataChangedAfterLoadMore(true);
+        else{
+            mUserListAdapter.notifyDataChangedAfterLoadMore(false);
+            if (notLoadingView == null) {
+                notLoadingView = getActivity().getWindow().getLayoutInflater().inflate(R.layout.not_loading, (ViewGroup) mRecyclerView.getParent(), false);
+            }
+            mUserListAdapter.addFooterView(notLoadingView);
+        }
     }
 
     @Override
     public void onError(Throwable throwable, String msg) {
-
+        ToastUtil.show(msg);
     }
 
     @Override
@@ -101,13 +116,6 @@ public class UserListFragment extends Fragment implements UserListContract.View{
 
     @Override
     public void onRefreshInterrupt() {
-
-    }
-
-    protected void onClickItem(User item){
-        Intent i = new Intent();
-        i.putExtra("user",item);
-        getActivity().setResult(101,i);
-        getActivity().finish();
+        mPtrFrameLayout.refreshComplete();
     }
 }

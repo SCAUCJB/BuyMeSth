@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.View;
+import android.widget.Button;
 
 import base.BaseActivity;
 import edu.scau.buymesth.R;
@@ -20,10 +22,26 @@ public class EmptyActivity extends BaseActivity {
     private FragmentManager mFragmentManager;
     private Fragment mMainFragment;
 
+    public static void navigate(Activity activity, String className, Bundle arg, String title){
+        Intent intent = new Intent(activity,EmptyActivity.class);
+        intent.putExtra("fragmentClass",className);
+        intent.putExtra("arg",arg);
+        intent.putExtra("activityTitle",title);
+        activity.startActivity(intent);
+    }
+
     public static void navigate(Activity activity, String className, Bundle arg, int requestCode){
         Intent intent = new Intent(activity,EmptyActivity.class);
         intent.putExtra("fragmentClass",className);
         intent.putExtra("arg",arg);
+        activity.startActivityForResult(intent,requestCode);
+    }
+
+    public static void navigateForResult(Activity activity, String className, Bundle arg, int requestCode, String title){
+        Intent intent = new Intent(activity,EmptyActivity.class);
+        intent.putExtra("fragmentClass",className);
+        intent.putExtra("arg",arg);
+        intent.putExtra("activityTitle",title);
         activity.startActivityForResult(intent,requestCode);
     }
 
@@ -51,13 +69,20 @@ public class EmptyActivity extends BaseActivity {
         String className = getIntent().getStringExtra("fragmentClass");
         try {
             mMainFragment = (Fragment) Class.forName(className).newInstance();
+            if(mMainFragment instanceof ButtonOnToolbar){
+                ((Button)findViewById(R.id.bt_on_toolbar)).setText(((ButtonOnToolbar)mMainFragment).toolbarsButtonText());
+                findViewById(R.id.bt_on_toolbar).setOnClickListener(v -> ((ButtonOnToolbar)mMainFragment).onToolbarButtonClick());
+            }else {
+                findViewById(R.id.bt_on_toolbar).setVisibility(View.GONE);
+            }
             mMainFragment.setArguments(getIntent().getBundleExtra("arg"));
             transaction.replace(R.id.content_fragment, mMainFragment);
             transaction.commit();
-            if(getIntent().getBundleExtra("arg")!=null)
-                this.setTitle(
-                    getIntent().getBundleExtra("arg").getString("activityTitle")==null?
-                            "":getIntent().getBundleExtra("arg").getString("activityTitle"));
+            if(getIntent().getStringExtra("activityTitle")!=null) this.setTitle(getIntent().getStringExtra("activityTitle"));
+//            if(getIntent().getBundleExtra("arg")!=null)
+//                this.setTitle(
+//                    getIntent().getBundleExtra("arg").getString("activityTitle")==null?
+//                            "":getIntent().getBundleExtra("arg").getString("activityTitle"));
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -93,5 +118,10 @@ public class EmptyActivity extends BaseActivity {
             else super.onBackPressed();
         }
         super.onBackPressed();
+    }
+
+    public interface ButtonOnToolbar{
+        void onToolbarButtonClick();
+        String toolbarsButtonText();
     }
 }

@@ -32,11 +32,11 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
     public void onStart() {
     }
 
-    public void Refresh(boolean firstTime){
+    public void Refresh(){
         mModel.updateLikeList();
         mModel.resetPage();
         BmobQuery.CachePolicy cachePolicy;
-        if(!firstTime&&NetworkHelper.isOpenNetwork(mContext))cachePolicy = BmobQuery.CachePolicy.CACHE_THEN_NETWORK;
+        if(NetworkHelper.isOpenNetwork(mContext))cachePolicy = BmobQuery.CachePolicy.CACHE_THEN_NETWORK;
         else cachePolicy = BmobQuery.CachePolicy.CACHE_ONLY;
         mModel.getRxMoments(cachePolicy).flatMap(new Func1<List<Moment>, Observable<Moment>>() {
             @Override
@@ -55,7 +55,6 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
                             mModel.getDatas().clear();
                             mModel.getDatas().addAll(tempData);
                             mView.onRefreshComplete(mModel.getDatas());
-                            if(firstTime) Refresh(false);
                         }
                     }
 

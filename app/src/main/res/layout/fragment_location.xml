@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:divider="@drawable/divider"
+    android:showDividers="middle"
+    android:background="@color/colorLightLightGrey"
+    android:paddingTop="@dimen/dp_22">
+
+    <EditText
+        android:hint="国家"
+        android:textSize="@dimen/sp_14"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textColor="#666666"
+        android:background="@color/white"
+        android:id="@+id/tv_country" />
+
+    <EditText
+        android:hint="省"
+        android:textSize="@dimen/sp_14"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textColor="#666666"
+        android:background="@color/white"
+        android:id="@+id/tv_province" />
+
+    <EditText
+        android:hint="市"
+        android:textSize="@dimen/sp_14"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textColor="#666666"
+        android:background="@color/white"
+        android:id="@+id/tv_city" />
+
+    <EditText
+        android:hint="详细地点"
+        android:textSize="@dimen/sp_14"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textColor="#666666"
+        android:background="@color/white"
+        android:id="@+id/tv_detail" />
+
+    <TextView
+        android:text="重新定位"
+        android:textSize="@dimen/sp_14"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:padding="10dp"
+        android:textColor="#666666"
+        android:background="@color/white"
+        android:id="@+id/tv_location_loading" />
+
+    <TextView
+        android:text="附近位置"
+        android:textSize="@dimen/sp_14"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:padding="10dp"
+        android:layout_marginTop="@dimen/dp_22"
+        android:textColor="#666666"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_location_detail_list"
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v7.widget.RecyclerView>
+</LinearLayout>

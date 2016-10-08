@@ -182,5 +182,17 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
+        <TextView
+            style="@style/theTextSmall"
+            android:id="@+id/tv_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/grey"
+            android:text="位置"
+            android:layout_marginTop="2dp"
+            android:layout_below="@+id/nine_grid_layout"
+            android:layout_alignStart="@+id/nine_grid_layout"
+            android:layout_toStartOf="@+id/ly_delete" />
+
     </RelativeLayout>
 </FrameLayout>
