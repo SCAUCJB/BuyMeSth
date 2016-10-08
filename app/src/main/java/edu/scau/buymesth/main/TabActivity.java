@@ -43,7 +43,7 @@ import co.mobiwise.materialintro.view.MaterialIntroView;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.TabAdapter;
-import edu.scau.buymesth.cash.CashBookActivity;
+import edu.scau.buymesth.cash.CashMainActivity;
 import edu.scau.buymesth.conversation.list.ConversationFragment;
 import edu.scau.buymesth.data.bean.Notificate;
 import edu.scau.buymesth.data.bean.Order;
@@ -138,7 +138,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
             else homeFragment.setFilter(null, null);
             fab.close(true);
         });
-        fab5.setOnClickListener(v -> CashBookActivity.navigate(this,BmobUser.getCurrentUser(User.class)));
+        fab5.setOnClickListener(v -> CashMainActivity.navigate(this,BmobUser.getCurrentUser(User.class)));
 
         fragmentList.add(homeFragment);
         fragmentList.add(discoverFragment);

@@ -2,6 +2,8 @@ package edu.scau.buymesth.userinfo;
 
 import android.content.Context;
 
+import org.json.JSONArray;
+
 import cn.bmob.v3.BmobQuery;
 import edu.scau.buymesth.data.bean.Evaluate;
 import edu.scau.buymesth.data.bean.User;
@@ -23,6 +25,7 @@ private Context mContext;
         BmobQuery<User> query=new BmobQuery<>();
         return query.getObjectObservable(User.class,id);
     }
+
     public Observable<Integer> getEvaluateCount(String id){
         BmobQuery<Evaluate> query=new BmobQuery<>();
         query.addWhereEqualTo("seller",id);
@@ -32,6 +35,17 @@ private Context mContext;
             query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ONLY);
         }
         return query.countObservable(Evaluate.class);
+    }
+    public Observable<JSONArray> getScore(String id){
+        BmobQuery<Evaluate> query=new BmobQuery<>();
+        query.addWhereEqualTo("seller",id);
+        if(query.hasCachedResult(Evaluate.class)|| !NetworkHelper.isOpenNetwork(mContext)){
+            query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ONLY);
+        }else {
+            query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ONLY);
+        }
+        query.average(new String[]{"score"});
+        return query.findStatisticsObservable(Evaluate.class);
     }
     public User getUser() {
         return user;

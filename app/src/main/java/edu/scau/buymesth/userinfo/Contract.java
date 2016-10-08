@@ -15,17 +15,20 @@ public interface Contract  {
         void setPopulation(String population);
         void showMsg(String msg);
         boolean hasNet();
-
+        void setUserId(String id);
         void setRatingBar(Float score);
 
         void initTab();
 
         void setEvaluateCount(Integer integer);
+
+        void setFollow(boolean b);
     }
     interface Presenter{
         void subscribe();
         void unsubscribe();
         void showUserInfo();
+        void follow();
         void showTab();
     }
 }

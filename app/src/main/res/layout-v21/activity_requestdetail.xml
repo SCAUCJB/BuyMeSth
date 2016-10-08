@@ -116,7 +116,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="@dimen/dp_6"
-                    android:background="@drawable/rect_accent"
+                    android:background="@drawable/background_button_follow"
                     android:gravity="center"
                     android:text="+ 关注"
                     style="@style/TextAppearance.AppCompat.Button"

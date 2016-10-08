@@ -1,10 +1,18 @@
 package edu.scau.buymesth.userinfo;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import cn.bmob.v3.AsyncCustomEndpoints;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.CloudCodeListener;
 import edu.scau.buymesth.data.bean.User;
 import rx.Subscriber;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by John on 2016/9/24.
@@ -13,8 +21,8 @@ import rx.schedulers.Schedulers;
 public class UserInfoPresenter implements Contract.Presenter {
 
     private final Contract.View mView;
-    private final UserInfoModel mModel;
-    private Subscription mSubscription;
+    public final UserInfoModel mModel;
+    private CompositeSubscription mSubscriptions = new CompositeSubscription();
 
     UserInfoPresenter(Contract.View view, UserInfoModel model) {
         mView = view;
@@ -28,7 +36,7 @@ public class UserInfoPresenter implements Contract.Presenter {
 
 
     public void unsubscribe() {
-        mSubscription.unsubscribe();
+        mSubscriptions.clear();
     }
 
     @Override
@@ -36,7 +44,7 @@ public class UserInfoPresenter implements Contract.Presenter {
         User user = mModel.getUser();
         mView.setAvatar(user.getAvatar());
         if (user.getSignature() != null)
-            mView.setSignature(user.getSignature());
+            mView.setSignature("个性签名：" + user.getSignature());
         else
             mView.setSignature("还没有个性签名~");
         mView.setLevel(user.getExp());
@@ -45,17 +53,11 @@ public class UserInfoPresenter implements Contract.Presenter {
         } else
             mView.setlocation(user.getResidence());
         mView.setUserName(user.getNickname());
-        if (user.getScore() != null) {
-            mView.setScore(user.getScore() + "分");
-            mView.setRatingBar(user.getScore());
-            mView.setPopulation(user.getRatePop() + "人评价");
-        } else {
-            mView.setScore("5分");
-            mView.setRatingBar(5.0f);
-            mView.setPopulation("0人评价");
-        }
-        mSubscription = mModel.getEvaluateCount(user.getObjectId()).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Integer>() {
+        mView.setUserId(user.getUsername());
+
+
+        mSubscriptions.add(mModel.getEvaluateCount(BmobUser.getCurrentUser().getObjectId()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Integer>() {
                     @Override
                     public void onCompleted() {
 
@@ -70,7 +72,59 @@ public class UserInfoPresenter implements Contract.Presenter {
                     public void onNext(Integer integer) {
                         mView.setEvaluateCount(integer);
                     }
-                });
+                }));
+        mSubscriptions.add(mModel.getScore(BmobUser.getCurrentUser().getObjectId()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<JSONArray>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+
+                    }
+
+                    @Override
+                    public void onNext(JSONArray jsonArray) {
+                        if (jsonArray != null) {
+                            JSONObject obj = null;
+                            try {
+                                obj = jsonArray.getJSONObject(0);
+                                double score = obj.getDouble("_avgScore");
+                                mView.setScore(score + "");
+                                mView.setRatingBar((float) score);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }));
+    }
+
+    public void follow() {
+        AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
+        //第一个参数是上下文对象，第二个参数是云端逻辑的方法名称，第三个参数是上传到云端逻辑的参数列表（JSONObject cloudCodeParams），第四个参数是回调类
+        JSONObject params = new JSONObject();
+        try {
+            params.put("fromUser", BmobUser.getCurrentUser().getObjectId());
+            params.put("toUser", mModel.getUser().getObjectId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        ace.callEndpoint("follow", params, new CloudCodeListener() {
+            @Override
+            public void done(Object o, BmobException e) {
+                if (e != null) return;
+                if (o != null) {
+                    if ((o.toString()).equals("true")) {
+                        mView.setFollow(true);
+                    } else {
+                        mView.setFollow(false);
+                    }
+                }
+            }
+        });
     }
 
     @Override

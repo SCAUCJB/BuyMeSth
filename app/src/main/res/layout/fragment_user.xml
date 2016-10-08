@@ -35,7 +35,7 @@
                 android:layout_marginRight="8dp"
                 android:isIndicator="true"
                 android:numStars="5"
-                android:rating="5"
+
                 android:stepSize="0.1" />
 
             <ImageView
@@ -116,7 +116,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/ratingBar"
                 android:layout_toLeftOf="@+id/tv_score_end"
-                android:text="5"
+
                 android:textSize="32sp"
                 android:textStyle="normal"/>
             <TextView
@@ -142,8 +142,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignEnd="@id/ratingBar"
-                android:layout_below="@+id/ratingBar"
-                android:text="0人评价" />
+                android:layout_below="@id/ratingBar"
+                 />
 
             <TextView
                 android:textColor="@color/white"

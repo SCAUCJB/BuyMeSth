@@ -7,6 +7,7 @@ package edu.scau;
 public class Constant {
     public static final int NUMBER_PER_PAGE = 10;
     public static final int SPLASH_TIME = 1000;
+    public final static String AMAP_WEB_API_KEY = "bba3ad4b510032c675b2f0f0f54ea8fb";
     public static final String BMOB_APP_ID = "211614edac96ab4c9492179cf459993a";
     public static final String BMOB_REST_API_ID = "9c84cfcf7a78e693963b87ba44592f17";
     public static final String BMOB_SECRET_KEY = "9889522cf37d324d";

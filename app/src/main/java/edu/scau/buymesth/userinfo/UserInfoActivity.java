@@ -25,6 +25,7 @@ import com.bumptech.glide.Glide;
 import base.BaseActivity;
 import base.util.GlideCircleTransform;
 import butterknife.Bind;
+import cn.bmob.v3.BmobUser;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.ViewPagerAdapter;
 import edu.scau.buymesth.data.bean.User;
@@ -64,6 +65,8 @@ public class UserInfoActivity extends BaseActivity implements Contract.View{
     TabLayout mTabLayout;
     @Bind(R.id.rl_user_info)
     RelativeLayout mUserInfoRl;
+    @Bind(R.id.tv_user_id)
+    TextView mUserIdTv;
     private BottomSheetBehavior<NestedScrollView> behavior;
     private SparseArray<Drawable> mLevelDrawableCache=new SparseArray<>();
 
@@ -208,5 +211,32 @@ public class UserInfoActivity extends BaseActivity implements Contract.View{
     @Override
     public void setEvaluateCount(Integer integer) {
         mPopulationTv.setText(integer+"人评价");
+    }
+
+    @Override
+    public void setFollow(boolean b) {
+        runOnUiThread(() -> {
+            if (b) {
+                mFollow.setText(getResources().getString(R.string.text_followed));
+            } else {
+                mFollow.setText(getResources().getString(R.string.text_follow));
+            }
+        });
+    }
+
+    @Override
+    public void setUserId(String id) {
+        mUserIdTv.setText(id);
+    }
+
+    @Override
+    protected void setListener() {
+        boolean isSelf = mPresenter.mModel.getUser().getObjectId().equals(BmobUser.getCurrentUser().getObjectId());
+        mFollow.setOnClickListener((v) -> {
+            if (!isSelf)
+                mPresenter.follow();
+            else
+                toast("关注自己毫无意义");
+        });
     }
 }

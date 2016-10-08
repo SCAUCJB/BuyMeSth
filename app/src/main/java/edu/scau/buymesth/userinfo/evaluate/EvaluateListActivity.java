@@ -11,13 +11,13 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import adpater.BaseQuickAdapter;
 import base.BaseActivity;
 import butterknife.Bind;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.EvaluateListAdapter;
 import edu.scau.buymesth.data.bean.Evaluate;
 import edu.scau.buymesth.notice.OrderDetailActivity;
+import edu.scau.buymesth.util.DividerItemDecoration;
 
 import static edu.scau.Constant.NUMBER_PER_PAGE;
 
@@ -57,14 +57,11 @@ public class EvaluateListActivity extends BaseActivity implements Contract.View 
         mAdapter = new EvaluateListAdapter();
         mAdapter.setOnLoadMoreListener(() -> mPresenter.onLoadMore());
         mAdapter.openLoadMore(NUMBER_PER_PAGE, true);
-        mAdapter.setOnRecyclerViewItemClickListener(new BaseQuickAdapter.OnRecyclerViewItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-              OrderDetailActivity.navigate((Activity) mContext,mAdapter.getItem(position).getOrderId());
-            }
-        });
+        mAdapter.setOnRecyclerViewItemClickListener((view, position) -> OrderDetailActivity.navigate((Activity) mContext,mAdapter.getItem(position).getOrderId()));
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
+                DividerItemDecoration.VERTICAL_LIST));
         Model model = new Model(this);
         model.setId(getIntent().getStringExtra("id"));
         model.setIsBuyer(getIntent().getBooleanExtra("isBuyer", false));

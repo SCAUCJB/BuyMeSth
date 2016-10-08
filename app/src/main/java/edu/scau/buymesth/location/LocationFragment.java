@@ -43,6 +43,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Response;
 
 import static cn.bmob.v3.Bmob.getApplicationContext;
+import static edu.scau.Constant.AMAP_WEB_API_KEY;
 
 /**
  * Created by ！ on 2016/10/7.
@@ -66,7 +67,7 @@ public class LocationFragment extends Fragment implements EmptyActivity.ButtonOn
     private AMapLocationClient mLocationClient = null;
     //声明定位回调监听器
     private AMapLocationListener mLocationListener = null;
-    private final static String AMAP_WEB_API_KEY = "bba3ad4b510032c675b2f0f0f54ea8fb";
+
     private JSONObject mSurroundingInfo;
     private List<String> mSurroundingData;
     private SurroundingAdapter mSurroundingAdapter;
@@ -131,8 +132,6 @@ public class LocationFragment extends Fragment implements EmptyActivity.ButtonOn
         mRecyclerView.setAdapter(mSurroundingAdapter);
         mSurroundingAdapter.setOnRecyclerViewItemClickListener((view, position) ->{
             mDetail.setText(mSurroundingAdapter.getItem(position).split("\n")[0]);
-//            mLocationData.remove("Address");
-//            mLocationData.putString("Address",mSurroundingAdapter.getItem(position).split("\n")[0]);
         });
     }
 

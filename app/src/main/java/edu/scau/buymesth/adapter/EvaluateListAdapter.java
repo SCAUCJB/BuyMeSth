@@ -49,6 +49,7 @@ public class EvaluateListAdapter extends BaseQuickAdapter<Evaluate> {
 
         NineGridLayout nineGridLayout = helper.getView(R.id.nine_grid_layout);
         nineGridLayout.setUrlList(item.getUrlList());
+        nineGridLayout.setmMaxColumn(9);
         ((NineGridLayout) helper.getView(R.id.nine_grid_layout)).setOnItemClickListener((view, position, urls, itemType) ->
                 PhotoActivity.navigate((Activity) mContext, (NineGridLayout) helper.getView(R.id.nine_grid_layout), item.getUrlList(), position));
     }

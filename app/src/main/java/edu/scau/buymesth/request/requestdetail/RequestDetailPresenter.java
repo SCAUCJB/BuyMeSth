@@ -71,8 +71,9 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
                     mView.toast("该请求已被删除");
                     mView.exit();
                     return;
-                }else if(request.getAccecpted()){
+                }else if(request.getAccecpted()&& !request.getUser().getObjectId().equals( BmobUser.getCurrentUser(User.class).getObjectId())){
                     mView.toast("该请求已交易完成，请刷新");
+                    bmobQuery.clearCachedResult(Request.class);
                     mView.exit();
                     return;
                 }

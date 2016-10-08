@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorLightGrey"
+    android:background="@color/colorLightLightGrey"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
@@ -50,6 +50,8 @@
 
             <EditText
                 android:id="@+id/et_recipient"
+                style="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@color/black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="1" />
@@ -66,11 +68,14 @@
             <TextView
                 style="@style/TextAppearance.AppCompat.Small"
                 android:layout_width="wrap_content"
+
                 android:layout_height="wrap_content"
                 android:text="手机号：" />
 
             <EditText
                 android:id="@+id/phone"
+                android:textColor="@color/black"
+                style="@style/TextAppearance.AppCompat.Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
@@ -103,6 +108,8 @@
 
             <EditText
                 android:id="@+id/region"
+                android:textColor="@color/black"
+                style="@style/TextAppearance.AppCompat.Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
@@ -110,6 +117,7 @@
                 android:layout_toEndOf="@+id/textView2"
                 android:layout_toStartOf="@id/iv_location"
                 android:hint="XX省XX市XX区"
+
                 android:maxLines="1" />
         </RelativeLayout>
 
@@ -128,6 +136,8 @@
                 android:text="详细地址：" />
 
             <EditText
+                android:textColor="@color/black"
+                style="@style/TextAppearance.AppCompat.Small"
                 android:id="@+id/specific"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

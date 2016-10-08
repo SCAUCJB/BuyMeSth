@@ -20,13 +20,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import base.BaseActivity;
 import base.util.GlideCircleTransform;
@@ -138,19 +138,16 @@ public class UserFragment extends Fragment implements UserContract.View {
     @Override
     public void setAvatar(String url) {
         Glide.with(getContext()).load(url).crossFade().placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(getContext())).into(mAvatarIv);
-        mAvatarIv.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                BmobUser.logOut();
-                ToastUtil.show("退出登陆");
-                Intent i = new Intent(getActivity(), LoginActivity.class);
-                startActivity(i);
-                return false;
-            }
+        mAvatarIv.setOnLongClickListener(v -> {
+            BmobUser.logOut();
+            ToastUtil.show("退出登陆");
+            Intent i = new Intent(getActivity(), LoginActivity.class);
+            startActivity(i);
+            return false;
         });
         Glide.with(this).
                 load(url).
-                asBitmap().
+                asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).
                 transform(new BlurTransformation(getContext(),40)).//高斯模糊处理
                 into(mBgUser);
     }

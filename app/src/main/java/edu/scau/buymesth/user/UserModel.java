@@ -3,6 +3,8 @@ package edu.scau.buymesth.user;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import org.json.JSONArray;
+
 import java.util.concurrent.TimeUnit;
 
 import cn.bmob.v3.BmobQuery;
@@ -57,6 +59,17 @@ public Observable<Integer> getEvaluateCount(String id){
     }
     return query.countObservable(Evaluate.class);
 }
+    public Observable<JSONArray> getScore(String id){
+        BmobQuery<Evaluate> query=new BmobQuery<>();
+        query.addWhereEqualTo("seller",id);
+        if(query.hasCachedResult(Evaluate.class)|| !NetworkHelper.isOpenNetwork(mContext)){
+            query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ONLY);
+        }else {
+            query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ONLY);
+        }
+        query.average(new String[]{"score"});
+        return query.findStatisticsObservable(Evaluate.class);
+    }
     public User getUser() {
         return user;
     }
