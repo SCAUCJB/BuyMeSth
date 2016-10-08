@@ -136,6 +136,10 @@ public class EvaluateActivity extends BaseActivity {
         }
         tvName.setText(order.getSeller().getNickname());
         btnSubmit.setOnClickListener(v -> {
+            if(etComment.getText().equals("")){
+                Toast.makeText(EvaluateActivity.this, "请填写你对卖家的评价", Toast.LENGTH_SHORT).show();
+                return ;
+            }
             if (mUrlList.size() > 0) {
                 if (mCompressing) {
                     toast("压缩中");
