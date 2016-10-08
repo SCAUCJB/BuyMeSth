@@ -18,8 +18,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name=".App"
@@ -47,7 +47,7 @@
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
             android:name=".ui.RegisterActivity"
-            android:theme="@style/AppTheme.SwipeBackLayout"
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
             android:name=".main.TabActivity"
@@ -128,7 +128,7 @@
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="083733e13fe97adc2b3559f3a96e601b" >//开发者申请的key
+            android:value="083733e13fe97adc2b3559f3a96e601b">//开发者申请的key
         </meta-data>
         <service android:name="com.amap.api.location.APSService" />
 
@@ -206,7 +206,7 @@
             android:name=".cash.DepositActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
-        
+
         <!--/////process用来定义线程的名字-->
         <service android:name=".notice.RequestService">
             <intent-filter>

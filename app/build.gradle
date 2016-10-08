@@ -1,12 +1,18 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 android {
+    signingConfigs {
+        BMSdebugKeystore {
+            keyAlias 'BMSdebugKeystore'
+            keyPassword '123456789'
+            storeFile file('D:/Android/keystore/BMSdebugKeystore.jks')
+            storePassword '123456789'
+        }
+    }
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
-
 //    **兼容Android6.0系统所需，如果这句话报错，可在dependencies标签下使用compile 'cn.bmob.android:http-legacy:1.0'**
 //    useLibrary 'org.apache.http.legacy'
-
     defaultConfig {
         applicationId "edu.scau.buymesth"
         minSdkVersion 18
@@ -18,6 +24,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.BMSdebugKeystore
         }
     }
     compileOptions {
