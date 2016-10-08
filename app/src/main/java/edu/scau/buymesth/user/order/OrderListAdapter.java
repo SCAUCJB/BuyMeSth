@@ -37,6 +37,9 @@ public class OrderListAdapter extends BaseQuickAdapter<Order>{
             case 4:
                 helper.setText(R.id.tv_status,"当前状态：交易完成");
                 break;
+            case 5:
+                helper.setText(R.id.tv_status,"当前状态：卖家取消订单");
+                break;
         }
         helper.setText(R.id.tv_price,"商品总价 = "+item.getPriceType()+item.getPrice()+" + 小费("+item.getTip()+item.getTipType()+")");
         helper.setText(R.id.request_title,item.getRequest().getTitle());

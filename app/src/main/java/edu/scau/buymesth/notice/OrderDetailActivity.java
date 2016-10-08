@@ -543,7 +543,9 @@ public class OrderDetailActivity extends BaseActivity {
                                 btnComment.setVisibility(View.GONE);
                                 llEvaluate.setVisibility(View.VISIBLE);
                                 ratingBar.setRating(order.getEvaluate().getScore());
+                                if(order.getEvaluate().getContent()!=null)
                                 buyerEvaluate.setText(order.getEvaluate().getContent());
+                                if(order.getEvaluate().getUrlList()!=null)
                                 picAdapter.setNewData(order.getEvaluate().getUrlList());
                             }
                             if (order.getEvaluate().getReply() != null) {
