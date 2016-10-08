@@ -1,5 +1,6 @@
 package edu.scau.buymesth.userinfo.evaluate;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,11 +11,13 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import adpater.BaseQuickAdapter;
 import base.BaseActivity;
 import butterknife.Bind;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.EvaluateListAdapter;
 import edu.scau.buymesth.data.bean.Evaluate;
+import edu.scau.buymesth.notice.OrderDetailActivity;
 
 import static edu.scau.Constant.NUMBER_PER_PAGE;
 
@@ -54,6 +57,12 @@ public class EvaluateListActivity extends BaseActivity implements Contract.View 
         mAdapter = new EvaluateListAdapter();
         mAdapter.setOnLoadMoreListener(() -> mPresenter.onLoadMore());
         mAdapter.openLoadMore(NUMBER_PER_PAGE, true);
+        mAdapter.setOnRecyclerViewItemClickListener(new BaseQuickAdapter.OnRecyclerViewItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+              OrderDetailActivity.navigate((Activity) mContext,mAdapter.getItem(position).getOrderId());
+            }
+        });
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         Model model = new Model(this);

@@ -1,7 +1,6 @@
 package edu.scau.buymesth.conversation.userlist;
 
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,12 +14,12 @@ import android.widget.EditText;
 
 import java.util.List;
 
-import adpater.BaseQuickAdapter;
 import base.util.SpaceItemDecoration;
 import base.util.ToastUtil;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.User;
+import edu.scau.buymesth.userinfo.UserInfoActivity;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
@@ -55,7 +54,7 @@ public class UserListFragment extends Fragment implements UserListContract.View{
     private void initAdapter(){
         mUserListAdapter = new UserListAdapter(getActivity(),mPresenter.mModel.getDatas());
         mUserListAdapter.openLoadAnimation();
-        mUserListAdapter.setOnRecyclerViewItemClickListener((view, position) -> ToastUtil.show("打开 "+mUserListAdapter.getItem(position)+" 的个人资料"));
+        mUserListAdapter.setOnRecyclerViewItemClickListener((view, position) -> UserInfoActivity.navigate(getActivity(),mUserListAdapter.getItem(position)));
         mRecyclerView.setAdapter(mUserListAdapter);
         mHeaderSearchView = LayoutInflater.from(getContext()).inflate(R.layout.item_search_bar,(ViewGroup) mRecyclerView.getParent(), false);
         mHeaderSearchView.findViewById(R.id.bt_search).setOnClickListener(v -> {

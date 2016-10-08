@@ -2,7 +2,6 @@ package edu.scau.buymesth.notice;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,7 +35,6 @@ import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
-import edu.scau.buymesth.adapter.MyPictureAdapter;
 import edu.scau.buymesth.adapter.PicAdapter;
 import edu.scau.buymesth.cash.PayActivity;
 import edu.scau.buymesth.data.bean.Address;
@@ -55,6 +53,16 @@ import edu.scau.buymesth.user.address.AddressActivity;
  * Created by Jammy on 2016/10/4.
  */
 public class OrderDetailActivity extends BaseActivity {
+    public static void navigate(Activity activity, Order order){
+        Intent intent = new Intent(activity,OrderDetailActivity.class);
+        intent.putExtra("order",order);
+        activity.startActivity(intent);
+    }
+    public static void navigate(Activity activity,String id){
+        Intent intent = new Intent(activity,OrderDetailActivity.class);
+        intent.putExtra("id",id);
+        activity.startActivity(intent);
+    }
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     @Bind(R.id.tv_msg)
@@ -152,9 +160,15 @@ public class OrderDetailActivity extends BaseActivity {
 
 
         mOrder = (Order) getIntent().getSerializableExtra("order");
+        String id;
+        if(mOrder==null){
+            id=getIntent().getStringExtra("id");
+        }else {
+           id=mOrder.getObjectId();
+        }
         BmobQuery<Order> query = new BmobQuery<>();
         query.include("buyer,request,seller,address,evaluate");
-        query.getObject(mOrder.getObjectId(), new QueryListener<Order>() {
+        query.getObject(id, new QueryListener<Order>() {
             @Override
             public void done(Order order, BmobException e) {
                 if (e == null) {
@@ -710,10 +724,6 @@ public class OrderDetailActivity extends BaseActivity {
         setIntent(intent);
     }
 
-    public static void navigate(Activity activity, Order order){
-        Intent intent = new Intent(activity,OrderDetailActivity.class);
-        intent.putExtra("order",order);
-        activity.startActivity(intent);
-    }
+
 
 }
