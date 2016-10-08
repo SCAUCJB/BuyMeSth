@@ -220,7 +220,7 @@ public class OrderFragment extends Fragment{
 
                     @Override
                     public void onError(Throwable throwable) {
-                        showMsg("获取订单列表出现了问题");
+                        showMsg("加载更多订单出现了问题");
                         adapter.notifyDataChangedAfterLoadMore(false);
                     }
 

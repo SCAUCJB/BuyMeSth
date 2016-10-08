@@ -162,19 +162,23 @@
         <activity
             android:name=".notice.detail.PicPublishActivity"
             android:launchMode="singleTop"
+            android:label="订单动态"
             android:theme="@style/AppTheme.SwipeBackLayout" />
         <activity
             android:name=".notice.OrderDetailActivity"
             android:launchMode="singleTop"
+            android:label="订单详情"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
         <activity
             android:name=".notice.EvaluateActivity"
+            android:label="个人评价"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
         <activity
             android:name=".notice.ReplyActivity"
+            android:label="回复"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 

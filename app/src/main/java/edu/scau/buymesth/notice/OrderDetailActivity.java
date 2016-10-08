@@ -421,31 +421,38 @@ public class OrderDetailActivity extends BaseActivity {
                                         if (e == null) {
                                             BmobQuery<CashBook> query1 = new BmobQuery<CashBook>();
                                             query1.include("user");
-                                            query1.getObject(order.getObjectId(), new QueryListener<CashBook>() {
+                                            query1.addWhereEqualTo("toOrder",order.getObjectId());
+                                            query1.findObjects(new FindListener<CashBook>() {
                                                 @Override
-                                                public void done(CashBook cashBook, BmobException e) {
-                                                    User user = cashBook.getToUser();
-                                                    user.setBalance(user.getBalance() + cashBook.getCash());
-                                                    user.update(new UpdateListener() {
-                                                        @Override
-                                                        public void done(BmobException e) {
-                                                            if (e == null) {
-                                                                tvMsg.setText("交易已完成，请对卖家做出评价");
-                                                                Notificate notificate = new Notificate();
-                                                                notificate.setUser(order.getSeller());
-                                                                notificate.setOrder(order);
-                                                                notificate.setStatus(order.getStatus());
-                                                                notificate.save(new SaveListener<String>() {
-                                                                    @Override
-                                                                    public void done(String s, BmobException e) {
+                                                public void done(List<CashBook> list, BmobException e) {
+                                                    if(e==null){
+                                                        {
+                                                            CashBook cashBook = list.get(0);
+                                                            User user = cashBook.getToUser();
+                                                            user.setBalance(user.getBalance() + cashBook.getCash());
+                                                            user.update(new UpdateListener() {
+                                                                @Override
+                                                                public void done(BmobException e) {
+                                                                    if (e == null) {
+                                                                        tvMsg.setText("交易已完成，请对卖家做出评价");
+                                                                        Notificate notificate = new Notificate();
+                                                                        notificate.setUser(order.getSeller());
+                                                                        notificate.setOrder(order);
+                                                                        notificate.setStatus(order.getStatus());
+                                                                        notificate.save(new SaveListener<String>() {
+                                                                            @Override
+                                                                            public void done(String s, BmobException e) {
 
+                                                                            }
+                                                                        });
                                                                     }
-                                                                });
-                                                            }
+                                                                }
+                                                            });
                                                         }
-                                                    });
+                                                    }
                                                 }
                                             });
+
                                             rlGet.setVisibility(View.GONE);
                                             btnComment.setVisibility(View.VISIBLE);
 

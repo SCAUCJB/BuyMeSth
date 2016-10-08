@@ -2,17 +2,12 @@ package edu.scau.buymesth.cash;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import base.BaseActivity;
 import butterknife.Bind;
-import butterknife.ButterKnife;
-import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.QueryListener;
@@ -39,10 +34,14 @@ public class DepositActivity extends BaseActivity {
     protected int getLayoutId() {
         return R.layout.activity_deposit;
     }
-
+    public static void navigate(Activity activity, User user) {
+        Intent intent = new Intent(activity, DepositActivity.class);
+        intent.putExtra("user", user);
+        activity.startActivity(intent);
+    }
     @Override
     public void initView() {
-        user = (User) getIntent().getSerializableExtra("order");
+        user = (User) getIntent().getSerializableExtra("user");
         btnOk.setOnClickListener(v -> {
             if(etMoney.getText().toString().equals("")){
                 Toast.makeText(DepositActivity.this,"请填写充值金额",Toast.LENGTH_SHORT).show();
@@ -95,11 +94,7 @@ public class DepositActivity extends BaseActivity {
         activity.startActivity(intent);
     }
 
-    public static void navigate(Activity activity, User user) {
-        Intent intent = new Intent(activity, DepositActivity.class);
-        intent.putExtra("user", user);
-        activity.startActivity(intent);
-    }
+
 
     @Override
     protected int getToolBarId() {

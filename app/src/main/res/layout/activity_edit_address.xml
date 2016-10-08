@@ -92,8 +92,9 @@
                 android:layout_centerVertical="true"
                 android:text="省市区：" />
 
-            <ImageView
+            <ImageButton
                 android:id="@+id/iv_location"
+                android:clickable="true"
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:layout_alignParentEnd="true"
