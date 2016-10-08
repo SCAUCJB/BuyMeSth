@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="2dp">
+
+    <TextView
+        android:text="地点名称"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/theTextLarge"
+        android:id="@+id/tv_location_name" />
+
+    <TextView
+        android:text="详细地址"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/theText"
+        android:textColor="@color/darkgrey"
+        android:id="@+id/tv_location_address" />
+</LinearLayout>
