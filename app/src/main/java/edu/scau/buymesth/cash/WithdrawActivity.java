@@ -15,8 +15,10 @@ import butterknife.ButterKnife;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.QueryListener;
+import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 import edu.scau.buymesth.R;
+import edu.scau.buymesth.data.bean.CashBook;
 import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.publish.FlowLayout;
 
@@ -24,9 +26,6 @@ import edu.scau.buymesth.publish.FlowLayout;
  * Created by Jammy on 2016/10/7.
  */
 public class WithdrawActivity extends BaseActivity {
-
-    ///TODO:提现成功后还要加入CashBook表中
-
 
     User user;
     @Bind(R.id.et_money)
@@ -43,36 +42,44 @@ public class WithdrawActivity extends BaseActivity {
     public void initView() {
         user = (User) getIntent().getSerializableExtra("order");
         btnOk.setOnClickListener(v -> {
-            if(etMoney.getText().toString().equals("")){
-                Toast.makeText(WithdrawActivity.this,"请填写提现金额",Toast.LENGTH_SHORT).show();
-                return ;
+            if (etMoney.getText().toString().equals("")) {
+                Toast.makeText(WithdrawActivity.this, "请填写提现金额", Toast.LENGTH_SHORT).show();
+                return;
             }
 
             BmobQuery<User> query = new BmobQuery<User>();
             query.getObject(user.getObjectId(), new QueryListener<User>() {
                 @Override
                 public void done(User u, BmobException e) {
-                    if(e==null){
+                    if (e == null) {
                         user = u;
-                        if(user.getBalance()<Float.valueOf(etMoney.getText().toString())){
-                            Toast.makeText(WithdrawActivity.this,"余额不足",Toast.LENGTH_SHORT).show();
-                            return ;
+                        if (user.getBalance() < Float.valueOf(etMoney.getText().toString())) {
+                            Toast.makeText(WithdrawActivity.this, "余额不足", Toast.LENGTH_SHORT).show();
+                            return;
                         }
-                        user.setBalance(user.getBalance()-Float.valueOf(etMoney.getText().toString()));
+                        user.setBalance(user.getBalance() - Float.valueOf(etMoney.getText().toString()));
                         user.update(new UpdateListener() {
                             @Override
                             public void done(BmobException e) {
-                                if(e==null){
-                                    Toast.makeText(WithdrawActivity.this,"提现成功",Toast.LENGTH_SHORT).show();
+                                if (e == null) {
+                                    CashBook cashBook = new CashBook();
+                                    cashBook.setCash(Float.valueOf(etMoney.getText().toString()));
+                                    cashBook.setUser(user);
+                                    cashBook.save(new SaveListener<String>() {
+                                        @Override
+                                        public void done(String s, BmobException e) {
+
+                                        }
+                                    });
+                                    Toast.makeText(WithdrawActivity.this, "提现成功", Toast.LENGTH_SHORT).show();
                                     finish();
-                                }else{
-                                    Toast.makeText(WithdrawActivity.this,"请重试",Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(WithdrawActivity.this, "请重试", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
-                    }
-                    else{
-                        Toast.makeText(WithdrawActivity.this,"请重试",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(WithdrawActivity.this, "请重试", Toast.LENGTH_SHORT).show();
                     }
                 }
             });

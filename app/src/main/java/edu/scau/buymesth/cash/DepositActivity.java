@@ -16,8 +16,10 @@ import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.QueryListener;
+import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 import edu.scau.buymesth.R;
+import edu.scau.buymesth.data.bean.CashBook;
 import edu.scau.buymesth.data.bean.User;
 
 /**
@@ -57,6 +59,15 @@ public class DepositActivity extends BaseActivity {
                             @Override
                             public void done(BmobException e) {
                                 if(e==null){
+                                    CashBook cashBook = new CashBook();
+                                    cashBook.setCash(Float.valueOf(etMoney.getText().toString()));
+                                    cashBook.setToUser(user);
+                                    cashBook.save(new SaveListener<String>() {
+                                        @Override
+                                        public void done(String s, BmobException e) {
+
+                                        }
+                                    });
                                     Toast.makeText(DepositActivity.this,"充值成功",Toast.LENGTH_SHORT).show();
                                     finish();
                                 }else{

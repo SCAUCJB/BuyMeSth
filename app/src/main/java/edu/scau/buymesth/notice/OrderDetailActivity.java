@@ -1,5 +1,6 @@
 package edu.scau.buymesth.notice;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -707,6 +708,12 @@ public class OrderDetailActivity extends BaseActivity {
         // TODO Auto-generated method stub
         super.onNewIntent(intent);
         setIntent(intent);
+    }
+
+    public static void navigate(Activity activity, Order order){
+        Intent intent = new Intent(activity,OrderDetailActivity.class);
+        intent.putExtra("order",order);
+        activity.startActivity(intent);
     }
 
 }
