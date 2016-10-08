@@ -44,7 +44,7 @@ public   class UserPresenter  implements UserContract.Presenter{
             public void onNext(User user) {
                 mView.setAvatar(user.getAvatar());
                 if (user.getSignature() != null)
-                    mView.setSignature(user.getSignature());
+                    mView.setSignature("个性签名："+user.getSignature());
                 else
                     mView.setSignature("还没有个性签名~");
                 mView.setLevel(user.getExp());
@@ -53,12 +53,13 @@ public   class UserPresenter  implements UserContract.Presenter{
                 } else
                     mView.setlocation(user.getResidence());
                 mView.setUserName(user.getNickname());
+                mView.setUserId(user.getUsername());
                 if (user.getScore() != null) {
-                    mView.setScore(user.getScore() + "分");
+                    mView.setScore(String.valueOf(user.getScore()));
                     mView.setRatingBar(user.getScore());
                     mView.setPopulation(user.getRatePop() + "人评价");
                 } else {
-                    mView.setScore("5分");
+                    mView.setScore("5");
                     mView.setRatingBar(5.0f);
                     mView.setPopulation("0人评价");
                 }

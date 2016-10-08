@@ -7,6 +7,7 @@ package edu.scau.buymesth.user;
 public interface UserContract {
     interface View {
         void setUserName(String name);
+        void setUserId(String id);
         void setAvatar(String url);
         void setLevel(Integer level);
         void setlocation(String location);

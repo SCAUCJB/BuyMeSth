@@ -10,7 +10,8 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:background="@color/cardview_dark_background"
-            android:id="@+id/tabLayout" />
+            android:id="@+id/tabLayout"
+            android:elevation="0dp"/>
 
     <FrameLayout
         android:layout_width="match_parent"

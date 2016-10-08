@@ -6,6 +6,7 @@ import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
@@ -30,6 +31,7 @@ import com.bumptech.glide.Glide;
 import base.BaseActivity;
 import base.util.GlideCircleTransform;
 import base.util.ToastUtil;
+import bitmap.BlurTransformation;
 import cn.bmob.v3.BmobUser;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.ViewPagerAdapter;
@@ -51,11 +53,13 @@ import util.DensityUtil;
 public class UserFragment extends Fragment implements UserContract.View {
     UserPresenter mPresenter;
     ImageView mAvatarIv;
+    ImageView mBgUser;
     TextView mNameTv;
+    TextView mUserIdTv;
     TextView mLevelTv;
     TextView mLocationTv;
     TextView mSignatureTv;
-    Button mSettingBtn;
+    View mSettingBtn;
     TextView mScoreTv;
     TextView mPopulationTv;
     RatingBar mRatingBar;
@@ -63,6 +67,8 @@ public class UserFragment extends Fragment implements UserContract.View {
     TabLayout mTabLayout;
     CoordinatorLayout mCoordinatorLayout;
     LinearLayout userInfoLl;
+
+    ViewGroup mUserInfoLayout;
 
     private BottomSheetBehavior<NestedScrollView> behavior;
     private SparseArray<Drawable> mLevelDrawableCache = new SparseArray<>();
@@ -73,11 +79,13 @@ public class UserFragment extends Fragment implements UserContract.View {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_user, container, false);
         mAvatarIv = (ImageView) view.findViewById(R.id.iv_avatar);
+        mBgUser = (ImageView) view.findViewById(R.id.bg_user_info);
         mNameTv = (TextView) view.findViewById(R.id.tv_user);
+        mUserIdTv = (TextView) view .findViewById(R.id.tv_user_id);
         mLevelTv = (TextView) view.findViewById(R.id.tv_level);
         mLocationTv = (TextView) view.findViewById(R.id.tv_location);
         mSignatureTv = (TextView) view.findViewById(R.id.tv_signature);
-        mSettingBtn = (Button) view.findViewById(R.id.btn_setting);
+        mSettingBtn = (View) view.findViewById(R.id.btn_setting);
         mScoreTv = (TextView) view.findViewById(R.id.tv_score);
         mPopulationTv = (TextView) view.findViewById(R.id.tv_population);
         mRatingBar = (RatingBar) view.findViewById(R.id.ratingBar);
@@ -85,6 +93,7 @@ public class UserFragment extends Fragment implements UserContract.View {
         mTabLayout = (TabLayout) view.findViewById(R.id.tab_layout);
         mCoordinatorLayout = (CoordinatorLayout) view.findViewById(R.id.cl);
         userInfoLl = (LinearLayout) view.findViewById(R.id.ll_user_info);
+        mUserInfoLayout = (ViewGroup) view.findViewById(R.id.ll_user_info);
 
         mSettingBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), UserSettingActivity.class);
@@ -122,6 +131,11 @@ public class UserFragment extends Fragment implements UserContract.View {
     }
 
     @Override
+    public void setUserId(String id) {
+        mUserIdTv.setText(id);
+    }
+
+    @Override
     public void setAvatar(String url) {
         Glide.with(getContext()).load(url).crossFade().placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(getContext())).into(mAvatarIv);
         mAvatarIv.setOnLongClickListener(new View.OnLongClickListener() {
@@ -134,6 +148,11 @@ public class UserFragment extends Fragment implements UserContract.View {
                 return false;
             }
         });
+        Glide.with(this).
+                load(url).
+                asBitmap().
+                transform(new BlurTransformation(getContext(),40)).//高斯模糊处理
+                into(mBgUser);
     }
 
     @Override
@@ -186,6 +205,17 @@ public class UserFragment extends Fragment implements UserContract.View {
         mTabLayout.setupWithViewPager(mViewPager);
         NestedScrollView bottomSheet = (NestedScrollView) mCoordinatorLayout.findViewById(R.id.bottom_sheet);
         behavior = BottomSheetBehavior.from(bottomSheet);
+        behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                mUserInfoLayout.setTranslationY(-mUserInfoLayout.getHeight()*slideOffset/3);
+            }
+        });
         requestFragment.disallowIntercept(bottomSheet);
         orderFragment.disallowIntercept(bottomSheet);
         userInfoLl.getViewTreeObserver().addOnGlobalLayoutListener(

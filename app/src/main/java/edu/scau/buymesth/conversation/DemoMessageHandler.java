@@ -34,10 +34,11 @@ public class DemoMessageHandler extends BmobIMMessageHandler {
 //        //当接收到服务器发来的消息时，此方法被调用
         if(largetIcon==null)
             largetIcon = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
-//        if (BmobNotificationManager.getInstance(context).isShowNotification()) {
+        if (BmobNotificationManager.getInstance(context).isShowNotification()) {
             Intent pendingIntent = new Intent(context, TabActivity.class);
             pendingIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             BmobIMMessage message = event.getMessage();
+            pendingIntent.putExtra("action","goConversation");
             String content = "unknown message";
             try {
                 JSONObject jsonMsg = new JSONObject(message.getContent());
@@ -49,12 +50,9 @@ public class DemoMessageHandler extends BmobIMMessageHandler {
                     default: break;
                 }
             } catch (JSONException e) { }
-//            BmobNotificationManager.getInstance(context).showNotification(largetIcon,
-//                    event.getConversation().getConversationTitle(),
-//                    content,content,pendingIntent);
             event.getMessage().setContent(content);
             BmobNotificationManager.getInstance(context.getApplicationContext()).showNotification(event,pendingIntent);
-//        }
+        }
     }
 
     @Override
@@ -70,6 +68,7 @@ public class DemoMessageHandler extends BmobIMMessageHandler {
         }
         Intent pendingIntent = new Intent(context, TabActivity.class);
         pendingIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        pendingIntent.putExtra("action","goConversation");
         BmobNotificationManager.getInstance(context).showNotification(largetIcon,
                 "离线消息",
                 map.size()+"个用户给你发了"+size+"条消息",map.size()+"个用户给你发了"+size+"条消息",pendingIntent);

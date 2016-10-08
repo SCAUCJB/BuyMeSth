@@ -183,10 +183,8 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-
                 if (!scrolling)
                     viewPager.setCurrentItem((Integer) tab.getCustomView().getTag(), false);
-
             }
 
             @Override
@@ -331,6 +329,15 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
                 editor.apply();
             }
         });
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String action = intent.getStringExtra("action");
+        if(action!=null&&action.equals("goConversation")){
+            viewPager.setCurrentItem(3);
+        }
     }
 
     public static void fixInputMethodManagerLeak(Context destContext) {
