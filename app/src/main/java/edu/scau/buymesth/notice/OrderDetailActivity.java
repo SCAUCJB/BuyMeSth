@@ -205,6 +205,10 @@ public class OrderDetailActivity extends BaseActivity {
                                     Toast.makeText(OrderDetailActivity.this, "请选择收货地址", Toast.LENGTH_LONG).show();
                                     return;
                                 }
+                                if(order.getRequest().getAccecpted()){
+                                    Toast.makeText(OrderDetailActivity.this, "此订单已被接收", Toast.LENGTH_SHORT).show();
+                                    return ;
+                                }
                                 PayActivity.navigateForResult(OrderDetailActivity.this, order);
                             });
 
