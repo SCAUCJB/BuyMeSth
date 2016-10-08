@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.text.TextUtils;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 
 import com.bumptech.glide.Glide;
 
@@ -37,6 +38,8 @@ public class EvaluateListAdapter extends BaseQuickAdapter<Evaluate> {
                 .setText(R.id.tv_content,item.getContent())
                 .setText(R.id.tv_score,String.valueOf(item.getScore()))
                 .setText(R.id.tv_date,item.getUpdatedAt());
+        RatingBar ratingBar=helper.getView(R.id.ratingBar);
+        ratingBar.setRating(item.getScore());
         if(TextUtils.isEmpty(item.getReply())){
             helper.setVisible(R.id.tv_reply,false);
         }else{

@@ -26,6 +26,7 @@
             android:text="姓名" />
 
         <RatingBar
+            android:padding="@dimen/content_padding"
             android:id="@+id/ratingBar"
             style="?android:attr/ratingBarStyleSmall"
             android:layout_width="wrap_content"

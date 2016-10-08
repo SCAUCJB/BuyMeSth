@@ -35,11 +35,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
-import static cn.bmob.v3.BmobQuery.CachePolicy.CACHE_ELSE_NETWORK;
 import static cn.bmob.v3.BmobQuery.CachePolicy.CACHE_ONLY;
-import static cn.bmob.v3.BmobQuery.CachePolicy.NETWORK_ELSE_CACHE;
 import static cn.bmob.v3.BmobQuery.CachePolicy.NETWORK_ONLY;
-import static edu.scau.Constant.NUMBER_PER_PAGE;
 
 /**
  * Created by John on 2016/9/25.
@@ -98,7 +95,7 @@ public class OrderFragment extends Fragment{
         query.include("buyer,request,seller");
         query.order("-updatedAt");
 
-        Subscription subscription = getOrderObservable(CACHE_ELSE_NETWORK, mId).subscribeOn(Schedulers.io())
+        Subscription subscription = getOrderObservable(CACHE_ONLY, mId).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<List<Order>>() {
                     @Override
                     public void onCompleted() {
@@ -163,7 +160,8 @@ public class OrderFragment extends Fragment{
 
                     @Override
                     public void onError(Throwable throwable) {
-                        showMsg("获取订单列表出现了问题");
+                        showMsg("刷新订单列表出现了问题");
+                        adapter.notifyDataChangedAfterLoadMore(false);
                     }
 
                     @Override
@@ -173,12 +171,7 @@ public class OrderFragment extends Fragment{
                             mHintTv.setVisibility(View.VISIBLE);
                         }else if(orders.size()>0&&mHintTv.getVisibility()==View.VISIBLE)
                             mHintTv.setVisibility(View.GONE);
-                        if(orders !=null&&orders.size()>0&&orders.size()<NUMBER_PER_PAGE){
-                            if (notLoadingView == null) {
-                                notLoadingView = getActivity().getWindow().getLayoutInflater().inflate(R.layout.not_loading, (ViewGroup) mRecyclerView.getParent(), false);
-                            }
-                            adapter.addFooterView(notLoadingView);
-                        }
+
                         adapter.setNewData(orders);
                     }
                 });
@@ -189,9 +182,9 @@ public class OrderFragment extends Fragment{
         BmobQuery<Order> query = new BmobQuery<>();
         query.setMaxCacheAge(TimeUnit.DAYS.toMillis(1));//此表示缓存一天，可以用来优化下拉刷新而清空了的加载更多
         BmobQuery<Order> query1 = new BmobQuery<>();
-        query1.addWhereEqualTo("seller",mId);
+        query1.addWhereEqualTo("seller",userId);
         BmobQuery<Order> query2 = new BmobQuery<>();
-        query2.addWhereEqualTo("buyer",mId);
+        query2.addWhereEqualTo("buyer",userId);
         List<BmobQuery<Order>> queries = new ArrayList<BmobQuery<Order>>();
         queries.add(query1);
         queries.add(query2);
@@ -203,7 +196,7 @@ public class OrderFragment extends Fragment{
         if (policy == CACHE_ONLY && query.hasCachedResult(Order.class))
             query.setCachePolicy(CACHE_ONLY);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
         else
-            query.setCachePolicy(NETWORK_ELSE_CACHE);// 从网络
+            query.setCachePolicy(NETWORK_ONLY);// 从网络
 
         return query.findObjectsObservable(Order.class);
     }
@@ -226,7 +219,7 @@ public class OrderFragment extends Fragment{
 
                     @Override
                     public void onNext(List<Order> orders) {
-                        if(orders==null)
+                        if(orders!=null)
                         adapter.notifyDataChangedAfterLoadMore(orders, true);
                         else{
                             adapter.notifyDataChangedAfterLoadMore(false);

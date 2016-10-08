@@ -35,7 +35,6 @@ import rx.subscriptions.CompositeSubscription;
 
 import static cn.bmob.v3.BmobQuery.CachePolicy.CACHE_ELSE_NETWORK;
 import static cn.bmob.v3.BmobQuery.CachePolicy.CACHE_ONLY;
-import static cn.bmob.v3.BmobQuery.CachePolicy.NETWORK_ELSE_CACHE;
 import static cn.bmob.v3.BmobQuery.CachePolicy.NETWORK_ONLY;
 import static edu.scau.Constant.NUMBER_PER_PAGE;
 
@@ -140,7 +139,7 @@ public class RequestFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable throwable) {
-
+                        showMsg("刷新请求列表出现了问题");
                     }
 
                     @Override
@@ -151,12 +150,7 @@ public class RequestFragment extends Fragment {
                         }else if(requests.size()>0&&mHintTv.getVisibility()==View.VISIBLE)
                             mHintTv.setVisibility(View.GONE);
                         mRequestListAdapter.setNewData(requests);
-                        if(requests!=null&&requests.size()>0&&requests.size()<NUMBER_PER_PAGE){
-                            if (notLoadingView == null) {
-                                notLoadingView = getActivity().getWindow().getLayoutInflater().inflate(R.layout.not_loading, (ViewGroup) mRecyclerView.getParent(), false);
-                            }
-                            mRequestListAdapter.addFooterView(notLoadingView);
-                        }
+
                     }
                 });
         mSubscriptions.add(subscription);
@@ -173,7 +167,7 @@ public class RequestFragment extends Fragment {
         if (policy == CACHE_ONLY && query.hasCachedResult(Request.class))
             query.setCachePolicy(CACHE_ONLY);    // 如果有缓存的话，则设置策略为CACHE_ELSE_NETWORK
         else
-            query.setCachePolicy(NETWORK_ELSE_CACHE);// 从网络
+            query.setCachePolicy(NETWORK_ONLY);// 从网络
 
         return query.findObjectsObservable(Request.class);
     }
@@ -190,7 +184,7 @@ public class RequestFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable throwable) {
-                        showMsg("获取请求列表出现了问题");
+                        showMsg("加载更多请求列表出现了问题");
                         mRequestListAdapter.notifyDataChangedAfterLoadMore(false);
                     }
 
