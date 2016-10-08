@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -11,16 +12,13 @@
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/background_comment"
-            android:paddingBottom="5dp"
-            android:paddingRight="8dp"
-            android:paddingStart="14dp"
-            android:paddingTop="5dp">
+            android:background="@drawable/background_comment">
 
             <RelativeLayout
                 android:id="@+id/person_info"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/content_padding">
 
                 <ImageView
                     android:id="@+id/chat_icon"
@@ -53,73 +51,56 @@
                     android:text="LV 2"
                     android:textColor="#ffffff"
                     android:textSize="8sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    tools:ignore="TextViewEdits" />
+
             </RelativeLayout>
 
-            <ImageView
-                android:id="@+id/iv_main_pic"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-
-                android:layout_marginTop="10dp"
-                android:src="@mipmap/default_img_rect"
-                android:layout_below="@+id/person_info" />
-
             <TextView
-                android:id="@+id/tv_chat_time"
-                style="@style/commentText"
+                android:text="消息提示"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/iv_main_pic"
-                android:layout_marginRight="@dimen/dp_14"
-                android:layout_marginTop="@dimen/dp_6"
-                android:text="用户于2016-08-24 00:00接收了你的订单" />
-
-            <edu.scau.buymesth.publish.FlowLayout
-                android:id="@+id/chat_tag"
-                android:layout_width="match_parent"
+                android:layout_below="@+id/person_info"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="@dimen/content_padding"
+                android:textStyle="bold"
+                android:textSize="15sp"
+                android:id="@+id/tv" />
+            <TextView
+                android:text="2013-03-03 22:22:22"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_chat_time"
-                android:layout_margin="10dp"
-                android:layout_marginBottom="@dimen/dp_10"
-                android:layout_marginTop="@dimen/dp_10">
-
-            </edu.scau.buymesth.publish.FlowLayout>
+                android:layout_alignParentTop="false"
+                android:layout_alignStart="@+id/person_info"
+                android:layout_below="@+id/tv"
+                android:id="@+id/tv_time" />
 
             <TextView
-                android:id="@+id/thing_price"
-                android:layout_width="match_parent"
+                android:text = "你的订单已发生变化，有用户接收了你的订单，等待你的确认"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="物品价格：￥"
-                android:layout_below="@+id/chat_tag" />
+                android:layout_below="@+id/tv_time"
+                android:layout_margin="@dimen/content_padding"
+                android:id="@+id/tv_detail" />
 
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="@dimen/content_padding"
+                android:layout_marginRight="@dimen/content_padding"
+                android:layout_below="@+id/tv_detail"
+                android:background="#bdbdbd"
+                android:id="@+id/ll" />
             <TextView
-                android:id="@+id/tv_tip"
-                android:layout_width="match_parent"
+                android:text="详情"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/thing_price"
-                android:text="索要小费：￥" />
-
-            <Button
-                android:id="@+id/btn_chat_cancle"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_marginRight="10dp"
-                android:layout_toStartOf="@+id/btn_chat_ok"
-                android:background="@drawable/btn_chat_cancle"
-                android:text="残忍拒绝"
-                android:layout_below="@+id/tv_tip" />
-
-            <Button
-                android:id="@+id/btn_chat_ok"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_alignParentEnd="true"
-                android:background="@drawable/btn_chat_ok"
-                android:text="接收订单"
-                android:textColor="#ffffff"
-                android:layout_below="@+id/tv_tip" />
+                android:layout_below="@+id/tv_detail"
+                android:layout_alignEnd="@+id/ll"
+                android:layout_margin="@dimen/content_padding" />
 
         </RelativeLayout>
     </android.support.v7.widget.CardView>
+
 </LinearLayout>

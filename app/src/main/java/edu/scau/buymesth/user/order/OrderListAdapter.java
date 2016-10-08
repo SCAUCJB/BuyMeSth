@@ -1,6 +1,10 @@
 package edu.scau.buymesth.user.order;
 
+import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
+import android.util.SparseArray;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
@@ -10,11 +14,16 @@ import adpater.BaseQuickAdapter;
 import adpater.BaseViewHolder;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Order;
+import edu.scau.buymesth.util.ColorChangeHelper;
 
 /**
  * Created by Jammy on 2016/10/3.
  */
 public class OrderListAdapter extends BaseQuickAdapter<Order>{
+
+    private SparseArray<Drawable> mLevelDrawableCache = new SparseArray<>();
+
+
     public OrderListAdapter(List<Order> data) {
         super(R.layout.order_item,data);
     }
@@ -47,11 +56,23 @@ public class OrderListAdapter extends BaseQuickAdapter<Order>{
         Glide.with(mContext).load(item.getRequest().getUrls().get(0)).into((ImageView) helper.getView(R.id.request_icon));
         Glide.with(mContext).load(item.getSeller().getAvatar()).into((ImageView)helper.getView(R.id.iv_avatar_author));
         helper.setText(R.id.tv_name,item.getSeller().getNickname());
-        helper.setText(R.id.tv_level,"LV"+item.getSeller().getExp()/10);
+        setLevel(helper.getView(R.id.tv_level),item.getSeller().getExp());
     }
 
     @Override
     public Order getItem(int position) {
         return super.getItem(position);
     }
+
+    public void setLevel(TextView view, Integer exp) {
+        Drawable levelBg = mLevelDrawableCache.get(exp / 10 * 10);
+        if (levelBg == null) {
+            levelBg = ColorChangeHelper.tintDrawable(mContext.getResources().getDrawable(R.drawable.rect_black),
+                    ColorStateList.valueOf(ColorChangeHelper.IntToColorValue(exp / 10 * 10)));
+            mLevelDrawableCache.put(exp / 10 * 10, levelBg);
+        }
+        view.setBackground(levelBg);
+        view.setText("LV" + exp / 10);
+    }
+
 }
