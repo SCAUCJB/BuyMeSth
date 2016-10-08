@@ -94,7 +94,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
 
     private DiscoverFragment discoverFragment;
     private HomeFragment homeFragment;
-    private NoticeFragment noticeFragment;
+//    private NoticeFragment noticeFragment;
     private AlertDialog searchDialog;
     private EditText et;
 
@@ -262,22 +262,6 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == 101 && resultCode == 101) {
-//            User user = (User) data.getSerializableExtra("user");
-//            toast(user.getNickname());
-//            BmobIMUserInfo info = new BmobIMUserInfo(user.getObjectId(), user.getNickname(), user.getAvatar());
-//            BmobIM.getInstance().startPrivateConversation(info, new ConversationListener() {
-//                @Override
-//                public void done(BmobIMConversation c, BmobException e) {
-//                    if (e == null) {
-//                        //在此跳转到聊天页面
-////                        viewPager.setCurrentItem(2);
-//                    } else {
-//                        toast(e.getMessage() + "(" + e.getErrorCode() + ")");
-//                    }
-//                }
-//            });
-//        }
     }
 
     @Override

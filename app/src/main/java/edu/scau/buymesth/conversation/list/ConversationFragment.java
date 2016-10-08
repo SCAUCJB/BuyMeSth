@@ -316,6 +316,7 @@ public class ConversationFragment extends Fragment implements ConversationContra
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+        getActivity().unbindService(serviceConnection);
     }
 
     @Override
