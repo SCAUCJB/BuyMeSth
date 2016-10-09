@@ -431,7 +431,10 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         query.findObjects(new FindListener<Notificate>() {
             @Override
             public void done(List<Notificate> list, BmobException e) {
-                if(e!=null||list==null) mHandler.postDelayed(() -> getNotification(),80000);
+                if(e!=null||list==null) {
+                    mHandler.postDelayed(() -> getNotification(),80000);
+                    return;
+                }
                 Gson gson  = new Gson();
                 for (int i = 0; i < list.size(); i++) {
                     Order order = list.get(i).getOrder();
