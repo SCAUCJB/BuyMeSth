@@ -315,4 +315,8 @@ public class EvaluateActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public int getStatusColorResources() {
+        return R.color.colorPrimaryDark;
+    }
 }

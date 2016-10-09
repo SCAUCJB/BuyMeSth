@@ -100,7 +100,10 @@ public class UserSettingActivity extends BaseActivity implements UserSettingFrag
         mTitleTv.setText("请输入常住地");
     }
 
-
+    @Override
+    public int getStatusColorResources() {
+        return R.color.colorPrimaryDark;
+    }
 
     @Override
     public void onInputCompleted(String input,byte type) {

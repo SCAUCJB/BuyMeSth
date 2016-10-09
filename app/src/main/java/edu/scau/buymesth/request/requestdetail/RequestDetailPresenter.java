@@ -33,7 +33,7 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
     public boolean mNeedQueryRequest = false;
     private CompositeSubscription mSubscriptions = new CompositeSubscription();
 
-    void onPause() {
+    public void onPause() {
         mSubscriptions.clear();
     }
 

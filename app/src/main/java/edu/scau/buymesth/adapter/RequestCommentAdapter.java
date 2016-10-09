@@ -35,7 +35,7 @@ public class RequestCommentAdapter extends BaseQuickAdapter<Comment> {
                 .setText(R.id.tv_comment, item.getContent())
                 .setText(R.id.tv_comment_date, item.getCreatedAt());
 
-        helper.setOnClickListener(R.id.iv_comment_like, v -> {
+        helper.setOnClickListener(R.id.ly_comment_like, v -> {
             AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
             //第一个参数是上下文对象，第二个参数是云端逻辑的方法名称，第三个参数是上传到云端逻辑的参数列表（JSONObject cloudCodeParams），第四个参数是回调类
             JSONObject params = new JSONObject();

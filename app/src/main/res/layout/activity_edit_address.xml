@@ -102,6 +102,7 @@
                 android:clickable="true"
                 android:layout_width="22dp"
                 android:layout_height="22dp"
+                android:layout_marginRight="10dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_location_on_grey600_48dp" />

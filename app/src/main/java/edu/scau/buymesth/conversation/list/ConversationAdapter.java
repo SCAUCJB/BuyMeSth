@@ -19,6 +19,7 @@ import cn.bmob.newim.BmobIM;
 import cn.bmob.newim.bean.BmobIMConversation;
 import cn.bmob.newim.bean.BmobIMMessage;
 import edu.scau.buymesth.R;
+import edu.scau.buymesth.userinfo.UserInfoActivity;
 import edu.scau.buymesth.util.DateFormatHelper;
 
 /**
@@ -45,7 +46,7 @@ public class ConversationAdapter extends BaseQuickAdapter<BmobIMConversation> {
                 .into((ImageView) helper.getView(R.id.iv_avatar));
         helper.getView(R.id.iv_avatar).setOnClickListener(v -> {
             //打开个人页
-            ToastUtil.show("打开个人页");
+            helper.getView(R.id.iv_avatar).setOnClickListener(v1 -> UserInfoActivity.navigate(mActivity, item.getConversationId()));
         });
         if(item.getMessages().size()!=0){
             BmobIMMessage newMsg = item.getMessages().get(0);

@@ -507,4 +507,10 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
             showIntro(swCompress,"swCompress","点击可以无损压缩图片节约流量哦");//这里用了夸张的广告手法
         }
     };
+
+
+    @Override
+    public int getStatusColorResources() {
+        return R.color.colorPrimaryDark;
+    }
 }

@@ -34,6 +34,7 @@ import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Conversation;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.request.requestdetail.RequestDetailActivity;
+import edu.scau.buymesth.userinfo.UserInfoActivity;
 import edu.scau.buymesth.util.DateFormatHelper;
 import gallery.PhotoActivity;
 import util.DensityUtil;
@@ -212,9 +213,6 @@ public class ChatAdapter extends BaseQuickAdapter<BmobIMMessage> {
             ToastUtil.show("已复制到剪贴板");
             return false;
         });
-        helper.getView(R.id.iv_avatar).setOnClickListener(v -> {
-            //打开个人页
-            ToastUtil.show("打开个人页");
-        });
+        helper.getView(R.id.iv_avatar).setOnClickListener(v1 -> UserInfoActivity.navigate(mActivity, item.getConversationId()));
     }
 }

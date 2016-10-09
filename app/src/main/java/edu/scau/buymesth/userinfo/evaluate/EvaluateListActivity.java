@@ -112,4 +112,9 @@ public class EvaluateListActivity extends BaseActivity implements Contract.View 
             addFooter();
         }
     }
+
+    @Override
+    public int getStatusColorResources() {
+        return R.color.colorPrimaryDark;
+    }
 }

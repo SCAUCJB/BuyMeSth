@@ -29,4 +29,51 @@ public class DateFormatHelper {
         time = DateUtils.getRelativeTimeSpanString(date);
         return time.toString();
     }
+
+    public static long getMsTime(String date) {
+        CharSequence time = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date tdate = null;
+        try {
+            tdate = sdf.parse(date);
+            return tdate.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return (long)0;
+    }
+
+    public static long getMinTime(String date) {
+        CharSequence time = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date tdate = null;
+        try {
+            tdate = sdf.parse(date);
+            return tdate.getTime()/1000/60;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return (long)0;
+    }
+
+    public static String getStringTime(String date) {
+        CharSequence time = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date tdate = null;
+        try {
+            tdate = sdf.parse(date);
+            long min = tdate.getTime() / 1000 / 60;
+            long sec = (tdate.getTime() - min*1000*60)/1000;
+            return tdate.getTime()/1000/60+"分"+sec+"秒";
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
+    public static String getStringTime(long date) {
+            long min = date / 1000 / 60;
+            long sec = (date - min*100*60)/1000;
+            return date/100/60+"分"+sec+"秒";
+    }
 }

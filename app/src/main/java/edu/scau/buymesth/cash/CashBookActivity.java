@@ -78,4 +78,8 @@ public class CashBookActivity extends BaseActivity {
         activity.startActivity(intent);
     }
 
+    @Override
+    public int getStatusColorResources() {
+        return R.color.colorPrimaryDark;
+    }
 }

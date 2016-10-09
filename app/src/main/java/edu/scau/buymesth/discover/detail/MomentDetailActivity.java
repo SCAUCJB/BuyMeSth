@@ -23,6 +23,7 @@ import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.data.bean.MomentsComment;
+import edu.scau.buymesth.userinfo.UserInfoActivity;
 import edu.scau.buymesth.util.ColorChangeHelper;
 import edu.scau.buymesth.util.DateFormatHelper;
 import edu.scau.buymesth.util.DividerItemDecoration;
@@ -140,8 +141,8 @@ public class MomentDetailActivity extends BaseActivity implements  MomentDetailC
                     .placeholder(R.mipmap.def_head)
                     .transform(new GlideCircleTransform(mContext))
                     .into((ImageView) momentView.findViewById(R.id.iv_avatar));
-            if(moment.getImages()!=null&&moment.getImages().size()>0)
-                ((NineGridLayout)momentView.findViewById(R.id.nine_grid_layout)).setUrlList(moment.getImages());
+            momentView.findViewById(R.id.iv_avatar).setOnClickListener(v -> UserInfoActivity.navigate(MomentDetailActivity.this, moment.getUser()));
+            ((NineGridLayout)momentView.findViewById(R.id.nine_grid_layout)).setUrlList(moment.getImages());
         });
     }
 
@@ -164,7 +165,7 @@ public class MomentDetailActivity extends BaseActivity implements  MomentDetailC
     }
 
     private void initAdapter(){
-        mMomentDetailAdapter = new MomentDetailAdapter(mPresenter.mModel.getDatas());
+        mMomentDetailAdapter = new MomentDetailAdapter(MomentDetailActivity.this,mPresenter.mModel.getDatas());
         mMomentDetailAdapter.openLoadAnimation();
         mMomentDetailAdapter.addHeaderView(momentView);
         mRecyclerView.setAdapter(mMomentDetailAdapter);
@@ -267,7 +268,6 @@ public class MomentDetailActivity extends BaseActivity implements  MomentDetailC
 
     @Override
     public void onPostCommentSuccess(String msg) {
-        toast(msg);
         ((TextView)findViewById(R.id.intput_comment)).setText(null);
         mPresenter.RefreshComments();
     }

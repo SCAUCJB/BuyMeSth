@@ -93,7 +93,7 @@ public class UserFragment extends Fragment implements UserContract.View {
         mTabLayout = (TabLayout) view.findViewById(R.id.tab_layout);
         mCoordinatorLayout = (CoordinatorLayout) view.findViewById(R.id.cl);
         userInfoLl = (LinearLayout) view.findViewById(R.id.ll_user_info);
-        mUserInfoLayout = (ViewGroup) view.findViewById(R.id.ll_user_info);
+        mUserInfoLayout = (ViewGroup) view.findViewById(R.id.rl_user_info);
 
         mSettingBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), UserSettingActivity.class);
@@ -143,6 +143,7 @@ public class UserFragment extends Fragment implements UserContract.View {
             ToastUtil.show("退出登陆");
             Intent i = new Intent(getActivity(), LoginActivity.class);
             startActivity(i);
+            getActivity().finish();
             return false;
         });
         Glide.with(this).
@@ -210,7 +211,8 @@ public class UserFragment extends Fragment implements UserContract.View {
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                mUserInfoLayout.setTranslationY(-mUserInfoLayout.getHeight()*slideOffset/3);
+                userInfoLl.setTranslationY(-userInfoLl.getHeight()*slideOffset/3);
+                mUserInfoLayout.setTranslationY(userInfoLl.getHeight()*slideOffset/8);
             }
         });
         requestFragment.disallowIntercept(bottomSheet);

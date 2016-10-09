@@ -71,7 +71,7 @@ public class EmptyActivity extends BaseActivity {
             mMainFragment = (Fragment) Class.forName(className).newInstance();
             if(mMainFragment instanceof ButtonOnToolbar){
                 ((Button)findViewById(R.id.bt_on_toolbar)).setText(((ButtonOnToolbar)mMainFragment).toolbarsButtonText());
-                findViewById(R.id.bt_on_toolbar).setOnClickListener(v -> ((ButtonOnToolbar)mMainFragment).onToolbarButtonClick());
+                findViewById(R.id.bt_on_toolbar).setOnClickListener(v -> ((ButtonOnToolbar)mMainFragment).onToolbarButtonClick(v));
             }else {
                 findViewById(R.id.bt_on_toolbar).setVisibility(View.GONE);
             }
@@ -121,7 +121,7 @@ public class EmptyActivity extends BaseActivity {
     }
 
     public interface ButtonOnToolbar{
-        void onToolbarButtonClick();
+        void onToolbarButtonClick(View v);
         String toolbarsButtonText();
     }
 }

@@ -1,5 +1,6 @@
 package edu.scau.buymesth.discover.detail;
 
+import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.widget.ImageView;
 
@@ -12,6 +13,7 @@ import adpater.BaseViewHolder;
 import base.util.GlideCircleTransform;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.MomentsComment;
+import edu.scau.buymesth.userinfo.UserInfoActivity;
 import edu.scau.buymesth.util.ColorChangeHelper;
 import edu.scau.buymesth.util.DateFormatHelper;
 
@@ -26,8 +28,11 @@ public class MomentDetailAdapter extends BaseMultiItemQuickAdapter<MomentsCommen
      *
      * @param data A new list is created out of this one to avoid mutable list
      */
-    public MomentDetailAdapter(List<MomentsComment> data) {
+    private Activity mActivity;
+
+    public MomentDetailAdapter(Activity activity,List<MomentsComment> data) {
         super(data);
+        mActivity = activity;
         addItemType(0, R.layout.item_moment_comment);
     }
 
@@ -45,6 +50,8 @@ public class MomentDetailAdapter extends BaseMultiItemQuickAdapter<MomentsCommen
                 .placeholder(R.mipmap.def_head)
                 .transform(new GlideCircleTransform(mContext))
                 .into((ImageView) helper.getView(R.id.iv_avatar));
+
+        helper.getView(R.id.iv_avatar).setOnClickListener(v1 -> UserInfoActivity.navigate(mActivity, item.getUser()));
 
     }
 }

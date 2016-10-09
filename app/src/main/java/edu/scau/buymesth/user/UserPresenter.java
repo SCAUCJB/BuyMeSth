@@ -5,6 +5,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
+
 import cn.bmob.v3.AsyncCustomEndpoints;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
@@ -102,9 +104,13 @@ public class UserPresenter implements UserContract.Presenter {
                             try {
                                 obj = jsonArray.getJSONObject(0);
                                 double score = obj.getDouble("_avgScore");
-                                mView.setScore(score + "");
+                                DecimalFormat decimalFormat=new DecimalFormat(".0");//构造方法的字符格式这里如果小数不足2位,会以0补足.
+                                String p= decimalFormat.format(score);//format 返回的是字符串
+                                mView.setScore(p + "");
                                 mView.setRatingBar((float) score);
                             } catch (JSONException e) {
+                                mView.setScore("0.0");
+                                mView.setRatingBar((float) 0.1);
                                 e.printStackTrace();
                             }
                         }

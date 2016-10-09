@@ -68,4 +68,9 @@ public class ReplyActivity extends BaseActivity {
         intent.putExtra("evaluate", evaluate);
         activity.startActivityForResult(intent, REPLY_SUCCESS);
     }
+
+    @Override
+    public int getStatusColorResources() {
+        return R.color.colorPrimaryDark;
+    }
 }

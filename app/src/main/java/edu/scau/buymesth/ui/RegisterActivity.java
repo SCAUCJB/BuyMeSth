@@ -6,9 +6,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import base.BaseActivity;
+import base.util.ToastUtil;
 import butterknife.Bind;
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.LogInListener;
 import cn.bmob.v3.listener.SaveListener;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.User;
@@ -46,41 +52,57 @@ public class RegisterActivity extends BaseActivity{
         String account = getIntent().getStringExtra("username");
         if(account!=null)
             inputAccount.setText(account);
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        buttonRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(checkInput()){
-                    String username = inputAccount.getText().toString();
-                    String password = inputPassword.getText().toString();
-                    User user = new User();
-                    user.setUsername(username);
-                    user.setPassword(password);
-                    user.setExp(0);
-                    user.setNickname(inputNickname.getText().toString());
-                    user.signUp(new SaveListener<User>(){
+        buttonCancel.setOnClickListener(v -> finish());
+        buttonRegister.setOnClickListener(v -> {
+            if(checkInput()){
+                String username = inputAccount.getText().toString();
+                String password = inputPassword.getText().toString();
+                User user = new User();
+                user.setUsername(username);
+                user.setEmail(username);
+                user.setPassword(password);
+                user.setExp(0);
+                user.setNickname(inputNickname.getText().toString());
+                user.signUp(new SaveListener<User>(){
 
-                        @Override
-                        public void done(User user, BmobException e) {
-                            if(user!=null){
-                                //注册成功
-                                toast(getString(R.string.action_register_succeed));
-                                Intent intent = new Intent(RegisterActivity.this, TabActivity.class);
-                                startActivity(intent);
-                            }else {
-                                toast(getString(R.string.action_register_failed)+":"+e.getMessage());
-                            }
+                    @Override
+                    public void done(User user, BmobException e) {
+                        if(e==null&user!=null){
+                            //注册成功
+                            ToastUtil.show("注册成功，正在登陆");
+                            BmobUser.loginByAccount(inputAccount.getText().toString(), inputPassword.getText().toString(), new LogInListener<User>() {
+                                @Override
+                                public void done(User user, BmobException e) {
+                                    if(e==null) {
+                                        ToastUtil.show("登陆成功");
+                                        Intent intent = new Intent(RegisterActivity.this, TabActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                    else {
+                                        ToastUtil.show("登陆失败");
+                                        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                }
+                            });
+                        }else {
+                            ToastUtil.show("注册失败"+e==null?"未知错误":e.getMessage());
                         }
-                    });
-                }
+                    }
+                });
             }
         });
 
+    }
+
+    public boolean isEmail(String email){
+        if (null==email || "".equals(email)) return false;
+//        Pattern p = Pattern.compile("\\w+@(\\w+.)+[a-z]{2,3}"); //简单匹配
+        Pattern p =  Pattern.compile("\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");//复杂匹配
+        Matcher m = p.matcher(email);
+        return m.matches();
     }
 
     public boolean checkInput(){
@@ -100,6 +122,10 @@ public class RegisterActivity extends BaseActivity{
         if(inputNickname.getText().toString().length()<=0){
             inputNickname.setError(getString(R.string.error_input_too_short));
             pass = false;
+        }
+        if(!isEmail(inputAccount.getText().toString())){
+            inputAccount.setError("不是符合规范的Email");
+            return false;
         }
         return pass;
     }

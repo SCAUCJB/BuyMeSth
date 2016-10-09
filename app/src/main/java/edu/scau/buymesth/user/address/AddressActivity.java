@@ -135,4 +135,8 @@ private void initRecyclerView(){
     });
 }
 
+    @Override
+    public int getStatusColorResources() {
+        return R.color.colorPrimaryDark;
+    }
 }

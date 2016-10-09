@@ -252,7 +252,7 @@ public class LocationFragment extends Fragment implements EmptyActivity.ButtonOn
     }
 
     @Override
-    public void onToolbarButtonClick() {
+    public void onToolbarButtonClick(View v) {
         Intent i = new Intent();
         mLocationData.remove("Country");
         mLocationData.remove("Province");

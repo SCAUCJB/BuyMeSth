@@ -33,19 +33,27 @@
             android:text="2016-08-24 00:00"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-        <ImageView
-            android:id="@+id/iv_comment_like"
+        <LinearLayout
+            android:background="?android:attr/selectableItemBackground"
+            android:id="@+id/ly_comment_like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="7dp"
+            android:layout_marginEnd="@dimen/dp_10"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="@dimen/dp_10"
-            android:src="@drawable/ic_favorite"
-            android:layout_width="@dimen/dp_14"
-            android:layout_height="@dimen/dp_14" />
+            android:clickable="true">
+            <ImageView
+                android:id="@+id/iv_comment_like"
+                android:src="@drawable/ic_favorite"
+                android:layout_width="@dimen/dp_14"
+                android:layout_height="@dimen/dp_14" />
+        </LinearLayout>
         <TextView
             android:id="@+id/tv_comment"
             android:layout_below="@+id/tv_comment_date"
             android:layout_toRightOf="@+id/iv_icon"
-            android:layout_toLeftOf="@+id/iv_comment_like"
+            android:layout_toLeftOf="@+id/ly_comment_like"
             style="@style/commentText"
             android:layout_marginTop="@dimen/dp_6"
             android:layout_marginRight="@dimen/dp_14"

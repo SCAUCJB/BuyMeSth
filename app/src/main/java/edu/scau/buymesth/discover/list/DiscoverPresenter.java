@@ -36,9 +36,9 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
         mModel.updateLikeList();
         mModel.resetPage();
         BmobQuery.CachePolicy cachePolicy;
-        if(NetworkHelper.isOpenNetwork(mContext))cachePolicy = BmobQuery.CachePolicy.CACHE_THEN_NETWORK;
+        if(NetworkHelper.isOpenNetwork(mContext))cachePolicy = BmobQuery.CachePolicy.NETWORK_ONLY;
         else cachePolicy = BmobQuery.CachePolicy.CACHE_ONLY;
-        mModel.getRxMoments(cachePolicy).flatMap(new Func1<List<Moment>, Observable<Moment>>() {
+        mSubscriptions.add(mModel.getRxMoments(cachePolicy).flatMap(new Func1<List<Moment>, Observable<Moment>>() {
             @Override
             public Observable<Moment> call(List<Moment> moments) {
                 return Observable.from(moments);
@@ -48,12 +48,12 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Moment>() {
                     int size = mModel.getDatas().size();
-                    ArrayList<Moment> tempData = new ArrayList<Moment>();
+//                    ArrayList<Moment> tempData = new ArrayList<Moment>();
                     @Override
                     public void onCompleted() {
                         if(isAlive()){
-                            mModel.getDatas().clear();
-                            mModel.getDatas().addAll(tempData);
+//                            mModel.getDatas().clear();
+//                            mModel.getDatas().addAll(tempData);
                             mView.onRefreshComplete(mModel.getDatas());
                         }
                     }
@@ -81,10 +81,10 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
                                     break;
                                 }
                             }
-                            tempData.add(moment);
+                            mModel.getDatas().add(moment);
                         }
                     }
-                });
+                }));
     }
 
     public void LoadMore(){
@@ -92,7 +92,7 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
         if(NetworkHelper.isOpenNetwork(mContext))cachePolicy = BmobQuery.CachePolicy.CACHE_THEN_NETWORK;
         else cachePolicy = BmobQuery.CachePolicy.CACHE_ONLY;
         List<Moment> tempList=new LinkedList<>();
-        mModel.getRxMoments(cachePolicy).flatMap(new Func1<List<Moment>, Observable<Moment>>() {
+        mSubscriptions.add(mModel.getRxMoments(cachePolicy).flatMap(new Func1<List<Moment>, Observable<Moment>>() {
             @Override
             public Observable<Moment> call(List<Moment> moments) {
                 return Observable.from(moments);
@@ -115,6 +115,6 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
                         mModel.getDatas().add(moment);
                         tempList.add(moment);
                     }
-                });
+                }));
     }
 }

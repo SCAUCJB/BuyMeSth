@@ -45,4 +45,10 @@ public class MarkActivity extends BaseActivity {
     public boolean canSwipeBack() {
         return true;
     }
+
+
+    @Override
+    public int getStatusColorResources() {
+        return R.color.colorPrimaryDark;
+    }
 }

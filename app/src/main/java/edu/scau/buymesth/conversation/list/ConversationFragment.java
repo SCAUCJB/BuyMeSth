@@ -41,7 +41,6 @@ import edu.scau.buymesth.conversation.chat.ChatFragment;
 import edu.scau.buymesth.conversation.userlist.UserListFragment;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.fragment.EmptyActivity;
-import edu.scau.buymesth.main.TabActivity;
 import edu.scau.buymesth.notice.NoticeFragment;
 import edu.scau.buymesth.util.DateFormatHelper;
 import in.srain.cube.views.ptr.PtrFrameLayout;
@@ -60,6 +59,7 @@ public class ConversationFragment extends Fragment implements ConversationContra
 
     private View mLoadingView;
     private View mHeaderView;
+    private View mHeaderView2;
     private View mEmptyView;
     //requestService
     private ServiceConnection serviceConnection;
@@ -77,8 +77,10 @@ public class ConversationFragment extends Fragment implements ConversationContra
         mPresenter=new ConversationPresenter(getActivity().getBaseContext());
         mPresenter.setVM(this,new ConversationModel());
         mHeaderView = LayoutInflater.from(getContext()).inflate(R.layout.item_conversation,(ViewGroup) mRecyclerView.getParent(), false);
+        mHeaderView2 = LayoutInflater.from(getContext()).inflate(R.layout.item_conversation,(ViewGroup) mRecyclerView.getParent(), false);
         mEmptyView = LayoutInflater.from(getContext()).inflate(R.layout.empty_view_add_conversation,(ViewGroup) mRecyclerView.getParent(), false);
         mEmptyView.setOnClickListener(v -> EmptyActivity.navigate(getActivity(), UserListFragment.class.getName(), null, 101));
+        mHeaderView2.setOnClickListener(v -> EmptyActivity.navigate(getActivity(),UserListFragment.class.getName(),null,"我的关注"));
         mHeaderView.setOnClickListener(v -> {
             mPresenter.lightRefresh();
             ///连接成功后发送信息让他进行服务器连接判断是否有新的信息,service用于判断类型
@@ -96,6 +98,11 @@ public class ConversationFragment extends Fragment implements ConversationContra
         ((TextView)mHeaderView.findViewById(R.id.tv_new_msg)).setText(" ");
         ((TextView)mHeaderView.findViewById(R.id.tv_date)).setText(" ");
         ((ImageView)mHeaderView.findViewById(R.id.iv_avatar)).setImageDrawable(getResources().getDrawable(R.mipmap.ic_launcher));
+
+        ((TextView)mHeaderView2.findViewById(R.id.tv_name)).setText("添加对话");
+        ((TextView)mHeaderView2.findViewById(R.id.tv_new_msg)).setText("来开始一个新的聊天吧");
+        ((TextView)mHeaderView2.findViewById(R.id.tv_date)).setText(" ");
+        ((ImageView)mHeaderView2.findViewById(R.id.iv_avatar)).setImageDrawable(getResources().getDrawable(R.drawable.ic_person_green));
         initAdapter();
         initStoreHouse(view);
         mLoadingView = view.findViewById(R.id.ly_loading_tips);

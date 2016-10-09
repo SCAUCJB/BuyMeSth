@@ -26,6 +26,10 @@ public abstract class BasePresenter<M, V> {
 
     }
 
+    public void onPause(){
+        mSubscriptions.clear();
+    }
+
     public void unsubscribe() {
         mSubscriptions.unsubscribe();
     }

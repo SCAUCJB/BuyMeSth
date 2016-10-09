@@ -6,12 +6,16 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.util.SparseArray;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -21,11 +25,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import base.BaseActivity;
 import base.util.GlideCircleTransform;
+import base.util.ToastUtil;
+import bitmap.BlurTransformation;
 import butterknife.Bind;
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.QueryListener;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.ViewPagerAdapter;
 import edu.scau.buymesth.data.bean.User;
@@ -67,6 +77,8 @@ public class UserInfoActivity extends BaseActivity implements Contract.View{
     RelativeLayout mUserInfoRl;
     @Bind(R.id.tv_user_id)
     TextView mUserIdTv;
+    @Bind(R.id.bg_user_info)
+    ImageView mBgUser;
     private BottomSheetBehavior<NestedScrollView> behavior;
     private SparseArray<Drawable> mLevelDrawableCache=new SparseArray<>();
 
@@ -74,6 +86,13 @@ public class UserInfoActivity extends BaseActivity implements Contract.View{
         Intent intent=new Intent(activity,UserInfoActivity.class);
         if(user==null)   return;
         intent.putExtra("user",user);
+        activity.startActivity(intent);
+    }
+
+    public static void navigate(Activity activity,String userId){
+        Intent intent=new Intent(activity,UserInfoActivity.class);
+        if(userId==null)   return;
+        intent.putExtra("userId",userId);
         activity.startActivity(intent);
     }
     @Override
@@ -104,10 +123,32 @@ public class UserInfoActivity extends BaseActivity implements Contract.View{
 
     }
 
+    private Handler mHandler = new Handler();
+
     @Override
     protected void initPresenter() {
         UserInfoModel model=new UserInfoModel(this);
-        model.setUser((User) getIntent().getSerializableExtra("user"));
+        if(getIntent().getSerializableExtra("user") !=null)
+            model.setUser((User) getIntent().getSerializableExtra("user"));
+        else{
+            User user = new User();
+            user.setObjectId(getIntent().getStringExtra("userId"));
+            BmobQuery<User> query = new BmobQuery<>();
+            showLoadingDialog();
+            query.getObject(user.getObjectId(), new QueryListener<User>() {
+                @Override
+                public void done(User user0, BmobException e) {
+                    closeLoadingDialog();
+                    if(e!=null) {
+                        model.setUser(user0);
+                        mHandler.post(() -> mPresenter.showUserInfo());
+                    }
+                    else
+                        mHandler.post(() -> ToastUtil.show("加载用户资料失败 "+e.toString()));
+                }
+            });
+            model.setUser(user);
+        }
         mPresenter=new UserInfoPresenter(this,model);
         mPopulationTv.setOnClickListener(v-> EvaluateListActivity.navigate(mContext, model.getUser().getObjectId(),false));
     }
@@ -142,7 +183,11 @@ public class UserInfoActivity extends BaseActivity implements Contract.View{
     @Override
     public void setAvatar(String url) {
         Glide.with(mContext).load(url).crossFade().placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into(mAvatarIv);
-
+        Glide.with(this).
+                load(url).
+                asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).
+                transform(new BlurTransformation(mContext,40)).//高斯模糊处理
+                into(mBgUser);
     }
 
     @Override
@@ -205,6 +250,17 @@ public class UserInfoActivity extends BaseActivity implements Contract.View{
         CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.cl);
         NestedScrollView bottomSheet = (NestedScrollView) coordinatorLayout.findViewById(R.id.bottom_sheet);
          behavior=BottomSheetBehavior.from(bottomSheet);
+        behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                mUserInfoRl.setTranslationY(-mUserInfoRl.getHeight()*slideOffset/3);
+            }
+        });
         requestFragment.disallowIntercept(bottomSheet);
         orderFragment.disallowIntercept(bottomSheet);
     }
@@ -238,5 +294,10 @@ public class UserInfoActivity extends BaseActivity implements Contract.View{
             else
                 toast("关注自己毫无意义");
         });
+    }
+
+    @Override
+    public int getStatusColorResources() {
+        return R.color.colorPrimaryDark;
     }
 }

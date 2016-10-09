@@ -118,4 +118,9 @@ public class RejectActivity extends BaseActivity {
         activity.startActivityForResult(intent, REJECT_SUCCESS);
     }
 
+    @Override
+    public int getStatusColorResources() {
+        return R.color.colorPrimaryDark;
+    }
+
 }

@@ -49,6 +49,12 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
         return view;
     }
 
+    @Override
+    public void onPause() {
+        mPresenter.onPause();
+        super.onPause();
+    }
+
     private void initStoreHouse(View view) {
         mPtrFrameLayout = (PtrFrameLayout) view.findViewById(R.id.store_house_ptr_frame);
         final StoreHouseHeader header = new StoreHouseHeader(getActivity());

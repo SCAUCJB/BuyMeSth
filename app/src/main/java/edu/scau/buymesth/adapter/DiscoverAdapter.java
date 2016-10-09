@@ -26,6 +26,7 @@ import cn.bmob.v3.listener.UpdateListener;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.request.requestdetail.RequestDetailActivity;
+import edu.scau.buymesth.userinfo.UserInfoActivity;
 import edu.scau.buymesth.util.ColorChangeHelper;
 import edu.scau.buymesth.util.DateFormatHelper;
 import gallery.PhotoActivity;
@@ -100,6 +101,7 @@ public class DiscoverAdapter extends BaseMultiItemQuickAdapter<Moment> {
         } else {
             helper.getView(R.id.ly_delete).setVisibility(View.INVISIBLE);
         }
+        helper.getView(R.id.iv_avatar).setOnClickListener(v -> UserInfoActivity.navigate(mActivity, item.getUser()));
         helper.getView(R.id.ly_likes).setOnClickListener(defaultOnClickListener);
         helper.getView(R.id.ly_comments).setOnClickListener(defaultOnClickListener);
         if (item.getRequest() != null)

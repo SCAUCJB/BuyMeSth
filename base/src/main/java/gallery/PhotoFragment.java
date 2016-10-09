@@ -34,6 +34,9 @@ public class PhotoFragment extends Fragment {
     private boolean transforming = false;
     private OnTransformListener onTransformListener;
     private PhotoViewAttacher.OnPhotoTapListener onPhotoTapListener;
+    private boolean imageLoaded = false;
+
+    private  int posi;
 
     public PhotoFragment() {
         super();
@@ -77,7 +80,7 @@ public class PhotoFragment extends Fragment {
 
         mViewList = new ArrayList<>();
         Object[] urls = (Object[]) data.getSerializable("urls");
-        int posi = data.getInt("urlposition",0);
+        posi = data.getInt("urlposition",0);
 
         mPagerAdapter = new MyPagerAdapter(urls,posi);
         mViewPager = (HackyViewPager) mRootView.findViewById(R.id.view_pager);
@@ -95,6 +98,10 @@ public class PhotoFragment extends Fragment {
     }
 
     public void transformOut(){
+        if(!imageLoaded){
+            getOnTransformListener().onTransformCompete(OnTransformListener.TRANSFORM_OUT);
+            return;
+        }
         if(!isTransforming()){
             transforming =true;
             int position = mViewPager.getCurrentItem();
@@ -202,6 +209,7 @@ public class PhotoFragment extends Fragment {
                         .into(new SimpleTarget<Bitmap>(){
                             @Override
                             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                if(position==posi)imageLoaded = true;
                                 imageView.setImageBitmap(resource);
                             }
                         });

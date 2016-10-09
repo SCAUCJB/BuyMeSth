@@ -26,10 +26,12 @@ import com.squareup.sqlbrite.SqlBrite;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
 import base.BaseActivity;
+import base.util.ToastUtil;
 import butterknife.Bind;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
@@ -50,13 +52,17 @@ import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.discover.list.DiscoverFragment;
 import edu.scau.buymesth.discover.publish.MomentPublishActivity;
+import edu.scau.buymesth.discover.publish.MomentPublishFragment;
+import edu.scau.buymesth.fragment.EmptyActivity;
 import edu.scau.buymesth.notice.OrderDetailActivity;
 import edu.scau.buymesth.notice.RequestService;
 import edu.scau.buymesth.notice.SQLiteHelper;
 import edu.scau.buymesth.publish.PublishActivity;
 import edu.scau.buymesth.request.HomeFragment;
 import edu.scau.buymesth.request.HomePresenter;
+import edu.scau.buymesth.ui.LoginActivity;
 import edu.scau.buymesth.user.UserFragment;
+import edu.scau.buymesth.util.DateFormatHelper;
 import rx.schedulers.Schedulers;
 import ui.widget.ChangeColorIconWithTextView;
 
@@ -89,6 +95,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
     private HomeFragment homeFragment;
     private AlertDialog searchDialog;
     private EditText et;
+    private Handler mHandler;
 
     @Override
     protected int getLayoutId() {
@@ -97,6 +104,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
 
     @Override
     public void initView() {
+        mHandler = new Handler();
         tabLayout.setSelectedTabIndicatorHeight(0);
         UserFragment userFragment = new UserFragment();
         DiscoverFragment discoverFragment = new DiscoverFragment();
@@ -110,8 +118,9 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
             startActivity(i);
         });
         fab2.setOnClickListener(v -> {
-            Intent i = new Intent(TabActivity.this, MomentPublishActivity.class);
-            startActivity(i);
+//            Intent i = new Intent(TabActivity.this, MomentPublishActivity.class);
+//            startActivity(i);
+            EmptyActivity.navigate(TabActivity.this, MomentPublishFragment.class.getName(),null,"编辑动态");
         });
         fab3.setOnClickListener(v -> {
             if (et == null) et = new EditText(TabActivity.this);
@@ -311,24 +320,58 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
     private void queryUser() {
         User user = BmobUser.getCurrentUser(User.class);
         BmobQuery<User> query = new BmobQuery<>();
-        query.getObject(user.getObjectId(), new QueryListener<User>() {
-            @Override
-            public void done(User user, BmobException e) {
-                if (e != null) return;
-                SharedPreferences settings = getSharedPreferences(Constant.SHARE_PREFERENCE_USER_INFO, MODE_PRIVATE);
-                //让setting处于编辑状态
-                SharedPreferences.Editor editor = settings.edit();
-                //存放数据
-                editor.putString(Constant.KEY_RESIDENCE, user.getResidence());
-                editor.putString(Constant.KEY_GENDA, user.getGender());
-                editor.putString(Constant.KEY_AVATAR, user.getAvatar());
-                editor.putString(Constant.KEY_NICKNAME, user.getNickname());
-                editor.putInt(Constant.KEY_EXP, user.getExp());
-                editor.putString(Constant.KEY_SIGNATURE, user.getSignature());
-                //完成提交
-                editor.apply();
-            }
-        });
+        if(user.getObjectId()==null) {
+            Intent i  = new Intent(this, LoginActivity.class);
+            ToastUtil.show("登陆过期");
+            startActivity(i);
+            finish();
+        }else {
+            query.getObject(user.getObjectId(), new QueryListener<User>() {
+                @Override
+                public void done(User user, BmobException e) {
+                    if (e != null) {
+                        if(e.getErrorCode()==101) {
+                            Intent i  = new Intent(TabActivity.this, LoginActivity.class);
+                            ToastUtil.show("用户不存在");
+                            startActivity(i);
+                            finish();
+                        }
+                        return;
+                    }
+                    ToastUtil.show("000000000");
+                    if(user.getEmail()!=null&&user.getEmail().length()>0){
+                        ToastUtil.show("1111111111");
+                        if(user.getEmailVerified()!=null){
+                            ToastUtil.show("2222222222");
+                            if(!user.getEmailVerified()){
+                                ToastUtil.show("33333333333");
+                                String text = "您的账号邮箱未验证，请尽快进行邮箱验证";
+//                                if(new Date().getTime()-DateFormatHelper.getMsTime(user.getCreatedAt())<=60*60*1000){
+//                                    text = "账号邮箱未验证请在 "
+//                                            + DateFormatHelper.getStringTime(60*60*1000-(new Date().getTime()-DateFormatHelper.getMsTime(user.getCreatedAt())))
+//                                            +" 内进行验证";
+//                                }
+//                                ToastUtil.show("4444444444");
+                                new AlertDialog.Builder(TabActivity.this).setMessage(text)
+                                        .setPositiveButton("知道了",null).show();
+                            }
+                        }
+                    }
+                    SharedPreferences settings = getSharedPreferences(Constant.SHARE_PREFERENCE_USER_INFO, MODE_PRIVATE);
+                    //让setting处于编辑状态
+                    SharedPreferences.Editor editor = settings.edit();
+                    //存放数据
+                    editor.putString(Constant.KEY_RESIDENCE, user.getResidence());
+                    editor.putString(Constant.KEY_GENDA, user.getGender());
+                    editor.putString(Constant.KEY_AVATAR, user.getAvatar());
+                    editor.putString(Constant.KEY_NICKNAME, user.getNickname());
+                    editor.putInt(Constant.KEY_EXP, user.getExp());
+                    editor.putString(Constant.KEY_SIGNATURE, user.getSignature());
+                    //完成提交
+                    editor.apply();
+                }
+            });
+        }
     }
 
     @Override
@@ -388,6 +431,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         query.findObjects(new FindListener<Notificate>() {
             @Override
             public void done(List<Notificate> list, BmobException e) {
+                if(e!=null||list==null) mHandler.postDelayed(() -> getNotification(),80000);
                 Gson gson  = new Gson();
                 for (int i = 0; i < list.size(); i++) {
                     Order order = list.get(i).getOrder();

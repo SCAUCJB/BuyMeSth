@@ -3,6 +3,8 @@ package edu.scau.buymesth.cash;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -39,6 +41,12 @@ public class CashMainActivity extends BaseActivity {
     TextView tvName;
     @Bind(R.id.tv_cash)
     TextView tvCash;
+    @Bind(R.id.tv_id)
+    TextView tvUserId;
+    @Bind(R.id.iv_refresh)
+    ImageView ivRefresh;
+    @Bind(R.id.rv_2)
+    ViewGroup mRv2;
 
     @Override
     protected int getLayoutId() {
@@ -58,6 +66,7 @@ public class CashMainActivity extends BaseActivity {
                         Glide.with(mContext).load(user.getAvatar()).placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into(ivIcon);
                     }
                     tvName.setText(user.getNickname());
+                    tvUserId.setText(user.getUsername());
                     tvCash.setText("当前账户余额为：" + user.getBalance()+"￥");
                 }else{
                     Toast.makeText(CashMainActivity.this, "网络请求失败", Toast.LENGTH_SHORT).show();
@@ -67,22 +76,34 @@ public class CashMainActivity extends BaseActivity {
 
 
         btnDeposit.setOnClickListener(v -> {
-            DepositActivity.navigate(CashMainActivity.this, user);
+            if(user!=null)
+                DepositActivity.navigate(CashMainActivity.this, user);
         });
 
         btnWithdraw.setOnClickListener(v -> {
-            WithdrawActivity.navigate(CashMainActivity.this, user);
+            if(user!=null)
+                WithdrawActivity.navigate(CashMainActivity.this, user);
         });
 
         tvCashDetail.setOnClickListener(v -> {
-            CashBookActivity.navigate(CashMainActivity.this, user);
+            if(user!=null)
+                CashBookActivity.navigate(CashMainActivity.this, user);
         });
+        mRv2.setOnClickListener(v -> {
+            if(user!=null)
+                CashBookActivity.navigate(CashMainActivity.this, user);
+        });
+        ivRefresh.setOnClickListener(v -> ivRefresh.post(() -> query()));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        tvCash.setText("当前账户余额为：-----￥");
+//        tvCash.setText("-----￥");
+        query();
+    }
+
+    private void query() {
         BmobQuery<User> query = new BmobQuery<>();
         query.getObject(user.getObjectId(), new QueryListener<User>() {
             @Override
@@ -93,7 +114,8 @@ public class CashMainActivity extends BaseActivity {
                         Glide.with(mContext).load(user.getAvatar()).placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into(ivIcon);
                     }
                     tvName.setText(user.getNickname());
-                    tvCash.setText("当前账户余额为：" + user.getBalance()+"￥");
+                    tvUserId.setText(user.getUsername());
+                    tvCash.setText( user.getBalance()+"￥");
                 }else{
                     Toast.makeText(CashMainActivity.this, "网络请求失败", Toast.LENGTH_SHORT).show();
                 }
@@ -115,5 +137,10 @@ public class CashMainActivity extends BaseActivity {
     @Override
     protected int getToolBarId() {
         return R.id.toolbar;
+    }
+
+    @Override
+    public int getStatusColorResources() {
+        return R.color.colorPrimaryDark;
     }
 }

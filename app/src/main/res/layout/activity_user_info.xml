@@ -39,13 +39,21 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_alignBottom="@+id/relativeLayout2"/>
+                <ImageView
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/shadow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignBottom="@+id/relativeLayout2"/>
                 <RatingBar
                     android:id="@+id/ratingBar"
                     style="@style/Widget.AppCompat.RatingBar.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toLeftOf="@+id/tv_score"
-                    android:layout_alignTop="@+id/iv_avatar"
+                    android:layout_alignTop="@+id/tv_score"
+                    android:layout_marginTop="6dp"
                     android:layout_marginRight="8dp"
                     android:isIndicator="true"
                     android:numStars="5"
@@ -68,7 +76,8 @@
                     android:layout_height="16dp"
                     android:src="@drawable/ic_location_on_white_48dp"
                     android:layout_marginBottom="2dp"
-                    android:layout_alignBottom="@+id/tv_level"
+                    android:layout_marginTop="19dp"
+                    android:layout_below="@+id/tv_user_id"
                     android:layout_alignStart="@+id/tv_user" />
 
                 <TextView
@@ -77,7 +86,7 @@
                     style="@style/TextAppearance.AppCompat.Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_10"
+                    android:layout_marginTop="4dp"
                     android:layout_marginLeft="12dp"
                     android:text="用户名"
                     android:textStyle="normal|bold"
@@ -124,16 +133,18 @@
                     android:textColor="@color/white"
                     android:id="@+id/tv_score"
                     android:gravity="top"
+                    android:text="0.0"
                     android:layout_marginRight="2dp"
                     style="@style/TextAppearance.AppCompat.Headline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignTop="@+id/ratingBar"
+                    android:layout_alignTop="@+id/tv_score_end"
                     android:layout_toLeftOf="@+id/tv_score_end"
 
                     android:textSize="32sp"
                     android:textStyle="normal"/>
                 <TextView
+                    android:layout_marginTop="10dp"
                     android:textColor="@color/white"
                     android:id="@+id/tv_score_end"
                     android:gravity="top"
@@ -141,13 +152,12 @@
                     android:layout_width="wrap_content"
                     android:paddingTop="8dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignTop="@+id/ratingBar"
+                    android:layout_alignParentTop="true"
                     android:layout_marginRight="12dp"
                     android:layout_alignParentRight="true"
                     android:text="分"
                     android:textSize="9sp"
-                    android:textStyle="normal"
-                    android:layout_alignBottom="@+id/tv_user" />
+                    android:textStyle="normal"/>
 
                 <TextView
                     android:textColor="@color/white"

@@ -53,12 +53,11 @@ public class ConversationPresenter extends BasePresenter<ConversationContract.Mo
                     if(mModel.getDatas()==null){
                         mView.onServerConnectStatusChanges(ConversationContract.View.SERVER_CONNECT_FAILED,"unknown error");
                         return;
-                    }
-                    if(mModel.getDatas().size()==0){
+                    } else if(mModel.getDatas().size()==0){
                         mView.onUpdatingUserInfo(ConversationContract.View.USER_INFO_UPDATE_COMPLETED,null);
                         return;
-                    }
-                    updateUserInfo();
+                    }else
+                        updateUserInfo();
                 }else {
                     mView.onServerConnectStatusChanges(ConversationContract.View.SERVER_CONNECT_FAILED,e.toString());
                 }
@@ -75,11 +74,12 @@ public class ConversationPresenter extends BasePresenter<ConversationContract.Mo
                     mView.onServerConnectStatusChanges(ConversationContract.View.SERVER_CONNECT_FAILED, "from !!!!!!!!!!!");
                     return;
                 }
-                if (mModel.getDatas().size() == 0) {
+                else if (mModel.getDatas().size() == 0) {
                     mView.onUpdatingUserInfo(ConversationContract.View.USER_INFO_UPDATE_COMPLETED, "from !!!!!!!!!!!");
                     return;
                 }
-                updateUserInfo();
+                else
+                    updateUserInfo();
             }else {
                 mView.onServerConnectStatusChanges(ConversationContract.View.SERVER_CONNECT_FAILED,"from !!!!!!!!!!!");
             }

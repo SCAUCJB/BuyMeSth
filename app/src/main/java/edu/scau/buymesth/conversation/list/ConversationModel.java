@@ -78,6 +78,7 @@ public class ConversationModel implements ConversationContract.Model{
                 query.findObjects(new FindListener<Follow>() {
                     @Override
                     public void done(List<Follow> list, BmobException e) {
+                        if(e!=null) subscriber.onError(null);
                         if(list!=null&&list.size()>0){
                             for(Follow follow:list){
                                 boolean add = true;

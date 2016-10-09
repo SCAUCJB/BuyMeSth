@@ -316,4 +316,9 @@ public class CreateOrderActivity extends BaseActivity implements CreateOrderCont
     public void setPrice(String price) {
         mPriceTv.setText(price);
     }
+
+    @Override
+    public int getStatusColorResources() {
+        return R.color.colorPrimaryDark;
+    }
 }
