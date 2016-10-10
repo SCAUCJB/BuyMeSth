@@ -496,6 +496,9 @@ public class OrderDetailActivity extends BaseActivity {
                                                 Toast.makeText(OrderDetailActivity.this, "请重试", Toast.LENGTH_SHORT).show();
                                                 closeLoadingDialog();
                                             }
+                                        }else{
+                                            Toast.makeText(OrderDetailActivity.this, "请重试", Toast.LENGTH_SHORT).show();
+                                            closeLoadingDialog();
                                         }
                                     }
                                 });
