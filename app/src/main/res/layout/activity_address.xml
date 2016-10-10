@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:background="@color/colorLightLightGrey"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
@@ -12,62 +12,70 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme" >
+        android:theme="?attr/actionBarTheme">
+
         <Button
             android:id="@+id/btn_add"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/dp_10"
             android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/dp_10"
             android:background="@drawable/background_button_base"
             android:text="添加" />
     </android.support.v7.widget.Toolbar>
+
     <RelativeLayout
         android:id="@+id/address_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-<android.support.v7.widget.RecyclerView
-    android:id="@+id/rv_content"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <LinearLayout
-    android:visibility="invisible"
-    android:id="@+id/empty_view"
-    android:layout_centerVertical="true"
-    android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:padding="@dimen/dp_6"
-    android:gravity="center"
-    android:layout_height="wrap_content">
-    <ImageView
-        android:src="@drawable/ic_location_on_grey600_48dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <TextView
-        android:layout_marginTop="@dimen/dp_22"
-        android:text="还没有收货地址哦"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <Button
-        android:id="@+id/btn_go_add"
-       android:layout_marginTop="@dimen/dp_22"
-        android:text="去添加"
-        android:textColor="@color/white"
-        style="@style/TextAppearance.AppCompat.Button"
-        android:background="@drawable/rect_accent"
-        android:layout_width="140dp"
-        android:layout_height="40dp" />
-</LinearLayout>
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/dp_6"
+            android:visibility="invisible">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_location_on_grey600_48dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_22"
+                android:text="还没有收货地址哦" />
+
+            <Button
+                android:id="@+id/btn_go_add"
+                style="@style/TextAppearance.AppCompat.Button"
+                android:layout_width="140dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="@dimen/dp_22"
+                android:background="@drawable/background_button_follow"
+                android:text="去添加"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
         <TextView
-            android:visibility="gone"
             android:id="@+id/tv_retry"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:clickable="true"
-           style="@style/TextAppearance.AppCompat.Title"
             android:gravity="center"
             android:text="网络异常，请点击我重试"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:visibility="gone" />
     </RelativeLayout>
 </LinearLayout>

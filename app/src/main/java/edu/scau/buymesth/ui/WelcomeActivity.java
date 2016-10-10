@@ -1,84 +1,116 @@
 package edu.scau.buymesth.ui;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import java.util.concurrent.TimeUnit;
-
 import base.BaseActivity;
-import butterknife.Bind;
-import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
-import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.main.TabActivity;
-import rx.SingleSubscriber;
-import rx.Subscription;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by IamRabbit on 2016/8/2.
  */
 public class WelcomeActivity extends BaseActivity {
     private volatile User bmobUser;
-    @Bind(R.id.welcome_image)
-    ImageView welcomeImage;
-    private Subscription mSubscription;
-
 
     @Override
     protected int getLayoutId() {
         return R.layout.activity_welcome;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+
 
     @Override
     public void initView() {
-
+        ImageView welcomeImage= (ImageView) findViewById(R.id.welcome_image);
         Glide.with(this).load("http://cdn.duitang.com/uploads/item/201312/03/20131203154448_WUTaC.thumb.700_0.jpeg")
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(welcomeImage);
 
+
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                toast("我们需要访问存储来读写缓存");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        243);
+            } else {
+                //申请WRITE_EXTERNAL_STORAGE权限
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        243);
+            }
+
+        }else {
+            bmobUser = BmobUser.getCurrentUser(User.class);
+            jumpToNextActivity();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+        if (requestCode == 243) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                bmobUser = BmobUser.getCurrentUser(User.class);
+                jumpToNextActivity();
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.help);
+                builder.setMessage(R.string.string_help_text);
+
+                // 拒绝, 退出应用
+                builder.setNegativeButton(R.string.quit, new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int which) {
+                        toast("不能读写缓存导致无法正常运行");
+                        finish();
+                    }
+                });
+
+                builder.setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int which) {
+                        startAppSettings();
+                    }
+                });
+
+                builder.setCancelable(false);
+
+                builder.show();
+            }
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+    private void startAppSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        intent.setData(Uri.parse("package:" + getPackageName()));
+        startActivity(intent);
+    }
     @Override
     public boolean canSwipeBack() {
         return false;
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
 
-        //原本在这里进行初始化的操作
-        //放到了Application里面，防止不经过这个页面就进入Activity导致context空指针
 
-        bmobUser = BmobUser.getCurrentUser(User.class);
-        jumpToNextActivity();
-//        if (bmobUser != null)
-//            queryUser();
-//            //完成初始化
-//        else {
-//            jumpToNextActivity();
-//        }
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
 
     private void jumpToNextActivity() {
         if (bmobUser != null) {
@@ -94,28 +126,7 @@ public class WelcomeActivity extends BaseActivity {
         }
     }
 
-    private void storeToSharePreference(User user) {
-        SharedPreferences settings = getSharedPreferences(Constant.SHARE_PREFERENCE_USER_INFO, MODE_PRIVATE);
-//让setting处于编辑状态
-        SharedPreferences.Editor editor = settings.edit();
-//存放数据
-        editor.putString(Constant.KEY_RESIDENCE, user.getResidence());
-        editor.putString(Constant.KEY_GENDA, user.getGender());
-        editor.putString(Constant.KEY_AVATAR, user.getAvatar());
-        editor.putString(Constant.KEY_NICKNAME, user.getNickname());
-        editor.putInt(Constant.KEY_EXP, user.getExp());
-        editor.putString(Constant.KEY_SIGNATURE, user.getSignature());
-//完成提交
-        editor.apply();
 
-        jumpToNextActivity();
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (mSubscription!=null&&!mSubscription.isUnsubscribed()) mSubscription.unsubscribe();
-        super.onDestroy();
-    }
 
     @Override
     public boolean showColorStatusBar() {

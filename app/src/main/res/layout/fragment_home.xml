@@ -23,6 +23,38 @@
             android:overScrollMode="never"
             android:paddingLeft="@dimen/dp_4"
             android:paddingRight="@dimen/dp_4" />
+        <LinearLayout
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/dp_6"
+            android:visibility="gone"
+            >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_error_grey600_48dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_22"
+                android:text="还没有购物请求哦~" />
+
+            <Button
+                android:id="@+id/btn_go_add"
+                style="@style/TextAppearance.AppCompat.Button"
+                android:layout_width="140dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="@dimen/dp_22"
+                android:background="@drawable/background_button_follow"
+                android:text="去发布"
+                android:textColor="@color/white" />
+        </LinearLayout>
 
     </RelativeLayout>
 </in.srain.cube.views.ptr.PtrFrameLayout>

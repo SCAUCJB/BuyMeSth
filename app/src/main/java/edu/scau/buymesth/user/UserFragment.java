@@ -200,6 +200,7 @@ public class UserFragment extends Fragment implements UserContract.View {
         adapter.addTab(requestFragment, "我的请求");
         adapter.addTab(orderFragment,"我的订单");
         mViewPager.setAdapter(adapter);
+
         mTabLayout.setupWithViewPager(mViewPager);
         NestedScrollView bottomSheet = (NestedScrollView) mCoordinatorLayout.findViewById(R.id.bottom_sheet);
         behavior = BottomSheetBehavior.from(bottomSheet);
@@ -217,6 +218,7 @@ public class UserFragment extends Fragment implements UserContract.View {
         });
         requestFragment.disallowIntercept(bottomSheet);
         orderFragment.disallowIntercept(bottomSheet);
+
         userInfoLl.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
 

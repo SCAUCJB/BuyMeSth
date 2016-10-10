@@ -20,7 +20,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SEND"
+                android:text="发布"
                 android:id="@+id/bt_send_moment"
                 android:layout_gravity="right"/>
             </android.support.v7.widget.Toolbar>
@@ -71,7 +71,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Size"
+                        android:text="图片大小："
                         android:id="@+id/tv_size"
                         android:paddingLeft="20dp"
                         android:paddingTop="8dp"
@@ -83,7 +83,7 @@
                     <Switch
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="Compress"
+                        android:text="压缩"
                         android:id="@+id/sw_compress" />
                 </LinearLayout>
 
@@ -99,7 +99,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Location"
+                    android:text="位置"
                     android:id="@+id/tv_location"
                     style="@style/theTextLarge"
                     android:paddingLeft="20dp"
@@ -113,7 +113,7 @@
                     style="@style/theTextLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Request"
+                    android:text="购物请求"
                     android:id="@+id/tv_request"
                     android:paddingLeft="20dp"
                     android:paddingTop="8dp"

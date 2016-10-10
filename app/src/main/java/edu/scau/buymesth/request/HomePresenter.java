@@ -61,8 +61,14 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
                         public void onCompleted() {
                             if(isAlive())
                             {
-                                mModel.getDatas().clear();
-                                mModel.setDatas(tempList);
+                                if(tempList.size()==0){
+                                    mView.showEmpty();
+                                }else {
+                                    mView.hideEmpty();
+                                    mModel.getDatas().clear();
+                                    mModel.setDatas(tempList);
+                                }
+
                                 mView.onRefreshComplete(mModel.getDatas());}
                         }
 
@@ -104,8 +110,14 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
                     public void onNext(List<Request> list  ) {
                         if(isAlive())
                         {
-                            mModel.getDatas().clear();
-                            mModel.setDatas(list);
+                            if(list==null||list.size()==0){
+                                mView.showEmpty();
+                            }else {
+                                mView.hideEmpty();
+                                mModel.getDatas().clear();
+                                mModel.setDatas(list);
+                            }
+
                             mView.onRefreshComplete(mModel.getDatas());}
                     }
                 }));
@@ -216,8 +228,12 @@ public class HomePresenter extends BasePresenter<HomeContract.Model, HomeContrac
                     @Override
                     public void onNext(List<Request> requests) {
                         if(isAlive()){
-                            mModel.setDatas(requests);
-                            mView.setAdapter(mModel.getDatas());
+                            if(requests==null||requests.size()==0){
+                                mView.showEmpty();
+                            }else {
+                                mModel.setDatas(requests);
+                                mView.setAdapter(mModel.getDatas());
+                            }
                         }
 
                     }

@@ -18,6 +18,10 @@ public interface HomeContract {
         void onRefreshFail();
         void setAdapter(List<Request>list);
         boolean hasNetwork();
+
+        void showEmpty();
+
+        void hideEmpty();
     }
 
     interface Model{
