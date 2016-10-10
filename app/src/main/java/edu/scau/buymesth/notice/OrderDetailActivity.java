@@ -36,6 +36,7 @@ import cn.bmob.v3.listener.CloudCodeListener;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.PicAdapter;
@@ -45,6 +46,7 @@ import edu.scau.buymesth.data.bean.Evaluate;
 import edu.scau.buymesth.data.bean.Notificate;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.OrderMoment;
+import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.notice.detail.OrderMomentAdapter;
 import edu.scau.buymesth.notice.detail.PicPublishActivity;
 import edu.scau.buymesth.request.requestdetail.RequestDetailActivity;
@@ -461,6 +463,31 @@ public class OrderDetailActivity extends BaseActivity {
                                         if (o != null) {
                                             if (((String) o).equals("success")) {
                                                 Toast.makeText(OrderDetailActivity.this, "已收货,付款成功", Toast.LENGTH_SHORT).show();
+
+                                                User buyer = order.getBuyer();
+                                                int level = (int) (buyer.getExp()+OrderDetailActivity.getSum(order));
+                                                        if(level==0){
+                                                            level=100;
+                                                        }
+
+                                                buyer.setExp(buyer.getExp()+level/100 );
+                                                buyer.update(new UpdateListener() {
+                                                    @Override
+                                                    public void done(BmobException e) {
+
+                                                    }
+                                                });
+
+                                                User seller = order.getSeller();
+                                                seller.setExp(seller.getExp()+level);
+                                                seller.update(new UpdateListener() {
+                                                    @Override
+                                                    public void done(BmobException e) {
+
+                                                    }
+                                                });
+
+
                                                 tvMsg.setText("交易已完成，请对卖家做出评价");
                                                 rlGet.setVisibility(View.GONE);
                                                 btnComment.setVisibility(View.VISIBLE);
@@ -711,7 +738,6 @@ public class OrderDetailActivity extends BaseActivity {
         if (resultCode == RejectActivity.REJECT_SUCCESS) {
             Order order = (Order) data.getSerializableExtra("order");
             tvMsg.setText("你已拒绝了订单，拒绝理由是：" + order.getRejectReason());
-
             btnGoback.setVisibility(View.GONE);
             btnGo.setVisibility(View.GONE);
             btnCamera.setVisibility(View.GONE);
@@ -719,6 +745,14 @@ public class OrderDetailActivity extends BaseActivity {
             llExpress.setVisibility(View.GONE);
             rlMoment.setVisibility(View.GONE);
             btnCancle.setVisibility(View.GONE);
+            User user = order.getSeller();
+            user.setExp(user.getExp()-300);
+            user.update(new UpdateListener() {
+                @Override
+                public void done(BmobException e) {
+
+                }
+            });
         }
 
         if (resultCode == PayActivity.PAY_SUCCESS) {
@@ -728,16 +762,6 @@ public class OrderDetailActivity extends BaseActivity {
             llAddress.setVisibility(View.GONE);
             rlMoment.setVisibility(View.VISIBLE);
             tvAddressMsg.setText("买家地址是：收货人：" + order.getAddress().getRecipient() + "\n手机号码：" + order.getAddress().getPhone() + "\n地址：" + order.getAddress().getRegion() + order.getAddress().getSpecific());
-            Notificate notificate = new Notificate();
-            notificate.setUser(order.getSeller());
-            notificate.setOrder(order);
-            notificate.setStatus(order.getStatus());
-            notificate.save(new SaveListener<String>() {
-                @Override
-                public void done(String s, BmobException e) {
-
-                }
-            });
         }
     }
 
@@ -748,7 +772,7 @@ public class OrderDetailActivity extends BaseActivity {
         setIntent(intent);
     }
 
-    public float getSum(Order order) {
+    public static float getSum(Order order) {
         float sum = 0f;
         if (order.getPriceType().equals("人民币")) {
             sum = order.getPrice();

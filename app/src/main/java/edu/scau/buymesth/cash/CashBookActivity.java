@@ -49,17 +49,9 @@ public class CashBookActivity extends BaseActivity {
         rv.setNestedScrollingEnabled(false);
         rv.setAdapter(adapter);
 
-
-        BmobQuery<CashBook> query1 = new BmobQuery<>();
-        query1.addWhereEqualTo("user", user.getObjectId());
-        BmobQuery<CashBook> query2 = new BmobQuery<>();
-        query2.addWhereEqualTo("toUser", user.getObjectId());
-        List<BmobQuery<CashBook>> queries = new ArrayList<>();
-        queries.add(query1);
-        queries.add(query2);
         showLoadingDialog();
         BmobQuery<CashBook> query = new BmobQuery<>();
-        query.or(queries);
+        query.addWhereEqualTo("user", user.getObjectId());
         query.include("user,toUser,toOrder");
         query.order("-updatedAt");
         query.findObjects(new FindListener<CashBook>() {

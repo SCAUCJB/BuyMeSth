@@ -7,17 +7,15 @@ import cn.bmob.v3.BmobObject;
  */
 public class CashBook extends BmobObject {
 
-    public static final int BUYER_PAY = 0;
-    public static final int SELLER_GET = 1;
-    public static final int SELLER_CANCLE = 2;
+    public static final int PAY = 0;
+    public static final int GET = 1;
+    public static final int CANCLE = 2;
     public static final int DEPOSIT = 3;
     public static final int WITHDRAW = 4;
 
     User user;
     int type;
-    User toUser;
-    Order toOrder;
-    String describe;
+    Order order;
     Float cash;
 
     public User getUser() {
@@ -36,29 +34,14 @@ public class CashBook extends BmobObject {
         this.type = type;
     }
 
-    public User getToUser() {
-        return toUser;
+    public Order getorder() {
+        return order;
     }
 
-    public void setToUser(User toUser) {
-        this.toUser = toUser;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
-    public Order getToOrder() {
-        return toOrder;
-    }
-
-    public void setToOrder(Order toOrder) {
-        this.toOrder = toOrder;
-    }
-
-    public String getDescribe() {
-        return describe;
-    }
-
-    public void setDescribe(String describe) {
-        this.describe = describe;
-    }
 
     public Float getCash() {
         return cash;

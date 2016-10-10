@@ -18,27 +18,32 @@ public class CashBookAdapter extends BaseQuickAdapter<CashBook> {
 
     @Override
     protected void convert(BaseViewHolder helper, CashBook item) {
-        helper.setText(R.id.tv_money, String.valueOf(item.getCash())+"￥");
+
         helper.setText(R.id.tv_time, item.getUpdatedAt());
             switch (item.getType()) {
-                case CashBook.BUYER_PAY:
+                case CashBook.PAY:
                     helper.setText(R.id.tv_status, "订单付款");
+                    helper.setText(R.id.tv_money, "-"+String.valueOf(item.getCash())+"￥");
                     break;
 
-                case CashBook.SELLER_GET:
+                case CashBook.GET:
                     helper.setText(R.id.tv_status, "交易成功");
+                    helper.setText(R.id.tv_money, "-"+String.valueOf(item.getCash())+"￥");
                     break;
 
-                case CashBook.SELLER_CANCLE:
-                    helper.setText(R.id.tv_status, "取消订单退款");
+                case CashBook.CANCLE:
+                    helper.setText(R.id.tv_status, "卖家取消订单退款");
+                    helper.setText(R.id.tv_money, "+"+String.valueOf(item.getCash())+"￥");
                     break;
 
                 case CashBook.DEPOSIT:
                     helper.setText(R.id.tv_status, "充值");
+                    helper.setText(R.id.tv_money, String.valueOf(item.getCash())+"￥");
                     break;
 
                 case CashBook.WITHDRAW:
                     helper.setText(R.id.tv_status, "提现");
+                    helper.setText(R.id.tv_money, "-"+String.valueOf(item.getCash())+"￥");
                     break;
 
             }

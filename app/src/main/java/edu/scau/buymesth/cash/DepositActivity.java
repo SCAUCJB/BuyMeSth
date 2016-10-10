@@ -31,8 +31,6 @@ import edu.scau.buymesth.util.InputMethodHelper;
  */
 public class DepositActivity extends BaseActivity {
 
-    ///TODO:充值成功后还要加入CashBook表中
-
     User user;
     @Bind(R.id.et_money)
     EditText etMoney;
