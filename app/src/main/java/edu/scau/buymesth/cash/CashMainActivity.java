@@ -18,10 +18,13 @@ import base.BaseActivity;
 import base.util.GlideCircleTransform;
 import butterknife.Bind;
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.User;
+import edu.scau.buymesth.data.bean.Wallet;
 
 
 /**
@@ -29,6 +32,7 @@ import edu.scau.buymesth.data.bean.User;
  */
 public class CashMainActivity extends BaseActivity {
     User user;
+    Wallet wallet;
     @Bind(R.id.btn_withdraw)
     Button btnWithdraw;
     @Bind(R.id.btn_deposit)
@@ -56,25 +60,12 @@ public class CashMainActivity extends BaseActivity {
     @Override
     public void initView() {
         user = (User) getIntent().getSerializableExtra("user");
-        BmobQuery<User> query = new BmobQuery<>();
-        query.getObject(user.getObjectId(), new QueryListener<User>() {
-            @Override
-            public void done(User u, BmobException e) {
-                if (e == null) {
-                    user = u;
-                    if (user.getAvatar() != null) {
-                        Glide.with(mContext).load(user.getAvatar()).placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into(ivIcon);
-                    }
-                    tvName.setText(user.getNickname());
-                    tvUserId.setText(user.getUsername());
-                    tvCash.setText("当前账户余额为：" + user.getBalance()+"￥");
-                }else{
-                    Toast.makeText(CashMainActivity.this, "网络请求失败", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        if (user.getAvatar() != null) {
+            Glide.with(mContext).load(user.getAvatar()).placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into(ivIcon);
+        }
+        tvName.setText(user.getNickname());
 
-
+        query();
         btnDeposit.setOnClickListener(v -> {
             if(user!=null)
                 DepositActivity.navigate(CashMainActivity.this, user);
@@ -99,28 +90,7 @@ public class CashMainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        tvCash.setText("-----￥");
         query();
-    }
-
-    private void query() {
-        BmobQuery<User> query = new BmobQuery<>();
-        query.getObject(user.getObjectId(), new QueryListener<User>() {
-            @Override
-            public void done(User u, BmobException e) {
-                if (e == null) {
-                    user = u;
-                    if (user.getAvatar() != null) {
-                        Glide.with(mContext).load(user.getAvatar()).placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into(ivIcon);
-                    }
-                    tvName.setText(user.getNickname());
-                    tvUserId.setText(user.getUsername());
-                    tvCash.setText( user.getBalance()+"￥");
-                }else{
-                    Toast.makeText(CashMainActivity.this, "网络请求失败", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 
     @Override
@@ -143,4 +113,23 @@ public class CashMainActivity extends BaseActivity {
     public int getStatusColorResources() {
         return R.color.colorPrimaryDark;
     }
+
+    public void query(){
+        showLoadingDialog();
+        tvCash.setText("当前账户余额为：-----￥");
+        BmobQuery<Wallet> query = new BmobQuery<>();
+        query.addWhereEqualTo("user",BmobUser.getCurrentUser().getObjectId());
+        query.findObjects( new FindListener<Wallet>() {
+            @Override
+            public void done(List<Wallet> list, BmobException e) {
+                if(e==null){
+                    wallet = list.get(0);
+                    tvCash.setText("当前账户余额为：" + wallet.getCash()+"￥");
+                    closeLoadingDialog();
+                }else{
+                    Toast.makeText(CashMainActivity.this, "网络请求失败", Toast.LENGTH_SHORT).show();
+                    closeLoadingDialog();
+                }}});
+    }
+
 }

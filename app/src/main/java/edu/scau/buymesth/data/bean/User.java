@@ -17,17 +17,6 @@ public class User extends BmobUser {
     private String residence;
     private Float score;
     private Integer ratePopulation;
-    private Float balance;
-
-    public Float getBalance() {
-        if(balance==null)
-            return 0.0f;
-        return balance;
-    }
-
-    public void setBalance(Float balance) {
-        this.balance = balance;
-    }
 
     public String getNickname() {
         return nickname;

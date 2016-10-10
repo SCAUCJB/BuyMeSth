@@ -10,6 +10,8 @@ public class CashBook extends BmobObject {
     public static final int BUYER_PAY = 0;
     public static final int SELLER_GET = 1;
     public static final int SELLER_CANCLE = 2;
+    public static final int DEPOSIT = 3;
+    public static final int WITHDRAW = 4;
 
     User user;
     int type;
@@ -66,3 +68,6 @@ public class CashBook extends BmobObject {
         this.cash = cash;
     }
 }
+
+
+

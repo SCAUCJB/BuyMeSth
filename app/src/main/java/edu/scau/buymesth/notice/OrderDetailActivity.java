@@ -7,7 +7,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,29 +20,31 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.github.clans.fab.FloatingActionButton;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import base.BaseActivity;
 import base.util.SpaceItemDecoration;
 import butterknife.Bind;
+import cn.bmob.v3.AsyncCustomEndpoints;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.CloudCodeListener;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
-import cn.bmob.v3.listener.UpdateListener;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.PicAdapter;
 import edu.scau.buymesth.cash.PayActivity;
 import edu.scau.buymesth.data.bean.Address;
-import edu.scau.buymesth.data.bean.CashBook;
 import edu.scau.buymesth.data.bean.Evaluate;
 import edu.scau.buymesth.data.bean.Notificate;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.OrderMoment;
-import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.notice.detail.OrderMomentAdapter;
 import edu.scau.buymesth.notice.detail.PicPublishActivity;
 import edu.scau.buymesth.request.requestdetail.RequestDetailActivity;
@@ -215,7 +216,31 @@ public class OrderDetailActivity extends BaseActivity {
                             });
 
                             btnReject.setOnClickListener(v -> {
-                                RejectActivity.navigateForResult(OrderDetailActivity.this, order);
+                                AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
+                                JSONObject params = new JSONObject();
+                                try {
+                                    params.put("orderid", order.getObjectId());
+                                    params.put("sellerid", order.getSeller().getObjectId());
+                                } catch (JSONException e1) {
+                                    e1.printStackTrace();
+                                }
+                                showLoadingDialog();
+                                ace.callEndpoint("rejectOrder", params, new CloudCodeListener() {
+                                    @Override
+                                    public void done(Object o, BmobException e) {
+                                        if (o != null) {
+                                            if (((String) o).equals("success")) {
+                                                Toast.makeText(OrderDetailActivity.this, "拒绝成功", Toast.LENGTH_SHORT).show();
+                                                tvMsg.setText("你已拒绝了这位卖家的报价");
+                                                rlCreateBtn.setVisibility(View.GONE);
+                                                closeLoadingDialog();
+                                            } else {
+                                                Toast.makeText(OrderDetailActivity.this, "请重试", Toast.LENGTH_SHORT).show();
+                                                closeLoadingDialog();
+                                            }
+                                        }
+                                    }
+                                });
                             });
 
                             break;
@@ -304,41 +329,42 @@ public class OrderDetailActivity extends BaseActivity {
                             });
 
                             btnGo.setOnClickListener(v -> {
-                                if (tvInc.getText().equals("") || tvExpressNum.equals("")) {
-                                    Toast.makeText(OrderDetailActivity.this, "请正确填写快递信息", Toast.LENGTH_LONG).show();
-                                    return;
-                                }
-                                order.setStatus(Order.STATUS_DELIVERING);
-                                order.setExpressInc(tvInc.getText().toString());
-                                order.setExpressNumber(tvExpressNum.getText().toString());
-                                order.update(new UpdateListener() {
-                                    @Override
-                                    public void done(BmobException e) {
-                                        if (e == null) {
-                                            btnCamera.setVisibility(View.GONE);
-                                            btnGo.setVisibility(View.GONE);
-                                            btnGoback.setVisibility(View.GONE);
-                                            llAddress.setClickable(false);
-
-                                            tvMsg.setText("你已发货，等待买家收货");
-                                            Notificate notificate = new Notificate();
-                                            notificate.setUser(order.getBuyer());
-                                            notificate.setOrder(order);
-                                            notificate.setStatus(order.getStatus());
-                                            notificate.save(new SaveListener<String>() {
-                                                @Override
-                                                public void done(String s, BmobException e) {
-
-                                                }
-                                            });
-
-                                            Log.i("bmob", "更新成功");
-                                        } else {
-                                            Log.i("bmob", "更新失败：" + e.getMessage() + "," + e.getErrorCode());
+                                        if (tvInc.getText().equals("") || tvExpressNum.equals("")) {
+                                            Toast.makeText(OrderDetailActivity.this, "请正确填写快递信息", Toast.LENGTH_LONG).show();
+                                            return;
                                         }
+                                        showLoadingDialog();
+                                                AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
+                                                JSONObject params = new JSONObject();
+                                                try {
+                                                    params.put("orderid", order.getObjectId());
+                                                    params.put("buyerid", order.getBuyer().getObjectId());
+                                                    params.put("expressnum", tvExpressNum.getText().toString());
+                                                    params.put("incnum", tvInc.getText().toString());
+                                                } catch (JSONException e1) {
+                                                    e1.printStackTrace();
+                                                }
+                                                ace.callEndpoint("sendgood", params, new CloudCodeListener() {
+                                                    @Override
+                                                    public void done(Object o, BmobException e) {
+                                                        if (o != null) {
+                                                            if (((String) o).equals("success")) {
+                                                                Toast.makeText(OrderDetailActivity.this, "拒绝成功", Toast.LENGTH_SHORT).show();
+                                                                tvMsg.setText("你已发货，等待买家收货");
+                                                                btnCamera.setVisibility(View.GONE);
+                                                                btnGo.setVisibility(View.GONE);
+                                                                btnGoback.setVisibility(View.GONE);
+                                                                llAddress.setClickable(false);
+                                                                closeLoadingDialog();
+                                                            } else {
+                                                                Toast.makeText(OrderDetailActivity.this, "请重试", Toast.LENGTH_SHORT).show();
+                                                                closeLoadingDialog();
+                                                            }
+                                                        }
+                                            }
+                                        });
                                     }
-                                });
-                            });
+                            );
 
                             btnGoback.setOnClickListener(v -> {
                                 RejectActivity.navigateForResult(OrderDetailActivity.this, order);
@@ -420,51 +446,30 @@ public class OrderDetailActivity extends BaseActivity {
                             });
 
                             btnGet.setOnClickListener(v -> {
-                                order.setStatus(Order.STATUS_FINISH);
-                                order.update(new UpdateListener() {
+                                showLoadingDialog();
+                                AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
+                                JSONObject params = new JSONObject();
+                                try {
+                                    params.put("order", order.getObjectId());
+                                    params.put("seller", order.getSeller().getObjectId());
+                                    params.put("sum", getSum(order));
+                                } catch (JSONException e1) {
+                                    e1.printStackTrace();
+                                }
+                                ace.callEndpoint("takegoods", params, new CloudCodeListener() {
                                     @Override
-                                    public void done(BmobException e) {
-                                        if (e == null) {
-                                            BmobQuery<CashBook> query1 = new BmobQuery<CashBook>();
-                                            query1.include("user");
-                                            query1.addWhereEqualTo("toOrder", order.getObjectId());
-                                            query1.findObjects(new FindListener<CashBook>() {
-                                                @Override
-                                                public void done(List<CashBook> list, BmobException e) {
-                                                    if (e == null) {
-                                                        {
-                                                            CashBook cashBook = list.get(0);
-                                                            User user = cashBook.getToUser();
-                                                            user.setBalance(user.getBalance() + cashBook.getCash());
-                                                            user.update(new UpdateListener() {
-                                                                @Override
-                                                                public void done(BmobException e) {
-                                                                    if (e == null) {
-                                                                        tvMsg.setText("交易已完成，请对卖家做出评价");
-                                                                        Notificate notificate = new Notificate();
-                                                                        notificate.setUser(order.getSeller());
-                                                                        notificate.setOrder(order);
-                                                                        notificate.setStatus(order.getStatus());
-                                                                        notificate.save(new SaveListener<String>() {
-                                                                            @Override
-                                                                            public void done(String s, BmobException e) {
-
-                                                                            }
-                                                                        });
-                                                                    }
-                                                                }
-                                                            });
-                                                        }
-                                                    }
-                                                }
-                                            });
-
-                                            rlGet.setVisibility(View.GONE);
-                                            btnComment.setVisibility(View.VISIBLE);
-
-                                            Toast.makeText(OrderDetailActivity.this, "已收货", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(OrderDetailActivity.this, "请重试", Toast.LENGTH_SHORT).show();
+                                    public void done(Object o, BmobException e) {
+                                        if (o != null) {
+                                            if (((String) o).equals("success")) {
+                                                Toast.makeText(OrderDetailActivity.this, "已收货,付款成功", Toast.LENGTH_SHORT).show();
+                                                tvMsg.setText("交易已完成，请对卖家做出评价");
+                                                rlGet.setVisibility(View.GONE);
+                                                btnComment.setVisibility(View.VISIBLE);
+                                                closeLoadingDialog();
+                                            } else {
+                                                Toast.makeText(OrderDetailActivity.this, "请重试", Toast.LENGTH_SHORT).show();
+                                                closeLoadingDialog();
+                                            }
                                         }
                                     }
                                 });
@@ -659,8 +664,8 @@ public class OrderDetailActivity extends BaseActivity {
             @Override
             public void done(List<OrderMoment> list, BmobException e) {
                 if (e == null) {
-                    if(list!=null&&list.size()>0)
-                    orderMomentAdapter.setNewData(list);
+                    if (list != null && list.size() > 0)
+                        orderMomentAdapter.setNewData(list);
                     closeLoadingDialog();
                 } else {
                     Toast.makeText(OrderDetailActivity.this, "网络有问题，请重试", Toast.LENGTH_LONG).show();
@@ -742,5 +747,31 @@ public class OrderDetailActivity extends BaseActivity {
         setIntent(intent);
     }
 
+    public float getSum(Order order) {
+        float sum = 0f;
+        if (order.getPriceType().equals("人民币")) {
+            sum = order.getPrice();
+        } else if (order.getPriceType().equals("美元")) {
+            sum = order.getPrice() * 6;
+        } else if (order.getPriceType().equals("港币")) {
+            sum = order.getPrice() * 0.8f;
+        }
+
+        if (order.getTipType().equals("人民币")) {
+            sum += order.getTip();
+        } else if (order.getTipType().equals("美元")) {
+            sum += (order.getTip() * 6);
+        } else if (order.getTipType().equals("港币")) {
+            sum += (order.getTip() * 0.8f);
+        } else {
+            sum = sum + sum * order.getTip();
+        }
+        return sum;
+    }
+
 
 }
+
+
+
+

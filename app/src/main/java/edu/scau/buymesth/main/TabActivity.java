@@ -436,6 +436,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
                     return;
                 }
                 Gson gson  = new Gson();
+                if(list==null||list.size()==0) return ;
                 for (int i = 0; i < list.size(); i++) {
                     Order order = list.get(i).getOrder();
 

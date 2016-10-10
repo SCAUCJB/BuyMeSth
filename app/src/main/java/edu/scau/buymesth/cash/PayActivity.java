@@ -8,10 +8,19 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.List;
+
 import base.BaseActivity;
 import butterknife.Bind;
+import cn.bmob.v3.AsyncCustomEndpoints;
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.CloudCodeListener;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
@@ -20,6 +29,7 @@ import edu.scau.buymesth.data.bean.CashBook;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.data.bean.User;
+import edu.scau.buymesth.data.bean.Wallet;
 
 /**
  * Created by Jammy on 2016/10/7.
@@ -68,109 +78,78 @@ public class PayActivity extends BaseActivity {
         }
 
         tvSum.setText("商品价格：" + sum);
-
-        BmobQuery<User> query = new BmobQuery<>();
-        query.getObject(user.getObjectId(), new QueryListener<User>() {
+        
+        BmobQuery<Wallet> query = new BmobQuery<>();
+        query.addWhereEqualTo("user",BmobUser.getCurrentUser().getObjectId());
+        query.findObjects( new FindListener<Wallet>() {
             @Override
-            public void done(User u, BmobException e) {
-                if (e == null) {
-                    user = u;
-                    tvMoney.setText("账户余额：" + user.getBalance());
-                } else {
+            public void done(List<Wallet> list, BmobException e) {
+                if(e==null){
+                    tvMoney.setText("当前账户余额为：" + list.get(0)+"￥");
+                }else{
+                    Toast.makeText(PayActivity.this, "网络请求失败", Toast.LENGTH_SHORT).show();
+                }}});
 
-                }
-            }
-        });
+
 
 
         btnAdd.setOnClickListener(v -> {
             DepositActivity.navigate(PayActivity.this, user);
         });
         btnSubmit.setOnClickListener(v -> {
-            BmobQuery<User> query1 = new BmobQuery<>();
-            query1.getObject(user.getObjectId(), new QueryListener<User>() {
+
+            showLoadingDialog();
+
+            AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
+            JSONObject params = new JSONObject();
+            try {
+                params.put("buyerid",order.getBuyer().getObjectId());
+                params.put("sellerid",order.getSeller().getObjectId());
+                params.put("orderid",order.getObjectId());
+                params.put("addressid",order.getAddress().getObjectId());
+                params.put("num",sum);
+                params.put("requestid",order.getRequest().getObjectId());
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+            }
+            ace.callEndpoint("acceptOrder", params, new CloudCodeListener() {
                 @Override
-                public void done(User u, BmobException e) {
-                    if (e == null) {
-                        user = u;
-                        tvMoney.setText("账户余额：" + user.getBalance());
-                        if (user.getBalance() < sum) {
-                            Toast.makeText(PayActivity.this, "账户余额不足，请充值", Toast.LENGTH_SHORT).show();
-                            return;
+                public void done(Object o, BmobException e) {
+                    if (o != null) {
+                        if (((String) o).equals("success")) {
+                            Toast.makeText(PayActivity.this, "付款成功", Toast.LENGTH_SHORT).show();
+                            Intent data = new Intent();
+                            data.putExtra("order", order);
+                            setResult(PAY_SUCCESS, data);
+                            finish();
+                            closeLoadingDialog();
+                        }else if(((String) o).equals("out")){
+                            Toast.makeText(PayActivity.this, "余额不足，请充值", Toast.LENGTH_SHORT).show();
+                            closeLoadingDialog();
+                        }else
+                        {
+                            Toast.makeText(PayActivity.this, "付款失败，请重试", Toast.LENGTH_SHORT).show();
+                            closeLoadingDialog();
                         }
-
-                        user.setBalance(user.getBalance() - sum);
-                        user.update(new UpdateListener() {
-                            @Override
-                            public void done(BmobException e) {
-                                if (e == null) {
-                                    CashBook cashBook = new CashBook();
-                                    cashBook.setUser(order.getBuyer());
-                                    cashBook.setType(CashBook.BUYER_PAY);
-//                                    cashBook.setDescribe();
-                                    cashBook.setToUser(order.getSeller());
-                                    cashBook.setToOrder(order);
-                                    cashBook.setCash(sum);
-                                    cashBook.save(new SaveListener<String>() {
-                                        @Override
-                                        public void done(String s, BmobException e) {
-                                            if (e == null) {
-                                                Toast.makeText(PayActivity.this, "付款成功", Toast.LENGTH_SHORT).show();
-                                                order.setStatus(Order.STATUS_ACCEPTED);
-                                                Request request = order.getRequest();
-                                                request.setAccecpted(true);
-                                                request.update(new UpdateListener() {
-                                                    @Override
-                                                    public void done(BmobException e) {
-
-                                                    }
-                                                });
-
-                                                order.update(new UpdateListener() {
-                                                    @Override
-                                                    public void done(BmobException e) {
-                                                        if(e==null){
-                                                            Intent data = new Intent();
-                                                            data.putExtra("order", order);
-                                                            setResult(PAY_SUCCESS, data);
-                                                            finish();
-                                                        }else{
-
-                                                        }
-                                                    }
-                                                });
-                                            }
-                                        }
-                                    });
-                                } else {
-
-                                }
-                            }
-                        });
-
-                    } else {
-
                     }
                 }
             });
-        });
+    });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        BmobQuery<User> query = new BmobQuery<>();
-        query.getObject(user.getObjectId(), new QueryListener<User>() {
+        BmobQuery<Wallet> query = new BmobQuery<>();
+        query.addWhereEqualTo("user",BmobUser.getCurrentUser().getObjectId());
+        query.findObjects( new FindListener<Wallet>() {
             @Override
-            public void done(User u, BmobException e) {
-                if (e == null) {
-                    user = u;
-                    tvMoney.setText("账户余额：" + user.getBalance());
-                } else {
-
-                }
-            }
-        });
+            public void done(List<Wallet> list, BmobException e) {
+                if(e==null){
+                    tvMoney.setText("当前账户余额为：" + list.get(0)+"￥");
+                }else{
+                    Toast.makeText(PayActivity.this, "网络请求失败", Toast.LENGTH_SHORT).show();
+                }}});
     }
 
     @Override
