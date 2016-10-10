@@ -52,7 +52,7 @@ import static java.util.concurrent.Executors.newFixedThreadPool;
 /**
  * Created by ！ on 2016/8/29.
  */
-public class MomentPublishActivity extends BaseActivity {
+public class MomentPublishActivity extends BaseActivity implements MyPictureAdapter.CompressList{
 
     @Bind(R.id.rv_images)
     RecyclerView recyclerView;
@@ -244,6 +244,7 @@ public class MomentPublishActivity extends BaseActivity {
                 });
             }
         });
+        setTitle("发布动态");
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -397,5 +398,15 @@ public class MomentPublishActivity extends BaseActivity {
         super.onDestroy();
         if (threadPoolExecutor != null)
             threadPoolExecutor.shutdownNow();
+    }
+
+    @Override
+    public void onDataChange(MyPictureAdapter.ImageItem item) {
+        mImageSize = 0;
+        Observable.from(mUrlList)
+                .map(imageItem -> new File(mCompress?imageItem.compressedImage:imageItem.sourceImage))
+                .subscribe(file -> mImageSize += file.length(),
+                        o->{},
+                        () -> tvSize.setText("图片大小："+ FileUtils.convert(mImageSize)));
     }
 }

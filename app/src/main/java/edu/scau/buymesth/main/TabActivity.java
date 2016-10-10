@@ -50,6 +50,7 @@ import edu.scau.buymesth.data.bean.Notificate;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.discover.list.DiscoverFragment;
+import edu.scau.buymesth.discover.publish.MomentPublishActivity;
 import edu.scau.buymesth.discover.publish.MomentPublishFragment;
 import edu.scau.buymesth.fragment.EmptyActivity;
 import edu.scau.buymesth.notice.OrderDetailActivity;
@@ -92,6 +93,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
     private AlertDialog searchDialog;
     private EditText et;
     private Handler mHandler;
+    private DiscoverFragment discoverFragment;
 
     @Override
     protected int getLayoutId() {
@@ -106,20 +108,21 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
             tabLayout.setElevation(25);
         }
         UserFragment userFragment = new UserFragment();
-        DiscoverFragment discoverFragment = new DiscoverFragment();
+        discoverFragment = new DiscoverFragment();
         homeFragment = new HomeFragment();
         ConversationFragment conversationFragment = new ConversationFragment();
 
         homeFragment.setRelatedFab(fab);
+        discoverFragment.setRelatedFab(fab);
         fab.setClosedOnTouchOutside(true);
         fab1.setOnClickListener(v -> {
             Intent i = new Intent(TabActivity.this, PublishActivity.class);
             startActivity(i);
         });
         fab2.setOnClickListener(v -> {
-//            Intent i = new Intent(TabActivity.this, MomentPublishActivity.class);
-//            startActivity(i);
-            EmptyActivity.navigate(TabActivity.this, MomentPublishFragment.class.getName(),null,"编辑动态");
+            Intent i = new Intent(TabActivity.this, MomentPublishActivity.class);
+            startActivity(i);
+//            EmptyActivity.navigate(TabActivity.this, MomentPublishFragment.class.getName(),null,"编辑动态");
         });
         fab3.setOnClickListener(v -> {
             if (et == null) et = new EditText(TabActivity.this);
@@ -298,6 +301,21 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
         }
         if (position == 0 || position == 1) {
             fab.showMenu(true);
+            if(position==1) {
+                fab3.setEnabled(false);
+                fab3.setLabelVisibility(View.INVISIBLE);
+                fab3.setAlpha(0f);
+                fab4.setEnabled(false);
+                fab4.setLabelVisibility(View.INVISIBLE);
+                fab4.setAlpha(0f);
+            }else if(position==0){
+                fab3.setEnabled(true);
+                fab3.setLabelVisibility(View.VISIBLE);
+                fab3.setAlpha(1f);
+                fab4.setEnabled(true);
+                fab4.setLabelVisibility(View.VISIBLE);
+                fab4.setAlpha(1f);
+            }
         } else {
             fab.hideMenu(true);
         }

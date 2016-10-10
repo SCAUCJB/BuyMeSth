@@ -8,7 +8,7 @@ import cn.bmob.v3.BmobObject;
 
 public class Wallet extends BmobObject{
     private User user;
-    private double cash;
+    private float cash;
 
     public User getUser() {
         return user;
@@ -22,7 +22,7 @@ public class Wallet extends BmobObject{
         return cash;
     }
 
-    public void setCash(double cash) {
+    public void setCash(float cash) {
         this.cash = cash;
     }
 }
