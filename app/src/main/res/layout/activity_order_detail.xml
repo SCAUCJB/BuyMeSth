@@ -33,16 +33,15 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ffffff">
+        android:background="@color/colorLightLightGrey">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
-
             <TextView
                 android:id="@+id/tv_msg"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/content_padding"
@@ -51,16 +50,14 @@
 
 
             <LinearLayout
+
                 android:id="@+id/ll_request"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:layout_below="@+id/image_list"
-                android:layout_centerHorizontal="true"
                 android:layout_marginLeft="@dimen/content_padding"
                 android:layout_marginRight="@dimen/content_padding"
                 android:background="@drawable/selectable_background_dark"
                 android:clickable="true"
-                android:contextClickable="false"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:visibility="gone">
@@ -84,6 +81,7 @@
             </LinearLayout>
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:id="@+id/tv_want"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -94,6 +92,7 @@
                 android:visibility="gone" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:id="@+id/tv_seller_price"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -103,6 +102,7 @@
                 android:visibility="gone" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:id="@+id/tv_seller_tip"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -168,6 +168,11 @@
                 android:visibility="gone">
 
                 <TextView
+                    android:background="@color/white"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:layout_marginBottom="@dimen/dp_6"
+                    style="@style/TextAppearance.AppCompat.Body1"
+                    android:padding="@dimen/content_padding"
                     android:id="@+id/tv_address_msg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -177,13 +182,24 @@
                     android:text="这里是地址信息"
                     android:visibility="visible" />
 
+                <View
+                    android:id="@+id/view1"
+                    android:layout_below="@+id/tv_address_msg"
+                    android:layout_marginTop="@dimen/dp_6"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorDarkGrey" />
+
                 <TextView
                     android:id="@+id/textView5"
+                    style="@style/TextAppearance.AppCompat.Body1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_address_msg"
-                    android:layout_margin="@dimen/content_padding"
-                    android:text="订单动态"
+                    android:layout_below="@+id/view1"
+                    android:layout_marginLeft="@dimen/content_padding"
+                    android:layout_marginRight="@dimen/content_padding"
+                    android:layout_marginTop="@dimen/content_padding"
+                    android:text="订单动态:"
                     android:visibility="visible" />
 
                 <android.support.v7.widget.RecyclerView
