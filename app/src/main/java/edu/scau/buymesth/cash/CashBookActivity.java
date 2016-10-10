@@ -82,4 +82,10 @@ public class CashBookActivity extends BaseActivity {
     public int getStatusColorResources() {
         return R.color.colorPrimaryDark;
     }
+
+
+    @Override
+    protected int getToolBarId() {
+        return R.id.toolbar;
+    }
 }
