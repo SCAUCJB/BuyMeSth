@@ -1,5 +1,8 @@
 package edu.scau.buymesth.adapter;
 
+import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
+import android.util.SparseArray;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -10,6 +13,7 @@ import adpater.BaseViewHolder;
 import base.util.GlideCircleTransform;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Request;
+import edu.scau.buymesth.util.ColorChangeHelper;
 import edu.scau.buymesth.util.DateFormatHelper;
 
 /**
@@ -17,6 +21,8 @@ import edu.scau.buymesth.util.DateFormatHelper;
  */
 
 public class RequestListAdapter extends BaseQuickAdapter<Request> {
+
+    private SparseArray<Drawable> mLevelDrawableCache=new SparseArray<>();
     public RequestListAdapter( ) {
         super(R.layout.item_home_view,null);
     }
@@ -30,12 +36,20 @@ public class RequestListAdapter extends BaseQuickAdapter<Request> {
             .setText(R.id.tv_tweet_text,item.getContent())
             .setText(R.id.tv_level,"LV "+ item.getUser().getExp()/10);
 
+        Drawable levelBg = mLevelDrawableCache.get(item.getUser().getExp()/10*10);
+        if(levelBg==null){
+            levelBg = ColorChangeHelper.tintDrawable(mContext.getResources().getDrawable(R.drawable.rect_black),
+                    ColorStateList.valueOf(ColorChangeHelper.IntToColorValue(item.getUser().getExp()/10*10)));
+            mLevelDrawableCache.put(item.getUser().getExp()/10*10,levelBg);
+        }
+        helper.getView(R.id.tv_level).setBackground(levelBg);
+
         Integer high = item.getMaxPrice();
         Integer low = item.getMinPrice();
         if (low != null) {
-            helper.setText(R.id.tv_price,"期望价格：￥" + low + "~￥" + high);
+            helper.setText(R.id.tv_price,"￥" + low + "~￥" + high);
         } else {
-            helper.setText(R.id.tv_price,"期望价格：￥" + high);
+            helper.setText(R.id.tv_price,"￥" + high);
         }
            Glide.with(mContext).load(item.getUser().getAvatar()).crossFade().placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into((ImageView) helper.getView(R.id.iv_avatar_author));
         if(item!=null&&item.getUrls()!=null&&!item.getUrls().isEmpty())

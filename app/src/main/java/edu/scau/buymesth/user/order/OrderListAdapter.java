@@ -12,6 +12,7 @@ import java.util.List;
 
 import adpater.BaseQuickAdapter;
 import adpater.BaseViewHolder;
+import cn.bmob.v3.BmobUser;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.util.ColorChangeHelper;
@@ -55,7 +56,7 @@ public class OrderListAdapter extends BaseQuickAdapter<Order>{
         if(item.getRequest().getUrls()!=null&&item.getRequest().getUrls().size()>0)
         Glide.with(mContext).load(item.getRequest().getUrls().get(0)).into((ImageView) helper.getView(R.id.request_icon));
         Glide.with(mContext).load(item.getSeller().getAvatar()).into((ImageView)helper.getView(R.id.iv_avatar_author));
-        helper.setText(R.id.tv_name,item.getSeller().getNickname());
+        helper.setText(R.id.tv_name,item.getSeller().getNickname()+(item.getBuyer().getObjectId().equals(BmobUser.getCurrentUser().getObjectId())?"（买家）":"（卖家）"));
         setLevel(helper.getView(R.id.tv_level),item.getSeller().getExp());
     }
 

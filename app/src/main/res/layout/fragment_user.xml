@@ -183,12 +183,24 @@
                 android:layout_alignEnd="@+id/iv_avatar" />
 
             <ImageView
-                android:id="@+id/btn_setting"
-                android:layout_width="40dp"
+                android:id="@+id/btn_app_setting"
+                android:layout_width="48dp"
                 android:layout_height="40dp"
                 android:paddingLeft="12dp"
                 android:paddingTop="12dp"
-                android:paddingRight="4dp"
+                android:paddingRight="12dp"
+                android:paddingBottom="4dp"
+                android:src="@drawable/ic_settings_white_48dp"
+                android:layout_above="@id/relativeLayout2"
+                android:layout_alignParentStart="true" />
+
+            <ImageView
+                android:id="@+id/btn_setting"
+                android:layout_width="48dp"
+                android:layout_height="40dp"
+                android:paddingLeft="12dp"
+                android:paddingTop="12dp"
+                android:paddingRight="12dp"
                 android:paddingBottom="4dp"
                 android:src="@drawable/ic_edit_white_48dp"
                 android:layout_above="@id/relativeLayout2"

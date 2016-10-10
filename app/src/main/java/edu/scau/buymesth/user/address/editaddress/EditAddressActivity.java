@@ -1,8 +1,16 @@
 package edu.scau.buymesth.user.address.editaddress;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
@@ -92,9 +100,63 @@ public class EditAddressActivity extends BaseActivity {
             }
         });
 
-        mLocation.setOnClickListener(v ->getLocation());
+        mLocation.setOnClickListener(v ->
+        {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    toast("我们需要访问位置信息");
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            243);
+                    //        Snackbar.make(welcomeImage,"我们需要访问存储来读写缓存",Snackbar.LENGTH_LONG).show();
+                } else {
+                    //申请WRITE_EXTERNAL_STORAGE权限
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            243);
+                }
+
+            } else
+                getLocation();
+        });
     }
-    private void startLocation(){
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+        if (requestCode == 243) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getLocation();
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.help);
+                builder.setMessage(R.string.string_help_text);
+
+                // 拒绝, 退出应用
+                builder.setNegativeButton(R.string.quit, new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int which) {
+                        toast("不能获取位置信息");
+                    }
+                });
+
+                builder.setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int which) {
+                        startAppSettings();
+                    }
+                });
+
+                builder.setCancelable(false);
+
+                builder.show();
+            }
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+    private void startAppSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        intent.setData(Uri.parse("package:" + getPackageName()));
+        startActivity(intent);
+    }
+    private void startLocation() {
         ToastUtil.show("开始定位");
         //获取一次定位结果：
         //该方法默认为false。
@@ -108,6 +170,7 @@ public class EditAddressActivity extends BaseActivity {
         //启动定位
         mLocationClient.startLocation();
     }
+
     private void getLocation() {
 
         AMapLocationListener mLocationListener = aMapLocation -> {

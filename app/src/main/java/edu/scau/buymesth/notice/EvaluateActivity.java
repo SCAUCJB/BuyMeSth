@@ -92,7 +92,7 @@ public class EvaluateActivity extends BaseActivity {
         recyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
-        adapter = new MyPictureAdapter(mUrlList);
+        adapter = new MyPictureAdapter(mUrlList,null);
         recyclerView.setAdapter(adapter);
         adapter.setOnRecyclerViewItemClickListener((view, position) -> {
             ////这里设置点击事件

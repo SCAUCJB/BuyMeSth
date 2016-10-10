@@ -22,6 +22,7 @@ import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.RequestListAdapter;
 import edu.scau.buymesth.data.bean.Request;
+import edu.scau.buymesth.publish.PublishActivity;
 import edu.scau.buymesth.request.requestdetail.RequestDetailActivity;
 import edu.scau.buymesth.util.NetworkHelper;
 import in.srain.cube.views.ptr.PtrFrameLayout;
@@ -43,6 +44,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     private String filter;
     private Object filterKey;
     private PtrHandler ptrHandler;
+    private View mEmptyView;
 
     @Nullable
     @Override
@@ -50,6 +52,11 @@ public class HomeFragment extends Fragment implements HomeContract.View {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_home_fragment);
+        mEmptyView = view.findViewById(R.id.empty_view);
+         view.findViewById(R.id.btn_go_add).setOnClickListener(v -> {
+            Intent i = new Intent(getContext(), PublishActivity.class);
+            startActivity(i);
+        });
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 //        mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_10)));
         //初始化代理人
@@ -73,7 +80,9 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         initStoreHouse(view, savedInstanceState);
         return view;
     }
-      StoreHouseHeader mHeader;
+
+    StoreHouseHeader mHeader;
+
     private void initStoreHouse(View view, Bundle savedInstanceState) {
         mPtrFrameLayout = (PtrFrameLayout) view.findViewById(R.id.store_house_ptr_frame);
         mHeader = new StoreHouseHeader(getActivity());
@@ -82,8 +91,8 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         mHeader.setTextColor(Color.BLACK);
         mPtrFrameLayout.setHeaderView(mHeader);
         mPtrFrameLayout.addPtrUIHandler(mHeader);
-     //   if(savedInstanceState==null)//屏幕旋转以后就不用再自动刷新了
-     //   mPtrFrameLayout.post(() -> mPtrFrameLayout.autoRefresh(false));
+        //   if(savedInstanceState==null)//屏幕旋转以后就不用再自动刷新了
+        //   mPtrFrameLayout.post(() -> mPtrFrameLayout.autoRefresh(false));
         ptrHandler = new PtrHandler() {
             @Override
             public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
@@ -107,7 +116,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     @Override
     public void onPause() {
         super.onPause();
-         mPresenter.onPause();
+        mPresenter.onPause();
         if (mPtrFrameLayout != null)
             mPtrFrameLayout.refreshComplete();
     }
@@ -120,7 +129,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     @Override
     public void onResume() {
         super.onResume();
-  //      mPresenter.onResume();
+        //      mPresenter.onResume();
     }
 
     private void initAdapter() {
@@ -209,7 +218,19 @@ public class HomeFragment extends Fragment implements HomeContract.View {
 
     @Override
     public boolean hasNetwork() {
-        return   (NetworkHelper.isOpenNetwork(getContext()));
+        return (NetworkHelper.isOpenNetwork(getContext()));
+    }
+
+    @Override
+    public void showEmpty() {
+        mEmptyView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideEmpty() {
+        if(mEmptyView.getVisibility()==View.VISIBLE)
+            mEmptyView.setVisibility(View.GONE);
+
     }
 
     public void setFilter(String filter, Object filterKey) {
@@ -237,7 +258,6 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     public void setRelatedFab(FloatingActionMenu relatedFab) {
         this.relatedFab = relatedFab;
     }
-
 
 
 }

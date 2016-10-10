@@ -1,9 +1,11 @@
 package edu.scau.buymesth.user;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +16,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AlertDialog;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +35,7 @@ import base.BaseActivity;
 import base.util.GlideCircleTransform;
 import base.util.ToastUtil;
 import bitmap.BlurTransformation;
+import cn.bmob.newim.BmobIM;
 import cn.bmob.v3.BmobUser;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.ViewPagerAdapter;
@@ -45,6 +49,7 @@ import edu.scau.buymesth.user.request.RequestFragment;
 import edu.scau.buymesth.user.setting.UserSettingActivity;
 import edu.scau.buymesth.userinfo.evaluate.EvaluateListActivity;
 import edu.scau.buymesth.util.ColorChangeHelper;
+import edu.scau.buymesth.util.CompressHelper;
 import util.DensityUtil;
 
 /**
@@ -85,6 +90,7 @@ public class UserFragment extends Fragment implements UserContract.View {
         mLevelTv = (TextView) view.findViewById(R.id.tv_level);
         mLocationTv = (TextView) view.findViewById(R.id.tv_location);
         mSignatureTv = (TextView) view.findViewById(R.id.tv_signature);
+        View mAppSettingBtn = (View) view.findViewById(R.id.btn_app_setting);
         mSettingBtn = (View) view.findViewById(R.id.btn_setting);
         mScoreTv = (TextView) view.findViewById(R.id.tv_score);
         mPopulationTv = (TextView) view.findViewById(R.id.tv_population);
@@ -99,6 +105,34 @@ public class UserFragment extends Fragment implements UserContract.View {
             Intent intent = new Intent(getActivity(), UserSettingActivity.class);
             getActivity().startActivityForResult(intent,303);
         });
+        mAppSettingBtn.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(
+                    getActivity());
+            String[] items = {"清除缓存","退出登录"};
+            builder.setItems(items, (dialog, which) -> {
+                switch (which){
+                    case 0:
+                        getActivity().runOnUiThread(() -> {
+                            AsyncTask task = new CacheCleanTask();
+                            task.execute("i");
+                        });
+                        break;
+                    case 1:
+                        new AlertDialog.Builder(getActivity()).setTitle("退出登录")
+                                .setMessage("确定要退出登录吗？")
+                                .setPositiveButton("确定", (dialog1, which1) -> {
+                                    BmobUser.logOut();
+                                    BmobIM.getInstance().clearAllConversation();
+                                    ToastUtil.show("退出登陆");
+                                    Intent i = new Intent(getActivity(), LoginActivity.class);
+                                    startActivity(i);
+                                    getActivity().finish();
+                                }).setNegativeButton("取消",null).show();
+                        break;
+                }
+            });
+            builder.show();
+        });
         view.findViewById(R.id.followed_user_list).setOnClickListener(v -> EmptyActivity.navigate(getActivity(), UserListFragment.class.getName(),null));
         view.findViewById(R.id.address_manage).setOnClickListener(v->{AddressActivity.navigate(getActivity());});
         view.findViewById(R.id.mark_list).setOnClickListener(v->{
@@ -108,7 +142,7 @@ public class UserFragment extends Fragment implements UserContract.View {
         mPopulationTv.setOnClickListener(v->EvaluateListActivity.navigate(getContext(),BmobUser.getCurrentUser().getObjectId(),false));
 
         UserModel model = new UserModel(getContext());
-        mPresenter = new UserPresenter(this, model);
+        mPresenter = new UserPresenter(getContext(),this, model);
         initTab();
         return view;
     }
@@ -138,14 +172,7 @@ public class UserFragment extends Fragment implements UserContract.View {
     @Override
     public void setAvatar(String url) {
         Glide.with(getContext()).load(url).crossFade().placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(getContext())).into(mAvatarIv);
-        mAvatarIv.setOnLongClickListener(v -> {
-            BmobUser.logOut();
-            ToastUtil.show("退出登陆");
-            Intent i = new Intent(getActivity(), LoginActivity.class);
-            startActivity(i);
-            getActivity().finish();
-            return false;
-        });
+        if(url!=null)
         Glide.with(this).
                 load(url).
                 asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).
@@ -200,6 +227,7 @@ public class UserFragment extends Fragment implements UserContract.View {
         adapter.addTab(requestFragment, "我的请求");
         adapter.addTab(orderFragment,"我的订单");
         mViewPager.setAdapter(adapter);
+
         mTabLayout.setupWithViewPager(mViewPager);
         NestedScrollView bottomSheet = (NestedScrollView) mCoordinatorLayout.findViewById(R.id.bottom_sheet);
         behavior = BottomSheetBehavior.from(bottomSheet);
@@ -217,6 +245,7 @@ public class UserFragment extends Fragment implements UserContract.View {
         });
         requestFragment.disallowIntercept(bottomSheet);
         orderFragment.disallowIntercept(bottomSheet);
+
         userInfoLl.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
 
@@ -240,5 +269,29 @@ public class UserFragment extends Fragment implements UserContract.View {
         mPopulationTv.setText(integer+"人评价");
     }
 
+    class CacheCleanTask extends AsyncTask<Object, Object, Object>{
+        //后面尖括号内分别是参数（例子里是线程休息时间），进度(publishProgress用到)，返回值 类型
 
+        @Override
+        protected Object doInBackground(Object... params) {
+            //第二个执行方法,onPreExecute()执行完后执行
+            try{
+                Glide.get(getContext()).clearDiskCache();
+                CompressHelper compressHelper = new CompressHelper(getContext());
+                compressHelper.cleanCache();
+            }catch (Exception e){
+//                ToastUtil.show("清理失败");
+                return "清理失败";
+            }
+//            ToastUtil.show("清理完毕");
+            return "清理完毕";
+        }
+
+        @Override
+        protected void onPostExecute(Object result) {
+            //doInBackground返回时触发，换句话说，就是doInBackground执行完后触发
+            //这里的result就是上面doInBackground执行后的返回值，所以这里是"执行完毕"
+            super.onPostExecute(result);
+        }
+    }
 }

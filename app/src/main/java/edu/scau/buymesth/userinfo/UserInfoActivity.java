@@ -123,33 +123,33 @@ public class UserInfoActivity extends BaseActivity implements Contract.View{
 
     }
 
-    private Handler mHandler = new Handler();
-
     @Override
     protected void initPresenter() {
         UserInfoModel model=new UserInfoModel(this);
-        if(getIntent().getSerializableExtra("user") !=null)
+        if(getIntent().getSerializableExtra("user") !=null){
             model.setUser((User) getIntent().getSerializableExtra("user"));
+            mPresenter=new UserInfoPresenter(this,model,true);
+        }
         else{
             User user = new User();
             user.setObjectId(getIntent().getStringExtra("userId"));
+            model.setUser(user);
             BmobQuery<User> query = new BmobQuery<>();
             showLoadingDialog();
             query.getObject(user.getObjectId(), new QueryListener<User>() {
                 @Override
                 public void done(User user0, BmobException e) {
                     closeLoadingDialog();
-                    if(e!=null) {
-                        model.setUser(user0);
-                        mHandler.post(() -> mPresenter.showUserInfo());
+                    if(e==null) {
+                        mPresenter.mModel.setUser(user0);
+                        runOnUiThread(() -> mPresenter.showUserInfo());
                     }
                     else
-                        mHandler.post(() -> ToastUtil.show("加载用户资料失败 "+e.toString()));
+                        runOnUiThread(() -> ToastUtil.show("加载用户资料失败 "+e.toString()));
                 }
             });
-            model.setUser(user);
+            mPresenter=new UserInfoPresenter(this,model,false);
         }
-        mPresenter=new UserInfoPresenter(this,model);
         mPopulationTv.setOnClickListener(v-> EvaluateListActivity.navigate(mContext, model.getUser().getObjectId(),false));
     }
 
@@ -183,6 +183,7 @@ public class UserInfoActivity extends BaseActivity implements Contract.View{
     @Override
     public void setAvatar(String url) {
         Glide.with(mContext).load(url).crossFade().placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into(mAvatarIv);
+        if(url!=null)
         Glide.with(this).
                 load(url).
                 asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).

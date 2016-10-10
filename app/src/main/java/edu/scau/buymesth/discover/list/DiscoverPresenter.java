@@ -32,11 +32,11 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
     public void onStart() {
     }
 
-    public void Refresh(){
+    public void Refresh(boolean firstTime){
         mModel.updateLikeList();
         mModel.resetPage();
         BmobQuery.CachePolicy cachePolicy;
-        if(NetworkHelper.isOpenNetwork(mContext))cachePolicy = BmobQuery.CachePolicy.NETWORK_ONLY;
+        if(!firstTime&&NetworkHelper.isOpenNetwork(mContext))cachePolicy = BmobQuery.CachePolicy.NETWORK_ONLY;
         else cachePolicy = BmobQuery.CachePolicy.CACHE_ONLY;
         mSubscriptions.add(mModel.getRxMoments(cachePolicy).flatMap(new Func1<List<Moment>, Observable<Moment>>() {
             @Override
@@ -48,13 +48,15 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Moment>() {
                     int size = mModel.getDatas().size();
-//                    ArrayList<Moment> tempData = new ArrayList<Moment>();
+                    ArrayList<Moment> tempData = new ArrayList<Moment>();
                     @Override
                     public void onCompleted() {
                         if(isAlive()){
 //                            mModel.getDatas().clear();
 //                            mModel.getDatas().addAll(tempData);
+                            mModel.getDatas().addAll(0,tempData);
                             mView.onRefreshComplete(mModel.getDatas());
+                            if(firstTime) Refresh(false);
                         }
                     }
 
@@ -72,6 +74,12 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
                         for(int i = 0;i<size;i++){
                             if(moment.getObjectId().equals(mModel.getDatas().get(i).getObjectId())){
                                 add = false;
+                                for(MomentsLike obj : mModel.getLikesList()){
+                                    if(obj.getMoment().getObjectId().contains(mModel.getDatas().get(i).getObjectId())) {
+                                        mModel.getDatas().get(i) .setLike(true);
+                                        break;
+                                    }
+                                }
                             }
                         }
                         if(add){
@@ -81,7 +89,7 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
                                     break;
                                 }
                             }
-                            mModel.getDatas().add(moment);
+                            tempData.add(moment);
                         }
                     }
                 }));
@@ -100,6 +108,7 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Moment>() {
+                    int size = mModel.getDatas().size();
                     @Override
                     public void onCompleted() {
                         mView.onLoadMoreSuccess(tempList);
@@ -112,8 +121,22 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
 
                     @Override
                     public void onNext(Moment moment) {
-                        mModel.getDatas().add(moment);
-                        tempList.add(moment);
+                        boolean add = true;
+                        for(int i = 0;i<size;i++){
+                            if(moment.getObjectId().equals(mModel.getDatas().get(i).getObjectId())){
+                                add = false;
+                            }
+                        }
+                        if(add){
+                            for(MomentsLike obj : mModel.getLikesList()){
+                                if(obj.getMoment().getObjectId().contains(moment.getObjectId())) {
+                                    moment.setLike(true);
+                                    break;
+                                }
+                            }
+                            mModel.getDatas().add(moment);
+                            tempList.add(moment);
+                        }
                     }
                 }));
     }

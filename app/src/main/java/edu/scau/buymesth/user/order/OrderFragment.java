@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,7 @@ import rx.subscriptions.CompositeSubscription;
 
 import static cn.bmob.v3.BmobQuery.CachePolicy.CACHE_ONLY;
 import static cn.bmob.v3.BmobQuery.CachePolicy.NETWORK_ONLY;
+import static in.srain.cube.views.ptr.PtrDefaultHandler.canChildScrollUp;
 
 /**
  * Created by John on 2016/9/25.
@@ -59,12 +61,23 @@ public class OrderFragment extends Fragment{
         mHintTv = (TextView) view.findViewById(R.id.tv_hint);
         user=(User) getActivity().getIntent().getSerializableExtra("user");
         mId= user!=null?user.getObjectId(): BmobUser.getCurrentUser().getObjectId();
-
+mRecyclerView.setOnTouchListener((v, event) -> {
+    Log.d("zhx","a?"+canChildScrollUp(mRecyclerView));
+    if(mParent!=null)
+    if(canChildScrollUp(mRecyclerView))
+    {
+        Log.d("zhx","a?"+canChildScrollUp(mRecyclerView));
+        mParent.setNestedScrollingEnabled(false);
+    }
+    else
+        mParent.setNestedScrollingEnabled(true);
+    return false;
+});
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if(mParent==null) return;
-                if(mRecyclerView.canScrollVertically(-1))
+                if(canChildScrollUp(recyclerView))
                 {
                     mParent.setNestedScrollingEnabled(false);
                 }

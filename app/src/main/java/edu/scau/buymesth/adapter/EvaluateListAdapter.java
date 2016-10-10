@@ -47,13 +47,11 @@ public class EvaluateListAdapter extends BaseQuickAdapter<Evaluate> {
             helper.setVisible(R.id.tv_reply, true);
             helper.setText(R.id.tv_reply, "[买手回复]:" + item.getReply());
         }
-        if (item.getUrlList() != null || item.getUrlList().size() > 0) {
             NineGridLayout nineGridLayout = helper.getView(R.id.nine_grid_layout);
             nineGridLayout.setVisibility(View.VISIBLE);
             nineGridLayout.setUrlList(item.getUrlList());
             nineGridLayout.setmMaxColumn(9);
             ((NineGridLayout) helper.getView(R.id.nine_grid_layout)).setOnItemClickListener((view, position, urls, itemType) ->
                     PhotoActivity.navigate((Activity) mContext, (NineGridLayout) helper.getView(R.id.nine_grid_layout), item.getUrlList(), position));
-        }
     }
 }

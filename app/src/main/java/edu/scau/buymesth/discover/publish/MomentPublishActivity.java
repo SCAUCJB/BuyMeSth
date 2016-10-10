@@ -1,7 +1,15 @@
 package edu.scau.buymesth.discover.publish;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Button;
@@ -69,11 +77,16 @@ public class MomentPublishActivity extends BaseActivity {
     boolean mCompressed = false;
     boolean mCompress = false;
     long mImageSize = 0;
-    private ExecutorService threadPoolExecutor=null;
+    private ExecutorService threadPoolExecutor = null;
 
     @Override
     protected int getLayoutId() {
         return R.layout.activity_moment_publish;
+    }
+
+    @Override
+    protected int getToolBarId() {
+        return R.id.toolbar;
     }
 
     @Override
@@ -86,13 +99,13 @@ public class MomentPublishActivity extends BaseActivity {
         recyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
-        adapter = new MyPictureAdapter(mUrlList);
+        adapter = new MyPictureAdapter(mUrlList,null);
         recyclerView.setAdapter(adapter);
         adapter.setOnRecyclerViewItemClickListener((view, position) -> {
             ////这里设置点击事件
             ArrayList<String> selectImages = new ArrayList<>();
             if (adapter.getItemId(position) == 1) {
-                for(MyPictureAdapter.ImageItem ii : mUrlList) selectImages.add(ii.sourceImage);
+                for (MyPictureAdapter.ImageItem ii : mUrlList) selectImages.add(ii.sourceImage);
                 PhotoPicker.builder()
                         .setPhotoCount(9)
                         .setShowCamera(true)
@@ -101,54 +114,75 @@ public class MomentPublishActivity extends BaseActivity {
                         .setSelected(selectImages)
                         .start(MomentPublishActivity.this, PhotoPicker.REQUEST_CODE);
             } else {
-                for(MyPictureAdapter.ImageItem ii : mUrlList) selectImages.add(mCompress?ii.compressedImage:ii.sourceImage);
-                PhotoActivity.navigate(MomentPublishActivity.this,recyclerView, selectImages,position);
+                for (MyPictureAdapter.ImageItem ii : mUrlList)
+                    selectImages.add(mCompress ? ii.compressedImage : ii.sourceImage);
+                PhotoActivity.navigate(MomentPublishActivity.this, recyclerView, selectImages, position);
             }
         });
 
         swCompress.setOnCheckedChangeListener((buttonView, isChecked) -> {
             mCompress = isChecked;
-            if(isChecked&&!mCompressed&&!mCompressing){
-            compress();
-        }else if(mCompressed&&!mCompressing){
-            mImageSize = 0;
-            adapter.setList(mUrlList,mCompress?1:0);
-            Observable.from(mUrlList)
-                    .map(imageItem -> new File(mCompress?imageItem.compressedImage:imageItem.sourceImage))
-                    .subscribe(file -> mImageSize += file.length(),
-                            o->{},
-                            () -> tvSize.setText("图片大小："+ FileUtils.convert(mImageSize)));
-        }
-    });
+            if (isChecked && !mCompressed && !mCompressing) {
+                compress();
+            } else if (mCompressed && !mCompressing) {
+                mImageSize = 0;
+                adapter.setList(mUrlList, mCompress ? 1 : 0);
+                Observable.from(mUrlList)
+                        .map(imageItem -> new File(mCompress ? imageItem.compressedImage : imageItem.sourceImage))
+                        .subscribe(file -> mImageSize += file.length(),
+                                o -> {
+                                },
+                                () -> tvSize.setText("图片大小：" + FileUtils.convert(mImageSize)));
+            }
+        });
 
         tvRequest.setOnClickListener(v -> {
-            Intent intent = new Intent(MomentPublishActivity.this,SelectActivity.class);
-            intent.putExtra("selectRequest",true);
-            startActivityForResult(intent,0);
+            Intent intent = new Intent(MomentPublishActivity.this, SelectActivity.class);
+            intent.putExtra("selectRequest", true);
+            startActivityForResult(intent, 0);
         });
-        tvLocation.setOnClickListener(v ->
+        tvLocation.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    toast("我们需要访问位置信息");
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            243);
+                    //        Snackbar.make(welcomeImage,"我们需要访问存储来读写缓存",Snackbar.LENGTH_LONG).show();
+                } else {
+                    //申请WRITE_EXTERNAL_STORAGE权限
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            243);
+                }
+
+            }else {
                 EmptyActivity.navigateForResult(MomentPublishActivity.this
                         , LocationFragment.class.getName()
-                        ,null
-                        ,Constant.LOCATION_SELECT_REQUEST_CODE,"定位"));
+                        , null
+                        , Constant.LOCATION_SELECT_REQUEST_CODE, "定位");
+            }
+
+        });
 
         momentSendButton.setOnClickListener(v -> {
             //upload images
-            if(mUrlList.size()>0) {
-                if(mCompressing){
+            if (mUrlList.size() > 0) {
+                if (mCompressing) {
                     toast("压缩中");
                     return;
                 }
                 momentSendButton.setEnabled(false);
                 ArrayList<String> selectImages = new ArrayList<>();
-                for(MyPictureAdapter.ImageItem ii : mUrlList) selectImages.add(mCompress?ii.compressedImage:ii.sourceImage);
+                for (MyPictureAdapter.ImageItem ii : mUrlList)
+                    selectImages.add(mCompress ? ii.compressedImage : ii.sourceImage);
                 String[] sendList = new String[selectImages.size()];
                 selectImages.toArray(sendList);
                 showLoadingDialog(1);
                 BmobFile.uploadBatch(sendList, new UploadBatchListener() {
                     @Override
                     public void onSuccess(List<BmobFile> files, List<String> urls) {
-                        if(urls.size()>= mUrlList.size()){
+                        if (urls.size() >= mUrlList.size()) {
                             Moment moment = new Moment();
                             moment.setUser(BmobUser.getCurrentUser(User.class));
                             moment.setContent(momentContent.getText().toString());
@@ -156,16 +190,16 @@ public class MomentPublishActivity extends BaseActivity {
                             mImagesUrlOnBmob.clear();
                             mImagesUrlOnBmob.addAll(urls);
                             moment.setImages(mImagesUrlOnBmob);
-                            if(mRequest!=null)moment.setRequest(mRequest);
-                            if(mLocation!=null)moment.setLocation(mLocation);
+                            if (mRequest != null) moment.setRequest(mRequest);
+                            if (mLocation != null) moment.setLocation(mLocation);
                             moment.save(new SaveListener<String>() {
                                 @Override
                                 public void done(String s, BmobException e) {
                                     closeLoadingDialog();
-                                    if(e==null){
+                                    if (e == null) {
                                         //succeed
                                         finish();
-                                    }else {
+                                    } else {
                                         toast(e.toString());
                                     }
                                 }
@@ -189,22 +223,21 @@ public class MomentPublishActivity extends BaseActivity {
                         closeLoadingDialog();
                     }
                 });
-            }
-            else {
+            } else {
                 Moment moment = new Moment();
                 moment.setUser(BmobUser.getCurrentUser(User.class));
                 moment.setContent(momentContent.getText().toString());
-                if(mRequest!=null)moment.setRequest(mRequest);
-                if(mLocation!=null)moment.setLocation(mLocation);
+                if (mRequest != null) moment.setRequest(mRequest);
+                if (mLocation != null) moment.setLocation(mLocation);
                 showLoadingDialog();
                 moment.save(new SaveListener<String>() {
                     @Override
                     public void done(String s, BmobException e) {
                         closeLoadingDialog();
-                        if(e==null){
+                        if (e == null) {
                             //succeed
                             finish();
-                        }else {
+                        } else {
                             toast(e.toString());
                         }
                     }
@@ -212,7 +245,45 @@ public class MomentPublishActivity extends BaseActivity {
             }
         });
     }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 
+        if (requestCode == 243) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                EmptyActivity.navigateForResult(MomentPublishActivity.this
+                        , LocationFragment.class.getName()
+                        , null
+                        , Constant.LOCATION_SELECT_REQUEST_CODE, "定位");
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.help);
+                builder.setMessage(R.string.string_help_text);
+
+                // 拒绝, 退出应用
+                builder.setNegativeButton(R.string.quit, new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int which) {
+                        toast("不能获取位置信息");
+                    }
+                });
+
+                builder.setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int which) {
+                        startAppSettings();
+                    }
+                });
+
+                builder.setCancelable(false);
+
+                builder.show();
+            }
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+    private void startAppSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        intent.setData(Uri.parse("package:" + getPackageName()));
+        startActivity(intent);
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -221,22 +292,24 @@ public class MomentPublishActivity extends BaseActivity {
             if (data != null) {
                 ArrayList<String> photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
                 mUrlList.clear();
-                for(String url : photos){
-                    mUrlList.add(new MyPictureAdapter.ImageItem(url,null));
+                for (String url : photos) {
+                    mUrlList.add(new MyPictureAdapter.ImageItem(url, null));
                 }
-                adapter.setList(mUrlList,mCompress?1:0);
+                adapter.setList(mUrlList, mCompress ? 1 : 0);
                 mImageSize = 0;
                 mCompressed = false;
                 Observable.from(mUrlList)
-                        .map(imageItem -> new File(mCompress?imageItem.compressedImage:imageItem.sourceImage))
+                        .map(imageItem -> new File(mCompress ? imageItem.compressedImage : imageItem.sourceImage))
                         .subscribe(file -> mImageSize += file.length(),
-                                o -> {},
-                                () -> tvSize.setText("图片大小："+ FileUtils.convert(mImageSize)));
-                if(mCompress) compress();
+                                o -> {
+                                },
+                                () -> tvSize.setText("图片大小：" + FileUtils.convert(mImageSize)));
+                if (mCompress) compress();
             }
-        } if(resultCode == RESULT_OK && requestCode == 0){
+        }
+        if (resultCode == RESULT_OK && requestCode == 0) {
             String id = data.getStringExtra("requestId");
-            if(id==null)return;
+            if (id == null) return;
             BmobQuery<Request> bmobQuery = new BmobQuery<>();
             bmobQuery.getObject(id, new QueryListener<Request>() {
                 @Override
@@ -245,21 +318,22 @@ public class MomentPublishActivity extends BaseActivity {
                     runOnUiThread(() -> tvRequest.setText(request.getTitle()));
                 }
             });
-        } if(requestCode == Constant.LOCATION_SELECT_REQUEST_CODE && resultCode == Constant.LOCATION_SELECT_RESULT_CODE){
+        }
+        if (requestCode == Constant.LOCATION_SELECT_REQUEST_CODE && resultCode == Constant.LOCATION_SELECT_RESULT_CODE) {
             Bundle locationInfo = data.getBundleExtra("data");
-            mLocation = locationInfo.getString("Country");
+            mLocation = ""+locationInfo.getString("Country");
             mLocation += locationInfo.getString("Province");
             mLocation += locationInfo.getString("City");
             mLocation += locationInfo.getString("Address");
             tvLocation.post(() -> tvLocation.setText(mLocation));
         }
     }
+
     private void compress() {
-        if(threadPoolExecutor==null)
-        {
+        if (threadPoolExecutor == null) {
             Runtime.getRuntime().gc();
-            short mem= (short) (Runtime.getRuntime().freeMemory()>>20);
-            threadPoolExecutor = newFixedThreadPool(mem>6?mem/5:1);
+            short mem = (short) (Runtime.getRuntime().freeMemory() >> 20);
+            threadPoolExecutor = newFixedThreadPool(mem > 6 ? mem / 5 : 1);
 
         }
         swCompress.setEnabled(false);
@@ -276,7 +350,7 @@ public class MomentPublishActivity extends BaseActivity {
                     compressHelper.setFilename("cc_" + finalI);
                     mUrlList.get(finalI).compressedImage = compressHelper.thirdCompress(new File(mUrlList.get(finalI).sourceImage));
                     countDownLatch.countDown();
-                    runOnUiThread(() -> mDialog.setProgress((int)(mUrlList.size()-countDownLatch.getCount())));
+                    runOnUiThread(() -> mDialog.setProgress((int) (mUrlList.size() - countDownLatch.getCount())));
                 });
             }
 
@@ -321,7 +395,7 @@ public class MomentPublishActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(threadPoolExecutor!=null)
-        threadPoolExecutor.shutdownNow();
+        if (threadPoolExecutor != null)
+            threadPoolExecutor.shutdownNow();
     }
 }

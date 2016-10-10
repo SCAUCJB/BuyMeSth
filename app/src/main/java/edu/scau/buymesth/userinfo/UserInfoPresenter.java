@@ -25,14 +25,16 @@ public class UserInfoPresenter implements Contract.Presenter {
     private final Contract.View mView;
     public final UserInfoModel mModel;
     private CompositeSubscription mSubscriptions = new CompositeSubscription();
+    private boolean mShowUserInfoOnSubscribe = true;
 
-    UserInfoPresenter(Contract.View view, UserInfoModel model) {
+    UserInfoPresenter(Contract.View view, UserInfoModel model , boolean showUserInfoOnSubscribe) {
         mView = view;
         mModel = model;
+        mShowUserInfoOnSubscribe = showUserInfoOnSubscribe;
     }
 
     public void subscribe() {
-        showUserInfo();
+        if(mShowUserInfoOnSubscribe) showUserInfo();
         showTab();
     }
 
@@ -44,21 +46,26 @@ public class UserInfoPresenter implements Contract.Presenter {
     @Override
     public void showUserInfo() {
         User user = mModel.getUser();
-        mView.setAvatar(user.getAvatar());
+        if(user==null)return;
+        if(user.getAvatar()!=null)
+            mView.setAvatar(user.getAvatar());
         if (user.getSignature() != null)
             mView.setSignature("个性签名：" + user.getSignature());
         else
             mView.setSignature("还没有个性签名~");
-        mView.setLevel(user.getExp());
+        if(user.getExp()!=null)
+            mView.setLevel(user.getExp());
         if (user.getResidence() == null) {
             mView.setlocation("未知的位置");
         } else
             mView.setlocation(user.getResidence());
-        mView.setUserName(user.getNickname());
-        mView.setUserId(user.getUsername());
+        if(user.getNickname()!=null)
+            mView.setUserName(user.getNickname());
+        if(user.getUsername()!=null)
+            mView.setUserId(user.getUsername());
 
 
-        mSubscriptions.add(mModel.getEvaluateCount(BmobUser.getCurrentUser().getObjectId()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        mSubscriptions.add(mModel.getEvaluateCount(mModel.getUser().getObjectId()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Integer>() {
                     @Override
                     public void onCompleted() {
@@ -75,7 +82,7 @@ public class UserInfoPresenter implements Contract.Presenter {
                         mView.setEvaluateCount(integer);
                     }
                 }));
-        mSubscriptions.add(mModel.getScore(BmobUser.getCurrentUser().getObjectId()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        mSubscriptions.add(mModel.getScore(mModel.getUser().getObjectId()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<JSONArray>() {
                     @Override
                     public void onCompleted() {

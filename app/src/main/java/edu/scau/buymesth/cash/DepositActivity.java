@@ -105,6 +105,11 @@ public class DepositActivity extends BaseActivity {
         return R.id.toolbar;
     }
 
+    @Override
+    public int getStatusColorResources() {
+        return R.color.colorPrimaryDark;
+    }
+
 
     public void hideBroad() {
         InputMethodHelper.toggle(this);

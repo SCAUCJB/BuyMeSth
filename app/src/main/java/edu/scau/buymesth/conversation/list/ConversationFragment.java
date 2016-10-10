@@ -55,7 +55,6 @@ public class ConversationFragment extends Fragment implements ConversationContra
     private ConversationAdapter mConversationAdapter;
     private ConversationPresenter mPresenter;
     private PtrFrameLayout mPtrFrameLayout;
-    private View notLoadingView;
 
     private View mLoadingView;
     private View mHeaderView;

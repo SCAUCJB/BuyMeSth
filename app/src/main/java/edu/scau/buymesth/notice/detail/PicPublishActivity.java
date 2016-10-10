@@ -36,7 +36,7 @@ import util.FileUtils;
 
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
-public class PicPublishActivity extends BaseActivity {
+public class PicPublishActivity extends BaseActivity implements MyPictureAdapter.CompressList{
 
 
     ArrayList<MyPictureAdapter.ImageItem> mUrlList;
@@ -70,7 +70,7 @@ public class PicPublishActivity extends BaseActivity {
         recyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
-        adapter = new MyPictureAdapter(mUrlList);
+        adapter = new MyPictureAdapter(mUrlList,this);
         recyclerView.setAdapter(adapter);
         adapter.setOnRecyclerViewItemClickListener((view, position) -> {
             ////这里设置点击事件
@@ -283,5 +283,18 @@ public class PicPublishActivity extends BaseActivity {
         super.onDestroy();
         if(threadPoolExecutor!=null)
         threadPoolExecutor.shutdownNow();
+    }
+
+    @Override
+    public void onDataChange(MyPictureAdapter.ImageItem item) {
+        mImageSize = 0;
+        Observable.from(mUrlList)
+                .map(imageItem -> new File(mCompress ? imageItem.compressedImage : imageItem.sourceImage))
+                .subscribe(file -> mImageSize += file.length(),
+                        o -> {
+                        },
+                        () -> tvSize.setText("图片大小：" + FileUtils.convert(mImageSize)));
+        adapter.setList(mUrlList, mCompress ? 1 : 0);
+        swCompress.setEnabled(true);
     }
 }

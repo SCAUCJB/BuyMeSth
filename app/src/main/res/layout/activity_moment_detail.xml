@@ -45,24 +45,31 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
+        android:padding="10dp"
+        android:layout_above="@+id/ly_tool"
+        android:id="@+id/ly_input">
 
         <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/intput_comment"
             android:layout_weight="1"
-            android:hint="type your comment" />
+            android:hint="评论"
+            android:background="@drawable/rect_white"
+            android:minHeight="38dp"
+            android:layout_marginRight="10dp"
+            android:paddingLeft="10dp"
+            android:paddingEnd="10dp" />
 
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:text="SEND"
+            android:layout_height="38dp"
+            android:text="发送"
+            android:layout_gravity="bottom"
             android:id="@+id/bt_send_comment"
             android:background="@drawable/rect_grey"
-            android:clickable="true" />
+            android:clickable="true"
+            android:enabled="false" />
     </LinearLayout>
 
 </LinearLayout>

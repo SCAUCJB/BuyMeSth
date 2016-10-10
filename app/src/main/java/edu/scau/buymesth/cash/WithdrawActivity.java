@@ -101,6 +101,11 @@ public class WithdrawActivity extends BaseActivity {
         return R.id.toolbar;
     }
 
+    @Override
+    public int getStatusColorResources() {
+        return R.color.colorPrimaryDark;
+    }
+
     public void hideBroad() {
         InputMethodHelper.toggle(this);
         new Handler().postDelayed(() -> InputMethodHelper.closeFromView(mContext, etMoney), 100);

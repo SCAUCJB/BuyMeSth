@@ -43,6 +43,8 @@ import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.discover.publish.SelectActivity;
 import edu.scau.buymesth.fragment.BackPressHandle;
+import edu.scau.buymesth.fragment.EmptyActivity;
+import edu.scau.buymesth.location.LocationFragment;
 import edu.scau.buymesth.util.CompressHelper;
 import edu.scau.buymesth.util.InputMethodHelper;
 import in.srain.cube.views.ptr.PtrFrameLayout;
@@ -339,6 +341,7 @@ public class ChatFragment extends Fragment implements ChatContract.View,MessageL
                 onFaceButtonClick(false);
                 break;
             case R.id.iv_location:
+                EmptyActivity.navigateForResult(getActivity(), LocationFragment.class.getName(),null,Constant.LOCATION_SELECT_REQUEST_CODE,"定位");
                 break;
             default:break;
         }
@@ -423,6 +426,15 @@ public class ChatFragment extends Fragment implements ChatContract.View,MessageL
                 }
             })
                     .setNegativeButton("取消", null).show();
+        }
+        if(requestCode == Constant.LOCATION_SELECT_REQUEST_CODE&&resultCode == Constant.LOCATION_SELECT_RESULT_CODE){
+            Bundle locationInfo = data.getBundleExtra("data");
+            String text = "";
+            text+=locationInfo.getString("Country");
+            text+=locationInfo.getString("Province");
+            text+=locationInfo.getString("City");
+            text+=locationInfo.getString("Address");
+            mInputMessage.append(text);
         }
     }
 

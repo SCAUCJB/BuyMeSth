@@ -11,6 +11,7 @@ import java.util.List;
 import adpater.BaseQuickAdapter;
 import adpater.BaseViewHolder;
 import edu.scau.buymesth.R;
+import edu.scau.buymesth.discover.publish.MomentPublishFragment;
 
 /**
  * Created by ! on 2016/9/13.
@@ -21,6 +22,7 @@ public class MyPictureAdapter extends BaseQuickAdapter<MyPictureAdapter.ImageIte
     public List<ImageItem> oriData;
 //    public List<String> tempData;
     private int mImageGroup = 0;
+    private CompressList mCompressList;
 
     public void setList(List<ImageItem> list) {
         oriData = list;
@@ -39,10 +41,13 @@ public class MyPictureAdapter extends BaseQuickAdapter<MyPictureAdapter.ImageIte
         setNewData(dataAdd);
     }
 
+    public interface CompressList{
+        void onDataChange(ImageItem item);
+    }
 
-
-    public MyPictureAdapter(List<ImageItem> data) {
+    public MyPictureAdapter(List<ImageItem> data, CompressList compressList) {
         super(R.layout.item_picture, data);
+        mCompressList = compressList;
         dataAdd = new ArrayList<>();
         oriData = data;
         setList(data);
@@ -65,6 +70,7 @@ public class MyPictureAdapter extends BaseQuickAdapter<MyPictureAdapter.ImageIte
                 oriData.remove(item);
                 if(dataAdd.get(dataAdd.size()-1)!=null)dataAdd.add(null);
                 notifyDataSetChanged();
+                if(mCompressList!=null) mCompressList.onDataChange(item);
             });
         }
     }

@@ -37,6 +37,7 @@ import static cn.bmob.v3.BmobQuery.CachePolicy.CACHE_ELSE_NETWORK;
 import static cn.bmob.v3.BmobQuery.CachePolicy.CACHE_ONLY;
 import static cn.bmob.v3.BmobQuery.CachePolicy.NETWORK_ONLY;
 import static edu.scau.Constant.NUMBER_PER_PAGE;
+import static in.srain.cube.views.ptr.PtrDefaultHandler.canChildScrollUp;
 
 /**
  * Created by John on 2016/9/21.
@@ -65,12 +66,13 @@ public class RequestFragment extends Fragment {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (mParent == null) return;
-                if (mRecyclerView.canScrollVertically(-1)) {
+                if (canChildScrollUp(recyclerView)) {
                     mParent.setNestedScrollingEnabled(false);
                 } else
                     mParent.setNestedScrollingEnabled(true);
             }
         });
+
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         initAdapter();
