@@ -1,7 +1,6 @@
 package edu.scau.buymesth.ui;
 
 import android.content.Intent;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
@@ -73,25 +72,34 @@ public class RegisterActivity extends BaseActivity{
                             Wallet wallet = new Wallet();
                             wallet.setUser(user);
                             wallet.setCash(0);
-                            wallet.save();
-                            ToastUtil.show("注册成功，正在登陆");
-                            BmobUser.loginByAccount(inputAccount.getText().toString(), inputPassword.getText().toString(), new LogInListener<User>() {
+                            wallet.save(new SaveListener<String>() {
                                 @Override
-                                public void done(User user, BmobException e) {
-                                    if(e==null) {
-                                        ToastUtil.show("登陆成功");
-                                        Intent intent = new Intent(RegisterActivity.this, TabActivity.class);
-                                        startActivity(intent);
-                                        finish();
+                                public void done(String s, BmobException e) {
+                                    if(e!=null){
+                                        ToastUtil.show("注册失败请检查网络");
+                                        return;
                                     }
-                                    else {
-                                        ToastUtil.show("登陆失败");
-                                        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                                        startActivity(intent);
-                                        finish();
-                                    }
+                                    ToastUtil.show("注册成功，正在登陆");
+                                    BmobUser.loginByAccount(inputAccount.getText().toString(), inputPassword.getText().toString(), new LogInListener<User>() {
+                                        @Override
+                                        public void done(User user, BmobException e) {
+                                            if(e==null) {
+                                                ToastUtil.show("登陆成功");
+                                                Intent intent = new Intent(RegisterActivity.this, TabActivity.class);
+                                                startActivity(intent);
+                                                finish();
+                                            }
+                                            else {
+                                                ToastUtil.show("登陆失败");
+                                                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                                                startActivity(intent);
+                                                finish();
+                                            }
+                                        }
+                                    });
                                 }
                             });
+
                         }else {
                             ToastUtil.show("注册失败"+e==null?"未知错误":e.getMessage());
                         }

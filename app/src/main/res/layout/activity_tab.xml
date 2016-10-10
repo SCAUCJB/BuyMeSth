@@ -23,6 +23,7 @@
             android:fadingEdge="none"
             android:overScrollMode="never"
             android:id="@+id/viewPager"/>
+
         <com.github.clans.fab.FloatingActionMenu
             android:id="@+id/fab_menu"
             android:layout_width="match_parent"
@@ -40,10 +41,9 @@
             fab:menu_colorPressed="#FF2070"
             android:layout_gravity="bottom|right">
 
-
             <com.github.clans.fab.FloatingActionButton
-                fab:menu_colorNormal="@color/colorAccent"
-                fab:menu_colorPressed="#FF2070"
+                fab:fab_colorNormal="@color/colorAccent"
+                fab:fab_colorPressed="#FF2070"
                 android:id="@+id/fab3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -53,10 +53,9 @@
                 fab:fab_size="mini"
                 fab:fab_label="搜索请求" />
 
-
             <com.github.clans.fab.FloatingActionButton
-                fab:menu_colorNormal="@color/colorAccent"
-                fab:menu_colorPressed="#FF2070"
+                fab:fab_colorNormal="@color/colorAccent"
+                fab:fab_colorPressed="#FF2070"
                 android:id="@+id/fab4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -65,8 +64,8 @@
                 fab:fab_label="只显示关注的" />
 
             <com.github.clans.fab.FloatingActionButton
-                fab:menu_colorNormal="@color/colorAccent"
-                fab:menu_colorPressed="#FF2070"
+                fab:fab_colorNormal="@color/colorAccent"
+                fab:fab_colorPressed="#FF2070"
                 android:id="@+id/fab1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -75,8 +74,8 @@
                 fab:fab_label="发布代购请求" />
 
             <com.github.clans.fab.FloatingActionButton
-                fab:menu_colorNormal="@color/colorAccent"
-                fab:menu_colorPressed="#FF2070"
+                fab:fab_colorNormal="@color/colorAccent"
+                fab:fab_colorPressed="#FF2070"
                 android:id="@+id/fab2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

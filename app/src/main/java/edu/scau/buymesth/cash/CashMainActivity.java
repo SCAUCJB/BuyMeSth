@@ -20,10 +20,8 @@ import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
-import cn.bmob.v3.listener.QueryListener;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.User;
-import edu.scau.buymesth.userinfo.UserInfoActivity;
 import edu.scau.buymesth.data.bean.Wallet;
 
 
@@ -149,7 +147,7 @@ public class CashMainActivity extends BaseActivity {
 
     public void query(){
         showLoadingDialog();
-        tvCash.setText("当前账户余额为：-----￥");
+        tvCash.setText("-----￥");
         BmobQuery<Wallet> query = new BmobQuery<>();
         query.addWhereEqualTo("user",BmobUser.getCurrentUser().getObjectId());
         query.findObjects( new FindListener<Wallet>() {
@@ -157,7 +155,7 @@ public class CashMainActivity extends BaseActivity {
             public void done(List<Wallet> list, BmobException e) {
                 if(e==null){
                     wallet = list.get(0);
-                    tvCash.setText("当前账户余额为：" + wallet.getCash()+"￥");
+                    tvCash.setText(wallet.getCash()+"￥");
                     closeLoadingDialog();
                 }else{
                     Toast.makeText(CashMainActivity.this, "网络请求失败", Toast.LENGTH_SHORT).show();

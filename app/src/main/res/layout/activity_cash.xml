@@ -175,7 +175,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="使用支付宝"
+                                android:text="使用支付宝    "
                                 android:id="@+id/textView8" />
 
                             <TextView
@@ -210,7 +210,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="使用微信    "/>
+                                android:text="使用微信        "/>
 
                             <TextView
                                 style="@style/theTextSmall"
@@ -248,7 +248,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="使用网银    "/>
+                                android:text="使用网银        "/>
 
                             <TextView
                                 style="@style/theTextSmall"

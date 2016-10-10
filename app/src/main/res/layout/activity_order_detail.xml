@@ -39,6 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <TextView
                 android:id="@+id/tv_msg"
                 style="@style/TextAppearance.AppCompat.Body1"
@@ -81,8 +82,8 @@
             </LinearLayout>
 
             <TextView
-                style="@style/TextAppearance.AppCompat.Body1"
                 android:id="@+id/tv_want"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/content_padding"
@@ -92,8 +93,8 @@
                 android:visibility="gone" />
 
             <TextView
-                style="@style/TextAppearance.AppCompat.Body1"
                 android:id="@+id/tv_seller_price"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/content_padding"
@@ -102,8 +103,8 @@
                 android:visibility="gone" />
 
             <TextView
-                style="@style/TextAppearance.AppCompat.Body1"
                 android:id="@+id/tv_seller_tip"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/content_padding"
@@ -115,8 +116,12 @@
                 android:id="@+id/ll_address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/content_padding"
-                android:layout_marginRight="@dimen/content_padding"
+                android:layout_marginBottom="@dimen/content_padding"
+                android:layout_marginTop="@dimen/content_padding"
+                android:background="@color/white"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:padding="@dimen/content_padding"
                 android:visibility="gone">
 
                 <ImageView
@@ -126,6 +131,7 @@
 
                 <TextView
                     android:id="@+id/tv_address"
+                    style="@style/TextAppearance.AppCompat.Body1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="点击选择收货地址" />
@@ -133,15 +139,22 @@
 
             <LinearLayout
                 android:id="@+id/ll_express"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dp_6"
                 android:layout_marginLeft="@dimen/content_padding"
                 android:layout_marginRight="@dimen/content_padding"
+                android:layout_marginTop="@dimen/dp_10"
+                android:background="@color/white"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:orientation="vertical"
+                android:padding="@dimen/content_padding"
                 android:visibility="gone">
 
                 <TextView
                     android:id="@+id/t_tip"
+                    style="@style/TextAppearance.AppCompat.Body1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="点击添加快递信息"
@@ -149,12 +162,14 @@
 
                 <TextView
                     android:id="@+id/tv_inc"
+                    style="@style/TextAppearance.AppCompat.Body1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="快递公司：" />
 
                 <TextView
                     android:id="@+id/tv_express_num"
+                    style="@style/TextAppearance.AppCompat.Body1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="快递单号：" />
@@ -168,26 +183,26 @@
                 android:visibility="gone">
 
                 <TextView
-                    android:background="@color/white"
-                    android:layout_marginTop="@dimen/dp_10"
-                    android:layout_marginBottom="@dimen/dp_6"
-                    style="@style/TextAppearance.AppCompat.Body1"
-                    android:padding="@dimen/content_padding"
                     android:id="@+id/tv_address_msg"
+                    style="@style/TextAppearance.AppCompat.Body1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/textView3"
+                    android:layout_marginBottom="@dimen/dp_6"
                     android:layout_marginLeft="@dimen/content_padding"
                     android:layout_marginRight="@dimen/content_padding"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:background="@color/white"
+                    android:padding="@dimen/content_padding"
                     android:text="这里是地址信息"
                     android:visibility="visible" />
 
                 <View
                     android:id="@+id/view1"
-                    android:layout_below="@+id/tv_address_msg"
-                    android:layout_marginTop="@dimen/dp_6"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
+                    android:layout_below="@+id/tv_address_msg"
+                    android:layout_marginTop="@dimen/dp_6"
                     android:background="@color/colorDarkGrey" />
 
                 <TextView
@@ -208,6 +223,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="false"
                     android:layout_below="@+id/textView5"
+                    android:layout_marginBottom="@dimen/content_padding"
                     android:layout_marginLeft="@dimen/content_padding"
                     android:layout_marginRight="@dimen/content_padding"
                     android:orientation="vertical"
@@ -253,7 +269,7 @@
                 android:layout_height="40dp"
                 android:layout_gravity="right"
                 android:layout_marginRight="5dp"
-                android:background="@drawable/btn_chat_ok"
+                android:background="@drawable/background_button_follow"
                 android:text="取消订单"
                 android:textColor="#ffffff"
                 android:visibility="gone" />
@@ -272,8 +288,9 @@
                     android:layout_height="40dp"
                     android:layout_margin="5dp"
                     android:layout_toLeftOf="@+id/btn_ok"
-                    android:background="@drawable/btn_chat_cancle"
-                    android:text="残忍拒绝" />
+                    android:background="@drawable/background_button_follow"
+                    android:text="残忍拒绝"
+                    android:textColor="#ffffff" />
 
                 <Button
                     android:id="@+id/btn_ok"
@@ -282,7 +299,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_gravity="right"
                     android:layout_margin="5dp"
-                    android:background="@drawable/btn_chat_ok"
+                    android:background="@drawable/background_button_follow"
                     android:text="接受订单"
                     android:textColor="#ffffff" />
             </RelativeLayout>
@@ -296,24 +313,33 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="买家评价是：" />
+                    android:orientation="horizontal">
 
-                <RatingBar
-                    android:id="@+id/ratingBar"
-                    style="@style/Widget.AppCompat.RatingBar.Indicator"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignTop="@+id/iv_avatar"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="15dp"
-                    android:isIndicator="true"
-                    android:numStars="5"
-                    android:rating="5.0"
-                    android:stepSize="0.1" />
+                    <TextView
+                        style="@style/TextAppearance.AppCompat.Small"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="买家评价是："
+                        android:textColor="@color/black" />
+
+                    <RatingBar
+                        android:id="@+id/ratingBar"
+                        style="@style/Widget.AppCompat.RatingBar.Indicator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignTop="@+id/iv_avatar"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="15dp"
+                        android:isIndicator="true"
+                        android:numStars="5"
+                        android:rating="5.0"
+                        android:stepSize="0.1" />
+                </LinearLayout>
+
 
                 <TextView
                     android:id="@+id/buyer_evaluate"
@@ -340,7 +366,7 @@
                 android:layout_height="40dp"
                 android:layout_gravity="right"
                 android:layout_marginRight="@dimen/content_padding"
-                android:background="@drawable/btn_chat_ok"
+                android:background="@drawable/background_button_follow"
                 android:text="评价"
                 android:textColor="#ffffff"
                 android:visibility="gone" />

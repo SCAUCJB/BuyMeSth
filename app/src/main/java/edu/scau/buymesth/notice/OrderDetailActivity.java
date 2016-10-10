@@ -331,7 +331,7 @@ public class OrderDetailActivity extends BaseActivity {
 
                             btnGo.setOnClickListener(v -> {
                                         if (tvInc.getText().equals("") || tvExpressNum.equals("")) {
-                                            Toast.makeText(OrderDetailActivity.this, "请正确填写快递信息", Toast.LENGTH_LONG).show();
+                                            llExpress.performClick();
                                             return;
                                         }
                                         showLoadingDialog();
@@ -350,7 +350,7 @@ public class OrderDetailActivity extends BaseActivity {
                                                     public void done(Object o, BmobException e) {
                                                         if (o != null) {
                                                             if (((String) o).equals("success")) {
-                                                                Toast.makeText(OrderDetailActivity.this, "拒绝成功", Toast.LENGTH_SHORT).show();
+                                                                Toast.makeText(OrderDetailActivity.this, "发货", Toast.LENGTH_SHORT).show();
                                                                 tvMsg.setText("你已发货，等待买家收货");
                                                                 btnCamera.setVisibility(View.GONE);
                                                                 btnGo.setVisibility(View.GONE);
@@ -589,7 +589,7 @@ public class OrderDetailActivity extends BaseActivity {
                                     picAdapter.setNewData(order.getEvaluate().getUrlList());
                             }
                             if (order.getEvaluate().getReply() != null) {
-                                sellerEvaluate.setText(order.getEvaluate().getReply());
+                                sellerEvaluate.setText("[买手回复]："+order.getEvaluate().getReply());
                                 sellerEvaluate.setVisibility(View.VISIBLE);
                             }
 
@@ -622,7 +622,7 @@ public class OrderDetailActivity extends BaseActivity {
                             else
                                 tvWant.setText("买家期望价格：" + order.getRequest().getMinPrice() + "~" + order.getRequest().getMaxPrice());
                             tvSellerPrice.setText("你的出价:" + order.getPrice() + order.getPriceType());
-                            tvSellerTip.setText("你索要的小费" + order.getTip() + order.getTipType());
+                            tvSellerTip.setText("你索要的小费:" + order.getTip() + order.getTipType());
                             tvInc.setText("快递公司：" + order.getExpressInc());
                             tvExpressNum.setText("快递单号：" + order.getExpressNum());
                             tvAddressMsg.setText("买家地址是：收货人：" + order.getAddress().getRecipient() + "\n手机号码：" + order.getAddress().getPhone() + "\n地址：" + order.getAddress().getRegion() + order.getAddress().getSpecific());

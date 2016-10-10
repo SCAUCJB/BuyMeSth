@@ -3,6 +3,7 @@ package edu.scau.buymesth.user;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -29,6 +30,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.Target;
 
 import base.BaseActivity;
 import base.util.GlideCircleTransform;
@@ -78,6 +80,7 @@ public class UserFragment extends Fragment implements UserContract.View {
 
     private BottomSheetBehavior<NestedScrollView> behavior;
     private SparseArray<Drawable> mLevelDrawableCache = new SparseArray<>();
+    private Target<Bitmap> mTartget;
 
 
     @Nullable
@@ -176,11 +179,17 @@ public class UserFragment extends Fragment implements UserContract.View {
     public void setAvatar(String url) {
         Glide.with(getContext()).load(url).crossFade().placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(getContext())).into(mAvatarIv);
         if(url!=null)
-        Glide.with(this).
+        mTartget=Glide.with(this).
                 load(url).
                 asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).
                 transform(new BlurTransformation(getContext(),40)).//高斯模糊处理
                 into(mBgUser);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Glide.clear(mTartget);
     }
 
     @Override

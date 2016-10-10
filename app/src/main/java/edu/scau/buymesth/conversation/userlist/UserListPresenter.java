@@ -4,12 +4,10 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import base.BasePresenter;
 import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.BmobUser;
 import edu.scau.buymesth.data.bean.Follow;
 import edu.scau.buymesth.data.bean.User;
 import rx.Observable;
@@ -64,7 +62,6 @@ public class UserListPresenter extends BasePresenter<UserListContract.Model,User
                         if(isAlive()){
                             mModel.resetPage();
                             mModel.getDatas().clear();
-                            mModel.getDatas().add(BmobUser.getCurrentUser(User.class));
                             mModel.getDatas().addAll(tempList);
                             //
                             mView.onRefreshComplete(mModel.getDatas());

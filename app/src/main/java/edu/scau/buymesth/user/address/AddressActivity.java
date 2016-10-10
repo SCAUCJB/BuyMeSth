@@ -111,8 +111,7 @@ public class AddressActivity extends BaseActivity implements Contract.View {
 
     @Override
     public void showAddresses(List<Address> addresses) {
-        if(mRetryTv.getVisibility()==View.VISIBLE)
-            mRetryTv.setVisibility(View.GONE);
+        mEmptyView.setVisibility(View.GONE);
         mAddressAdapter.setNewData(addresses);
     }
 

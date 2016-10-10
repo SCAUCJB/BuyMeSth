@@ -52,7 +52,7 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
                     @Override
                     public void onCompleted() {
                         if(isAlive()){
-//                            mModel.getDatas().clear();
+                            mModel.getDatas().clear();
 //                            mModel.getDatas().addAll(tempData);
                             mModel.getDatas().addAll(0,tempData);
                             mView.onRefreshComplete(mModel.getDatas());
@@ -73,7 +73,7 @@ public class DiscoverPresenter extends BasePresenter<DiscoverContract.Model,Disc
                         boolean add = true;
                         for(int i = 0;i<size;i++){
                             if(moment.getObjectId().equals(mModel.getDatas().get(i).getObjectId())){
-                                add = false;
+//                                add = false;
                                 for(MomentsLike obj : mModel.getLikesList()){
                                     if(obj.getMoment().getObjectId().contains(mModel.getDatas().get(i).getObjectId())) {
                                         mModel.getDatas().get(i) .setLike(true);

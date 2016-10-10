@@ -7,8 +7,6 @@
     </shape>
 </item>
     <item android:gravity="center">
-        <bitmap
-            android:gravity="center"
-            android:src="@drawable/meow"/>
+
     </item>
 </layer-list>

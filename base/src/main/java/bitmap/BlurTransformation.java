@@ -87,7 +87,7 @@ public class BlurTransformation implements Transformation<Bitmap> {
         } else {
             bitmap = FastBlur.blur(bitmap, mRadius, true);
         }
-
+        mContext = null;
         return BitmapResource.obtain(bitmap, mBitmapPool);
     }
 

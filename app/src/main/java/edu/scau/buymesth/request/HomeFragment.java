@@ -223,13 +223,13 @@ public class HomeFragment extends Fragment implements HomeContract.View {
 
     @Override
     public void showEmpty() {
-        mEmptyView.setVisibility(View.VISIBLE);
+        //mEmptyView.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideEmpty() {
-        if(mEmptyView.getVisibility()==View.VISIBLE)
-            mEmptyView.setVisibility(View.GONE);
+//        if(mEmptyView.getVisibility()==View.VISIBLE)
+//            mEmptyView.setVisibility(View.GONE);
 
     }
 
