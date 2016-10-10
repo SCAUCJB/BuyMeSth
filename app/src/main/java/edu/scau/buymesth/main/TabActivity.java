@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -26,7 +27,6 @@ import com.squareup.sqlbrite.SqlBrite;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -45,13 +45,11 @@ import co.mobiwise.materialintro.view.MaterialIntroView;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.TabAdapter;
-import edu.scau.buymesth.cash.CashMainActivity;
 import edu.scau.buymesth.conversation.list.ConversationFragment;
 import edu.scau.buymesth.data.bean.Notificate;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.discover.list.DiscoverFragment;
-import edu.scau.buymesth.discover.publish.MomentPublishActivity;
 import edu.scau.buymesth.discover.publish.MomentPublishFragment;
 import edu.scau.buymesth.fragment.EmptyActivity;
 import edu.scau.buymesth.notice.OrderDetailActivity;
@@ -62,7 +60,6 @@ import edu.scau.buymesth.request.HomeFragment;
 import edu.scau.buymesth.request.HomePresenter;
 import edu.scau.buymesth.ui.LoginActivity;
 import edu.scau.buymesth.user.UserFragment;
-import edu.scau.buymesth.util.DateFormatHelper;
 import rx.schedulers.Schedulers;
 import ui.widget.ChangeColorIconWithTextView;
 
@@ -89,8 +86,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
     FloatingActionButton fab3;
     @Bind(R.id.fab4)
     FloatingActionButton fab4;
-    @Bind(R.id.fab5)
-    FloatingActionButton fab5;
+
 
     private HomeFragment homeFragment;
     private AlertDialog searchDialog;
@@ -106,6 +102,9 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
     public void initView() {
         mHandler = new Handler();
         tabLayout.setSelectedTabIndicatorHeight(0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            tabLayout.setElevation(25);
+        }
         UserFragment userFragment = new UserFragment();
         DiscoverFragment discoverFragment = new DiscoverFragment();
         homeFragment = new HomeFragment();
@@ -147,7 +146,6 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
             else homeFragment.setFilter(null, null);
             fab.close(true);
         });
-        fab5.setOnClickListener(v -> CashMainActivity.navigate(this,BmobUser.getCurrentUser(User.class)));
 
         fragmentList.add(homeFragment);
         fragmentList.add(discoverFragment);
@@ -326,7 +324,6 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
             startActivity(i);
             finish();
         }else {
-//            query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);
             query.getObject(user.getObjectId(), new QueryListener<User>() {
                 @Override
                 public void done(User user, BmobException e) {
@@ -341,12 +338,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
                     }
                     if(user.getEmail()!=null&&user.getEmail().length()>0&&user.getEmailVerified()!=null&&!user.getEmailVerified()){
                         String text = "您的账号邮箱未验证，请尽快进行邮箱验证";
-//                                if(new Date().getTime()-DateFormatHelper.getMsTime(user.getCreatedAt())<=60*60*1000){
-//                                    text = "账号邮箱未验证请在 "
-//                                            + DateFormatHelper.getStringTime(60*60*1000-(new Date().getTime()-DateFormatHelper.getMsTime(user.getCreatedAt())))
-//                                            +" 内进行验证";
-//                                }
-//                                ToastUtil.show("4444444444");
+
                         new AlertDialog.Builder(TabActivity.this).setMessage(text)
                                 .setPositiveButton("知道了",null).show();
                     }

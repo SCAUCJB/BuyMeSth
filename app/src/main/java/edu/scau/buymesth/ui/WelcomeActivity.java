@@ -32,16 +32,27 @@ public class WelcomeActivity extends BaseActivity {
     }
 
 
-
     @Override
     public void initView() {
-        ImageView welcomeImage= (ImageView) findViewById(R.id.welcome_image);
+        ImageView welcomeImage = (ImageView) findViewById(R.id.welcome_image);
         Glide.with(this).load("http://cdn.duitang.com/uploads/item/201312/03/20131203154448_WUTaC.thumb.700_0.jpeg")
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(welcomeImage);
 
-
+        alertDialog = new AlertDialog.Builder(this).setTitle(R.string.help).setMessage(R.string.string_help_text)
+                .setNegativeButton(R.string.quit, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        toast("不能读写缓存导致无法正常运行");
+                        finish();
+                    }
+                }).setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startAppSettings();
+                    }
+                }).setCancelable(false).create();
     }
 
     @Override
@@ -60,56 +71,38 @@ public class WelcomeActivity extends BaseActivity {
                         243);
             }
 
-        }else {
+        } else {
             bmobUser = BmobUser.getCurrentUser(User.class);
             jumpToNextActivity();
         }
     }
 
+    AlertDialog alertDialog;
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 243) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 bmobUser = BmobUser.getCurrentUser(User.class);
                 jumpToNextActivity();
             } else {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(R.string.help);
-                builder.setMessage(R.string.string_help_text);
-
-                // 拒绝, 退出应用
-                builder.setNegativeButton(R.string.quit, new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialog, int which) {
-                        toast("不能读写缓存导致无法正常运行");
-                        finish();
-                    }
-                });
-
-                builder.setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialog, int which) {
-                        startAppSettings();
-                    }
-                });
-
-                builder.setCancelable(false);
-
-                builder.show();
+                alertDialog.show();
             }
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
         }
     }
+
     private void startAppSettings() {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent.setData(Uri.parse("package:" + getPackageName()));
         startActivity(intent);
     }
+
     @Override
     public boolean canSwipeBack() {
         return false;
     }
-
-
 
 
     private void jumpToNextActivity() {
@@ -125,7 +118,6 @@ public class WelcomeActivity extends BaseActivity {
             finish();
         }
     }
-
 
 
     @Override

@@ -3,16 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <android.support.v7.widget.CardView
+        android:foreground="?android:attr/selectableItemBackground"
+        card_view:cardBackgroundColor="#FFFFFF"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/background_comment">
+           >
 
             <RelativeLayout
                 android:id="@+id/person_info"

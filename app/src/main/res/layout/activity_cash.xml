@@ -31,7 +31,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="用户ID"
+
                     android:textSize="12sp"
                     android:gravity="center"
                     android:layout_marginLeft="2dp"
@@ -59,7 +59,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_gravity="center_horizontal"
-                    android:text="用户名"
+
                     android:textSize="20sp"
                     android:gravity="center"
                     android:layout_alignTop="@+id/iv_icon"
@@ -93,7 +93,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="-----￥"
                     android:textSize="16sp"
                     android:layout_marginRight="12dp"
                     android:layout_marginLeft="12dp"

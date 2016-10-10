@@ -148,7 +148,6 @@ public class OrderDetailActivity extends BaseActivity {
         orderMomentAdapter = new OrderMomentAdapter(new ArrayList<>());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(OrderDetailActivity.this);
         imageList.setLayoutManager(linearLayoutManager);
-        imageList.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
         imageList.setNestedScrollingEnabled(false);
         imageList.setAdapter(orderMomentAdapter);
 
@@ -660,7 +659,9 @@ public class OrderDetailActivity extends BaseActivity {
             public void done(List<OrderMoment> list, BmobException e) {
                 if (e == null) {
                     if(list!=null&&list.size()>0)
-                    orderMomentAdapter.setNewData(list);
+                    {
+                        orderMomentAdapter.setNewData(list);
+                    }
                     closeLoadingDialog();
                 } else {
                     Toast.makeText(OrderDetailActivity.this, "网络有问题，请重试", Toast.LENGTH_LONG).show();
