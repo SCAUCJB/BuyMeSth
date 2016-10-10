@@ -18,7 +18,7 @@ public class CashBookAdapter extends BaseQuickAdapter<CashBook> {
 
     @Override
     protected void convert(BaseViewHolder helper, CashBook item) {
-        helper.setText(R.id.tv_money, String.valueOf(item.getCash()));
+        helper.setText(R.id.tv_money, String.valueOf(item.getCash())+"￥");
         helper.setText(R.id.tv_time, item.getUpdatedAt());
             switch (item.getType()) {
                 case CashBook.BUYER_PAY:

@@ -425,7 +425,7 @@ public class OrderDetailActivity extends BaseActivity {
                             tvSellerPrice.setText("你的出价:" + order.getPrice() + order.getPriceType());
                             tvSellerTip.setText("你索要的小费" + order.getTip() + order.getTipType());
                             tvInc.setText("快递公司：" + order.getExpressInc());
-                            tvExpressNum.setText("快递单号：" + order.getExpressNumber());
+                            tvExpressNum.setText("快递单号：" + order.getExpressNum());
                             tvAddressMsg.setText("你的收货地址是：\n收货人：" + order.getAddress().getRecipient() + "\n手机号码：" + order.getAddress().getPhone() + "\n地址：" + order.getAddress().getRegion() + order.getAddress().getSpecific());
 
                             BmobQuery<OrderMoment> query2 = new BmobQuery<>();
@@ -491,7 +491,7 @@ public class OrderDetailActivity extends BaseActivity {
                             tvSellerPrice.setText("你的出价:" + order.getPrice() + order.getPriceType());
                             tvSellerTip.setText("你索要的小费" + order.getTip() + order.getTipType());
                             tvInc.setText("快递公司：" + order.getExpressInc());
-                            tvExpressNum.setText("快递单号：" + order.getExpressNumber());
+                            tvExpressNum.setText("快递单号：" + order.getExpressNum());
                             tvAddressMsg.setText("买家地址是：收货人：" + order.getAddress().getRecipient() + "\n手机号码：" + order.getAddress().getPhone() + "\n地址：" + order.getAddress().getRegion() + order.getAddress().getSpecific());
 
                             BmobQuery<OrderMoment> query3 = new BmobQuery<>();
@@ -527,7 +527,7 @@ public class OrderDetailActivity extends BaseActivity {
                             tvSellerPrice.setText("卖家出价:" + order.getPrice() + order.getPriceType());
                             tvSellerTip.setText("卖家索要的小费" + order.getTip() + order.getTipType());
                             tvInc.setText("快递公司：" + order.getExpressInc());
-                            tvExpressNum.setText("快递单号：" + order.getExpressNumber());
+                            tvExpressNum.setText("快递单号：" + order.getExpressNum());
                             tvAddressMsg.setText("买家地址是：收货人：" + order.getAddress().getRecipient() + "\n手机号码：" + order.getAddress().getPhone() + "\n地址：" + order.getAddress().getRegion() + order.getAddress().getSpecific());
 
                             BmobQuery<OrderMoment> query4 = new BmobQuery<>();
@@ -594,7 +594,7 @@ public class OrderDetailActivity extends BaseActivity {
                             tvSellerPrice.setText("你的出价:" + order.getPrice() + order.getPriceType());
                             tvSellerTip.setText("你索要的小费" + order.getTip() + order.getTipType());
                             tvInc.setText("快递公司：" + order.getExpressInc());
-                            tvExpressNum.setText("快递单号：" + order.getExpressNumber());
+                            tvExpressNum.setText("快递单号：" + order.getExpressNum());
                             tvAddressMsg.setText("买家地址是：收货人：" + order.getAddress().getRecipient() + "\n手机号码：" + order.getAddress().getPhone() + "\n地址：" + order.getAddress().getRegion() + order.getAddress().getSpecific());
 
                             BmobQuery<OrderMoment> query5 = new BmobQuery<>();

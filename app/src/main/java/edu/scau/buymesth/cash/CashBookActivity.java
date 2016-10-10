@@ -6,12 +6,14 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import base.BaseActivity;
 import base.util.SpaceItemDecoration;
+import base.util.ToastUtil;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cn.bmob.v3.BmobQuery;
@@ -55,6 +57,7 @@ public class CashBookActivity extends BaseActivity {
         List<BmobQuery<CashBook>> queries = new ArrayList<>();
         queries.add(query1);
         queries.add(query2);
+        showLoadingDialog();
         BmobQuery<CashBook> query = new BmobQuery<>();
         query.or(queries);
         query.include("user,toUser,toOrder");
@@ -62,7 +65,13 @@ public class CashBookActivity extends BaseActivity {
         query.findObjects(new FindListener<CashBook>() {
             @Override
             public void done(List<CashBook> list, BmobException e) {
-                adapter.setNewData(list);
+                if(e==null) {
+                    adapter.setNewData(list);
+                    closeLoadingDialog();
+                }
+                else{
+                    Toast.makeText(CashBookActivity.this,"请求失败",Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

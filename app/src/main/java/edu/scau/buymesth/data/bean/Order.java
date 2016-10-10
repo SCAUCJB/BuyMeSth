@@ -28,7 +28,7 @@ public class Order extends BmobObject implements Serializable, MultiItemEntity{
     private User buyer;
     private Request request;
     private String expressInc;
-    private String expressNumber;
+    private String expressNum;
     private String deliverAt;
     private Float tip;
     private String tipType;
@@ -126,12 +126,12 @@ public class Order extends BmobObject implements Serializable, MultiItemEntity{
         this.expressInc = expressInc;
     }
 
-    public String getExpressNumber() {
-        return expressNumber;
+    public String getExpressNum() {
+        return expressNum;
     }
 
-    public void setExpressNumber(String expressNumber) {
-        this.expressNumber = expressNumber;
+    public void setExpressNum(String expressNum) {
+        this.expressNum = expressNum;
     }
 
     public String getDeliverAt() {

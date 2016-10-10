@@ -85,7 +85,7 @@ public class PayActivity extends BaseActivity {
             @Override
             public void done(List<Wallet> list, BmobException e) {
                 if(e==null){
-                    tvMoney.setText("当前账户余额为：" + list.get(0)+"￥");
+                    tvMoney.setText("当前账户余额为：" + list.get(0).getCash()+"￥");
                 }else{
                     Toast.makeText(PayActivity.this, "网络请求失败", Toast.LENGTH_SHORT).show();
                 }}});
@@ -146,7 +146,7 @@ public class PayActivity extends BaseActivity {
             @Override
             public void done(List<Wallet> list, BmobException e) {
                 if(e==null){
-                    tvMoney.setText("当前账户余额为：" + list.get(0)+"￥");
+                    tvMoney.setText("当前账户余额为：" + list.get(0).getCash()+"￥");
                 }else{
                     Toast.makeText(PayActivity.this, "网络请求失败", Toast.LENGTH_SHORT).show();
                 }}});
