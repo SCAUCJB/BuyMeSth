@@ -101,7 +101,7 @@ public class ConversationFragment extends Fragment implements ConversationContra
         ((TextView)mHeaderView2.findViewById(R.id.tv_name)).setText("添加对话");
         ((TextView)mHeaderView2.findViewById(R.id.tv_new_msg)).setText("来开始一个新的聊天吧");
         ((TextView)mHeaderView2.findViewById(R.id.tv_date)).setText(" ");
-        ((ImageView)mHeaderView2.findViewById(R.id.iv_avatar)).setImageDrawable(getResources().getDrawable(R.drawable.ic_person_green));
+        ((ImageView)mHeaderView2.findViewById(R.id.iv_avatar)).setImageDrawable(getResources().getDrawable(R.drawable.ic_person_add_nlue));
         initAdapter();
         initStoreHouse(view);
         mLoadingView = view.findViewById(R.id.ly_loading_tips);

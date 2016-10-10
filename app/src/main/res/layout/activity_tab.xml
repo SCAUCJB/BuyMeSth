@@ -36,10 +36,14 @@
             fab:menu_fab_label="收起来"
             fab:menu_fab_show_animation="@anim/jump_from_down"
             fab:menu_fab_hide_animation="@anim/jump_to_down"
+            fab:menu_colorNormal="@color/colorAccent"
+            fab:menu_colorPressed="#FF2070"
             android:layout_gravity="bottom|right">
 
 
             <com.github.clans.fab.FloatingActionButton
+                fab:menu_colorNormal="@color/colorAccent"
+                fab:menu_colorPressed="#FF2070"
                 android:id="@+id/fab3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -51,6 +55,8 @@
 
 
             <com.github.clans.fab.FloatingActionButton
+                fab:menu_colorNormal="@color/colorAccent"
+                fab:menu_colorPressed="#FF2070"
                 android:id="@+id/fab4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -59,6 +65,8 @@
                 fab:fab_label="只显示关注的" />
 
             <com.github.clans.fab.FloatingActionButton
+                fab:menu_colorNormal="@color/colorAccent"
+                fab:menu_colorPressed="#FF2070"
                 android:id="@+id/fab1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -67,6 +75,8 @@
                 fab:fab_label="发布代购请求" />
 
             <com.github.clans.fab.FloatingActionButton
+                fab:menu_colorNormal="@color/colorAccent"
+                fab:menu_colorPressed="#FF2070"
                 android:id="@+id/fab2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
@@ -94,6 +95,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
     private EditText et;
     private Handler mHandler;
     private DiscoverFragment discoverFragment;
+    private SharedPreferences settings;
 
     @Override
     protected int getLayoutId() {
@@ -300,22 +302,14 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
             }
         }
         if (position == 0 || position == 1) {
-            fab.showMenu(true);
-            if(position==1) {
-                fab3.setEnabled(false);
-                fab3.setLabelVisibility(View.INVISIBLE);
-                fab3.setAlpha(0f);
-                fab4.setEnabled(false);
-                fab4.setLabelVisibility(View.INVISIBLE);
-                fab4.setAlpha(0f);
-            }else if(position==0){
+            if(position == 0){
                 fab3.setEnabled(true);
-                fab3.setLabelVisibility(View.VISIBLE);
-                fab3.setAlpha(1f);
                 fab4.setEnabled(true);
-                fab4.setLabelVisibility(View.VISIBLE);
-                fab4.setAlpha(1f);
+            }else {
+                fab3.setEnabled(false);
+                fab4.setEnabled(false);
             }
+            fab.showMenu(true);
         } else {
             fab.hideMenu(true);
         }
@@ -354,13 +348,8 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
                         }
                         return;
                     }
-                    if(user.getEmail()!=null&&user.getEmail().length()>0&&user.getEmailVerified()!=null&&!user.getEmailVerified()){
-                        String text = "您的账号邮箱未验证，请尽快进行邮箱验证";
-
-                        new AlertDialog.Builder(TabActivity.this).setMessage(text)
-                                .setPositiveButton("知道了",null).show();
-                    }
-                    SharedPreferences settings = getSharedPreferences(Constant.SHARE_PREFERENCE_USER_INFO, MODE_PRIVATE);
+                    settings = getSharedPreferences(Constant.SHARE_PREFERENCE_USER_INFO, MODE_PRIVATE);
+                    boolean showWarning = settings.getBoolean(Constant.KEY_WARNING_MESSAGE_SHOW,true);
                     //让setting处于编辑状态
                     SharedPreferences.Editor editor = settings.edit();
                     //存放数据
@@ -372,6 +361,17 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
                     editor.putString(Constant.KEY_SIGNATURE, user.getSignature());
                     //完成提交
                     editor.apply();
+                    if(showWarning&&user.getEmail()!=null&&user.getEmail().length()>0&&user.getEmailVerified()!=null&&!user.getEmailVerified()){
+                        String text = "您的账号邮箱未验证，请尽快进行邮箱验证";
+
+                        new AlertDialog.Builder(TabActivity.this).setMessage(text)
+                                .setPositiveButton("知道了",null)
+                                .setNeutralButton("不再提醒", (dialog, which) -> {
+                                    SharedPreferences.Editor editor1 = settings.edit();
+                                    editor1.putBoolean(Constant.KEY_WARNING_MESSAGE_SHOW,false);
+                                    editor1.apply();
+                                }).show();
+                    }
                 }
             });
         }
