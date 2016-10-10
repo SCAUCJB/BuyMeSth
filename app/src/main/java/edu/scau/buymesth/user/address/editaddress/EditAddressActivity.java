@@ -178,12 +178,10 @@ public class EditAddressActivity extends BaseActivity {
                 if (aMapLocation.getErrorCode() == 0) {
                     ToastUtil.show("定位成功");
                     mLocationData = new Bundle();
-                    mLocationData.putDouble("Latitude", aMapLocation.getLatitude());//获取纬度
-                    mLocationData.putDouble("Longitude", aMapLocation.getLongitude());//获取经度
+
                     mLocationData.putString("Province", aMapLocation.getProvince());//省信息
                     mLocationData.putString("City", aMapLocation.getCity());//城市信息
                     mLocationData.putString("District", aMapLocation.getDistrict());//城区信息
-                    mLocationData.putString("Street", aMapLocation.getStreet());//街道信息
                     mLocationClient.stopLocation();
                     updateInfo();
                 } else {
@@ -209,7 +207,6 @@ public class EditAddressActivity extends BaseActivity {
             mRegion.setText(mLocationData.getString("Province") +
                     mLocationData.getString("City") +
                     mLocationData.getString("District"));
-            mSpecific.setText(mLocationData.getString("Street"));
         });
     }
 

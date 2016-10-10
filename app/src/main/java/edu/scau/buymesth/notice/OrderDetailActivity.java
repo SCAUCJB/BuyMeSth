@@ -151,7 +151,7 @@ public class OrderDetailActivity extends BaseActivity {
         imageList.setLayoutManager(linearLayoutManager);
         imageList.setNestedScrollingEnabled(false);
         imageList.setAdapter(orderMomentAdapter);
-
+        imageList.addItemDecoration(new SpaceItemDecoration(45));
 
         picAdapter = new PicAdapter(new ArrayList<>());
         GridLayoutManager gridLayoutManager = new GridLayoutManager(OrderDetailActivity.this, 3);
@@ -269,7 +269,7 @@ public class OrderDetailActivity extends BaseActivity {
                             tvSellerTip.setVisibility(View.VISIBLE);
                             btnCamera.setVisibility(View.GONE);
                             tvMsg.setText("你已接收订单，等待卖家发货");
-                            tvAddressMsg.setText("收货地址是：收货人：" + order.getAddress().getRecipient() + "\n手机号码：" + order.getAddress().getPhone() + "\n地址：" + order.getAddress().getRegion() + order.getAddress().getSpecific());
+                            tvAddressMsg.setText("收货人：" + order.getAddress().getRecipient() + "\n手机号码：" + order.getAddress().getPhone() + "\n地址：" + order.getAddress().getRegion() + order.getAddress().getSpecific());
                             if (order.getRequest().getMinPrice() == null)
                                 tvWant.setText("买家期望价格：" + order.getRequest().getMaxPrice() + "￥");
                             else

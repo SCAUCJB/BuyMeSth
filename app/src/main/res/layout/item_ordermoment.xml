@@ -2,6 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+
+    android:padding="@dimen/content_padding"
+    android:background="@color/white"
     >
 
     <TextView
@@ -14,6 +17,8 @@
 
 
         <TextView
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="@color/black"
             android:layout_below="@id/time"
             android:id="@+id/text"
             android:layout_width="match_parent"
@@ -26,7 +31,8 @@
             android:layout_height="wrap_content"
             android:layout_alignStart="@id/text"
             android:layout_below="@id/text"
-            android:layout_margin="@dimen/content_padding"
+            android:layout_marginTop="@dimen/content_padding"
+            android:layout_marginBottom="@dimen/content_padding"
             android:visibility="visible" />
 
 </RelativeLayout>
