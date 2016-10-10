@@ -62,6 +62,7 @@ public class RejectActivity extends BaseActivity {
                 params.put("orderid", order.getObjectId());
                 params.put("buyerid", order.getBuyer().getObjectId());
                 params.put("reason", et.getText().toString());
+                params.put("requestid",order.getRequest().getObjectId());
             } catch (JSONException e1) {
                 e1.printStackTrace();
             }
