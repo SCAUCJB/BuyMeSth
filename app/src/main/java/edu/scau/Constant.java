@@ -51,4 +51,5 @@ public class Constant {
     public static final int FILE_SELECT_CODE = 535;
     public static final int LOCATION_SELECT_REQUEST_CODE = 537;
     public static final int LOCATION_SELECT_RESULT_CODE = 538;
+    public static final String KEY_WARNING_MESSAGE_SHOW = "key warning show";
 }

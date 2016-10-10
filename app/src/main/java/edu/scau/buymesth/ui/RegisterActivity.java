@@ -18,6 +18,7 @@ import cn.bmob.v3.listener.LogInListener;
 import cn.bmob.v3.listener.SaveListener;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.User;
+import edu.scau.buymesth.data.bean.Wallet;
 import edu.scau.buymesth.main.TabActivity;
 import util.HideIMEHelper;
 
@@ -69,6 +70,10 @@ public class RegisterActivity extends BaseActivity{
                     public void done(User user, BmobException e) {
                         if(e==null&user!=null){
                             //注册成功
+                            Wallet wallet = new Wallet();
+                            wallet.setUser(user);
+                            wallet.setCash(0);
+                            wallet.save();
                             ToastUtil.show("注册成功，正在登陆");
                             BmobUser.loginByAccount(inputAccount.getText().toString(), inputPassword.getText().toString(), new LogInListener<User>() {
                                 @Override

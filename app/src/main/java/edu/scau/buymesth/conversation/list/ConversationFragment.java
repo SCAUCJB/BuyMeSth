@@ -101,7 +101,7 @@ public class ConversationFragment extends Fragment implements ConversationContra
         ((TextView)mHeaderView2.findViewById(R.id.tv_name)).setText("添加对话");
         ((TextView)mHeaderView2.findViewById(R.id.tv_new_msg)).setText("来开始一个新的聊天吧");
         ((TextView)mHeaderView2.findViewById(R.id.tv_date)).setText(" ");
-        ((ImageView)mHeaderView2.findViewById(R.id.iv_avatar)).setImageDrawable(getResources().getDrawable(R.drawable.ic_person_green));
+        ((ImageView)mHeaderView2.findViewById(R.id.iv_avatar)).setImageDrawable(getResources().getDrawable(R.drawable.ic_person_add_nlue));
         initAdapter();
         initStoreHouse(view);
         mLoadingView = view.findViewById(R.id.ly_loading_tips);
@@ -182,6 +182,7 @@ public class ConversationFragment extends Fragment implements ConversationContra
             return false;
         });
         mConversationAdapter.addHeaderView(mHeaderView);
+        mConversationAdapter.addHeaderView(mHeaderView2);
 //        mConversationAdapter.openLoadAnimation();
         mRecyclerView.setAdapter(mConversationAdapter);
 //        mConversationAdapter.setOnLoadMoreListener(() -> mPresenter.loadMore());
@@ -299,6 +300,7 @@ public class ConversationFragment extends Fragment implements ConversationContra
     @Override
     public void onResume() {
         super.onResume();
+        BmobIM.getInstance().addMessageListHandler(this);
         mPresenter.lightRefresh();
         ///连接成功后发送信息让他进行服务器连接判断是否有新的信息,service用于判断类型
         if(mService==null)return;
@@ -312,9 +314,14 @@ public class ConversationFragment extends Fragment implements ConversationContra
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        BmobIM.getInstance().removeMessageListHandler(this);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-        BmobIM.getInstance().removeMessageListHandler(this);
         Message msg = Message.obtain(null, Constant.END_BIND);
         msg.replyTo = null;/////设置回调
         try {
@@ -328,7 +335,6 @@ public class ConversationFragment extends Fragment implements ConversationContra
     @Override
     public void onMessageReceive(List<MessageEvent> list) {
         boolean refresh = true;
-        ToastUtil.show("receive");
         for(MessageEvent event:list){
 //            if(event.getMessage().getId()==-1){
 //                ((TextView)mHeaderView.findViewById(R.id.tv_name)).setText("系统消息");

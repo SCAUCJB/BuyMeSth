@@ -7,8 +7,12 @@ import android.graphics.Color;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -46,6 +50,8 @@ public class MomentDetailActivity extends BaseActivity implements  MomentDetailC
     private MomentDetailAdapter mMomentDetailAdapter;
     private View momentView;
     private View notLoadingView;
+    private Button mButtonSend;
+    private EditText mInputComment;
 
     public static void navigate(Activity activity, String momentId) {
         Intent intent = new Intent(activity, MomentDetailActivity.class);
@@ -84,8 +90,28 @@ public class MomentDetailActivity extends BaseActivity implements  MomentDetailC
         mRecyclerView.addItemDecoration( new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL_LIST));
         initAdapter();
-        findViewById(R.id.bt_send_comment).setOnClickListener(v ->
+        mButtonSend = (Button)findViewById(R.id.bt_send_comment);
+        mInputComment = ((EditText)findViewById(R.id.intput_comment));
+        mButtonSend.findViewById(R.id.bt_send_comment).setOnClickListener(v ->
                 mPresenter.postComment(((TextView)findViewById(R.id.intput_comment)).getText().toString()));
+        mInputComment.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String input = mInputComment.getText().toString();
+                if(input.trim().length()>0) mButtonSend.setEnabled(true);
+                else mButtonSend.setEnabled(false);
+            }
+        });
     }
 
     protected void initToolBar() {

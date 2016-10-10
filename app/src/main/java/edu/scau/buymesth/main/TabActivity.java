@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
@@ -50,6 +51,7 @@ import edu.scau.buymesth.data.bean.Notificate;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.discover.list.DiscoverFragment;
+import edu.scau.buymesth.discover.publish.MomentPublishActivity;
 import edu.scau.buymesth.discover.publish.MomentPublishFragment;
 import edu.scau.buymesth.fragment.EmptyActivity;
 import edu.scau.buymesth.notice.OrderDetailActivity;
@@ -92,6 +94,8 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
     private AlertDialog searchDialog;
     private EditText et;
     private Handler mHandler;
+    private DiscoverFragment discoverFragment;
+    private SharedPreferences settings;
 
     @Override
     protected int getLayoutId() {
@@ -106,20 +110,21 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
             tabLayout.setElevation(25);
         }
         UserFragment userFragment = new UserFragment();
-        DiscoverFragment discoverFragment = new DiscoverFragment();
+        discoverFragment = new DiscoverFragment();
         homeFragment = new HomeFragment();
         ConversationFragment conversationFragment = new ConversationFragment();
 
         homeFragment.setRelatedFab(fab);
+        discoverFragment.setRelatedFab(fab);
         fab.setClosedOnTouchOutside(true);
         fab1.setOnClickListener(v -> {
             Intent i = new Intent(TabActivity.this, PublishActivity.class);
             startActivity(i);
         });
         fab2.setOnClickListener(v -> {
-//            Intent i = new Intent(TabActivity.this, MomentPublishActivity.class);
-//            startActivity(i);
-            EmptyActivity.navigate(TabActivity.this, MomentPublishFragment.class.getName(),null,"编辑动态");
+            Intent i = new Intent(TabActivity.this, MomentPublishActivity.class);
+            startActivity(i);
+//            EmptyActivity.navigate(TabActivity.this, MomentPublishFragment.class.getName(),null,"编辑动态");
         });
         fab3.setOnClickListener(v -> {
             if (et == null) et = new EditText(TabActivity.this);
@@ -297,6 +302,13 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
             }
         }
         if (position == 0 || position == 1) {
+            if(position == 0){
+                fab3.setEnabled(true);
+                fab4.setEnabled(true);
+            }else {
+                fab3.setEnabled(false);
+                fab4.setEnabled(false);
+            }
             fab.showMenu(true);
         } else {
             fab.hideMenu(true);
@@ -336,13 +348,8 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
                         }
                         return;
                     }
-                    if(user.getEmail()!=null&&user.getEmail().length()>0&&user.getEmailVerified()!=null&&!user.getEmailVerified()){
-                        String text = "您的账号邮箱未验证，请尽快进行邮箱验证";
-
-                        new AlertDialog.Builder(TabActivity.this).setMessage(text)
-                                .setPositiveButton("知道了",null).show();
-                    }
-                    SharedPreferences settings = getSharedPreferences(Constant.SHARE_PREFERENCE_USER_INFO, MODE_PRIVATE);
+                    settings = getSharedPreferences(Constant.SHARE_PREFERENCE_USER_INFO, MODE_PRIVATE);
+                    boolean showWarning = settings.getBoolean(Constant.KEY_WARNING_MESSAGE_SHOW,true);
                     //让setting处于编辑状态
                     SharedPreferences.Editor editor = settings.edit();
                     //存放数据
@@ -354,6 +361,17 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
                     editor.putString(Constant.KEY_SIGNATURE, user.getSignature());
                     //完成提交
                     editor.apply();
+                    if(showWarning&&user.getEmail()!=null&&user.getEmail().length()>0&&user.getEmailVerified()!=null&&!user.getEmailVerified()){
+                        String text = "您的账号邮箱未验证，请尽快进行邮箱验证";
+
+                        new AlertDialog.Builder(TabActivity.this).setMessage(text)
+                                .setPositiveButton("知道了",null)
+                                .setNeutralButton("不再提醒", (dialog, which) -> {
+                                    SharedPreferences.Editor editor1 = settings.edit();
+                                    editor1.putBoolean(Constant.KEY_WARNING_MESSAGE_SHOW,false);
+                                    editor1.apply();
+                                }).show();
+                    }
                 }
             });
         }

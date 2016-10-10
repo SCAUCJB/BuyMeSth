@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.github.clans.fab.FloatingActionMenu;
+
 import java.util.List;
 
 import base.util.SpaceItemDecoration;
@@ -19,6 +21,7 @@ import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.DiscoverAdapter;
 import edu.scau.buymesth.data.bean.Moment;
 import edu.scau.buymesth.discover.detail.MomentDetailActivity;
+import edu.scau.buymesth.request.HidingScrollListener;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
@@ -30,6 +33,8 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
     private DiscoverPresenter mPresenter;
     private PtrFrameLayout mPtrFrameLayout;
     private View notLoadingView;
+
+    private FloatingActionMenu relatedFab;
 
     @Nullable
     @Override
@@ -45,6 +50,19 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
         mPresenter.setVM(this,new DiscoverModel());
         initAdapter();
         initStoreHouse(view);
+
+        if (relatedFab != null)
+            mRecyclerView.addOnScrollListener(new HidingScrollListener() {
+                @Override
+                public void onHide() {
+                    relatedFab.hideMenu(true);
+                }
+
+                @Override
+                public void onShow() {
+                    relatedFab.showMenu(true);
+                }
+            });
 
         return view;
     }
@@ -136,5 +154,13 @@ public class DiscoverFragment extends Fragment implements DiscoverContract.View{
         if(mPtrFrameLayout!=null)
             mPtrFrameLayout.refreshComplete();
         mDiscoverAdapter.notifyDataSetChanged();
+    }
+
+    public FloatingActionMenu getRelatedFab() {
+        return relatedFab;
+    }
+
+    public void setRelatedFab(FloatingActionMenu relatedFab) {
+        this.relatedFab = relatedFab;
     }
 }
