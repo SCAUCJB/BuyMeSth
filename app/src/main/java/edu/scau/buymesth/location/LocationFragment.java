@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -56,6 +57,12 @@ public class LocationFragment extends Fragment implements EmptyActivity.ButtonOn
     private EditText mProvince;
     private EditText mCity;
     private EditText mDetail;
+
+    private CheckBox mCbCountry;
+    private CheckBox mCbProvince;
+    private CheckBox mCbCity;
+    private CheckBox mCbDetail;
+
     private TextView mLocation;
     private String locationProvider;
 
@@ -83,6 +90,13 @@ public class LocationFragment extends Fragment implements EmptyActivity.ButtonOn
         mProvince = (EditText) view.findViewById(R.id.tv_province);
         mCity = (EditText) view.findViewById(R.id.tv_city);
         mDetail = (EditText) view.findViewById(R.id.tv_detail);
+
+        mCbCountry = (CheckBox) view.findViewById(R.id.cb_country);
+        mCbProvince = (CheckBox) view.findViewById(R.id.cb_province);
+        mCbCity = (CheckBox) view.findViewById(R.id.cb_city);
+        mCbDetail = (CheckBox) view.findViewById(R.id.cb_detail);
+
+
         mLocation = (TextView) view.findViewById(R.id.tv_location_loading);
         mLocation.setOnClickListener(v -> {
             startLocation();
@@ -90,7 +104,7 @@ public class LocationFragment extends Fragment implements EmptyActivity.ButtonOn
         initAdapter();
         initLocation();
         startLocation();
-        mDetail.setText(sHA1(getContext()));
+//        mDetail.setText(sHA1(getContext()));
         return view;
     }
 
@@ -258,10 +272,10 @@ public class LocationFragment extends Fragment implements EmptyActivity.ButtonOn
         mLocationData.remove("Province");
         mLocationData.remove("City");
         mLocationData.remove("Address");
-        mLocationData.putString("Country",mCountry.getText().toString());
-        mLocationData.putString("Province",mProvince.getText().toString());
-        mLocationData.putString("City",mCity.getText().toString());
-        mLocationData.putString("Address",mDetail.getText().toString());
+        mLocationData.putString("Country",mCbCountry.isChecked()?mCountry.getText().toString():"");
+        mLocationData.putString("Province",mCbProvince.isChecked()?mProvince.getText().toString():"");
+        mLocationData.putString("City",mCbCity.isChecked()?mCity.getText().toString():"");
+        mLocationData.putString("Address",mCbDetail.isChecked()?mDetail.getText().toString():"");
         i.putExtra("data",mLocationData);
         getActivity().setResult(Constant.LOCATION_SELECT_RESULT_CODE,i);
         getActivity().finish();

@@ -1,6 +1,8 @@
 package edu.scau.buymesth.user;
 
 
+import android.content.Context;
+
 /**
  * Created by Jammy on 2016/8/31.
  */

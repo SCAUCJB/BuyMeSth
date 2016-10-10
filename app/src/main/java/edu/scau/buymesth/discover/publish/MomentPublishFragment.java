@@ -54,7 +54,7 @@ import static java.util.concurrent.Executors.newFixedThreadPool;
  * Created by ！ on 2016/10/9.
  */
 
-public class MomentPublishFragment extends Fragment implements EmptyActivity.ButtonOnToolbar{
+public class MomentPublishFragment extends Fragment implements EmptyActivity.ButtonOnToolbar,MyPictureAdapter.CompressList{
     RecyclerView recyclerView;
     EditText momentContent;
     TextView tvRequest;
@@ -91,7 +91,7 @@ public class MomentPublishFragment extends Fragment implements EmptyActivity.But
         recyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
-        adapter = new MyPictureAdapter(mUrlList);
+        adapter = new MyPictureAdapter(mUrlList,this);
         recyclerView.setAdapter(adapter);
         adapter.setOnRecyclerViewItemClickListener((view0, position) -> {
             ////这里设置点击事件
@@ -322,5 +322,15 @@ public class MomentPublishFragment extends Fragment implements EmptyActivity.But
     @Override
     public String toolbarsButtonText() {
         return "发送";
+    }
+
+    @Override
+    public void onDataChange(MyPictureAdapter.ImageItem item) {
+        mImageSize = 0;
+        Observable.from(mUrlList)
+                .map(imageItem -> new File(mCompress?imageItem.compressedImage:imageItem.sourceImage))
+                .subscribe(file -> mImageSize += file.length(),
+                        o->{},
+                        () -> tvSize.setText("图片大小："+ FileUtils.convert(mImageSize)));
     }
 }

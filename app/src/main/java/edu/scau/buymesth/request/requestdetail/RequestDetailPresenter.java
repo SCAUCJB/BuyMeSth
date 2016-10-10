@@ -198,9 +198,9 @@ public class RequestDetailPresenter extends BasePresenter<RequestDetailContract.
         Integer high = mModel.getRequest().getMaxPrice();
         Integer low = mModel.getRequest().getMinPrice();
         if (low != null) {
-            mView.setPrice("期望价格：￥" + low + "~￥" + high);
+            mView.setPrice("￥" + low + "~￥" + high);
         } else {
-            mView.setPrice("期望价格：￥" + high);
+            mView.setPrice("￥" + high);
         }
     }
 

@@ -17,6 +17,7 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay">
         <Button
+            android:visibility="invisible"
             android:id="@+id/bt_on_toolbar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

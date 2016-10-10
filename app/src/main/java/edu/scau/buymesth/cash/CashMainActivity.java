@@ -1,8 +1,10 @@
 package edu.scau.buymesth.cash;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -29,10 +31,10 @@ import edu.scau.buymesth.data.bean.User;
  */
 public class CashMainActivity extends BaseActivity {
     User user;
-    @Bind(R.id.btn_withdraw)
-    Button btnWithdraw;
-    @Bind(R.id.btn_deposit)
-    Button btnDeposit;
+//    @Bind(R.id.btn_withdraw)
+//    Button btnWithdraw;
+//    @Bind(R.id.btn_deposit)
+//    Button btnDeposit;
     @Bind(R.id.tv_cash_detail)
     TextView tvCashDetail;
     @Bind(R.id.iv_icon)
@@ -47,6 +49,8 @@ public class CashMainActivity extends BaseActivity {
     ImageView ivRefresh;
     @Bind(R.id.rv_2)
     ViewGroup mRv2;
+    @Bind(R.id.ly_btn_deposit_withdraw)
+    View mButtonDepositWithdraw;
 
     @Override
     protected int getLayoutId() {
@@ -75,14 +79,30 @@ public class CashMainActivity extends BaseActivity {
         });
 
 
-        btnDeposit.setOnClickListener(v -> {
-            if(user!=null)
-                DepositActivity.navigate(CashMainActivity.this, user);
-        });
-
-        btnWithdraw.setOnClickListener(v -> {
-            if(user!=null)
-                WithdrawActivity.navigate(CashMainActivity.this, user);
+//        btnDeposit.setOnClickListener(v -> {
+//            if(user!=null)
+//                DepositActivity.navigate(CashMainActivity.this, user);
+//        });
+//
+//        btnWithdraw.setOnClickListener(v -> {
+//            if(user!=null)
+//                WithdrawActivity.navigate(CashMainActivity.this, user);
+//        });
+        mButtonDepositWithdraw.setOnClickListener(v -> {
+            String[] items = {"充值","提现"};
+            new AlertDialog.Builder(CashMainActivity.this)
+                    .setItems(items, (dialog, which) -> {
+                        switch (which){
+                            case 0:
+                                if(user!=null)
+                                    DepositActivity.navigate(CashMainActivity.this, user);
+                                break;
+                            case 1:
+                                if(user!=null)
+                                    WithdrawActivity.navigate(CashMainActivity.this, user);
+                                break;
+                        }
+                    }).show();
         });
 
         tvCashDetail.setOnClickListener(v -> {

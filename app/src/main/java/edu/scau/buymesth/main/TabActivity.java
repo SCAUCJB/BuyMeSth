@@ -326,6 +326,7 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
             startActivity(i);
             finish();
         }else {
+//            query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);
             query.getObject(user.getObjectId(), new QueryListener<User>() {
                 @Override
                 public void done(User user, BmobException e) {
@@ -338,24 +339,16 @@ public class TabActivity extends BaseActivity implements ViewPager.OnPageChangeL
                         }
                         return;
                     }
-                    ToastUtil.show("000000000");
-                    if(user.getEmail()!=null&&user.getEmail().length()>0){
-                        ToastUtil.show("1111111111");
-                        if(user.getEmailVerified()!=null){
-                            ToastUtil.show("2222222222");
-                            if(!user.getEmailVerified()){
-                                ToastUtil.show("33333333333");
-                                String text = "您的账号邮箱未验证，请尽快进行邮箱验证";
+                    if(user.getEmail()!=null&&user.getEmail().length()>0&&user.getEmailVerified()!=null&&!user.getEmailVerified()){
+                        String text = "您的账号邮箱未验证，请尽快进行邮箱验证";
 //                                if(new Date().getTime()-DateFormatHelper.getMsTime(user.getCreatedAt())<=60*60*1000){
 //                                    text = "账号邮箱未验证请在 "
 //                                            + DateFormatHelper.getStringTime(60*60*1000-(new Date().getTime()-DateFormatHelper.getMsTime(user.getCreatedAt())))
 //                                            +" 内进行验证";
 //                                }
 //                                ToastUtil.show("4444444444");
-                                new AlertDialog.Builder(TabActivity.this).setMessage(text)
-                                        .setPositiveButton("知道了",null).show();
-                            }
-                        }
+                        new AlertDialog.Builder(TabActivity.this).setMessage(text)
+                                .setPositiveButton("知道了",null).show();
                     }
                     SharedPreferences settings = getSharedPreferences(Constant.SHARE_PREFERENCE_USER_INFO, MODE_PRIVATE);
                     //让setting处于编辑状态

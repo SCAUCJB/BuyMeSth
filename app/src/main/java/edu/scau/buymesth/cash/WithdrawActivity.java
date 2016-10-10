@@ -102,4 +102,9 @@ public class WithdrawActivity extends BaseActivity {
     protected int getToolBarId() {
         return R.id.toolbar;
     }
+
+    @Override
+    public int getStatusColorResources() {
+        return R.color.colorPrimaryDark;
+    }
 }

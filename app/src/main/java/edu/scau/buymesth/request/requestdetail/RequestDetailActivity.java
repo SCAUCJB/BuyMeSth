@@ -3,6 +3,8 @@ package edu.scau.buymesth.request.requestdetail;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -36,6 +38,7 @@ import edu.scau.buymesth.data.bean.Comment;
 import edu.scau.buymesth.data.bean.Request;
 import edu.scau.buymesth.publish.FlowLayout;
 import edu.scau.buymesth.request.comment.CommentActivity;
+import edu.scau.buymesth.util.ColorChangeHelper;
 import edu.scau.buymesth.util.DividerItemDecoration;
 import edu.scau.buymesth.util.NetworkHelper;
 
@@ -170,6 +173,9 @@ public class RequestDetailActivity extends BaseActivity implements RequestDetail
     public void setAuthorExp(Integer exp) {
         String levelString = "LV" + exp / 10;
         level.setText(levelString);
+        Drawable levelBg = ColorChangeHelper.tintDrawable(mContext.getResources().getDrawable(R.drawable.rect_black),
+                    ColorStateList.valueOf(ColorChangeHelper.IntToColorValue(exp/10*10)));
+        level.setBackground(levelBg);
     }
 
     @Override

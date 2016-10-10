@@ -47,7 +47,7 @@
                     android:id="@+id/et_moment_content"
                     android:background="#ffffff"
                     android:minHeight="130dp"
-                    android:hint="moment"
+                    android:hint="在这里写动态"
                     android:gravity="top"
                     android:padding="10dp"
                     style="@style/theTextLarge" />
@@ -99,7 +99,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="位置"
+                    android:text="地点"
                     android:id="@+id/tv_location"
                     style="@style/theTextLarge"
                     android:paddingLeft="20dp"

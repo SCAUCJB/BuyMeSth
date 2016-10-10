@@ -70,6 +70,7 @@ public class EmptyActivity extends BaseActivity {
         try {
             mMainFragment = (Fragment) Class.forName(className).newInstance();
             if(mMainFragment instanceof ButtonOnToolbar){
+                findViewById(R.id.bt_on_toolbar).setVisibility(View.VISIBLE);
                 ((Button)findViewById(R.id.bt_on_toolbar)).setText(((ButtonOnToolbar)mMainFragment).toolbarsButtonText());
                 findViewById(R.id.bt_on_toolbar).setOnClickListener(v -> ((ButtonOnToolbar)mMainFragment).onToolbarButtonClick(v));
             }else {

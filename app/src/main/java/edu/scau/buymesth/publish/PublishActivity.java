@@ -54,7 +54,7 @@ import static java.util.concurrent.Executors.newFixedThreadPool;
  * Created by Jammy on 2016/8/11.
  * Updated by John on 2016/8/18
  */
-public class PublishActivity extends BaseActivity implements View.OnClickListener, PublishContract.View {
+public class PublishActivity extends BaseActivity implements View.OnClickListener, PublishContract.View,MyPictureAdapter.CompressList {
     List<TextView> tagList = new LinkedList<>();
     @Bind(R.id.btn_submit)
     Button btnSubmit;
@@ -158,7 +158,7 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
             }
         });
         helper.attachToRecyclerView(mRecyclerView);
-        adapter = new MyPictureAdapter(mUrlList);
+        adapter = new MyPictureAdapter(mUrlList,this);
         mRecyclerView.setAdapter(adapter);
         adapter.setOnRecyclerViewItemClickListener((view, position) -> {
             ////这里设置点击事件
@@ -512,5 +512,18 @@ public class PublishActivity extends BaseActivity implements View.OnClickListene
     @Override
     public int getStatusColorResources() {
         return R.color.colorPrimaryDark;
+    }
+
+    @Override
+    public void onDataChange(MyPictureAdapter.ImageItem item) {
+        mImageSize = 0;
+        Observable.from(mUrlList)
+                .map(imageItem -> new File(mCompress ? imageItem.compressedImage : imageItem.sourceImage))
+                .subscribe(file -> mImageSize += file.length(),
+                        o -> {
+                        },
+                        () -> tvSize.setText("图片大小：" + FileUtils.convert(mImageSize)));
+        adapter.setList(mUrlList, mCompress ? 1 : 0);
+        swCompress.setEnabled(true);
     }
 }

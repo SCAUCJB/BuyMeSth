@@ -7,45 +7,98 @@
     android:background="@color/colorLightLightGrey"
     android:paddingTop="@dimen/dp_22">
 
-    <EditText
-        android:hint="国家"
-        android:textSize="@dimen/sp_14"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:textColor="#666666"
+    <LinearLayout
         android:background="@color/white"
-        android:id="@+id/tv_country" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:hint="国家"
+            android:textSize="@dimen/sp_14"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textColor="#666666"
+            android:background="@color/white"
+            android:id="@+id/tv_country" />
+        <CheckBox
+            android:id="@+id/cb_country"
+            android:checked="true"
+            style="@style/Widget.AppCompat.CompoundButton.CheckBox"
+            android:alpha="0.6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
-    <EditText
-        android:hint="省"
-        android:textSize="@dimen/sp_14"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:textColor="#666666"
+    <LinearLayout
         android:background="@color/white"
-        android:id="@+id/tv_province" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:hint="省"
+            android:textSize="@dimen/sp_14"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textColor="#666666"
+            android:background="@color/white"
+            android:id="@+id/tv_province" />
+        <CheckBox
+            android:id="@+id/cb_province"
+            android:checked="true"
+            style="@style/Widget.AppCompat.CompoundButton.CheckBox"
+            android:alpha="0.6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
-    <EditText
-        android:hint="市"
-        android:textSize="@dimen/sp_14"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:textColor="#666666"
-        android:background="@color/white"
-        android:id="@+id/tv_city" />
 
-    <EditText
-        android:hint="详细地点"
-        android:textSize="@dimen/sp_14"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:textColor="#666666"
+    <LinearLayout
         android:background="@color/white"
-        android:id="@+id/tv_detail" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:hint="市"
+            android:textSize="@dimen/sp_14"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textColor="#666666"
+            android:background="@color/white"
+            android:id="@+id/tv_city" />
+        <CheckBox
+            android:id="@+id/cb_city"
+            android:checked="true"
+            style="@style/Widget.AppCompat.CompoundButton.CheckBox"
+            android:alpha="0.6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:hint="详细地点"
+            android:textSize="@dimen/sp_14"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textColor="#666666"
+            android:background="@color/white"
+            android:id="@+id/tv_detail" />
+        <CheckBox
+            android:id="@+id/cb_detail"
+            android:checked="true"
+            style="@style/Widget.AppCompat.CompoundButton.CheckBox"
+            android:alpha="0.6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
     <TextView
         android:text="重新定位"

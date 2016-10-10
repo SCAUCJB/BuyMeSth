@@ -1,6 +1,9 @@
 package edu.scau.buymesth.user;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,6 +14,7 @@ import cn.bmob.v3.AsyncCustomEndpoints;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.CloudCodeListener;
+import edu.scau.Constant;
 import edu.scau.buymesth.data.bean.User;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -24,8 +28,10 @@ public class UserPresenter implements UserContract.Presenter {
     private final UserContract.View mView;
     private final UserModel mModel;
     CompositeSubscription mSubscriptions = new CompositeSubscription();
+    private Context mContext;
 
-    UserPresenter(UserContract.View view, UserModel model) {
+    UserPresenter(Context context,UserContract.View view, UserModel model) {
+        mContext = context;
         mView = view;
         mModel = model;
     }

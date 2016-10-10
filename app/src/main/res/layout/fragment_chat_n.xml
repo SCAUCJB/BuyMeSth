@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/input_message"
             android:layout_weight="1"
-            android:hint="type your message"
+            android:hint="消息"
             android:background="@drawable/rect_white"
             android:minHeight="38dp"
             android:layout_marginRight="10dp"
@@ -48,7 +48,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="38dp"
-            android:text="SEND"
+            android:text="发送"
             android:layout_gravity="bottom"
             android:id="@+id/bt_send_message"
             android:background="@drawable/rect_grey"
@@ -66,31 +66,31 @@
         android:layout_height="40dp">
 
         <ImageView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             cube_ptr:srcCompat="@drawable/ic_insert_photo_grey600_48dp"
             android:id="@+id/iv_picture"
             android:layout_weight="1" />
         <ImageView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            cube_ptr:srcCompat="@drawable/ic_photo_camera_grey600_48dp"
+            cube_ptr:srcCompat="@drawable/ic_assignment_grey600_48dp"
             android:id="@+id/iv_photo"
             android:layout_weight="1" />
         <ImageView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             cube_ptr:srcCompat="@drawable/ic_folder_open_grey600_48dp"
             android:id="@+id/iv_file"
             android:layout_weight="1" />
         <ImageView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             cube_ptr:srcCompat="@drawable/ic_tag_faces_grey600_48dp"
             android:id="@+id/iv_face"
             android:layout_weight="1" />
         <ImageView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             cube_ptr:srcCompat="@drawable/ic_location_on_grey600_48dp"
             android:id="@+id/iv_location"

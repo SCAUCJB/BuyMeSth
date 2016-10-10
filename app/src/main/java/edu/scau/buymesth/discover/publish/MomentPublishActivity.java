@@ -99,7 +99,7 @@ public class MomentPublishActivity extends BaseActivity {
         recyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_6)));
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
-        adapter = new MyPictureAdapter(mUrlList);
+        adapter = new MyPictureAdapter(mUrlList,null);
         recyclerView.setAdapter(adapter);
         adapter.setOnRecyclerViewItemClickListener((view, position) -> {
             ////这里设置点击事件
@@ -321,7 +321,7 @@ public class MomentPublishActivity extends BaseActivity {
         }
         if (requestCode == Constant.LOCATION_SELECT_REQUEST_CODE && resultCode == Constant.LOCATION_SELECT_RESULT_CODE) {
             Bundle locationInfo = data.getBundleExtra("data");
-            mLocation = locationInfo.getString("Country");
+            mLocation = ""+locationInfo.getString("Country");
             mLocation += locationInfo.getString("Province");
             mLocation += locationInfo.getString("City");
             mLocation += locationInfo.getString("Address");

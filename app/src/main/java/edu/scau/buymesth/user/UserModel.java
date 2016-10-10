@@ -37,7 +37,7 @@ public class UserModel {
             return Observable.just(BmobUser.getCurrentUser(User.class));
         } else {
             query.addWhereEqualTo("objectId", id);
-            if(query.hasCachedResult(User.class)|| !NetworkHelper.isOpenNetwork(mContext)){
+            if(query.hasCachedResult(User.class)&& !NetworkHelper.isOpenNetwork(mContext)){
                 query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ONLY);
             }else {
                 query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ONLY);
