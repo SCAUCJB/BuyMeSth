@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import java.util.List;
+
 import base.BaseActivity;
 import base.util.GlideCircleTransform;
 import butterknife.Bind;
@@ -123,25 +125,6 @@ public class CashMainActivity extends BaseActivity {
         query();
     }
 
-    private void query() {
-        BmobQuery<User> query = new BmobQuery<>();
-        query.getObject(user.getObjectId(), new QueryListener<User>() {
-            @Override
-            public void done(User u, BmobException e) {
-                if (e == null) {
-                    user = u;
-                    if (user.getAvatar() != null) {
-                        Glide.with(mContext).load(user.getAvatar()).placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into(ivIcon);
-                    }
-                    tvName.setText(user.getNickname());
-                    tvUserId.setText(user.getUsername());
-                    tvCash.setText(user.getBalance() + "￥");
-                } else {
-                    Toast.makeText(CashMainActivity.this, "网络请求失败", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
 
     @Override
     public boolean canSwipeBack() {
