@@ -1,20 +1,15 @@
 package edu.scau.buymesth.cash;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-
-import java.util.List;
 
 import base.BaseActivity;
 import base.util.GlideCircleTransform;
@@ -26,6 +21,7 @@ import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.data.bean.User;
+import edu.scau.buymesth.userinfo.UserInfoActivity;
 import edu.scau.buymesth.data.bean.Wallet;
 
 
@@ -34,7 +30,7 @@ import edu.scau.buymesth.data.bean.Wallet;
  */
 public class CashMainActivity extends BaseActivity {
     User user;
-//    @Bind(R.id.btn_withdraw)
+    //    @Bind(R.id.btn_withdraw)
 //    Button btnWithdraw;
 //    @Bind(R.id.btn_deposit)
 //    Button btnDeposit;
@@ -59,6 +55,8 @@ public class CashMainActivity extends BaseActivity {
     ViewGroup mRv2;
     @Bind(R.id.ly_btn_deposit_withdraw)
     View mButtonDepositWithdraw;
+    @Bind(R.id.rv_1)
+    View mUserBar;
 
     @Override
     protected int getLayoutId() {
@@ -92,16 +90,16 @@ public class CashMainActivity extends BaseActivity {
 //                WithdrawActivity.navigate(CashMainActivity.this, user);
 //        });
         mButtonDepositWithdraw.setOnClickListener(v -> {
-            String[] items = {"充值","提现"};
+            String[] items = {"充值", "提现"};
             new AlertDialog.Builder(CashMainActivity.this)
                     .setItems(items, (dialog, which) -> {
-                        switch (which){
+                        switch (which) {
                             case 0:
-                                if(user!=null)
+                                if (user != null)
                                     DepositActivity.navigate(CashMainActivity.this, user);
                                 break;
                             case 1:
-                                if(user!=null)
+                                if (user != null)
                                     WithdrawActivity.navigate(CashMainActivity.this, user);
                                 break;
                         }
@@ -109,11 +107,11 @@ public class CashMainActivity extends BaseActivity {
         });
 
         tvCashDetail.setOnClickListener(v -> {
-            if(user!=null)
+            if (user != null)
                 CashBookActivity.navigate(CashMainActivity.this, user);
         });
         mRv2.setOnClickListener(v -> {
-            if(user!=null)
+            if (user != null)
                 CashBookActivity.navigate(CashMainActivity.this, user);
         });
         ivRefresh.setOnClickListener(v -> ivRefresh.post(() -> query()));
@@ -123,6 +121,26 @@ public class CashMainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         query();
+    }
+
+    private void query() {
+        BmobQuery<User> query = new BmobQuery<>();
+        query.getObject(user.getObjectId(), new QueryListener<User>() {
+            @Override
+            public void done(User u, BmobException e) {
+                if (e == null) {
+                    user = u;
+                    if (user.getAvatar() != null) {
+                        Glide.with(mContext).load(user.getAvatar()).placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into(ivIcon);
+                    }
+                    tvName.setText(user.getNickname());
+                    tvUserId.setText(user.getUsername());
+                    tvCash.setText(user.getBalance() + "￥");
+                } else {
+                    Toast.makeText(CashMainActivity.this, "网络请求失败", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override

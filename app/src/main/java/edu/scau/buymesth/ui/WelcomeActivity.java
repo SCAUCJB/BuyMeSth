@@ -1,7 +1,6 @@
 package edu.scau.buymesth.ui;
 
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -40,21 +39,17 @@ public class WelcomeActivity extends BaseActivity {
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(welcomeImage);
 
-        alertDialog = new AlertDialog.Builder(this).setTitle(R.string.help).setMessage(R.string.string_help_text)
-                .setNegativeButton(R.string.quit, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        toast("不能读写缓存导致无法正常运行");
-                        finish();
-                    }
-                }).setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        startAppSettings();
-                    }
-                }).setCancelable(false).create();
-    }
 
+    }
+public void showAlert(){
+    if(alertDialog==null)
+    alertDialog = new AlertDialog.Builder(this).setTitle(R.string.help).setMessage(R.string.string_help_text)
+            .setNegativeButton(R.string.quit, (dialog, which) -> {
+                toast("不能读写缓存导致无法正常运行");
+                finish();
+            }).setPositiveButton(R.string.settings, (dialog, which) -> startAppSettings()).setCancelable(false).create();
+    alertDialog.show();
+}
     @Override
     protected void onResume() {
         super.onResume();
@@ -77,7 +72,7 @@ public class WelcomeActivity extends BaseActivity {
         }
     }
 
-    AlertDialog alertDialog;
+    AlertDialog alertDialog=null;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -87,7 +82,7 @@ public class WelcomeActivity extends BaseActivity {
                 bmobUser = BmobUser.getCurrentUser(User.class);
                 jumpToNextActivity();
             } else {
-                alertDialog.show();
+                showAlert();
             }
 
         }
@@ -96,6 +91,7 @@ public class WelcomeActivity extends BaseActivity {
     private void startAppSettings() {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent.setData(Uri.parse("package:" + getPackageName()));
+
         startActivity(intent);
     }
 
