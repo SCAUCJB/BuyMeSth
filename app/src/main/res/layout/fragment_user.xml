@@ -113,7 +113,7 @@
                     android:id="@+id/tv_signature"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="个人描述:xxxxxxxxxxxxxxxxxxxxxxxxxxx" />
+                   />
 
             </RelativeLayout>
             <TextView
@@ -213,7 +213,7 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:background="#f3f3f3f3"
-            android:weightSum="4">
+            android:weightSum="5">
 
             <LinearLayout
                 android:id="@+id/followed_user_list"
@@ -226,7 +226,8 @@
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:src="@mipmap/icon_user" />
+
+                    android:src="@mipmap/ic_favorite_outline_black_36dp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -246,9 +247,9 @@
                 android:orientation="vertical">
 
                 <ImageView
+                    android:src="@drawable/ic_location_city_black_36dp"
                     android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@mipmap/ic_favorite_outline_black_36dp" />
+                    android:layout_height="30dp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -257,7 +258,27 @@
                     android:gravity="center"
                     android:text="地址管理" />
             </LinearLayout>
+            <LinearLayout
+                android:id="@+id/wallet"
+                android:clickable="true"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
 
+                <ImageView
+                    android:src="@drawable/ic_account_balance_wallet_black_36dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center"
+                    android:text="钱包" />
+            </LinearLayout>
             <LinearLayout
                 android:id="@+id/my_evaluate"
                 android:layout_width="0dp"
@@ -319,6 +340,7 @@
             android:orientation="vertical">
 
             <android.support.design.widget.TabLayout
+                android:background="@color/white"
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>

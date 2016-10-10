@@ -1,7 +1,6 @@
 package edu.scau.buymesth.user;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
@@ -39,7 +38,9 @@ import cn.bmob.newim.BmobIM;
 import cn.bmob.v3.BmobUser;
 import edu.scau.buymesth.R;
 import edu.scau.buymesth.adapter.ViewPagerAdapter;
+import edu.scau.buymesth.cash.CashMainActivity;
 import edu.scau.buymesth.conversation.userlist.UserListFragment;
+import edu.scau.buymesth.data.bean.User;
 import edu.scau.buymesth.fragment.EmptyActivity;
 import edu.scau.buymesth.ui.LoginActivity;
 import edu.scau.buymesth.user.address.AddressActivity;
@@ -139,6 +140,8 @@ public class UserFragment extends Fragment implements UserContract.View {
             MarkActivity.navigate(getContext());});
         //查看我的评价
         view.findViewById(R.id.my_evaluate).setOnClickListener(v-> EvaluateListActivity.navigate(getContext(),BmobUser.getCurrentUser().getObjectId(),true));
+        //钱包
+        view.findViewById(R.id.wallet).setOnClickListener(v-> CashMainActivity.navigate(getActivity(),BmobUser.getCurrentUser(User.class)));
         mPopulationTv.setOnClickListener(v->EvaluateListActivity.navigate(getContext(),BmobUser.getCurrentUser().getObjectId(),false));
 
         UserModel model = new UserModel(getContext());
@@ -227,7 +230,9 @@ public class UserFragment extends Fragment implements UserContract.View {
         adapter.addTab(requestFragment, "我的请求");
         adapter.addTab(orderFragment,"我的订单");
         mViewPager.setAdapter(adapter);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mTabLayout.setElevation(16);
+        }
         mTabLayout.setupWithViewPager(mViewPager);
         NestedScrollView bottomSheet = (NestedScrollView) mCoordinatorLayout.findViewById(R.id.bottom_sheet);
         behavior = BottomSheetBehavior.from(bottomSheet);
