@@ -28,7 +28,7 @@ public class CashBookAdapter extends BaseQuickAdapter<CashBook> {
 
                 case CashBook.GET:
                     helper.setText(R.id.tv_status, "交易成功");
-                    helper.setText(R.id.tv_money, "-"+String.valueOf(item.getCash())+"￥");
+                    helper.setText(R.id.tv_money, "+"+String.valueOf(item.getCash())+"￥");
                     break;
 
                 case CashBook.CANCLE:
@@ -38,7 +38,7 @@ public class CashBookAdapter extends BaseQuickAdapter<CashBook> {
 
                 case CashBook.DEPOSIT:
                     helper.setText(R.id.tv_status, "充值");
-                    helper.setText(R.id.tv_money, String.valueOf(item.getCash())+"￥");
+                    helper.setText(R.id.tv_money, "+"+String.valueOf(item.getCash())+"￥");
                     break;
 
                 case CashBook.WITHDRAW:

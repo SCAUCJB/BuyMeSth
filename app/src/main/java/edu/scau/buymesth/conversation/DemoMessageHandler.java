@@ -44,9 +44,9 @@ public class DemoMessageHandler extends BmobIMMessageHandler {
                 JSONObject jsonMsg = new JSONObject(message.getContent());
                 switch (jsonMsg.getInt("type")){
                     case 0 : content = jsonMsg.getString("content"); break;
-                    case 1 : content = "[image]"; break;
-                    case 2 : content = "[request]"; break;
-                    case 3 : content = "[file]"; break;
+                    case 1 : content = "[图片]"; break;
+                    case 2 : content = "[购物请求]"; break;
+                    case 3 : content = "[文件]"; break;
                     default: break;
                 }
             } catch (JSONException e) { }

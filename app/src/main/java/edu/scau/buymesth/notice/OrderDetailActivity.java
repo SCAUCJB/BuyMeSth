@@ -35,7 +35,6 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.CloudCodeListener;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
-import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 import edu.scau.Constant;
 import edu.scau.buymesth.R;
@@ -43,7 +42,6 @@ import edu.scau.buymesth.adapter.PicAdapter;
 import edu.scau.buymesth.cash.PayActivity;
 import edu.scau.buymesth.data.bean.Address;
 import edu.scau.buymesth.data.bean.Evaluate;
-import edu.scau.buymesth.data.bean.Notificate;
 import edu.scau.buymesth.data.bean.Order;
 import edu.scau.buymesth.data.bean.OrderMoment;
 import edu.scau.buymesth.data.bean.User;
@@ -466,11 +464,11 @@ public class OrderDetailActivity extends BaseActivity {
 
                                                 User buyer = order.getBuyer();
                                                 int level = (int) (buyer.getExp()+OrderDetailActivity.getSum(order));
-                                                        if(level==0){
+                                                        if((int)(level/100)==0){
                                                             level=100;
                                                         }
 
-                                                buyer.setExp(buyer.getExp()+level/100 );
+                                                buyer.setExp(buyer.getExp()+level);
                                                 buyer.update(new UpdateListener() {
                                                     @Override
                                                     public void done(BmobException e) {
@@ -726,6 +724,7 @@ public class OrderDetailActivity extends BaseActivity {
         }
         if (resultCode == EvaluateActivity.EVALUATE_SUCCESS) {
             Evaluate evaluate = (Evaluate) data.getSerializableExtra("evaluate");
+            if(evaluate.getUrlList()!=null&&evaluate.getUrlList().size()>0)
             picAdapter.setNewData(evaluate.getUrlList());
             btnComment.setVisibility(View.GONE);
             llEvaluate.setVisibility(View.VISIBLE);

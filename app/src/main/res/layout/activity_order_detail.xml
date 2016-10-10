@@ -320,8 +320,9 @@
 
                     <TextView
                         style="@style/TextAppearance.AppCompat.Small"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:text="买家评价是："
                         android:textColor="@color/black" />
 
@@ -330,8 +331,7 @@
                         style="@style/Widget.AppCompat.RatingBar.Indicator"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignTop="@+id/iv_avatar"
+                       android:layout_marginLeft="@dimen/dp_14"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="15dp"
                         android:isIndicator="true"

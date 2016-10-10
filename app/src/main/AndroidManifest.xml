@@ -133,6 +133,7 @@
 
         <activity
             android:name=".discover.publish.SelectActivity"
+            android:label="选择请求"
             android:theme="@style/AppTheme.SwipeBackLayout" />
         <activity
             android:name=".fragment.EmptyActivity"
@@ -141,13 +142,16 @@
         <activity
             android:name="gallery.PhotoActivity"
             android:launchMode="singleTop"
+            android:label="选择图片"
             android:theme="@style/AppTheme.SwipeBackLayout" />
         <activity
             android:name=".user.setting.UserSettingActivity"
             android:launchMode="singleTop"
+            android:label="用户信息"
             android:theme="@style/AppTheme.SwipeBackLayout" />
         <activity
             android:name=".userinfo.evaluate.EvaluateListActivity"
+            android:label="评价"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
@@ -184,30 +188,36 @@
         <activity
             android:name=".notice.RejectActivity"
             android:launchMode="singleTop"
+            android:label="拒绝订单"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
         <activity
             android:name=".cash.CashBookActivity"
             android:launchMode="singleTop"
+            android:label="交易详情"
             android:theme="@style/AppTheme.SwipeBackLayout" />
         <activity
             android:name=".cash.CashMainActivity"
             android:launchMode="singleTop"
+            android:label="账户信息"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
         <activity
             android:name=".cash.PayActivity"
             android:launchMode="singleTop"
+            android:label="支付"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
         <activity
             android:name=".cash.WithdrawActivity"
             android:launchMode="singleTop"
+            android:label="提现"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
         <activity
             android:name=".cash.DepositActivity"
             android:launchMode="singleTop"
+            android:label="充值"
             android:theme="@style/AppTheme.SwipeBackLayout" />
 
         <!--/////process用来定义线程的名字-->

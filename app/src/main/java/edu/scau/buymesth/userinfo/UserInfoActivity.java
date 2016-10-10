@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
@@ -15,7 +15,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.util.SparseArray;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -26,6 +25,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.Target;
 
 import base.BaseActivity;
 import base.util.GlideCircleTransform;
@@ -44,6 +44,8 @@ import edu.scau.buymesth.user.request.RequestFragment;
 import edu.scau.buymesth.userinfo.evaluate.EvaluateListActivity;
 import edu.scau.buymesth.util.ColorChangeHelper;
 import edu.scau.buymesth.util.NetworkHelper;
+
+import static cn.bmob.newim.core.BmobIMClient.getContext;
 
 /**
  * Created by John on 2016/9/24.
@@ -81,6 +83,7 @@ public class UserInfoActivity extends BaseActivity implements Contract.View{
     ImageView mBgUser;
     private BottomSheetBehavior<NestedScrollView> behavior;
     private SparseArray<Drawable> mLevelDrawableCache=new SparseArray<>();
+    private Target<Bitmap> mTartget;
 
     public static void navigate(Activity activity,User user){
         Intent intent=new Intent(activity,UserInfoActivity.class);
@@ -182,15 +185,20 @@ public class UserInfoActivity extends BaseActivity implements Contract.View{
 
     @Override
     public void setAvatar(String url) {
-        Glide.with(mContext).load(url).crossFade().placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into(mAvatarIv);
+        Glide.with(getContext()).load(url).crossFade().placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(getContext())).into(mAvatarIv);
         if(url!=null)
-        Glide.with(this).
-                load(url).
-                asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).
-                transform(new BlurTransformation(mContext,40)).//高斯模糊处理
-                into(mBgUser);
+            mTartget=Glide.with(this).
+                    load(url).
+                    asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).
+                    transform(new BlurTransformation(this,40)).//高斯模糊处理
+                    into(mBgUser);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Glide.clear(mTartget);
+    }
     @Override
     public void setLevel(Integer exp) {
         Drawable levelBg = mLevelDrawableCache.get(exp/10*10);

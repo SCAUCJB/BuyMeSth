@@ -14,7 +14,6 @@ import java.util.List;
 import adpater.BaseQuickAdapter;
 import adpater.BaseViewHolder;
 import base.util.GlideCircleTransform;
-import base.util.ToastUtil;
 import cn.bmob.newim.BmobIM;
 import cn.bmob.newim.bean.BmobIMConversation;
 import cn.bmob.newim.bean.BmobIMMessage;
@@ -55,9 +54,9 @@ public class ConversationAdapter extends BaseQuickAdapter<BmobIMConversation> {
                 JSONObject jsonMsg = new JSONObject(newMsg.getContent());
                 switch (jsonMsg.getInt("type")){
                     case 0 : content = jsonMsg.getString("content"); break;
-                    case 1 : content = "[image]"; break;
-                    case 2 : content = "[request]"; break;
-                    case 3 : content = "[file]"; break;
+                    case 1 : content = "[图片]"; break;
+                    case 2 : content = "[购物请求]"; break;
+                    case 3 : content = "[文件]"; break;
                     default:break;
                 }
             } catch (JSONException e) { }
