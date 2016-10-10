@@ -39,10 +39,10 @@ public class CashMainActivity extends BaseActivity {
 //    @Bind(R.id.btn_deposit)
 //    Button btnDeposit;
     Wallet wallet;
-    @Bind(R.id.btn_withdraw)
-    Button btnWithdraw;
-    @Bind(R.id.btn_deposit)
-    Button btnDeposit;
+//    @Bind(R.id.btn_withdraw)
+//    Button btnWithdraw;
+//    @Bind(R.id.btn_deposit)
+//    Button btnDeposit;
     @Bind(R.id.tv_cash_detail)
     TextView tvCashDetail;
     @Bind(R.id.iv_icon)
@@ -72,16 +72,15 @@ public class CashMainActivity extends BaseActivity {
             Glide.with(mContext).load(user.getAvatar()).placeholder(R.mipmap.def_head).transform(new GlideCircleTransform(mContext)).into(ivIcon);
         }
         tvName.setText(user.getNickname());
-
         query();
-        btnDeposit.setOnClickListener(v -> {
-            if(user!=null)
-                DepositActivity.navigate(CashMainActivity.this, user);
-        });
-
-        btnWithdraw.setOnClickListener(v -> {
-            if(user!=null)
-                WithdrawActivity.navigate(CashMainActivity.this, user);
+//        btnDeposit.setOnClickListener(v -> {
+//            if(user!=null)
+//                DepositActivity.navigate(CashMainActivity.this, user);
+//        });
+//
+//        btnWithdraw.setOnClickListener(v -> {
+//            if(user!=null)
+//                WithdrawActivity.navigate(CashMainActivity.this, user);
 
 //        btnDeposit.setOnClickListener(v -> {
 //            if(user!=null)
