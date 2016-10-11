@@ -1,0 +1,2 @@
+# BuyMeSth
+init
